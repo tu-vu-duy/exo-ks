@@ -1,5 +1,5 @@
-/***************************************************************************
- * Copyright (C) 2003-2007 eXo Platform SAS.
+/*
+ * Copyright (C) 2003-2009 eXo Platform SAS.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Affero General Public License
@@ -8,98 +8,86 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see<http://www.gnu.org/licenses/>.
- ***************************************************************************/
-package org.exoplatform.forum.service ;
+ */
+package org.exoplatform.forum.service;
 
 import java.util.Date;
 
-import org.exoplatform.services.jcr.util.IdGenerator;
-
 /**
- * March 2, 2007	
+ * Created by The eXo Platform SAS
+ * Author : eXoPlatform
+ *          exo@exoplatform.com
+ * Jul 18, 2009  
  */
-public class Category {
-	private String id;
-	private String owner;
-	private String path;
-	private long categoryOrder;
-	private Date createdDate;
-	private String modifiedBy;
-	private Date modifiedDate;
-	private String name;
-	private String description;
-	private String[] moderators;
-	private String[] userPrivate ;
-	private String[] createTopicRole;
-		
-	private String[] viewer;
-	private String[] poster;
+public interface Category {
 
-	private long forumCount = 0;
-	private String[] emailNotification;
-	public Category(String id) {
-		this.id = id;
-		userPrivate = new String[] {" "};
-		moderators = new String[] {" "};
-		emailNotification = new String [] {} ;
-		viewer = new String[] {" "};
-		createTopicRole = new String[] {" "};
-		poster = new String[] {" "};
-	}
-	public Category(){
-		this(Utils.CATEGORY + IdGenerator.generate());
-	}
+  public abstract String getId();
 
-	public String getId(){return id;}
-	public void setId(String id){ this.id = id;}
-	 
-	public String getOwner(){return owner;}
-	public void setOwner(String owner){this.owner=owner;}
+  public abstract void setId(String id);
 
-	public String getPath() {return path; }
-	public void setPath( String path) { this.path = path;}
-	 
-	public long getCategoryOrder(){return categoryOrder;}
-	public void setCategoryOrder(long categoryOrder){this.categoryOrder = categoryOrder;}
-	 
-	public Date getCreatedDate(){return createdDate;}
-	public void setCreatedDate(Date createdDate){this.createdDate = createdDate;}
-	 
-	public String getModifiedBy(){return modifiedBy;}
-	public void setModifiedBy(String modifiedBy) {this.modifiedBy = modifiedBy;}
-	 
-	public Date getModifiedDate(){return modifiedDate;}
-	public void setModifiedDate(Date modifiedDate){this.modifiedDate = modifiedDate;}
-	 
-	public String getCategoryName(){return name;}
-	public void setCategoryName(String categoryName){this.name = categoryName;}
-	 
-	public String getDescription(){return description;}	 
-	public void setDescription(String description){this.description = description;}
+  public abstract String getOwner();
 
-	public String[] getModerators() {return moderators;}
-	public void setModerators(String[] moderators) { this.moderators = moderators;}
+  public abstract void setOwner(String owner);
 
-	public String[] getUserPrivate(){return userPrivate;}
-	public void setUserPrivate(String[] userPrivate){this.userPrivate = userPrivate;}
+  public abstract String getPath();
 
-	public String[] getCreateTopicRole(){return createTopicRole;}
-	public void setCreateTopicRole(String[] createTopicRole){this.createTopicRole = createTopicRole;}
-	
-	public String[] getPoster(){return poster;}
-	public void setPoster(String[] poster){this.poster = poster;}
-	
-	public String[] getViewer(){return viewer;}
-	public void setViewer(String[] viewer){this.viewer = viewer;}
+  public abstract void setPath(String path);
 
-	public long getForumCount() {return forumCount;}
-	public void setForumCount(long forumCount) {this.forumCount = forumCount;}
+  public abstract long getCategoryOrder();
 
-	public String[] getEmailNotification() { return emailNotification; }
-	public void setEmailNotification(String[] emailNotification) { this.emailNotification = emailNotification; }
+  public abstract void setCategoryOrder(long categoryOrder);
+
+  public abstract Date getCreatedDate();
+
+  public abstract void setCreatedDate(Date createdDate);
+
+  public abstract String getModifiedBy();
+
+  public abstract void setModifiedBy(String modifiedBy);
+
+  public abstract Date getModifiedDate();
+
+  public abstract void setModifiedDate(Date modifiedDate);
+
+  public abstract String getCategoryName();
+
+  public abstract void setCategoryName(String categoryName);
+
+  public abstract String getDescription();
+
+  public abstract void setDescription(String description);
+
+  public abstract String[] getModerators();
+
+  public abstract void setModerators(String[] moderators);
+
+  public abstract String[] getUserPrivate();
+
+  public abstract void setUserPrivate(String[] userPrivate);
+
+  public abstract String[] getCreateTopicRole();
+
+  public abstract void setCreateTopicRole(String[] createTopicRole);
+
+  public abstract String[] getPoster();
+
+  public abstract void setPoster(String[] poster);
+
+  public abstract String[] getViewer();
+
+  public abstract void setViewer(String[] viewer);
+
+  public abstract long getForumCount();
+
+  public abstract void setForumCount(long forumCount);
+
+  public abstract String[] getEmailNotification();
+
+  public abstract void setEmailNotification(String[] emailNotification);
+
 }

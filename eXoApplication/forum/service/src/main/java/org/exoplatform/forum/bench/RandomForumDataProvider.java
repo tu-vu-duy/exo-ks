@@ -12,6 +12,8 @@ import org.exoplatform.forum.service.Forum;
 import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.Post;
 import org.exoplatform.forum.service.Topic;
+import org.exoplatform.forum.service.impl.CategoryImpl;
+import org.exoplatform.forum.service.impl.ForumImpl;
 import org.exoplatform.services.idgenerator.IDGeneratorService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.organization.OrganizationService;
@@ -111,9 +113,9 @@ public class RandomForumDataProvider implements ForumDataProvider {
 
 	private Forum newForum(Forum previous) {
 		if (previous == null) {
-			previous = new Forum();
+			previous = new ForumImpl();
 		}
-		Forum forum = new Forum();
+		Forum forum = new ForumImpl();
 		forum.setCreatedDate(new Date());
 		forum.setDescription(randomWords(10));
 		forum.setForumName(randomWords(5));
@@ -124,9 +126,9 @@ public class RandomForumDataProvider implements ForumDataProvider {
 
 	private Category newCategory(Category previous) {
 		if (previous == null) {
-			previous = new Category();
+			previous = new CategoryImpl();
 		}
-		Category category = new Category();
+		Category category = new CategoryImpl();
 		category.setCategoryName(randomWords(10));
 		category.setCategoryOrder(previous.getCategoryOrder() + 1);
 		category.setCreatedDate(new Date());

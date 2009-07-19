@@ -30,6 +30,7 @@ import org.exoplatform.forum.service.JCRPageList;
 import org.exoplatform.forum.service.Topic;
 import org.exoplatform.forum.service.UserProfile;
 import org.exoplatform.forum.service.Forum;
+import org.exoplatform.forum.service.impl.ForumImpl;
 import org.exoplatform.forum.webui.UIForumContainer;
 import org.exoplatform.forum.webui.UIForumDescription;
 import org.exoplatform.forum.webui.UIForumLinks;
@@ -171,7 +172,7 @@ public class UIPageListTopicByUser extends UIContainer{
 					sProvider.close();
 				}
 			}
-			Forum forum = new Forum();
+			Forum forum = new ForumImpl();
 			if(isRead) {
 				SessionProvider sProvider = SessionProviderFactory.createSystemProvider();
 				try {

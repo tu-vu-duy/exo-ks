@@ -287,6 +287,7 @@
 	<nodeType name="exo:forum" isMixin="false" hasOrderableChildNodes="false" primaryItemName="">
 		<supertypes>
 			<supertype>nt:base</supertype>
+			<supertype>mix:referenceable</supertype>
 		</supertypes>
 		<propertyDefinitions>
 		 	<propertyDefinition name="exo:id" requiredType="String" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" multiple="false">
@@ -390,6 +391,7 @@
 	<nodeType name="exo:forumCategory" isMixin="false" hasOrderableChildNodes="false" primaryItemName="">
 		<supertypes>
 			<supertype>nt:base</supertype>
+			<supertype>mix:referenceable</supertype>
 		</supertypes>
 		<propertyDefinitions> 
 	 		<propertyDefinition name="exo:id" requiredType="String" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" multiple="false">

@@ -28,6 +28,7 @@ import org.exoplatform.forum.service.Category;
 import org.exoplatform.forum.service.Forum;
 import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.ForumServiceUtils;
+import org.exoplatform.forum.service.impl.ForumImpl;
 import org.exoplatform.forum.webui.UIBreadcumbs;
 import org.exoplatform.forum.webui.UICategories;
 import org.exoplatform.forum.webui.UICategory;
@@ -338,7 +339,7 @@ public class UIForumForm extends UIForm implements UIPopupComponent, UISelector 
 			viewer = ForumUtils.removeSpaceInString(viewer) ;
 			
 			String userName = ForumSessionUtils.getCurrentUser() ;
-			Forum newForum = new Forum();
+			Forum newForum = new ForumImpl();
 			newForum.setForumName(forumTitle);
 			newForum.setOwner(userName);
 			newForum.setForumOrder(Integer.valueOf(forumOrder).intValue());

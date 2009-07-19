@@ -27,6 +27,7 @@ import org.exoplatform.forum.ForumUtils;
 import org.exoplatform.forum.service.Category;
 import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.Utils;
+import org.exoplatform.forum.service.impl.CategoryImpl;
 import org.exoplatform.forum.webui.UIBreadcumbs;
 import org.exoplatform.forum.webui.UICategories;
 import org.exoplatform.forum.webui.UICategory;
@@ -289,7 +290,7 @@ public class UICategoryForm extends UIForm implements UIPopupComponent, UISelect
 			String []setViewer = ForumUtils.splitForForum(viewer) ;
 			
 			String userName = ForumSessionUtils.getCurrentUser();
-			Category cat = new Category();
+			Category cat = new CategoryImpl();
 			cat.setOwner(userName) ;
 			cat.setCategoryName(categoryTitle.trim()) ;
 			cat.setCategoryOrder(Long.parseLong(categoryOrder)) ;

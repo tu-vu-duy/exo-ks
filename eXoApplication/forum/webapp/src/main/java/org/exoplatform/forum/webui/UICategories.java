@@ -32,6 +32,7 @@ import org.exoplatform.forum.service.ForumServiceUtils;
 import org.exoplatform.forum.service.Topic;
 import org.exoplatform.forum.service.UserProfile;
 import org.exoplatform.forum.service.Utils;
+import org.exoplatform.forum.service.impl.ForumImpl;
 import org.exoplatform.forum.webui.popup.UIPopupAction;
 import org.exoplatform.forum.webui.popup.UIPopupContainer;
 import org.exoplatform.forum.webui.popup.UIRSSForm;
@@ -223,7 +224,7 @@ public class UICategories extends UIContainer	{
 	}
 	
 	private Forum getForumById(String categoryId, String forumId) throws Exception {
-		Forum forum_ = new Forum() ; 
+		Forum forum_ = new ForumImpl() ; 
 		if(!mapListForum.isEmpty() && !isGetForumList) {
 			for(Forum forum : mapListForum.get(categoryId)) {
 				if(forum.getId().equals(forumId)) {forum_ = forum ; break;}

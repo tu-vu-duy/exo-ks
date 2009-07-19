@@ -15,6 +15,8 @@ import org.exoplatform.forum.service.Category;
 import org.exoplatform.forum.service.Forum;
 import org.exoplatform.forum.service.Post;
 import org.exoplatform.forum.service.Topic;
+import org.exoplatform.forum.service.impl.CategoryImpl;
+import org.exoplatform.forum.service.impl.ForumImpl;
 
 public class PhpBBForumDataProvider implements ForumDataProvider {
 	DataSource ds;
@@ -40,7 +42,7 @@ public class PhpBBForumDataProvider implements ForumDataProvider {
 
 	protected Category newCategory(String name, long order) {
 
-		Category category = new Category();
+		Category category = new CategoryImpl();
 		category.setCategoryName(name);
 		category.setCategoryOrder(order);
 		category.setCreatedDate(new Date());
@@ -102,7 +104,7 @@ public class PhpBBForumDataProvider implements ForumDataProvider {
 	}
 
 	protected Forum newForum(String name, String desc, int order) {
-		Forum forum = new Forum();
+		Forum forum = new ForumImpl();
 		forum.setCreatedDate(new Date());
 		forum.setDescription(desc);
 		forum.setForumName(name);

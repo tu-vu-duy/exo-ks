@@ -56,6 +56,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
+import org.exoplatform.chrome.ChromeService;
+import org.exoplatform.chrome.core.DomainSession;
 import org.exoplatform.commons.utils.ISO8601;
 import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
@@ -100,6 +102,7 @@ import org.exoplatform.forum.service.conf.PostData;
 import org.exoplatform.forum.service.conf.SendMessageInfo;
 import org.exoplatform.forum.service.conf.StatisticEventListener;
 import org.exoplatform.forum.service.conf.TopicData;
+import org.exoplatform.forum.service.impl.mapping.CategoryMapping;
 import org.exoplatform.ks.common.conf.RoleRulesPlugin;
 import org.exoplatform.ks.common.jcr.PropertyReader;
 import org.exoplatform.ks.rss.RSSEventListener;
@@ -631,7 +634,7 @@ public class JCRDataStorage {
 				categories = pln.getForumInitialData().getCategories();
 				for(CategoryData categoryData : categories) {
 					String categoryId = "";
-					Category category = new Category();
+					Category category = new CategoryImpl();
 					category.setCategoryName(categoryData.getName());
 					category.setDescription(categoryData.getDescription());
 					category.setOwner(categoryData.getOwner());
@@ -640,7 +643,7 @@ public class JCRDataStorage {
 					List<ForumData> forums = categoryData.getForums();
 					String forumId = "";
 					for (ForumData forumData : forums) {
-						Forum forum = new Forum();
+						Forum forum = new ForumImpl();
 						forum.setForumName(forumData.getName());
 						forum.setDescription(forumData.getDescription());
 						forum.setOwner(forumData.getOwner());
@@ -695,11 +698,14 @@ public class JCRDataStorage {
 			Query query = qm.createQuery(queryString.toString(), Query.XPATH);
 			QueryResult result = query.execute();
 			NodeIterator iter = result.getNodes();
+			Node cateNode = null;
 			while (iter.hasNext()) {
 				try{
-					Node cateNode = iter.nextNode();
+					cateNode = iter.nextNode();
 					categories.add(getCategory(cateNode));
-				}catch(Exception e) {}				
+				}catch (Exception e) {
+				  log.error("Could not load category " + cateNode.getName() + ": " + e.getMessage(), e);
+				}				
 			}
 			return categories;
 		} catch(Exception e) {
@@ -734,7 +740,12 @@ public class JCRDataStorage {
   }
 
 	private Category getCategory(Node cateNode) throws Exception {
-		Category cat = new Category(cateNode.getName());
+	  ChromeService chromeService = (ChromeService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(ChromeService.class);
+	  DomainSession session = chromeService.login();
+	  Category cat = session.find(CategoryMapping.class, cateNode);
+	  return cat;
+	  
+/*		Category cat = new CategoryImpl(cateNode.getName());
 		cat.setPath(cateNode.getPath());
 		PropertyReader reader = new PropertyReader(cateNode);
 		cat.setOwner(reader.string("exo:owner"));
@@ -753,7 +764,8 @@ public class JCRDataStorage {
 		cat.setViewer(reader.strings("exo:viewer"));
 		cat.setCreateTopicRole(reader.strings("exo:createTopicRole"));
 		cat.setPoster(reader.strings("exo:poster"));		
-		return cat;
+		return cat;*/
+		
 	}
 
 	public void saveCategory(Category category, boolean isNew) throws Exception {
@@ -908,7 +920,7 @@ public class JCRDataStorage {
 	private void updateModeratorInForums(SessionProvider sProvider, Node cateNode, String[] moderatorCat) throws Exception {
 		NodeIterator iter = cateNode.getNodes();
 		List<String> list;
-		Forum forum = new Forum();
+		Forum forum = new ForumImpl();
 		String[] oldModeratoForums;
 		String[] strModerators;
 		while (iter.hasNext()) {
@@ -1469,7 +1481,7 @@ public class JCRDataStorage {
 	 * @throws Exception
 	 */
 	 private Forum getForumSummary(Node forumNode) throws Exception {
-	    Forum forum = new Forum();
+	    Forum forum = new ForumImpl();
 	    PropertyReader reader = new PropertyReader(forumNode);
 	    forum.setId(forumNode.getName());
 	    forum.setPath(forumNode.getPath());
@@ -1498,7 +1510,7 @@ public class JCRDataStorage {
 	 }
 	
 	private Forum getForum(Node forumNode) throws Exception {
-		Forum forum = new Forum();
+		Forum forum = new ForumImpl();
 		PropertyReader reader = new PropertyReader(forumNode);
 		forum.setId(forumNode.getName());
 		forum.setPath(forumNode.getPath());
@@ -1544,7 +1556,7 @@ public class JCRDataStorage {
 
 	public Forum removeForum(String categoryId, String forumId) throws Exception {
 		SessionProvider sProvider = SessionProvider.createSystemProvider() ;
-		Forum forum = new Forum();
+		Forum forum = new ForumImpl();
 		try {
 			Node catNode = getCategoryHome(sProvider).getNode(categoryId);
 			Node forumNode = catNode.getNode(forumId);
@@ -4823,13 +4835,13 @@ public class JCRDataStorage {
 				topic.setTopicName(myNode.getProperty("exo:name").getString());
 				object = topic;
 			} else if (path.indexOf(Utils.FORUM) > 0 && (path.lastIndexOf(Utils.FORUM) > path.indexOf(Utils.CATEGORY))) {
-				Forum forum = new Forum();
+				Forum forum = new ForumImpl();
 				forum.setId(myNode.getName());
 				forum.setPath(path);
 				forum.setForumName(myNode.getProperty("exo:name").getString());
 				object = forum;
 			} else if (path.indexOf(Utils.CATEGORY) > 0) {
-				Category category = new Category();
+				Category category = new CategoryImpl();
 				category.setId(myNode.getName());
 				category.setPath(path);
 				category.setCategoryName(myNode.getProperty("exo:name").getString());
@@ -5682,7 +5694,7 @@ public class JCRDataStorage {
 		SessionProvider sProvider = ForumServiceUtils.getSessionProvider();
 		try {
 			JsonGeneratorImpl generatorImpl = new JsonGeneratorImpl();
-			Category cat = new Category();
+			Category cat = new CategoryImpl();
 			List<String> list = new ArrayList<String>();
 			ContinuationService continuation = getContinuationService() ;
 			for (String userId : userIds) {

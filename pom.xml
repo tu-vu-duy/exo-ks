@@ -12,12 +12,12 @@
   <groupId>org.exoplatform.ks</groupId>
   <artifactId>config</artifactId>
   <name>eXo Knowledge Suite</name>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.2-crm</version>
   <packaging>pom</packaging>
   
   <properties>
      <exo.product.name>exo-ks</exo.product.name>
-     <exo.product.specification>1.2</exo.product.specification>
+     <exo.product.specification>1.2-crm</exo.product.specification>
   </properties>
   <issueManagement>
   	<system>jira</system>

@@ -27,8 +27,6 @@ import org.exoplatform.forum.service.Category;
 @NodeMapping(name = "exo:forumCategory")
 public abstract class CategoryMapping implements Category {
 
-  @Name
-  public abstract String getCategoryName() ;
   
   @Name
   public abstract String getId(); 
@@ -36,14 +34,14 @@ public abstract class CategoryMapping implements Category {
   @Path
   public abstract String getPath();
   
+  @Property(name = "exo:name")
+  public abstract String getCategoryName() ;
+  
   @Property(name = "exo:owner")
   public abstract String getOwner();
 
   @Property(name = "exo:categoryOrder")
   public abstract long getCategoryOrder();
-  
-  //@Property(name = "exo:createTopicRole")
-  public abstract String[] getCreateTopicRole();
   
   @Property(name = "exo:createdDate")
   public abstract Date getCreatedDate();
@@ -51,28 +49,31 @@ public abstract class CategoryMapping implements Category {
   @Property(name = "exo:description")
   public abstract String getDescription();
   
-  //@Property(name = "exo:emailWatching")
-  public abstract String[] getEmailNotification();
-  
   @Property(name = "exo:forumCount")
   public abstract long getForumCount() ;
-
-  //@Property(name = "exo:moderators")
-  public abstract String[] getModerators();
   
   @Property(name = " exo:modifiedBy")
   public abstract String getModifiedBy() ;
   
   @Property(name = "exo:modifiedDate")
   public abstract Date getModifiedDate();
+  
+  @Property(name = "exo:createTopicRole")
+  public abstract String[] getCreateTopicRole();  
+  
+  @Property(name = "exo:emailWatching")
+  public abstract String[] getEmailNotification(); 
 
-  //@Property(name = "exo:poster")
+  @Property(name = "exo:moderators")
+  public abstract String[] getModerators();  
+
+  @Property(name = "exo:poster")
   public abstract String[] getPoster() ;
     
-  //@Property(name = "exo:userPrivate")
+  @Property(name = "exo:userPrivate")
   public abstract String[] getUserPrivate();
 
-  //@Property(name = "exo:viewer")
+  @Property(name = "exo:viewer")
   public abstract String[] getViewer() ;
 
   public abstract void setCategoryName(String categoryName) ;

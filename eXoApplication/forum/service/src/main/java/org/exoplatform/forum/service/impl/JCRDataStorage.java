@@ -103,6 +103,7 @@ import org.exoplatform.forum.service.conf.SendMessageInfo;
 import org.exoplatform.forum.service.conf.StatisticEventListener;
 import org.exoplatform.forum.service.conf.TopicData;
 import org.exoplatform.forum.service.impl.mapping.CategoryMapping;
+import org.exoplatform.forum.service.impl.mapping.ForumMapping;
 import org.exoplatform.ks.common.conf.RoleRulesPlugin;
 import org.exoplatform.ks.common.jcr.PropertyReader;
 import org.exoplatform.ks.rss.RSSEventListener;
@@ -740,35 +741,51 @@ public class JCRDataStorage {
   }
 
 	private Category getCategory(Node cateNode) throws Exception {
-	  ChromeService chromeService = (ChromeService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(ChromeService.class);
-	  DomainSession session = chromeService.login();
-	  Category cat = session.find(CategoryMapping.class, cateNode);
-	  return cat;
-	  
-/*		Category cat = new CategoryImpl(cateNode.getName());
-		cat.setPath(cateNode.getPath());
-		PropertyReader reader = new PropertyReader(cateNode);
-		cat.setOwner(reader.string("exo:owner"));
-		cat.setCategoryName(reader.string("exo:name"));
-		cat.setCategoryOrder(reader.l("exo:categoryOrder"));
-		cat.setCreatedDate(reader.date("exo:createdDate"));
-		cat.setDescription(reader.string("exo:description"));
-		cat.setModifiedBy(reader.string("exo:modifiedBy"));
-		cat.setModifiedDate(reader.date("exo:modifiedDate"));
-		cat.setUserPrivate(reader.strings("exo:userPrivate"));
-		cat.setModerators(reader.strings("exo:moderators"));
-		cat.setForumCount(reader.l("exo:forumCount"));
-		if(cateNode.isNodeType("exo:forumWatching")) {
-		  cat.setEmailNotification(reader.strings("exo:emailWatching"));
-		}
-		cat.setViewer(reader.strings("exo:viewer"));
-		cat.setCreateTopicRole(reader.strings("exo:createTopicRole"));
-		cat.setPoster(reader.strings("exo:poster"));		
-		return cat;*/
-		
+	  return loadDomainObject(CategoryMapping.class, cateNode);
 	}
+	
+	/**
+	 * Load a domain object from JCR Node
+	 * @param <T> 
+	 * @param clazz
+	 * @param node
+	 * @return
+	 * @throws Exception
+	 */
+  private <T> T loadDomainObject(Class<T> clazz, Node node) throws Exception {
+    ChromeService chromeService = getService(ChromeService.class);
+    DomainSession session = null;
+    try {
+      session = chromeService.login();
+      T cat = session.find(clazz, node);
+      return cat;
+    } catch (Exception e) {
+      log.error("Could not load Domain object of type " + clazz + " for node " + node.getPath());
+      throw e;
+    } finally {
+      if (session != null) {
+        session.close();
+      }
+    }
+  }
+  
+  
+  private <T> T loadDomainObject(Class<T> clazz, Node node, DomainSession session) throws Exception {
+    ChromeService chromeService = getService(ChromeService.class);
+    try {
+      T cat = session.find(clazz, node);
+      return cat;
+    } catch (Exception e) {
+      log.error("Could not load Domain object of type " + clazz + " for node " + node.getPath());
+      throw e;
+    }
+  }
 
-	public void saveCategory(Category category, boolean isNew) throws Exception {
+	@SuppressWarnings("unchecked")
+  private <T> T getService(Class<T> clazz) {
+	  return (T) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(clazz);
+  }
+  public void saveCategory(Category category, boolean isNew) throws Exception {
 		SessionProvider sProvider = SessionProvider.createSystemProvider() ;
 		String[] oldcategoryMod = new String[]{""};
 		List<String> presentPoster = new ArrayList<String>();
@@ -1510,7 +1527,9 @@ public class JCRDataStorage {
 	 }
 	
 	private Forum getForum(Node forumNode) throws Exception {
-		Forum forum = new ForumImpl();
+	  return loadDomainObject(ForumMapping.class, forumNode);
+	 
+/*		Forum forum = new ForumImpl();
 		PropertyReader reader = new PropertyReader(forumNode);
 		forum.setId(forumNode.getName());
 		forum.setPath(forumNode.getPath());
@@ -1551,7 +1570,7 @@ public class JCRDataStorage {
 			if(forumNode.hasProperty("exo:emailWatching"))
 				forum.setEmailNotification(reader.strings("exo:emailWatching"));
 		}
-		return forum;
+		return forum;*/
 	}
 
 	public Forum removeForum(String categoryId, String forumId) throws Exception {
@@ -1875,33 +1894,49 @@ public class JCRDataStorage {
 		NodeIterator iter = result.getNodes();
 		Node topicNode = null;
 		boolean isSavePath = false;
+
+		DomainSession session = null;
 		try {
+	    ChromeService chromeService = getService(ChromeService.class);
+	    session = chromeService.login();
 			Node forumNode = (Node) forumHomeNode.getSession().getItem(forumPath);
+			Forum forum = session.find(ForumMapping.class, forumNode);
+			
 			while (iter.hasNext()) {
 				topicNode = iter.nextNode();
-				if (!forumNode.hasProperty("exo:isModerateTopic") && !forumNode.getProperty("exo:isModerateTopic").getBoolean()) {
-					forumNode.setProperty("exo:lastTopicPath", topicNode.getName());
+				if (!forum.getIsModerateTopic()) {
+				  forum.setLastTopicPath(topicNode.getName());
 					isSavePath = true;
 					break;
 				} else {
 					if (topicNode.getProperty("exo:isApproved").getBoolean()) {
-						forumNode.setProperty("exo:lastTopicPath", topicNode.getName());
+					  forum.setLastTopicPath(topicNode.getName());
+						
 						isSavePath = true;
 						break;
 					}
 				}
 			}
 			if (!isSavePath) {
-				forumNode.setProperty("exo:lastTopicPath", "");
+			  forum.setLastTopicPath("");
 			}
-			if(forumNode.isNew()){
-				forumNode.getSession().save();
-			} else {
-				forumNode.save();
-			}
-		} catch (PathNotFoundException e) {
-			e.printStackTrace();
+      if (forumNode.isNew()) {
+        //forumNode.getSession().save();
+        session.persist(forum);
+      } else {
+        //forumNode.save();
+        session.save();
+      }
+      
+			
+			
+		} catch (Exception e) {
+			log.error("Failed to query LastTopic for forum " + forumPath, e);
 			return null;
+		} finally {
+		  if (session != null) {
+		    session.close();
+		  }
 		}
 		return topicNode;
 	}

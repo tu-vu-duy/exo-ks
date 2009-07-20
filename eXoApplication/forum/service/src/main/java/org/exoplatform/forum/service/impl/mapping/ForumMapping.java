@@ -57,32 +57,31 @@ public abstract class ForumMapping implements Forum {
   @Property(name = "exo:description")
   public abstract String getDescription();
   
-  //@Property(name = "exo:emailWatching")
-  public abstract String[] getEmailNotification();
-  
   @Property(name = "exo:topicCount")
   public abstract long getTopicCount() ;
 
   @Property(name = "exo:postCount")
   public abstract long getPostCount() ;
   
-  //@Property(name = "exo:moderators")
+  @Property(name = "exo:emailWatching")
+  public abstract String[] getEmailNotification();  
+  
+  @Property(name = "exo:moderators")
   public abstract String[] getModerators();
   
-  //@Property(name = "exo:poster")
+  @Property(name = "exo:poster")
   public abstract String[] getPoster() ;
   
-  //@Property(name = "exo:viewer")
+  @Property(name = "exo:viewer")
   public abstract String[] getViewer() ; 
     
-  //@Property(name = "exo:userPrivate")
+  @Property(name = "exo:userPrivate")
   public abstract String[] getUserPrivate();
 
   @Property(name = "exo:isClosed")
   public abstract boolean getIsClosed();
   
- 
-  //@Property(name = "exo:banIPs")
+  @Property(name = "exo:banIPs")
   public abstract List<String> getBanIP();
 
   @Property(name = "exo:isModerateTopic")
@@ -91,8 +90,8 @@ public abstract class ForumMapping implements Forum {
   @Property(name = "exo:isModeratePost")
   public abstract boolean getIsModerateTopic();
 
-  //@Property(name = "exo:createTopicRole")
-  public abstract String [] getCreatetopicRole();
+  @Property(name = "exo:createTopicRole")
+  public abstract String [] getCreateTopicRole();
   
   @Property(name = "exo:isAutoAddEmailNotify") 
  public abstract boolean getIsAutoAddEmailNotify();
@@ -100,33 +99,40 @@ public abstract class ForumMapping implements Forum {
   @Property(name = "exo:isLock") 
    public abstract boolean getIsLock();
 
-  //@Property(name = "exo:notifyWhenAddPost") 
+  @Property(name = "exo:notifyWhenAddPost") 
    public abstract String [] getNotifyWhenAddPost();
   
-  //@Property(name = "exo:notifyWhenAddTopic")
+  @Property(name = "exo:notifyWhenAddTopic")
    public abstract String [] getNotifyWhenAddTopic();
 
-  /**
-
-  if (forumNode.hasProperty("exo:lastTopicPath")){
-    lastTopicPath = forumNode.getProperty("exo:lastTopicPath").getString();
-    if(lastTopicPath.trim().length() > 0){
-      if(lastTopicPath.lastIndexOf("/") > 0){
-        lastTopicPath = forum.getPath() + lastTopicPath.substring(lastTopicPath.lastIndexOf("/"));
-      } else {
-        lastTopicPath = forum.getPath() + "/" + lastTopicPath;
-      }
-    }
-  }
-  */ 
   @Property(name = "exo:lastTopicPath")
-  public abstract String getLastTopicPath();
+  public abstract String getLastTopic();
   
+  
+  public String getLastTopicPath() {
+    String result = null;
+    if (getLastTopic() != null) {
+      result = getLastTopic() ;
+      if(result.trim().length() > 0){
+        if(result.lastIndexOf("/") > 0){
+          result = getPath() + result.substring(result.lastIndexOf("/"));
+        } else {
+          result = getPath() + "/" + result;
+        }
+      }  
+    }
+    return result;
+  }
+  
+  public void setLastTopicPath(String lastTopicPath) {
+    setLastTopic(lastTopicPath);
+  }
 
   public String getCategoryId(){
     if(getPath() != null && getPath().length() > 0) {
       String[] arr = getPath().split("/");
-      return arr[arr.length - 2];
+      String result = arr[arr.length - 2];
+      return result;
     }
     return null;
   }
@@ -157,7 +163,7 @@ public abstract class ForumMapping implements Forum {
 
   public abstract void setIsModerateTopic(boolean isModerateTopic);
 
-  public abstract void setLastTopicPath(String lastTopicPath);
+  public abstract void setLastTopic(String lastTopicPath);
 
   public abstract void setModerators(String[] moderators);
 

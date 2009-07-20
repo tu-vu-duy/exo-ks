@@ -18,76 +18,100 @@ package org.exoplatform.forum.service;
 
 import java.util.Date;
 
+import org.exoplatform.chrome.api.annotations.Name;
+import org.exoplatform.chrome.api.annotations.NodeMapping;
+import org.exoplatform.chrome.api.annotations.Path;
+import org.exoplatform.chrome.api.annotations.Property;
+
 /**
  * Created by The eXo Platform SAS
  * Author : eXoPlatform
  *          exo@exoplatform.com
  * Jul 18, 2009  
  */
+@NodeMapping(name = "exo:forumCategory")
 public interface Category {
 
-  public abstract String getId();
-
-  public abstract void setId(String id);
-
+  
+  @Name
+  public abstract String getId(); 
+  
+  @Path
+  public abstract String getPath();
+  
+  @Property(name = "exo:name")
+  public abstract String getCategoryName() ;
+  
+  @Property(name = "exo:owner")
   public abstract String getOwner();
 
-  public abstract void setOwner(String owner);
-
-  public abstract String getPath();
-
-  public abstract void setPath(String path);
-
+  @Property(name = "exo:categoryOrder")
   public abstract long getCategoryOrder();
-
-  public abstract void setCategoryOrder(long categoryOrder);
-
+  
+  @Property(name = "exo:createdDate")
   public abstract Date getCreatedDate();
-
-  public abstract void setCreatedDate(Date createdDate);
-
-  public abstract String getModifiedBy();
-
-  public abstract void setModifiedBy(String modifiedBy);
-
-  public abstract Date getModifiedDate();
-
-  public abstract void setModifiedDate(Date modifiedDate);
-
-  public abstract String getCategoryName();
-
-  public abstract void setCategoryName(String categoryName);
-
+  
+  @Property(name = "exo:description")
   public abstract String getDescription();
+  
+  @Property(name = "exo:forumCount")
+  public abstract long getForumCount() ;
+  
+  @Property(name = " exo:modifiedBy")
+  public abstract String getModifiedBy() ;
+  
+  @Property(name = "exo:modifiedDate")
+  public abstract Date getModifiedDate();
+  
+  @Property(name = "exo:createTopicRole")
+  public abstract String[] getCreateTopicRole();  
+  
+  @Property(name = "exo:emailWatching")
+  public abstract String[] getEmailNotification(); 
 
-  public abstract void setDescription(String description);
+  @Property(name = "exo:moderators")
+  public abstract String[] getModerators();  
 
-  public abstract String[] getModerators();
-
-  public abstract void setModerators(String[] moderators);
-
+  @Property(name = "exo:poster")
+  public abstract String[] getPoster() ;
+    
+  @Property(name = "exo:userPrivate")
   public abstract String[] getUserPrivate();
 
-  public abstract void setUserPrivate(String[] userPrivate);
+  @Property(name = "exo:viewer")
+  public abstract String[] getViewer() ;
 
-  public abstract String[] getCreateTopicRole();
+
+  public abstract void setCategoryName(String categoryName) ;
+
+  public abstract void setCategoryOrder(long categoryOrder) ;
 
   public abstract void setCreateTopicRole(String[] createTopicRole);
 
-  public abstract String[] getPoster();
+  public abstract void setCreatedDate(Date createdDate);
 
-  public abstract void setPoster(String[] poster);
+  public abstract void setDescription(String description);
 
-  public abstract String[] getViewer();
-
-  public abstract void setViewer(String[] viewer);
-
-  public abstract long getForumCount();
+  public abstract void setEmailNotification(String[] emailNotification);
 
   public abstract void setForumCount(long forumCount);
 
-  public abstract String[] getEmailNotification();
+  public abstract void setId(String id);
 
-  public abstract void setEmailNotification(String[] emailNotification);
+  public abstract void setModerators(String[] moderators);
+
+  public abstract void setModifiedBy(String modifiedBy);
+
+  public abstract void setModifiedDate(Date modifiedDate);
+
+  public abstract void setOwner(String owner);
+
+  public abstract void setPath(String path);
+
+  public abstract void setPoster(String[] poster) ;
+
+  public abstract void setUserPrivate(String[] userPrivate) ;
+
+  public abstract void setViewer(String[] viewer);
 
 }

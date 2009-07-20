@@ -102,7 +102,6 @@ import org.exoplatform.forum.service.conf.PostData;
 import org.exoplatform.forum.service.conf.SendMessageInfo;
 import org.exoplatform.forum.service.conf.StatisticEventListener;
 import org.exoplatform.forum.service.conf.TopicData;
-import org.exoplatform.forum.service.impl.mapping.CategoryMapping;
 import org.exoplatform.forum.service.impl.mapping.ForumMapping;
 import org.exoplatform.ks.common.conf.RoleRulesPlugin;
 import org.exoplatform.ks.common.jcr.PropertyReader;
@@ -741,7 +740,7 @@ public class JCRDataStorage {
   }
 
 	private Category getCategory(Node cateNode) throws Exception {
-	  return loadDomainObject(CategoryMapping.class, cateNode);
+	  return loadDomainObject(Category.class, cateNode);
 	}
 	
 	/**

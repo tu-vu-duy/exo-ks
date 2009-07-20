@@ -23,7 +23,7 @@ import org.apache.commons.logging.Log;
 import org.exoplatform.chrome.api.Chrome;
 import org.exoplatform.chrome.api.ChromeBuilder;
 import org.exoplatform.chrome.core.DomainSession;
-import org.exoplatform.forum.service.impl.mapping.CategoryMapping;
+import org.exoplatform.forum.service.Category;
 import org.exoplatform.forum.service.impl.mapping.ForumMapping;
 import org.exoplatform.services.log.ExoLogger;
 import org.picocontainer.Startable;
@@ -75,8 +75,8 @@ public class ChromeService implements Startable {
   }
 
   private void createDomain() {
-    addClass(CategoryMapping.class);
-    addClass(ForumMapping.class);
+    builder.add(Category.class);
+    builder.add(ForumMapping.class);
   }
 
   public void stop() {

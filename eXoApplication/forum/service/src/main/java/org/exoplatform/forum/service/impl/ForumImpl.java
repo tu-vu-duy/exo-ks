@@ -56,7 +56,6 @@ public class ForumImpl implements Forum {
 	private String[] emailNotification;
 	private List<String> banIPs;
 	
-	
 	public ForumImpl() {
 		notifyWhenAddTopic = new String[] {};
 		notifyWhenAddPost = new String[] {};
@@ -87,6 +86,35 @@ public class ForumImpl implements Forum {
 		}
 		return null;
 	}
+	
+  public String getLastTopicPath() {
+    String result = null;
+    if (getLastTopic() != null) {
+      result = getLastTopic() ;
+      if(result.trim().length() > 0){
+        if(result.lastIndexOf("/") > 0){
+          result = getPath() + result.substring(result.lastIndexOf("/"));
+        } else {
+          result = getPath() + "/" + result;
+        }
+      }  
+    }
+    return result;
+  }
+  
+  public void setLastTopicPath(String lastTopicPath) {
+    setLastTopic(lastTopicPath);
+  }
+
+
+  public String getLastTopic() {
+    return lastTopicPath;
+  }
+
+  public void setLastTopic(String lastTopicPath) {
+   this.lastTopicPath = lastTopicPath;
+    
+  }
 	
 	/* (non-Javadoc)
    * @see org.exoplatform.forum.service.Forum#getOwner()
@@ -142,14 +170,6 @@ public class ForumImpl implements Forum {
    */
 	public void setModifiedDate(Date modifiedDate){this.modifiedDate = modifiedDate;}
 	
-	/* (non-Javadoc)
-   * @see org.exoplatform.forum.service.Forum#getLastTopicPath()
-   */
-	public String getLastTopicPath(){return lastTopicPath;}
-	/* (non-Javadoc)
-   * @see org.exoplatform.forum.service.Forum#setLastTopicPath(java.lang.String)
-   */
-	public void setLastTopicPath(String lastTopicPath){this.lastTopicPath = lastTopicPath;}
 	
 	/* (non-Javadoc)
    * @see org.exoplatform.forum.service.Forum#getForumName()
@@ -303,4 +323,8 @@ public class ForumImpl implements Forum {
    * @see org.exoplatform.forum.service.Forum#setIsAutoAddEmailNotify(boolean)
    */
 	public void setIsAutoAddEmailNotify(boolean isAutoAddEmailNotify) {this.isAutoAddEmailNotify = isAutoAddEmailNotify;}
+
+
+
+
 }

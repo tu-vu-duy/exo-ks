@@ -19,119 +19,155 @@ package org.exoplatform.forum.service;
 import java.util.Date;
 import java.util.List;
 
+import org.exoplatform.chrome.api.annotations.Name;
+import org.exoplatform.chrome.api.annotations.NodeMapping;
+import org.exoplatform.chrome.api.annotations.Path;
+import org.exoplatform.chrome.api.annotations.Property;
+
 /**
  * Created by The eXo Platform SAS
  * Author : eXoPlatform
  *          exo@exoplatform.com
  * Jul 18, 2009  
  */
+
 public interface Forum {
 
+  @Path
+  public abstract String getPath() ;
+  
+  @Name
   public abstract String getId();
+  
+  @Property(name = "exo:owner")
+  public abstract String getOwner();
+  
+  @Property(name = "exo:name")
+  public abstract String getForumName();
 
-  public abstract void setId(String id);
+  @Property(name = "exo:forumOrder")
+  public abstract int getForumOrder();
+  
+  @Property(name = "exo:createdDate")
+  public abstract Date getCreatedDate();
+  
+  @Property(name = " exo:modifiedBy")
+  public abstract String getModifiedBy() ;
+  
+  @Property(name = "exo:modifiedDate")
+  public abstract Date getModifiedDate();  
+  
+  @Property(name = "exo:description")
+  public abstract String getDescription();
+  
+  @Property(name = "exo:topicCount")
+  public abstract long getTopicCount() ;
 
-  /**
-   * This method should:
-   * Calculate the category id	base on the forum id
-   * @return The category id
-   */
+  @Property(name = "exo:postCount")
+  public abstract long getPostCount() ;
+  
+  @Property(name = "exo:emailWatching")
+  public abstract String[] getEmailNotification();  
+  
+  @Property(name = "exo:moderators")
+  public abstract String[] getModerators();
+  
+  @Property(name = "exo:poster")
+  public abstract String[] getPoster() ;
+  
+  @Property(name = "exo:viewer")
+  public abstract String[] getViewer() ; 
+
+  @Property(name = "exo:isClosed")
+  public abstract boolean getIsClosed();
+  
+  @Property(name = "exo:banIPs")
+  public abstract List<String> getBanIP();
+
+  @Property(name = "exo:isModerateTopic")
+  public abstract boolean getIsModeratePost();
+
+  @Property(name = "exo:isModeratePost")
+  public abstract boolean getIsModerateTopic();
+
+  @Property(name = "exo:createTopicRole")
+  public abstract String [] getCreateTopicRole();
+  
+  @Property(name = "exo:isAutoAddEmailNotify") 
+ public abstract boolean getIsAutoAddEmailNotify();
+  
+  @Property(name = "exo:isLock") 
+   public abstract boolean getIsLock();
+
+  @Property(name = "exo:notifyWhenAddPost") 
+   public abstract String [] getNotifyWhenAddPost();
+  
+  @Property(name = "exo:notifyWhenAddTopic")
+   public abstract String [] getNotifyWhenAddTopic();
+
+  @Property(name = "exo:lastTopicPath")
+  String getLastTopic();
+  
+  // Utility methods
+  
+  public String getLastTopicPath() ;
+  
+  public void setLastTopicPath(String lastTopicPath);
+
   public abstract String getCategoryId();
 
-  public abstract String getOwner();
-
-  public abstract void setOwner(String owner);
-
-  public abstract String getPath();
-
-  public abstract void setPath(String path);
-
-  public abstract int getForumOrder();
-
-  public abstract void setForumOrder(int forumOrder);
-
-  public abstract Date getCreatedDate();
+  
+  // Setters
+  
+  public abstract void setBanIP(List<String> banIPs);
+  
+  public abstract void setCreateTopicRole(String[] createTopicRole) ;
 
   public abstract void setCreatedDate(Date createdDate);
 
-  public abstract String getModifiedBy();
-
-  public abstract void setModifiedBy(String modifiedBy);
-
-  public abstract Date getModifiedDate();
-
-  public abstract void setModifiedDate(Date modifiedDate);
-
-  public abstract String getLastTopicPath();
-
-  public abstract void setLastTopicPath(String lastTopicPath);
-
-  public abstract String getForumName();
-
-  public abstract void setForumName(String forumName);
-
-  public abstract String getDescription();
-
   public abstract void setDescription(String description);
-
-  public abstract long getPostCount();
-
-  public abstract void setPostCount(long postCount);
-
-  public abstract long getTopicCount();
-
-  public abstract void setTopicCount(long topicCount);
-
-  public abstract String[] getNotifyWhenAddTopic();
-
-  public abstract void setNotifyWhenAddTopic(String[] notifyWhenAddTopic);
-
-  public abstract String[] getNotifyWhenAddPost();
-
-  public abstract void setNotifyWhenAddPost(String[] notifyWhenAddPost);
-
-  public abstract boolean getIsModerateTopic();
-
-  public abstract void setIsModerateTopic(boolean isModerateTopic);
-
-  public abstract boolean getIsModeratePost();
-
-  public abstract void setIsModeratePost(boolean isModeratePost);
-
-  public abstract boolean getIsClosed();
-
-  public abstract void setIsClosed(boolean isClosed);
-
-  public abstract boolean getIsLock();
-
-  public abstract void setIsLock(boolean isLock);
-
-  public abstract String[] getCreateTopicRole();
-
-  public abstract void setCreateTopicRole(String[] createTopicRole);
-
-  public abstract String[] getPoster();
-
-  public abstract void setPoster(String[] poster);
-
-  public abstract String[] getViewer();
-
-  public abstract void setViewer(String[] viewer);
-
-  public abstract String[] getModerators();
-
-  public abstract void setModerators(String[] moderators);
-
-  public abstract String[] getEmailNotification();
 
   public abstract void setEmailNotification(String[] emailNotification);
 
-  public abstract List<String> getBanIP();
+  public abstract void setForumName(String forumName) ;
 
-  public abstract void setBanIP(List<String> banIPs);
+  public abstract void setForumOrder(int forumOrder) ;
 
-  public abstract boolean getIsAutoAddEmailNotify();
+  public abstract void setId(String id) ;
 
   public abstract void setIsAutoAddEmailNotify(boolean isAutoAddEmailNotify);
+
+  public abstract void setIsClosed(boolean isClosed);
+
+  public abstract void setIsLock(boolean isLock);
+
+  public abstract void setIsModeratePost(boolean isModeratePost);
+
+  public abstract void setIsModerateTopic(boolean isModerateTopic);
+
+  public abstract void setLastTopic(String lastTopicPath);
+
+  public abstract void setModerators(String[] moderators);
+
+  public abstract void setModifiedBy(String modifiedBy);
+
+  public abstract void setModifiedDate(Date modifiedDate);
+
+  public abstract void setNotifyWhenAddPost(String[] notifyWhenAddPost) ;
+
+  public abstract void setNotifyWhenAddTopic(String[] notifyWhenAddTopic);
+
+  public abstract void setOwner(String owner);
+
+  public abstract void setPath(String path);
+
+  public abstract void setPostCount(long postCount);
+
+  public abstract void setPoster(String[] poster);
+
+  public abstract void setTopicCount(long topicCount) ;
+
+  public abstract void setViewer(String[] viewer);
+  
 
 }

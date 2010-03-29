@@ -16,10 +16,10 @@
  */
 package org.exoplatform.wiki.mow.core.api.wiki;
 
-import org.chromattic.api.RelationshipType;
 import org.chromattic.api.annotations.Create;
 import org.chromattic.api.annotations.MappedBy;
 import org.chromattic.api.annotations.OneToOne;
+import org.chromattic.api.annotations.Owner;
 import org.chromattic.api.annotations.Property;
 import org.exoplatform.wiki.mow.api.Wiki;
 
@@ -30,22 +30,23 @@ import org.exoplatform.wiki.mow.api.Wiki;
  */
 public abstract class WikiImpl implements Wiki {
 
-  @OneToOne(type = RelationshipType.HIERARCHIC)
+  @OneToOne
+  @Owner
   @MappedBy("WikiHome")
-  public abstract PageImpl getHome();
+  public abstract WikiHome getHome();
 
-  public abstract void setHome(PageImpl homePage);
+  public abstract void setHome(WikiHome homePage);
+
+  @Create
+  public abstract WikiHome createWikiHome();
 
   @Create
   public abstract PageImpl createWikiPage();
 
-  @Create
-  public abstract PageImpl createWikiPage(String pageName);
-
-  public PageImpl getWikiHome() {
-    PageImpl home = getHome();
+  public WikiHome getWikiHome() {
+    WikiHome home = getHome();
     if (home == null) {
-      home = createWikiPage("WikiHome");
+      home = createWikiHome();
       setHome(home);
     }
     return home;

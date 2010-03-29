@@ -18,15 +18,7 @@
   -->
 
 <nodeTypes xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:mix="http://www.jcp.org/jcr/mix/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0">
-<!-- Node type generated for the class poc.wiki.mow.core.api.wiki.GroupWiki -->
-  <nodeType name="wiki:groupwiki" isMixin="false" hasOrderableChildNodes="false">
-    <supertypes>
-      <supertype>mix:referenceable</supertype>
-    </supertypes>
-    <propertyDefinitions/>
-    <childNodeDefinitions/>
-  </nodeType>
-  <!-- Node type generated for the class poc.wiki.mow.core.api.content.WikiLink -->
+  <!-- Node type generated for the class org.exoplatform.wiki.mow.core.api.content.WikiLink -->
   <nodeType name="wiki:link" isMixin="false" hasOrderableChildNodes="false">
     <supertypes>
       <supertype>wiki:contentItem</supertype>
@@ -45,7 +37,98 @@
     </propertyDefinitions>
     <childNodeDefinitions/>
   </nodeType>
-  <!-- Node type generated for the class poc.wiki.mow.core.api.content.ParagraphImpl -->
+  <!-- Node type generated for the class org.exoplatform.wiki.mow.core.api.wiki.UserWikiContainer -->
+  <nodeType name="wiki:userwikis" isMixin="false" hasOrderableChildNodes="false">
+    <supertypes>
+      <supertype>mix:referenceable</supertype>
+    </supertypes>
+    <propertyDefinitions/>
+    <childNodeDefinitions>
+      <childNodeDefinition name="*" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
+        <requiredPrimaryTypes>
+          <requiredPrimaryType>wiki:userwiki</requiredPrimaryType>
+        </requiredPrimaryTypes>
+      </childNodeDefinition>
+    </childNodeDefinitions>
+  </nodeType>
+  <!-- Node type generated for the class org.exoplatform.wiki.mow.core.api.content.AnnotationImpl -->
+  <nodeType name="wiki:annotation" isMixin="false" hasOrderableChildNodes="false">
+    <supertypes>
+      <supertype>wiki:contentItem</supertype>
+      <supertype>mix:referenceable</supertype>
+    </supertypes>
+    <propertyDefinitions/>
+    <childNodeDefinitions/>
+  </nodeType>
+  <!-- Node type generated for the class org.exoplatform.wiki.mow.core.api.content.MarkupImpl -->
+  <nodeType name="wiki:markup" isMixin="false" hasOrderableChildNodes="false">
+    <supertypes>
+      <supertype>wiki:contentItem</supertype>
+      <supertype>mix:referenceable</supertype>
+    </supertypes>
+    <propertyDefinitions/>
+    <childNodeDefinitions/>
+  </nodeType>
+  <!-- Node type generated for the class org.exoplatform.wiki.mow.core.api.wiki.PortalWiki -->
+  <nodeType name="wiki:portalwiki" isMixin="false" hasOrderableChildNodes="false">
+    <supertypes>
+      <supertype>mix:referenceable</supertype>
+    </supertypes>
+    <propertyDefinitions/>
+    <childNodeDefinitions>
+      <childNodeDefinition name="WikiHome" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
+        <requiredPrimaryTypes>
+          <requiredPrimaryType>exo:wikihome</requiredPrimaryType>
+        </requiredPrimaryTypes>
+      </childNodeDefinition>
+    </childNodeDefinitions>
+  </nodeType>
+  <!-- Node type generated for the class org.exoplatform.wiki.mow.core.api.content.ContentImpl -->
+  <nodeType name="wiki:content" isMixin="false" hasOrderableChildNodes="false">
+    <supertypes>
+      <supertype>wiki:contentItem</supertype>
+      <supertype>mix:referenceable</supertype>
+    </supertypes>
+    <propertyDefinitions>
+      <propertyDefinition name="syntax" requiredType="String" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" multiple="false">
+        <valueConstraints/>
+      </propertyDefinition>
+    </propertyDefinitions>
+    <childNodeDefinitions/>
+  </nodeType>
+  <!-- Node type generated for the class org.exoplatform.wiki.mow.core.api.content.AbstractContentItem -->
+  <nodeType name="wiki:contentItem" isMixin="false" hasOrderableChildNodes="false">
+    <supertypes>
+      <supertype>mix:referenceable</supertype>
+    </supertypes>
+    <propertyDefinitions>
+      <propertyDefinition name="text" requiredType="String" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" multiple="false">
+        <valueConstraints/>
+      </propertyDefinition>
+    </propertyDefinitions>
+    <childNodeDefinitions>
+      <childNodeDefinition name="*" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
+        <requiredPrimaryTypes>
+          <requiredPrimaryType>wiki:contentItem</requiredPrimaryType>
+        </requiredPrimaryTypes>
+      </childNodeDefinition>
+    </childNodeDefinitions>
+  </nodeType>
+  <!-- Node type generated for the class org.exoplatform.wiki.mow.core.api.wiki.UserWiki -->
+  <nodeType name="wiki:userwiki" isMixin="false" hasOrderableChildNodes="false">
+    <supertypes>
+      <supertype>mix:referenceable</supertype>
+    </supertypes>
+    <propertyDefinitions/>
+    <childNodeDefinitions>
+      <childNodeDefinition name="WikiHome" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
+        <requiredPrimaryTypes>
+          <requiredPrimaryType>exo:wikihome</requiredPrimaryType>
+        </requiredPrimaryTypes>
+      </childNodeDefinition>
+    </childNodeDefinitions>
+  </nodeType>
+  <!-- Node type generated for the class org.exoplatform.wiki.mow.core.api.content.ParagraphImpl -->
   <nodeType name="wiki:paragraph" isMixin="false" hasOrderableChildNodes="false">
     <supertypes>
       <supertype>wiki:contentItem</supertype>
@@ -54,15 +137,46 @@
     <propertyDefinitions/>
     <childNodeDefinitions/>
   </nodeType>
-  <!-- Node type generated for the class poc.wiki.mow.core.api.wiki.GroupWikiContainer -->
-  <nodeType name="wiki:groupwikis" isMixin="false" hasOrderableChildNodes="false">
+  <!-- Node type generated for the class org.exoplatform.wiki.mow.core.api.wiki.GroupWiki -->
+  <nodeType name="wiki:groupwiki" isMixin="false" hasOrderableChildNodes="false">
     <supertypes>
       <supertype>mix:referenceable</supertype>
     </supertypes>
     <propertyDefinitions/>
-    <childNodeDefinitions/>
+    <childNodeDefinitions>
+      <childNodeDefinition name="WikiHome" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
+        <requiredPrimaryTypes>
+          <requiredPrimaryType>exo:wikihome</requiredPrimaryType>
+        </requiredPrimaryTypes>
+      </childNodeDefinition>
+    </childNodeDefinitions>
   </nodeType>
-  <!-- Node type generated for the class poc.wiki.mow.core.api.wiki.PageImpl -->
+  <!-- Node type generated for the class org.exoplatform.wiki.mow.core.api.WikiStoreImpl -->
+  <nodeType name="wiki:store" isMixin="false" hasOrderableChildNodes="false">
+    <supertypes>
+      <supertype>nt:base</supertype>
+      <supertype>mix:referenceable</supertype>
+    </supertypes>
+    <propertyDefinitions/>
+    <childNodeDefinitions>
+      <childNodeDefinition name="userwikis" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
+        <requiredPrimaryTypes>
+          <requiredPrimaryType>wiki:userwikis</requiredPrimaryType>
+        </requiredPrimaryTypes>
+      </childNodeDefinition>
+      <childNodeDefinition name="portalwikis" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
+        <requiredPrimaryTypes>
+          <requiredPrimaryType>wiki:portalwikis</requiredPrimaryType>
+        </requiredPrimaryTypes>
+      </childNodeDefinition>
+      <childNodeDefinition name="groupwikis" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
+        <requiredPrimaryTypes>
+          <requiredPrimaryType>wiki:groupwikis</requiredPrimaryType>
+        </requiredPrimaryTypes>
+      </childNodeDefinition>
+    </childNodeDefinitions>
+  </nodeType>
+  <!-- Node type generated for the class org.exoplatform.wiki.mow.core.api.wiki.PageImpl -->
   <nodeType name="wiki:page" isMixin="false" hasOrderableChildNodes="false">
     <supertypes>
       <supertype>mix:referenceable</supertype>
@@ -85,105 +199,44 @@
       </childNodeDefinition>
     </childNodeDefinitions>
   </nodeType>
-  <!-- Node type generated for the class poc.wiki.mow.core.api.WikiStoreImpl -->
-  <nodeType name="wiki:store" isMixin="false" hasOrderableChildNodes="false">
-    <supertypes>
-    <supertype>nt:base</supertype>
-      <supertype>mix:referenceable</supertype>
-    </supertypes>
-    <propertyDefinitions/>
-    <childNodeDefinitions>
-      <childNodeDefinition name="userwikis" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
-        <requiredPrimaryTypes>
-          <requiredPrimaryType>wiki:userwikis</requiredPrimaryType>
-        </requiredPrimaryTypes>
-      </childNodeDefinition>
-      <childNodeDefinition name="portalwikis" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
-        <requiredPrimaryTypes>
-          <requiredPrimaryType>wiki:portalwikis</requiredPrimaryType>
-        </requiredPrimaryTypes>
-      </childNodeDefinition>
-      <childNodeDefinition name="groupwikis" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
-        <requiredPrimaryTypes>
-          <requiredPrimaryType>wiki:groupwikis</requiredPrimaryType>
-        </requiredPrimaryTypes>
-      </childNodeDefinition>
-    </childNodeDefinitions>
-  </nodeType>
-  <!-- Node type generated for the class poc.wiki.mow.core.api.content.AbstractContentItem -->
-  <nodeType name="wiki:contentItem" isMixin="false" hasOrderableChildNodes="false">
+  <!-- Node type generated for the class org.exoplatform.wiki.mow.core.api.wiki.WikiHome -->
+  <nodeType name="exo:wikihome" isMixin="false" hasOrderableChildNodes="false">
     <supertypes>
       <supertype>mix:referenceable</supertype>
     </supertypes>
     <propertyDefinitions>
-      <propertyDefinition name="text" requiredType="String" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" multiple="false">
+      <propertyDefinition name="owner" requiredType="String" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" multiple="false">
         <valueConstraints/>
       </propertyDefinition>
     </propertyDefinitions>
+    <childNodeDefinitions>
+      <childNodeDefinition name="content" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
+        <requiredPrimaryTypes>
+          <requiredPrimaryType>wiki:content</requiredPrimaryType>
+        </requiredPrimaryTypes>
+      </childNodeDefinition>
+      <childNodeDefinition name="*" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
+        <requiredPrimaryTypes>
+          <requiredPrimaryType>wiki:page</requiredPrimaryType>
+        </requiredPrimaryTypes>
+      </childNodeDefinition>
+    </childNodeDefinitions>
+  </nodeType>
+  <!-- Node type generated for the class org.exoplatform.wiki.mow.core.api.wiki.GroupWikiContainer -->
+  <nodeType name="wiki:groupwikis" isMixin="false" hasOrderableChildNodes="false">
+    <supertypes>
+      <supertype>mix:referenceable</supertype>
+    </supertypes>
+    <propertyDefinitions/>
     <childNodeDefinitions>
       <childNodeDefinition name="*" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
         <requiredPrimaryTypes>
-          <requiredPrimaryType>wiki:contentItem</requiredPrimaryType>
+          <requiredPrimaryType>wiki:groupwiki</requiredPrimaryType>
         </requiredPrimaryTypes>
       </childNodeDefinition>
     </childNodeDefinitions>
   </nodeType>
-  <!-- Node type generated for the class poc.wiki.mow.core.api.wiki.UserWiki -->
-  <nodeType name="wiki:userwiki" isMixin="false" hasOrderableChildNodes="false">
-    <supertypes>
-      <supertype>mix:referenceable</supertype>
-    </supertypes>
-    <propertyDefinitions/>
-    <childNodeDefinitions/>
-  </nodeType>
-  <!-- Node type generated for the class poc.wiki.mow.core.api.content.MarkupImpl -->
-  <nodeType name="wiki:markup" isMixin="false" hasOrderableChildNodes="false">
-    <supertypes>
-      <supertype>wiki:contentItem</supertype>
-      <supertype>mix:referenceable</supertype>
-    </supertypes>
-    <propertyDefinitions/>
-    <childNodeDefinitions/>
-  </nodeType>
-  <!-- Node type generated for the class poc.wiki.mow.core.api.content.ContentImpl -->
-  <nodeType name="wiki:content" isMixin="false" hasOrderableChildNodes="false">
-    <supertypes>
-      <supertype>wiki:contentItem</supertype>
-      <supertype>mix:referenceable</supertype>
-    </supertypes>
-    <propertyDefinitions>
-      <propertyDefinition name="syntax" requiredType="String" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" multiple="false">
-        <valueConstraints/>
-      </propertyDefinition>
-    </propertyDefinitions>
-    <childNodeDefinitions/>
-  </nodeType>
-  <!-- Node type generated for the class poc.wiki.mow.core.api.wiki.PortalWiki -->
-  <nodeType name="wiki:portalwiki" isMixin="false" hasOrderableChildNodes="false">
-    <supertypes>
-      <supertype>mix:referenceable</supertype>
-    </supertypes>
-    <propertyDefinitions/>
-    <childNodeDefinitions/>
-  </nodeType>
-  <!-- Node type generated for the class poc.wiki.mow.core.api.content.AnnotationImpl -->
-  <nodeType name="wiki:annotation" isMixin="false" hasOrderableChildNodes="false">
-    <supertypes>
-      <supertype>wiki:contentItem</supertype>
-      <supertype>mix:referenceable</supertype>
-    </supertypes>
-    <propertyDefinitions/>
-    <childNodeDefinitions/>
-  </nodeType>
-  <!-- Node type generated for the class poc.wiki.mow.core.api.wiki.UserWikiContainer -->
-  <nodeType name="wiki:userwikis" isMixin="false" hasOrderableChildNodes="false">
-    <supertypes>
-      <supertype>mix:referenceable</supertype>
-    </supertypes>
-    <propertyDefinitions/>
-    <childNodeDefinitions/>
-  </nodeType>
-  <!-- Node type generated for the class poc.wiki.mow.core.api.wiki.PortalWikiContainer -->
+  <!-- Node type generated for the class org.exoplatform.wiki.mow.core.api.wiki.PortalWikiContainer -->
   <nodeType name="wiki:portalwikis" isMixin="false" hasOrderableChildNodes="false">
     <supertypes>
       <supertype>mix:referenceable</supertype>

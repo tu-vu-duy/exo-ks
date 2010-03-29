@@ -18,9 +18,7 @@ package org.exoplatform.wiki.mow.core.api.wiki;
 
 import java.util.Collection;
 
-import org.chromattic.api.annotations.ManyToOne;
 import org.chromattic.api.annotations.MappedBy;
-import org.chromattic.api.annotations.Name;
 import org.chromattic.api.annotations.OneToMany;
 import org.chromattic.api.annotations.OneToOne;
 import org.chromattic.api.annotations.Owner;
@@ -34,15 +32,22 @@ import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
  * Created by The eXo Platform SAS
  * Author : viet.nguyen
  *          viet.nguyen@exoplatform.com
- * Mar 26, 2010  
+ * Mar 29, 2010  
  */
-@PrimaryType(name = "wiki:page")
-public abstract class PageImpl implements Page {
+@PrimaryType(name = "exo:wikihome")
+public abstract class WikiHome implements Page {
 
-  @Name
-  public abstract String getName();
-
-  public abstract void setName(String name);
+  @OneToOne
+  @MappedBy("WikiHome")
+  public abstract PortalWiki getPortalWiki();
+  
+  @OneToOne
+  @MappedBy("WikiHome")
+  public abstract GroupWiki getGroupWiki();
+  
+  @OneToOne
+  @MappedBy("WikiHome")
+  public abstract UserWiki getUserWiki();
   
   @OneToOne
   @Owner
@@ -53,13 +58,11 @@ public abstract class PageImpl implements Page {
   public abstract String getOwner();
   
   public abstract Collection<Attachment> getAttachments();
-  
-  @ManyToOne
-  public abstract PageImpl getParentPage();
-
-  public abstract void setParentPage(PageImpl page);
 
   @OneToMany
   public abstract Collection<PageImpl> getChildPages();
 
+  public void addWikiPage(PageImpl wikiPage) {
+    getChildPages().add(wikiPage);
+  }
 }

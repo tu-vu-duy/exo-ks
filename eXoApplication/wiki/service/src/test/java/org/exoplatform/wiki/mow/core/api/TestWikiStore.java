@@ -22,10 +22,13 @@ import org.exoplatform.wiki.mow.api.WikiStore;
 import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.PortalWiki;
 import org.exoplatform.wiki.mow.core.api.wiki.PortalWikiContainer;
+import org.exoplatform.wiki.mow.core.api.wiki.WikiHome;
 
 /**
- * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Mar
- * 26, 2010
+ * Created by The eXo Platform SAS
+ * Author : viet.nguyen
+ *          viet.nguyen@exoplatform.com
+ * Mar 29, 2010  
  */
 public class TestWikiStore extends AbstractMOWTestcase {
 
@@ -71,10 +74,15 @@ public class TestWikiStore extends AbstractMOWTestcase {
     PortalWikiContainer portalWiki = wStore.createPortalWikiContainer();
     wStore.setPortalWikis(portalWiki);
     PortalWiki wiki = portalWiki.addWiki("classic");
-    PageImpl wikiHomePage = wiki.getWikiHome();
+    WikiHome wikiHomePage = wiki.getWikiHome();
     PageImpl wikipage = wiki.createWikiPage();
-    wikipage.setParentPage(wikiHomePage);
+    wikipage.setName("Hello World Wiki Page");
+    wikiHomePage.addWikiPage(wikipage);
     assertSame(wikipage, wikiHomePage.getChildPages().iterator().next());
+    PageImpl wikiChildPage = wiki.createWikiPage();
+    wikiChildPage.setName("Hello World Wiki  Child Page");
+    wikiChildPage.setParentPage(wikipage);
+    assertSame(wikiChildPage, wikipage.getChildPages().iterator().next());
   }
 
 }

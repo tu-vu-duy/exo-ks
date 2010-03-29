@@ -16,6 +16,7 @@
  */
 package org.exoplatform.wiki.mow.core.api.wiki;
 
+import org.chromattic.api.annotations.ManyToOne;
 import org.chromattic.api.annotations.PrimaryType;
 
 /**
@@ -25,5 +26,8 @@ import org.chromattic.api.annotations.PrimaryType;
  */
 @PrimaryType(name = "wiki:userwiki")
 public abstract class UserWiki extends WikiImpl {
-
+  
+  @ManyToOne
+  public abstract UserWikiContainer getUserWikis();
+  
 }

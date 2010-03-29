@@ -35,14 +35,14 @@ import org.exoplatform.wiki.mow.api.Page;
  * 5, 2009
  */
 
-@ComponentConfig(lifecycle = UIApplicationLifecycle.class, template = "app:/templates/WikiPOCApplication.gtmpl")
-public class WikiPOCApplication extends UIPortletApplication {
+@ComponentConfig(lifecycle = UIApplicationLifecycle.class, template = "app:/templates/webui/UIWikiPortlet.gtmpl")
+public class UIWikiPortlet extends UIPortletApplication {
 
   private String htmlOutput;
 
-  public WikiPOCApplication() throws Exception {
+  public UIWikiPortlet() throws Exception {
     super();
-    addChild(WikiForm.class, null, null).setRendered(true);
+    addChild(UIPageForm.class, null, null).setRendered(true);
   }
 
   public String getHtmlOutput() {

@@ -1,0 +1,74 @@
+<div class="UIPageForm">
+	<% uiform.begin(); %>
+		<div class="HorizontalLayout">
+			<div class="UIFormInput">
+				<table class="UIFormGrid">
+					<tbody>						
+							<tr>
+									<td class="FieldLabel">
+											Markup
+									</td>
+									<td class="FieldComponent">
+											<%uiform.renderField("Markup"); %>
+									</td>
+									
+									
+									
+									
+							</tr>
+							<tr>
+								<td>WYSIWYG</td>
+								<td>
+  <script type="text/javascript" src="xwe.nocache.js"></script>
+  <button onclick="load(this)">Load</button>
+  <script type="text/javascript">
+    // Configure the GWT module.
+
+    function load(hook) {
+      // Create a plain text area.
+      var textArea = document.createElement('textarea');
+      textArea.id = 'demo';
+      textArea.rows = 25;
+      textArea.cols = 80;
+      hook.parentNode.replaceChild(textArea, hook);
+      // Create a new editor instance.
+      new WysiwygEditor({
+        hookId: 'demo',
+        syntax: 'xwiki/2.0',
+        displayTabs: true,
+        defaultEditor: 'wysiwyg',
+        plugins: 'submit line separator text valign list indent history format symbol link image table macro import',
+        menu: 'link image table macro import',
+        debug: true
+      });
+    }
+  </script>
+								
+								</td>
+							</tr>					
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="UIAction"> 
+			<table class="ActionContainer">
+				<tr>
+					<td align="center">
+
+						<div style="cursor:pointer;" class="ActionButton LightBlueStyle">
+							<div class="ButtonLeft">
+								<div class="ButtonRight">
+									<div class="ButtonMiddle">
+									   <a href="<%=uicomponent.event("Render", "")%>">Render</a>
+									
+										
+									</div>
+								</div>
+							</div>
+						</div>
+					</td>
+				</tr>
+	 		</table> 
+		</div>
+	<%uiform.end();%>
+</div>

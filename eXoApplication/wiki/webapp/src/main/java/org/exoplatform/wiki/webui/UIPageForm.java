@@ -32,14 +32,14 @@ import org.exoplatform.wiki.rendering.Renderer;
  */
 
 @ComponentConfig(lifecycle = UIFormLifecycle.class,
-                 template = "app:/templates/WikiForm.gtmpl",
+                 template = "app:/templates/webui/UIPageForm.gtmpl",
                  events = {
-                   @EventConfig(listeners = WikiForm.RenderActionListener.class)
+                   @EventConfig(listeners = UIPageForm.RenderActionListener.class)
                    }
                  )
-public class WikiForm extends UIForm {
+public class UIPageForm extends UIForm {
 
-  public WikiForm() {
+  public UIPageForm() {
     UIFormTextAreaInput markupInput = new UIFormTextAreaInput("Markup",
                                                               "Markup",
                                                               "This is **bold**");
@@ -47,17 +47,17 @@ public class WikiForm extends UIForm {
     setActions(new String[] { "Render" });
   }
 
-  static public class RenderActionListener extends EventListener<WikiForm> {
+  static public class RenderActionListener extends EventListener<UIPageForm> {
 
-    public void execute(Event<WikiForm> event) throws Exception {
-      WikiForm thisForm = event.getSource();
+    public void execute(Event<UIPageForm> event) throws Exception {
+      UIPageForm thisForm = event.getSource();
 
       UIFormTextAreaInput markupInput = thisForm.findComponentById("Markup");
       String markup = markupInput.getValue();
 
       String output = thisForm.renderWikiMarkup(markup);
 
-      WikiPOCApplication parent = thisForm.getParent();
+      UIWikiPortlet parent = thisForm.getParent();
       parent.setHtmlOutput(output);
       event.getRequestContext().addUIComponentToUpdateByAjax(parent);
 

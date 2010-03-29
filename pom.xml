@@ -13,6 +13,29 @@
   <version>2.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>eXo Knowledge Suite - Wiki</name>
+  
+  <properties>
+    <org.chromattic.version>1.0.0</org.chromattic.version>
+    <org.xwiki.platform.version>2.0.3</org.xwiki.platform.version>
+    <junit.version>3.8.1</junit.version>
+    <org.slf4j.version>1.5.6</org.slf4j.version>
+  </properties>
+  
+  <repositories>
+    <repository>
+      <id>xwiki</id>
+      <url>http://maven.xwiki.org/releases</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+       <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+  
+  
+  
   <modules>
     <module>eXoApplication/wiki/service</module>
     <module>eXoApplication/wiki/webapp</module>

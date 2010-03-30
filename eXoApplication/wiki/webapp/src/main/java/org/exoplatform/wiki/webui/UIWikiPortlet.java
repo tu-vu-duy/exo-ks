@@ -19,6 +19,7 @@ package org.exoplatform.wiki.webui;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
+import org.exoplatform.container.PortalContainer;
 import org.exoplatform.portal.application.PortalRequestContext;
 import org.exoplatform.portal.webui.portal.UIPortal;
 import org.exoplatform.portal.webui.util.Util;
@@ -29,6 +30,7 @@ import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.core.UIPortletApplication;
 import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
 import org.exoplatform.wiki.mow.api.Page;
+import org.exoplatform.wiki.resolver.PageResolver;
 
 /**
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Nov
@@ -68,7 +70,8 @@ public class UIWikiPortlet extends UIPortletApplication {
     String requestURL = requestWrapper.getRequestURL().toString();
     String pageNodeSelected = uiPortal.getSelectedNode().getUri();
     String siteName = uiPortal.getOwner();
-    Page page = new PageResolver().resolve(requestURL);
+    PageResolver pageResolver = (PageResolver)PortalContainer.getComponent(PageResolver.class) ;
+    Page page = pageResolver.resolve(requestURL);
     context.setAttribute("wikiPage", page);
 
     // if(portletReqContext.getApplicationMode() == PortletMode.VIEW) {

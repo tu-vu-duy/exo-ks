@@ -19,12 +19,14 @@ package org.exoplatform.wiki.mow.core.api;
 import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import org.chromattic.api.ChromatticSession;
 import org.chromattic.api.annotations.Create;
 import org.chromattic.api.annotations.MappedBy;
 import org.chromattic.api.annotations.OneToOne;
 import org.chromattic.api.annotations.Owner;
 import org.chromattic.api.annotations.PrimaryType;
 import org.exoplatform.wiki.mow.api.Wiki;
+import org.exoplatform.wiki.mow.api.WikiNodeType;
 import org.exoplatform.wiki.mow.api.WikiStore;
 import org.exoplatform.wiki.mow.api.WikiType;
 import org.exoplatform.wiki.mow.core.api.wiki.GroupWikiContainer;
@@ -39,9 +41,19 @@ import org.exoplatform.wiki.mow.core.api.wiki.WikiContainer;
  *         Lamarque</a>
  * @version $Revision$
  */
-@PrimaryType(name = "wiki:store")
+@PrimaryType(name = WikiNodeType.WIKI_STORE)
 public abstract class WikiStoreImpl implements WikiStore {
 
+  private ChromatticSession session;
+  
+  public void setSession(ChromatticSession chromatticSession){
+    session = chromatticSession;
+  }
+  
+  public ChromatticSession getSession(){
+    return session;
+  }
+  
   public void addWiki(WikiType wikiType, String name) {
     getWikiContainer(wikiType).addWiki(name);
   }
@@ -73,7 +85,7 @@ public abstract class WikiStoreImpl implements WikiStore {
 
   @OneToOne
   @Owner
-  @MappedBy("portalwikis")
+  @MappedBy(WikiNodeType.Definition.PORTAL_WIKI_CONTAINER_NAME )
   public abstract PortalWikiContainer getPortalWikis();
 
   public abstract void setPortalWikis(PortalWikiContainer pContainer);
@@ -83,7 +95,7 @@ public abstract class WikiStoreImpl implements WikiStore {
 
   @OneToOne
   @Owner
-  @MappedBy("groupwikis")
+  @MappedBy(WikiNodeType.Definition.GROUP_WIKI_CONTAINER_NAME )
   public abstract GroupWikiContainer getGroupWikis();
 
   @Create
@@ -91,7 +103,7 @@ public abstract class WikiStoreImpl implements WikiStore {
 
   @OneToOne
   @Owner
-  @MappedBy("userwikis")
+  @MappedBy(WikiNodeType.Definition.USER_WIKI_CONTAINER_NAME )
   public abstract UserWikiContainer getUserWikis();
 
   @Create

@@ -18,6 +18,7 @@ package org.exoplatform.wiki.mow.core.api.wiki;
 
 import org.chromattic.api.annotations.MappedBy;
 import org.chromattic.api.annotations.PrimaryType;
+import org.exoplatform.wiki.mow.api.WikiNodeType;
 import org.exoplatform.wiki.mow.core.api.WikiStoreImpl;
 
 /**
@@ -25,10 +26,10 @@ import org.exoplatform.wiki.mow.core.api.WikiStoreImpl;
  *         Lamarque</a>
  * @version $Revision$
  */
-@PrimaryType(name = "wiki:userwikis")
+@PrimaryType(name = WikiNodeType.USER_WIKI_CONTAINER)
 public abstract class UserWikiContainer extends WikiContainer<UserWiki> {
 
-  @MappedBy("userwikis")
+  @MappedBy(WikiNodeType.Definition.USER_WIKI_CONTAINER_NAME )
   public abstract WikiStoreImpl getMultiWiki();
 
 }

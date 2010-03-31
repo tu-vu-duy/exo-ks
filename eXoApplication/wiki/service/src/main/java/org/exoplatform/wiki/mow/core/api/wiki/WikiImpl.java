@@ -18,10 +18,12 @@ package org.exoplatform.wiki.mow.core.api.wiki;
 
 import org.chromattic.api.annotations.Create;
 import org.chromattic.api.annotations.MappedBy;
+import org.chromattic.api.annotations.Name;
 import org.chromattic.api.annotations.OneToOne;
 import org.chromattic.api.annotations.Owner;
 import org.chromattic.api.annotations.Property;
 import org.exoplatform.wiki.mow.api.Wiki;
+import org.exoplatform.wiki.mow.api.WikiNodeType;
 
 /**
  * @author <a href="mailto:patrice.lamarque@exoplatform.com">Patrice
@@ -32,7 +34,7 @@ public abstract class WikiImpl implements Wiki {
 
   @OneToOne
   @Owner
-  @MappedBy("WikiHome")
+  @MappedBy(WikiNodeType.Definition.WIKI_HOME_NAME)
   public abstract WikiHome getHome();
 
   public abstract void setHome(WikiHome homePage);
@@ -52,11 +54,13 @@ public abstract class WikiImpl implements Wiki {
     return home;
   }
 
-  @Property(name = "name")
+  @Name
   public abstract String getName();
 
-  @Property(name = "owner")
+  @Property(name = WikiNodeType.Definition.OWNER )
   public abstract String getOwner();
+  
+  public abstract void setOwner(String wikiOwner);
 
   public PageImpl getPageByID(String id) {
     throw new UnsupportedOperationException();

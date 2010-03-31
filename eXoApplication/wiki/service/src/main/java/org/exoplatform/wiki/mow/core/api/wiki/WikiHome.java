@@ -26,6 +26,7 @@ import org.chromattic.api.annotations.PrimaryType;
 import org.chromattic.api.annotations.Property;
 import org.exoplatform.wiki.mow.api.Attachment;
 import org.exoplatform.wiki.mow.api.Page;
+import org.exoplatform.wiki.mow.api.WikiNodeType;
 import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
 
 /**
@@ -34,27 +35,27 @@ import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
  *          viet.nguyen@exoplatform.com
  * Mar 29, 2010  
  */
-@PrimaryType(name = "exo:wikihome")
+@PrimaryType(name = WikiNodeType.WIKI_HOME)
 public abstract class WikiHome implements Page {
 
   @OneToOne
-  @MappedBy("WikiHome")
+  @MappedBy(WikiNodeType.Definition.WIKI_HOME_NAME)
   public abstract PortalWiki getPortalWiki();
   
   @OneToOne
-  @MappedBy("WikiHome")
+  @MappedBy(WikiNodeType.Definition.WIKI_HOME_NAME)
   public abstract GroupWiki getGroupWiki();
   
   @OneToOne
-  @MappedBy("WikiHome")
+  @MappedBy(WikiNodeType.Definition.WIKI_HOME_NAME)
   public abstract UserWiki getUserWiki();
   
   @OneToOne
   @Owner
-  @MappedBy("content")
+  @MappedBy(WikiNodeType.Definition.CONTENT)
   public abstract ContentImpl getContent();
 
-  @Property(name = "owner")
+  @Property(name = WikiNodeType.Definition.OWNER)
   public abstract String getOwner();
   
   public abstract Collection<Attachment> getAttachments();

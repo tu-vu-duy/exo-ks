@@ -19,16 +19,17 @@ package org.exoplatform.wiki.mow.core.api.content;
 import org.chromattic.api.annotations.PrimaryType;
 import org.chromattic.api.annotations.Property;
 import org.exoplatform.wiki.mow.api.content.Content;
+import org.exoplatform.wiki.mow.api.WikiNodeType;
 
 /**
  * @author <a href="mailto:patrice.lamarque@exoplatform.com">Patrice
  *         Lamarque</a>
  * @version $Revision$
  */
-@PrimaryType(name = "wiki:content")
+@PrimaryType(name = WikiNodeType.WIKI_PAGE_CONTENT)
 public abstract class ContentImpl extends AbstractContainerContent implements Content {
 
-  @Property(name = "syntax")
+  @Property(name = WikiNodeType.Definition.SYNTAX)
   public abstract String getSyntax();
 
 }

@@ -16,9 +16,16 @@
  */
 package org.exoplatform.wiki.mow.core.api.wiki;
 
+import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.RepositoryException;
+
+import org.chromattic.api.ChromatticSession;
+import org.chromattic.api.UndeclaredRepositoryException;
 import org.chromattic.api.annotations.MappedBy;
 import org.chromattic.api.annotations.OneToOne;
 import org.chromattic.api.annotations.PrimaryType;
+import org.exoplatform.wiki.mow.api.WikiNodeType;
 import org.exoplatform.wiki.mow.core.api.WikiStoreImpl;
 
 /**
@@ -26,11 +33,34 @@ import org.exoplatform.wiki.mow.core.api.WikiStoreImpl;
  *         Lamarque</a>
  * @version $Revision$
  */
-@PrimaryType(name = "wiki:portalwikis")
+@PrimaryType(name = WikiNodeType.PORTAL_WIKI_CONTAINER)
 public abstract class PortalWikiContainer extends WikiContainer<PortalWiki> {
 
   @OneToOne
-  @MappedBy("portalwikis")
+  @MappedBy(WikiNodeType.Definition.PORTAL_WIKI_CONTAINER_NAME)
   public abstract WikiStoreImpl getMultiWiki();
+
+  public PortalWiki addWiki(String wikiOwner) {
+    ChromatticSession session = getMultiWiki().getSession();
+    Node wikiNode = null;
+    try {
+      Node rootNode = session.getJCRSession().getRootNode();
+      Node wikisNode = rootNode.getNode("exo:applications" + "/"
+          + WikiNodeType.Definition.WIKI_APPLICATION + "/"
+          + "wikis");
+      try {
+        wikiNode = wikisNode.getNode(wikiOwner);
+      } catch (PathNotFoundException e) {
+        wikiNode = wikisNode.addNode(wikiOwner, WikiNodeType.PORTAL_WIKI);
+        wikisNode.save();
+      }
+    } catch (RepositoryException e) {
+      throw new UndeclaredRepositoryException(e);
+    }
+    PortalWiki pwiki = session.findByNode(PortalWiki.class, wikiNode);
+    pwiki.setOwner(wikiOwner);
+    pwiki.setPortalWikis(this);
+    return pwiki;
+  }
 
 }

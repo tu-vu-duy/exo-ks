@@ -17,11 +17,13 @@
 package org.exoplatform.wiki.mow.core.api.wiki;
 
 import java.util.Collection;
-import java.util.Map;
 
+import org.chromattic.api.RelationshipType;
 import org.chromattic.api.annotations.Create;
+import org.chromattic.api.annotations.MappedBy;
 import org.chromattic.api.annotations.OneToMany;
 import org.exoplatform.wiki.mow.api.Wiki;
+import org.exoplatform.wiki.mow.api.WikiNodeType;
 
 /**
  * @author <a href="mailto:patrice.lamarque@exoplatform.com">Patrice
@@ -30,30 +32,58 @@ import org.exoplatform.wiki.mow.api.Wiki;
  */
 public abstract class WikiContainer<T extends Wiki> {
 
-  @OneToMany
-  public abstract Map<String, T> getWikis();
+  @OneToMany(type = RelationshipType.REFERENCE)
+  @MappedBy(WikiNodeType.Definition.WIKI_CONTAINER_REFERENCE)
+  public abstract Collection<T> getWikis();
 
   /*
    * @OneToOne public abstract WikiStoreImpl getMultiWiki();
    */
 
-  public T addWiki(String wikiName) {
+  public abstract T addWiki(String wikiOwner);
+  /*public T addWiki(String wikiName) {
     T wiki = createWiki();
+    
+     * switch(type){
+     *   Portal:
+     *     rootNode = session.getRoot();
+     *     wikisNode = rootNode.getNode("/exo:applications/eXoWiki/wikis");
+     *     Node wikiNode = wikisNode.addNode(wikiName, "wiki:portalwiki");
+     *     Portalwiki pwiki = session.findByNode(PortalWiki.class, wikiNode);
+     *     pwiki.setParent(this);
+     *   Group:
+     *    rootNode = session.getRoot();
+     *    wikisNode = rootNode.getNode("/Groups/"+wikiName+"/ApplicationData");
+     *    Node wikiNode = wikisNode.addNode("eXoWiki", "wiki:groupwiki");
+     *    GroupWiki gwiki = session.findByNode(GroupWiki.class, wikiNode);
+     *    gwiki.setParent(this);
+     *   User:
+     *    rootNode = session.getRoot();
+     *    wikisNode = rootNode.getNode("/Users/"+wikiName+"/ApplicationData");
+     *    Node wikiNode = wikisNode.addNode("eXoWiki", "wiki:userwiki");
+     *    GroupWiki uwiki = session.findByNode(UserWiki.class, wikiNode);
+     *    uwiki.setParent(this);
+     *   
+     * }
+     
     getWikis().put(wikiName, wiki);
     return wiki;
-  }
+  }*/
 
   @Create
   public abstract T createWiki();
 
-  public T getWiki(String name) {
-    Map<String, T> wikis = getWikis();
-    return wikis.get(name);
+  public T getWiki(String wikiOwner) {
+    for(T wiki : getWikis()){
+      if(wiki.getOwner().equals(wikiOwner)){
+        return wiki;
+      }
+    }
+    return null;
   }
 
   public Collection<T> getAllWikis() {
-    Map<String, T> wikis = getWikis();
-    return wikis.values();
+    return getWikis();
   }
 
 }

@@ -16,18 +16,24 @@
  */
 package org.exoplatform.wiki.mow.core.api.wiki;
 
+import org.chromattic.api.RelationshipType;
 import org.chromattic.api.annotations.ManyToOne;
+import org.chromattic.api.annotations.MappedBy;
 import org.chromattic.api.annotations.PrimaryType;
+import org.exoplatform.wiki.mow.api.WikiNodeType;
 
 /**
  * @author <a href="mailto:patrice.lamarque@exoplatform.com">Patrice
  *         Lamarque</a>
  * @version $Revision$
  */
-@PrimaryType(name = "wiki:portalwiki")
+@PrimaryType(name = WikiNodeType.PORTAL_WIKI )
 public abstract class PortalWiki extends WikiImpl {
 
-  @ManyToOne
+  @ManyToOne(type = RelationshipType.REFERENCE)
+  @MappedBy(WikiNodeType.Definition.WIKI_CONTAINER_REFERENCE)
   public abstract PortalWikiContainer getPortalWikis();
+  
+  public abstract void setPortalWikis(PortalWikiContainer pWikiContainer);
 
 }

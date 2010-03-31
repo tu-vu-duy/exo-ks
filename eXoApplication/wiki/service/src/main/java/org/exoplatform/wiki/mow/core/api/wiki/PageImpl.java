@@ -28,6 +28,7 @@ import org.chromattic.api.annotations.PrimaryType;
 import org.chromattic.api.annotations.Property;
 import org.exoplatform.wiki.mow.api.Attachment;
 import org.exoplatform.wiki.mow.api.Page;
+import org.exoplatform.wiki.mow.api.WikiNodeType;
 import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
 
 /**
@@ -36,7 +37,7 @@ import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
  *          viet.nguyen@exoplatform.com
  * Mar 26, 2010  
  */
-@PrimaryType(name = "wiki:page")
+@PrimaryType(name = WikiNodeType.WIKI_PAGE)
 public abstract class PageImpl implements Page {
 
   @Name
@@ -46,10 +47,10 @@ public abstract class PageImpl implements Page {
   
   @OneToOne
   @Owner
-  @MappedBy("content")
+  @MappedBy(WikiNodeType.Definition.CONTENT)
   public abstract ContentImpl getContent();
 
-  @Property(name = "owner")
+  @Property(name = WikiNodeType.Definition.OWNER)
   public abstract String getOwner();
   
   public abstract Collection<Attachment> getAttachments();

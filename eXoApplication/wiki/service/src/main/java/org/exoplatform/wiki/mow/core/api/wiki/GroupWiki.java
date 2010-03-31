@@ -18,13 +18,14 @@ package org.exoplatform.wiki.mow.core.api.wiki;
 
 import org.chromattic.api.annotations.ManyToOne;
 import org.chromattic.api.annotations.PrimaryType;
+import org.exoplatform.wiki.mow.api.WikiNodeType;
 
 /**
  * @author <a href="mailto:patrice.lamarque@exoplatform.com">Patrice
  *         Lamarque</a>
  * @version $Revision$
  */
-@PrimaryType(name = "wiki:groupwiki")
+@PrimaryType(name = WikiNodeType.GROUP_WIKI)
 public abstract class GroupWiki extends WikiImpl {
   
   @ManyToOne

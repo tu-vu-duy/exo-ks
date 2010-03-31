@@ -23,13 +23,14 @@ import org.chromattic.api.annotations.OneToMany;
 import org.chromattic.api.annotations.PrimaryType;
 import org.chromattic.api.annotations.Property;
 import org.exoplatform.wiki.mow.api.content.ContentItem;
+import org.exoplatform.wiki.mow.api.WikiNodeType;
 
 /**
  * @author <a href="mailto:patrice.lamarque@exoplatform.com">Patrice
  *         Lamarque</a>
  * @version $Revision$
  */
-@PrimaryType(name = "wiki:contentItem")
+@PrimaryType(name = WikiNodeType.WIKI_CONTENT_ITEM)
 public abstract class AbstractContentItem implements ContentItem {
 
   @OneToMany
@@ -38,6 +39,6 @@ public abstract class AbstractContentItem implements ContentItem {
   @Id
   public abstract String getId();
 
-  @Property(name = "text")
+  @Property(name = WikiNodeType.Definition.TEXT)
   public abstract String getText();
 }

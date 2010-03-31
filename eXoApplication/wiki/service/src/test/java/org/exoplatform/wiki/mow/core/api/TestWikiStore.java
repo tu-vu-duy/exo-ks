@@ -41,9 +41,12 @@ public class TestWikiStore extends AbstractMOWTestcase {
   public void testAddAndGetPortalContainerWiki() {
     Model model = mowService.getModel();
     WikiStoreImpl wStore = (WikiStoreImpl) model.getMultiWiki();
-    PortalWikiContainer portalWiki = wStore.createPortalWikiContainer();
+    PortalWikiContainer portalWiki = wStore.getPortalWikis();
+    if(portalWiki == null){
+      portalWiki = wStore.createPortalWikiContainer();
+      wStore.setPortalWikis(portalWiki);
+    }
     assertNotNull(portalWiki);
-    wStore.setPortalWikis(portalWiki);
     PortalWikiContainer pw = wStore.getPortalWikis();
     assertSame(portalWiki, pw);
   }
@@ -51,8 +54,11 @@ public class TestWikiStore extends AbstractMOWTestcase {
   public void testAddAndGetPortalClassicWiki() {
     Model model = mowService.getModel();
     WikiStoreImpl wStore = (WikiStoreImpl) model.getMultiWiki();
-    PortalWikiContainer portalWiki = wStore.createPortalWikiContainer();
-    wStore.setPortalWikis(portalWiki);
+    PortalWikiContainer portalWiki = wStore.getPortalWikis();
+    if(portalWiki == null){
+      portalWiki = wStore.createPortalWikiContainer();
+      wStore.setPortalWikis(portalWiki);
+    }
     PortalWiki wiki = portalWiki.addWiki("classic");
     PortalWiki classicWiki = portalWiki.getWiki("classic");
     assertSame(wiki, classicWiki);
@@ -61,8 +67,11 @@ public class TestWikiStore extends AbstractMOWTestcase {
   public void testGetClassicWikiHomePage() {
     Model model = mowService.getModel();
     WikiStoreImpl wStore = (WikiStoreImpl) model.getMultiWiki();
-    PortalWikiContainer portalWiki = wStore.createPortalWikiContainer();
-    wStore.setPortalWikis(portalWiki);
+    PortalWikiContainer portalWiki = wStore.getPortalWikis();
+    if(portalWiki == null){
+      portalWiki = wStore.createPortalWikiContainer();
+      wStore.setPortalWikis(portalWiki);
+    }
     PortalWiki wiki = portalWiki.addWiki("classic");
     Page wikiHomePage = wiki.getWikiHome();
     assertNotNull(wikiHomePage);
@@ -71,8 +80,11 @@ public class TestWikiStore extends AbstractMOWTestcase {
   public void testAddAndGetClassicWikiPage() {
     Model model = mowService.getModel();
     WikiStoreImpl wStore = (WikiStoreImpl) model.getMultiWiki();
-    PortalWikiContainer portalWiki = wStore.createPortalWikiContainer();
-    wStore.setPortalWikis(portalWiki);
+    PortalWikiContainer portalWiki = wStore.getPortalWikis();
+    if(portalWiki == null){
+      portalWiki = wStore.createPortalWikiContainer();
+      wStore.setPortalWikis(portalWiki);
+    }
     PortalWiki wiki = portalWiki.addWiki("classic");
     WikiHome wikiHomePage = wiki.getWikiHome();
     PageImpl wikipage = wiki.createWikiPage();

@@ -19,6 +19,7 @@ package org.exoplatform.wiki.mow.core.api.wiki;
 import org.chromattic.api.annotations.MappedBy;
 import org.chromattic.api.annotations.OneToOne;
 import org.chromattic.api.annotations.PrimaryType;
+import org.exoplatform.wiki.mow.api.WikiNodeType;
 import org.exoplatform.wiki.mow.core.api.WikiStoreImpl;
 
 /**
@@ -26,11 +27,11 @@ import org.exoplatform.wiki.mow.core.api.WikiStoreImpl;
  *         Lamarque</a>
  * @version $Revision$
  */
-@PrimaryType(name = "wiki:groupwikis")
+@PrimaryType(name = WikiNodeType.GROUP_WIKI_CONTAINER)
 public abstract class GroupWikiContainer extends WikiContainer<GroupWiki> {
 
   @OneToOne
-  @MappedBy("groupwikis")
+  @MappedBy(WikiNodeType.Definition.GROUP_WIKI_CONTAINER_NAME )
   public abstract WikiStoreImpl getMultiWiki();
 
 }

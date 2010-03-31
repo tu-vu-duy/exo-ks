@@ -23,6 +23,7 @@ import javax.jcr.RepositoryException;
 import org.chromattic.api.ChromatticSession;
 import org.chromattic.api.UndeclaredRepositoryException;
 import org.exoplatform.wiki.mow.api.Model;
+import org.exoplatform.wiki.mow.api.WikiNodeType;
 import org.exoplatform.wiki.mow.api.WikiStore;
 
 /**
@@ -44,20 +45,23 @@ public class ModelImpl implements Model {
 
   public WikiStore getMultiWiki() {
     if (store == null) {
-      store = session.findByPath(WikiStoreImpl.class, "exo:applications/eXoWiki/wikistore");
+      store = session.findByPath(WikiStoreImpl.class, "exo:applications" + "/"
+          + WikiNodeType.Definition.WIKI_APPLICATION + "/"
+          + WikiNodeType.Definition.WIKI_STORE_NAME);
       if (store == null) {
         try {
           Node rootNode = session.getJCRSession().getRootNode();
           Node publicApplicationNode = rootNode.getNode("exo:applications");
           Node eXoWiki = null;
           try {
-            eXoWiki = publicApplicationNode.getNode("eXoWiki");
+            eXoWiki = publicApplicationNode.getNode(WikiNodeType.Definition.WIKI_APPLICATION);
           } catch (PathNotFoundException e) {
-            eXoWiki = publicApplicationNode.addNode("eXoWiki");
+            eXoWiki = publicApplicationNode.addNode(WikiNodeType.Definition.WIKI_APPLICATION);
             publicApplicationNode.save();
           }
-          Node wikiMetadata = eXoWiki.addNode("wikimetadata", "wiki:store");
-          Node wikis = eXoWiki.addNode("wikis", "nt:unstructured");
+          Node wikiMetadata = eXoWiki.addNode(WikiNodeType.Definition.WIKI_STORE_NAME,
+                                              WikiNodeType.WIKI_STORE);
+          Node wikis = eXoWiki.addNode("wikis");
           eXoWiki.save();
           store = session.findByNode(WikiStoreImpl.class, wikiMetadata);
         } catch (RepositoryException e) {
@@ -65,6 +69,7 @@ public class ModelImpl implements Model {
         }
       }
     }
+    store.setSession(session);
     return store;
   }
 

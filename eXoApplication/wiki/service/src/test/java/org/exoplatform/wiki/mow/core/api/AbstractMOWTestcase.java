@@ -18,6 +18,9 @@ package org.exoplatform.wiki.mow.core.api;
 
 import junit.framework.TestCase;
 
+import org.exoplatform.container.StandaloneContainer;
+import org.exoplatform.container.component.RequestLifeCycle;
+
 /**
  * @author <a href="mailto:patrice.lamarque@exoplatform.com">Patrice
  *         Lamarque</a>
@@ -25,13 +28,52 @@ import junit.framework.TestCase;
  */
 public abstract class AbstractMOWTestcase extends TestCase {
 
-  MOWService mowService;
+  protected static StandaloneContainer container;
+
+  protected static MOWService          mowService;
+
+  static {
+    initContainer();
+  }
+
+  protected void begin() {
+    RequestLifeCycle.begin(container);
+  }
+
+  protected void end() {
+    RequestLifeCycle.end();
+  }
 
   protected void setUp() throws Exception {
-    MOWService mowService = new MOWService();
-    mowService.start();
+    begin();
+  }
 
-    this.mowService = mowService;
+  public void tearDown() throws Exception {
+    end();
+  }
+
+  private static void initContainer() {
+    try {
+      String containerConf = Thread.currentThread()
+                                   .getContextClassLoader()
+                                   .getResource("conf/standalone/configuration.xml")
+                                   .toString();
+      StandaloneContainer.addConfigurationURL(containerConf);
+
+      //
+      String loginConf = Thread.currentThread()
+                               .getContextClassLoader()
+                               .getResource("conf/standalone/login.conf")
+                               .toString();
+      System.setProperty("java.security.auth.login.config", loginConf);
+
+      //
+      container = StandaloneContainer.getInstance();
+      mowService = (MOWService) container.getComponentInstanceOfType(MOWService.class);
+
+    } catch (Exception e) {
+      throw new RuntimeException("Failed to initialize standalone container: " + e.getMessage(), e);
+    }
   }
 
 }

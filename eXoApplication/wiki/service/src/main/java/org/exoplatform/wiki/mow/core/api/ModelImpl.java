@@ -16,7 +16,12 @@
  */
 package org.exoplatform.wiki.mow.core.api;
 
+import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.RepositoryException;
+
 import org.chromattic.api.ChromatticSession;
+import org.chromattic.api.UndeclaredRepositoryException;
 import org.exoplatform.wiki.mow.api.Model;
 import org.exoplatform.wiki.mow.api.WikiStore;
 
@@ -39,9 +44,25 @@ public class ModelImpl implements Model {
 
   public WikiStore getMultiWiki() {
     if (store == null) {
-      store = session.findByPath(WikiStoreImpl.class, "wikistore");
+      store = session.findByPath(WikiStoreImpl.class, "exo:applications/eXoWiki/wikistore");
       if (store == null) {
-        store = session.insert(WikiStoreImpl.class, "wikistore");
+        try {
+          Node rootNode = session.getJCRSession().getRootNode();
+          Node publicApplicationNode = rootNode.getNode("exo:applications");
+          Node eXoWiki = null;
+          try {
+            eXoWiki = publicApplicationNode.getNode("eXoWiki");
+          } catch (PathNotFoundException e) {
+            eXoWiki = publicApplicationNode.addNode("eXoWiki");
+            publicApplicationNode.save();
+          }
+          Node wikiMetadata = eXoWiki.addNode("wikimetadata", "wiki:store");
+          Node wikis = eXoWiki.addNode("wikis", "nt:unstructured");
+          eXoWiki.save();
+          store = session.findByNode(WikiStoreImpl.class, wikiMetadata);
+        } catch (RepositoryException e) {
+          throw new UndeclaredRepositoryException(e);
+        }
       }
     }
     return store;

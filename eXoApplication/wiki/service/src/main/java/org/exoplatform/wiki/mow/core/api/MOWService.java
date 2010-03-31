@@ -17,19 +17,9 @@
 package org.exoplatform.wiki.mow.core.api;
 
 import org.chromattic.api.Chromattic;
-import org.chromattic.api.ChromatticBuilder;
 import org.chromattic.api.ChromatticSession;
-import org.exoplatform.wiki.mow.core.api.content.AnnotationImpl;
-import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
-import org.exoplatform.wiki.mow.core.api.content.MarkupImpl;
-import org.exoplatform.wiki.mow.core.api.content.ParagraphImpl;
-import org.exoplatform.wiki.mow.core.api.content.WikiLink;
-import org.exoplatform.wiki.mow.core.api.wiki.GroupWiki;
-import org.exoplatform.wiki.mow.core.api.wiki.GroupWikiContainer;
-import org.exoplatform.wiki.mow.core.api.wiki.PortalWiki;
-import org.exoplatform.wiki.mow.core.api.wiki.PortalWikiContainer;
-import org.exoplatform.wiki.mow.core.api.wiki.UserWiki;
-import org.exoplatform.wiki.mow.core.api.wiki.UserWikiContainer;
+import org.exoplatform.commons.chromattic.ChromatticLifeCycle;
+import org.exoplatform.commons.chromattic.ChromatticManager;
 
 /**
  * @author <a href="mailto:patrice.lamarque@exoplatform.com">Patrice
@@ -38,55 +28,17 @@ import org.exoplatform.wiki.mow.core.api.wiki.UserWikiContainer;
  */
 public class MOWService {
 
-  /** . */
-  private Chromattic              chromattic;
+  private ChromatticManager   chromatticManager;
 
-  /** . */
-  private final ChromatticBuilder builder;
+  private ChromatticLifeCycle chromatticLifeCycle;
 
-  public MOWService() {
-    ChromatticBuilder builder = ChromatticBuilder.create();
-    // builder.setOption(ChromatticBuilder.INSTRUMENTOR_CLASSNAME,
-    // "org.chromattic.cglib.CGLibInstrumentor");
-    builder.setOptionValue(ChromatticBuilder.INSTRUMENTOR_CLASSNAME,
-                           "org.chromattic.apt.InstrumentorImpl");
-    // builder.setOption(ChromatticBuilder.OBJECT_FORMATTER_CLASSNAME,
-    // MOPFormatter.class.getName());
-
-    //
-    this.builder = builder;
-  }
-
-  public <T> void setOption(ChromatticBuilder.Option<T> option, T value) {
-    builder.setOptionValue(option, value);
-  }
-
-  public void start() throws Exception {
-
-    builder.add(WikiStoreImpl.class);
-
-    builder.add(PortalWiki.class);
-    builder.add(PortalWikiContainer.class);
-    builder.add(GroupWiki.class);
-    builder.add(GroupWikiContainer.class);
-    builder.add(UserWiki.class);
-    builder.add(UserWikiContainer.class);
-
-    builder.add(ContentImpl.class);
-    builder.add(ParagraphImpl.class);
-    builder.add(MarkupImpl.class);
-    builder.add(WikiLink.class);
-    builder.add(AnnotationImpl.class);
-
-    //
-    chromattic = builder.build();
-
-    //
-    this.chromattic = builder.build();
-
+  public MOWService(ChromatticManager chromatticManager) {
+    this.chromatticManager = chromatticManager;
+    this.chromatticLifeCycle = chromatticManager.getLifeCycle("wiki");
   }
 
   public ModelImpl getModel() {
+    Chromattic chromattic = chromatticLifeCycle.getChromattic();
     ChromatticSession chromeSession = chromattic.openSession();
     return new ModelImpl(chromeSession);
   }

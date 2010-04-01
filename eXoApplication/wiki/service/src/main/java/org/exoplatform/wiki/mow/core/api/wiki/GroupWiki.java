@@ -16,7 +16,9 @@
  */
 package org.exoplatform.wiki.mow.core.api.wiki;
 
+import org.chromattic.api.RelationshipType;
 import org.chromattic.api.annotations.ManyToOne;
+import org.chromattic.api.annotations.MappedBy;
 import org.chromattic.api.annotations.PrimaryType;
 import org.exoplatform.wiki.mow.api.WikiNodeType;
 
@@ -28,7 +30,9 @@ import org.exoplatform.wiki.mow.api.WikiNodeType;
 @PrimaryType(name = WikiNodeType.GROUP_WIKI)
 public abstract class GroupWiki extends WikiImpl {
   
-  @ManyToOne
+  @ManyToOne(type = RelationshipType.REFERENCE)
+  @MappedBy(WikiNodeType.Definition.WIKI_CONTAINER_REFERENCE)
   public abstract GroupWikiContainer getGroupWikis();
   
+  public abstract void setGroupWikis(GroupWikiContainer groupWikiContainer);
 }

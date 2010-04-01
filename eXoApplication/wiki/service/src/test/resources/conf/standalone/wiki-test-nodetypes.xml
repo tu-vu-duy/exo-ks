@@ -43,13 +43,7 @@
       <supertype>mix:referenceable</supertype>
     </supertypes>
     <propertyDefinitions/>
-    <childNodeDefinitions>
-      <childNodeDefinition name="*" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
-        <requiredPrimaryTypes>
-          <requiredPrimaryType>wiki:userwiki</requiredPrimaryType>
-        </requiredPrimaryTypes>
-      </childNodeDefinition>
-    </childNodeDefinitions>
+    <childNodeDefinitions/>
   </nodeType>
   <!-- Node type generated for the class org.exoplatform.wiki.mow.core.api.content.AnnotationImpl -->
   <nodeType name="wiki:annotation" isMixin="false" hasOrderableChildNodes="false">
@@ -125,9 +119,17 @@
   <!-- Node type generated for the class org.exoplatform.wiki.mow.core.api.wiki.UserWiki -->
   <nodeType name="wiki:userwiki" isMixin="false" hasOrderableChildNodes="false">
     <supertypes>
+      <supertype>nt:base</supertype>
       <supertype>mix:referenceable</supertype>
     </supertypes>
-    <propertyDefinitions/>
+    <propertyDefinitions>
+      <propertyDefinition name="ref" requiredType="Reference" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" multiple="false">
+        <valueConstraints/>
+      </propertyDefinition>
+      <propertyDefinition name="owner" requiredType="String" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" multiple="false">
+        <valueConstraints/>
+      </propertyDefinition>
+    </propertyDefinitions>
     <childNodeDefinitions>
       <childNodeDefinition name="WikiHome" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
         <requiredPrimaryTypes>
@@ -148,9 +150,17 @@
   <!-- Node type generated for the class org.exoplatform.wiki.mow.core.api.wiki.GroupWiki -->
   <nodeType name="wiki:groupwiki" isMixin="false" hasOrderableChildNodes="false">
     <supertypes>
+      <supertype>nt:base</supertype>
       <supertype>mix:referenceable</supertype>
     </supertypes>
-    <propertyDefinitions/>
+    <propertyDefinitions>
+      <propertyDefinition name="ref" requiredType="Reference" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" multiple="false">
+        <valueConstraints/>
+      </propertyDefinition>
+      <propertyDefinition name="owner" requiredType="String" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" multiple="false">
+        <valueConstraints/>
+      </propertyDefinition>
+    </propertyDefinitions>
     <childNodeDefinitions>
       <childNodeDefinition name="WikiHome" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
         <requiredPrimaryTypes>
@@ -236,13 +246,7 @@
       <supertype>mix:referenceable</supertype>
     </supertypes>
     <propertyDefinitions/>
-    <childNodeDefinitions>
-      <childNodeDefinition name="*" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
-        <requiredPrimaryTypes>
-          <requiredPrimaryType>wiki:groupwiki</requiredPrimaryType>
-        </requiredPrimaryTypes>
-      </childNodeDefinition>
-    </childNodeDefinitions>
+    <childNodeDefinitions/>
   </nodeType>
   <!-- Node type generated for the class org.exoplatform.wiki.mow.core.api.wiki.PortalWikiContainer -->
   <nodeType name="wiki:portalwikis" isMixin="false" hasOrderableChildNodes="false">

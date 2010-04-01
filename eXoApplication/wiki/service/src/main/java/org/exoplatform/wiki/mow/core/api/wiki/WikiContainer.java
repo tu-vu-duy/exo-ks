@@ -41,34 +41,6 @@ public abstract class WikiContainer<T extends Wiki> {
    */
 
   public abstract T addWiki(String wikiOwner);
-  /*public T addWiki(String wikiName) {
-    T wiki = createWiki();
-    
-     * switch(type){
-     *   Portal:
-     *     rootNode = session.getRoot();
-     *     wikisNode = rootNode.getNode("/exo:applications/eXoWiki/wikis");
-     *     Node wikiNode = wikisNode.addNode(wikiName, "wiki:portalwiki");
-     *     Portalwiki pwiki = session.findByNode(PortalWiki.class, wikiNode);
-     *     pwiki.setParent(this);
-     *   Group:
-     *    rootNode = session.getRoot();
-     *    wikisNode = rootNode.getNode("/Groups/"+wikiName+"/ApplicationData");
-     *    Node wikiNode = wikisNode.addNode("eXoWiki", "wiki:groupwiki");
-     *    GroupWiki gwiki = session.findByNode(GroupWiki.class, wikiNode);
-     *    gwiki.setParent(this);
-     *   User:
-     *    rootNode = session.getRoot();
-     *    wikisNode = rootNode.getNode("/Users/"+wikiName+"/ApplicationData");
-     *    Node wikiNode = wikisNode.addNode("eXoWiki", "wiki:userwiki");
-     *    GroupWiki uwiki = session.findByNode(UserWiki.class, wikiNode);
-     *    uwiki.setParent(this);
-     *   
-     * }
-     
-    getWikis().put(wikiName, wiki);
-    return wiki;
-  }*/
 
   @Create
   public abstract T createWiki();

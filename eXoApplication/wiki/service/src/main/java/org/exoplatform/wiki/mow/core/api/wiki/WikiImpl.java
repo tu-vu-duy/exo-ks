@@ -35,12 +35,12 @@ public abstract class WikiImpl implements Wiki {
   @OneToOne
   @Owner
   @MappedBy(WikiNodeType.Definition.WIKI_HOME_NAME)
-  public abstract WikiHome getHome();
+  protected abstract WikiHome getHome();
 
-  public abstract void setHome(WikiHome homePage);
+  protected abstract void setHome(WikiHome homePage);
 
   @Create
-  public abstract WikiHome createWikiHome();
+  protected abstract WikiHome createWikiHome();
 
   @Create
   public abstract PageImpl createWikiPage();

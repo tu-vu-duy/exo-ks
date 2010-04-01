@@ -16,6 +16,12 @@
  */
 package org.exoplatform.wiki.mow.core.api.wiki;
 
+import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.RepositoryException;
+
+import org.chromattic.api.ChromatticSession;
+import org.chromattic.api.UndeclaredRepositoryException;
 import org.chromattic.api.annotations.MappedBy;
 import org.chromattic.api.annotations.OneToOne;
 import org.chromattic.api.annotations.PrimaryType;
@@ -31,7 +37,28 @@ import org.exoplatform.wiki.mow.core.api.WikiStoreImpl;
 public abstract class GroupWikiContainer extends WikiContainer<GroupWiki> {
 
   @OneToOne
-  @MappedBy(WikiNodeType.Definition.GROUP_WIKI_CONTAINER_NAME )
+  @MappedBy(WikiNodeType.Definition.GROUP_WIKI_CONTAINER_NAME)
   public abstract WikiStoreImpl getMultiWiki();
 
+  public GroupWiki addWiki(String wikiOwner) {
+    //Group wikis is stored in /Groups/$wikiOwner/ApplicationData/eXoWiki/WikiHome
+    ChromatticSession session = getMultiWiki().getSession();
+    Node wikiNode = null;
+    try {
+      Node rootNode = session.getJCRSession().getRootNode();
+      Node groupDataNode = rootNode.getNode("Groups" + "/" + wikiOwner + "/" + "ApplicationData");
+      try {
+        wikiNode = groupDataNode.getNode(WikiNodeType.Definition.WIKI_APPLICATION);
+      } catch (PathNotFoundException e) {
+        wikiNode = groupDataNode.addNode(WikiNodeType.Definition.WIKI_APPLICATION, WikiNodeType.GROUP_WIKI);
+        groupDataNode.save();
+      }
+    } catch (RepositoryException e) {
+      throw new UndeclaredRepositoryException(e);
+    }
+    GroupWiki gwiki = session.findByNode(GroupWiki.class, wikiNode);
+    gwiki.setOwner(wikiOwner);
+    gwiki.setGroupWikis(this);
+    return gwiki;
+  }
 }

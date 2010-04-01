@@ -45,15 +45,15 @@ import org.exoplatform.wiki.mow.core.api.wiki.WikiContainer;
 public abstract class WikiStoreImpl implements WikiStore {
 
   private ChromatticSession session;
-  
-  public void setSession(ChromatticSession chromatticSession){
+
+  public void setSession(ChromatticSession chromatticSession) {
     session = chromatticSession;
   }
-  
-  public ChromatticSession getSession(){
+
+  public ChromatticSession getSession() {
     return session;
   }
-  
+
   public void addWiki(WikiType wikiType, String name) {
     getWikiContainer(wikiType).addWiki(name);
   }
@@ -64,20 +64,20 @@ public abstract class WikiStoreImpl implements WikiStore {
 
   public Collection<Wiki> getWikis() {
     Collection<Wiki> col = new CopyOnWriteArraySet<Wiki>();
-    col.addAll(getPortalWikis().getAllWikis());
-    col.addAll(getGroupWikis().getAllWikis());
-    col.addAll(getUserWikis().getAllWikis());
+    col.addAll(getPortalWikiContainer().getAllWikis());
+    col.addAll(getGroupWikiContainer().getAllWikis());
+    col.addAll(getUserWikiContainer().getAllWikis());
     return col;
   }
 
   @SuppressWarnings("unchecked")
-  private <W extends Wiki> WikiContainer<W> getWikiContainer(WikiType wikiType) {
+  public  <W extends Wiki>WikiContainer<W> getWikiContainer(WikiType wikiType) {
     if (wikiType == WikiType.PORTAL) {
-      return (WikiContainer<W>) getPortalWikis();
+      return (WikiContainer<W>) getPortalWikiContainer();
     } else if (wikiType == WikiType.GROUP) {
-      return (WikiContainer<W>) getGroupWikis();
+      return (WikiContainer<W>) getGroupWikiContainer();
     } else if (wikiType == WikiType.USER) {
-      return (WikiContainer<W>) getUserWikis();
+      return (WikiContainer<W>) getUserWikiContainer();
     } else {
       throw new UnsupportedOperationException();
     }
@@ -85,28 +85,59 @@ public abstract class WikiStoreImpl implements WikiStore {
 
   @OneToOne
   @Owner
-  @MappedBy(WikiNodeType.Definition.PORTAL_WIKI_CONTAINER_NAME )
-  public abstract PortalWikiContainer getPortalWikis();
+  @MappedBy(WikiNodeType.Definition.PORTAL_WIKI_CONTAINER_NAME)
+  protected abstract PortalWikiContainer getPortalWikiContainerByChromattic();
 
-  public abstract void setPortalWikis(PortalWikiContainer pContainer);
+  protected abstract void setPortalWikiContainerByChromattic(PortalWikiContainer portalWikiContainer);
 
   @Create
-  public abstract PortalWikiContainer createPortalWikiContainer();
+  protected abstract PortalWikiContainer createPortalWikiContainer();
 
   @OneToOne
   @Owner
-  @MappedBy(WikiNodeType.Definition.GROUP_WIKI_CONTAINER_NAME )
-  public abstract GroupWikiContainer getGroupWikis();
+  @MappedBy(WikiNodeType.Definition.GROUP_WIKI_CONTAINER_NAME)
+  protected abstract GroupWikiContainer getGroupWikiContainerByChromattic();
+
+  protected abstract void setGroupWikiContainerByChromattic(GroupWikiContainer groupWikiContainer);
 
   @Create
-  public abstract GroupWikiContainer createGroupWikiContainer();
+  protected abstract GroupWikiContainer createGroupWikiContainer();
 
   @OneToOne
   @Owner
-  @MappedBy(WikiNodeType.Definition.USER_WIKI_CONTAINER_NAME )
-  public abstract UserWikiContainer getUserWikis();
+  @MappedBy(WikiNodeType.Definition.USER_WIKI_CONTAINER_NAME)
+  protected abstract UserWikiContainer getUserWikiContainerByChromattic();
+
+  protected abstract void setUserWikiContainerByChromattic(UserWikiContainer userWikiContainer);
 
   @Create
-  public abstract UserWikiContainer createUserWikiContainer();
+  protected abstract UserWikiContainer createUserWikiContainer();
+
+  private PortalWikiContainer getPortalWikiContainer() {
+    PortalWikiContainer portalWikiContainer = getPortalWikiContainerByChromattic();
+    if (portalWikiContainer == null) {
+      portalWikiContainer = createPortalWikiContainer();
+      setPortalWikiContainerByChromattic(portalWikiContainer);
+    }
+    return portalWikiContainer;
+  }
+
+  private GroupWikiContainer getGroupWikiContainer() {
+    GroupWikiContainer groupWikiContainer = getGroupWikiContainerByChromattic();
+    if (groupWikiContainer == null) {
+      groupWikiContainer = createGroupWikiContainer();
+      setGroupWikiContainerByChromattic(groupWikiContainer);
+    }
+    return groupWikiContainer;
+  }
+
+  private UserWikiContainer getUserWikiContainer() {
+    UserWikiContainer userWikiContainer = getUserWikiContainerByChromattic();
+    if (userWikiContainer == null) {
+      userWikiContainer = createUserWikiContainer();
+      setUserWikiContainerByChromattic(userWikiContainer);
+    }
+    return userWikiContainer;
+  }
 
 }

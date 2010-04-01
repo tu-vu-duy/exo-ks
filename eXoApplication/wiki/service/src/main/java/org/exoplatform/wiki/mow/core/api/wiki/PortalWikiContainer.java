@@ -41,6 +41,7 @@ public abstract class PortalWikiContainer extends WikiContainer<PortalWiki> {
   public abstract WikiStoreImpl getMultiWiki();
 
   public PortalWiki addWiki(String wikiOwner) {
+    //Portal wikis is stored in /exo:applications/eXoWiki/wikis/$wikiOwner/WikiHome
     ChromatticSession session = getMultiWiki().getSession();
     Node wikiNode = null;
     try {

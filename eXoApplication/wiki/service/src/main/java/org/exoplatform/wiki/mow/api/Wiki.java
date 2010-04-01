@@ -43,7 +43,7 @@ public interface Wiki {
    * 
    * @return
    */
-  Page getHome();
+  Page getWikiHome();
 
   /**
    * Get a page by its URO

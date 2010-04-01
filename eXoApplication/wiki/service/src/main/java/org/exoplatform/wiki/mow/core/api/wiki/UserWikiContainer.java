@@ -16,7 +16,14 @@
  */
 package org.exoplatform.wiki.mow.core.api.wiki;
 
+import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.RepositoryException;
+
+import org.chromattic.api.ChromatticSession;
+import org.chromattic.api.UndeclaredRepositoryException;
 import org.chromattic.api.annotations.MappedBy;
+import org.chromattic.api.annotations.OneToOne;
 import org.chromattic.api.annotations.PrimaryType;
 import org.exoplatform.wiki.mow.api.WikiNodeType;
 import org.exoplatform.wiki.mow.core.api.WikiStoreImpl;
@@ -29,7 +36,29 @@ import org.exoplatform.wiki.mow.core.api.WikiStoreImpl;
 @PrimaryType(name = WikiNodeType.USER_WIKI_CONTAINER)
 public abstract class UserWikiContainer extends WikiContainer<UserWiki> {
 
+  @OneToOne
   @MappedBy(WikiNodeType.Definition.USER_WIKI_CONTAINER_NAME )
   public abstract WikiStoreImpl getMultiWiki();
 
+  public UserWiki addWiki(String wikiOwner) {
+    //User wikis is stored in /Users/$wikiOwner/ApplicationData/eXoWiki/WikiHome
+    ChromatticSession session = getMultiWiki().getSession();
+    Node wikiNode = null;
+    try {
+      Node rootNode = session.getJCRSession().getRootNode();
+      Node userDataNode = rootNode.getNode("Users" + "/" + wikiOwner + "/" + "ApplicationData");
+      try {
+        wikiNode = userDataNode.getNode(WikiNodeType.Definition.WIKI_APPLICATION);
+      } catch (PathNotFoundException e) {
+        wikiNode = userDataNode.addNode(WikiNodeType.Definition.WIKI_APPLICATION, WikiNodeType.USER_WIKI);
+        userDataNode.save();
+      }
+    } catch (RepositoryException e) {
+      throw new UndeclaredRepositoryException(e);
+    }
+    UserWiki uwiki = session.findByNode(UserWiki.class, wikiNode);
+    uwiki.setOwner(wikiOwner);
+    uwiki.setUserWikis(this);
+    return uwiki;
+  }
 }

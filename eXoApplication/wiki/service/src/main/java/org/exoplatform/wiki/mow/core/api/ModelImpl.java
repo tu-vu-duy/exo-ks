@@ -43,7 +43,7 @@ public class ModelImpl implements Model {
     this.session = chromeSession;
   }
 
-  public WikiStore getMultiWiki() {
+  public WikiStore getWikiStore() {
     if (store == null) {
       store = session.findByPath(WikiStoreImpl.class, "exo:applications" + "/"
           + WikiNodeType.Definition.WIKI_APPLICATION + "/"

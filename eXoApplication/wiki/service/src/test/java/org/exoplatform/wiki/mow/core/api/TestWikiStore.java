@@ -19,9 +19,15 @@ package org.exoplatform.wiki.mow.core.api;
 import org.exoplatform.wiki.mow.api.Model;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.mow.api.WikiStore;
+import org.exoplatform.wiki.mow.api.WikiType;
+import org.exoplatform.wiki.mow.core.api.wiki.GroupWiki;
+import org.exoplatform.wiki.mow.core.api.wiki.GroupWikiContainer;
 import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.PortalWiki;
 import org.exoplatform.wiki.mow.core.api.wiki.PortalWikiContainer;
+import org.exoplatform.wiki.mow.core.api.wiki.UserWiki;
+import org.exoplatform.wiki.mow.core.api.wiki.UserWikiContainer;
+import org.exoplatform.wiki.mow.core.api.wiki.WikiContainer;
 import org.exoplatform.wiki.mow.core.api.wiki.WikiHome;
 
 /**
@@ -34,58 +40,47 @@ public class TestWikiStore extends AbstractMOWTestcase {
 
   public void testGetWikiStore() {
     Model model = mowService.getModel();
-    WikiStore wStore = model.getMultiWiki();
+    WikiStore wStore = model.getWikiStore();
     assertNotNull(wStore);
   }
 
-  public void testAddAndGetPortalContainerWiki() {
+  public void testGetWikiContainers() {
     Model model = mowService.getModel();
-    WikiStoreImpl wStore = (WikiStoreImpl) model.getMultiWiki();
-    PortalWikiContainer portalWiki = wStore.getPortalWikis();
-    if(portalWiki == null){
-      portalWiki = wStore.createPortalWikiContainer();
-      wStore.setPortalWikis(portalWiki);
-    }
-    assertNotNull(portalWiki);
-    PortalWikiContainer pw = wStore.getPortalWikis();
-    assertSame(portalWiki, pw);
+    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
+    WikiContainer<PortalWiki> pwikiContainer = wStore.getWikiContainer(WikiType.PORTAL);
+    PortalWikiContainer portalWikiContainer = (PortalWikiContainer) pwikiContainer;
+    assertNotNull(portalWikiContainer);
+    WikiContainer<GroupWiki> gwikiContainer = wStore.getWikiContainer(WikiType.GROUP);
+    GroupWikiContainer groupWikiContainer = (GroupWikiContainer) gwikiContainer;
+    assertNotNull(groupWikiContainer);
+    WikiContainer<UserWiki> uwikiContainer = wStore.getWikiContainer(WikiType.USER);
+    UserWikiContainer userWikiContainer = (UserWikiContainer) uwikiContainer;
+    assertNotNull(userWikiContainer);
   }
 
   public void testAddAndGetPortalClassicWiki() {
     Model model = mowService.getModel();
-    WikiStoreImpl wStore = (WikiStoreImpl) model.getMultiWiki();
-    PortalWikiContainer portalWiki = wStore.getPortalWikis();
-    if(portalWiki == null){
-      portalWiki = wStore.createPortalWikiContainer();
-      wStore.setPortalWikis(portalWiki);
-    }
-    PortalWiki wiki = portalWiki.addWiki("classic");
-    PortalWiki classicWiki = portalWiki.getWiki("classic");
+    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
+    WikiContainer<PortalWiki> portalWikiContainer = wStore.getWikiContainer(WikiType.PORTAL);
+    PortalWiki wiki = portalWikiContainer.addWiki("classic");
+    PortalWiki classicWiki = portalWikiContainer.getWiki("classic");
     assertSame(wiki, classicWiki);
   }
 
-  public void testGetClassicWikiHomePage() {
+  public void testGetPortalClassicWikiHomePage() {
     Model model = mowService.getModel();
-    WikiStoreImpl wStore = (WikiStoreImpl) model.getMultiWiki();
-    PortalWikiContainer portalWiki = wStore.getPortalWikis();
-    if(portalWiki == null){
-      portalWiki = wStore.createPortalWikiContainer();
-      wStore.setPortalWikis(portalWiki);
-    }
-    PortalWiki wiki = portalWiki.addWiki("classic");
+    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
+    WikiContainer<PortalWiki> portalWikiContainer = wStore.getWikiContainer(WikiType.PORTAL);
+    PortalWiki wiki = portalWikiContainer.addWiki("classic");
     Page wikiHomePage = wiki.getWikiHome();
     assertNotNull(wikiHomePage);
   }
 
-  public void testAddAndGetClassicWikiPage() {
+  public void testAddAndGetPortalClassicWikiPage() {
     Model model = mowService.getModel();
-    WikiStoreImpl wStore = (WikiStoreImpl) model.getMultiWiki();
-    PortalWikiContainer portalWiki = wStore.getPortalWikis();
-    if(portalWiki == null){
-      portalWiki = wStore.createPortalWikiContainer();
-      wStore.setPortalWikis(portalWiki);
-    }
-    PortalWiki wiki = portalWiki.addWiki("classic");
+    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
+    WikiContainer<PortalWiki> portalWikiContainer = wStore.getWikiContainer(WikiType.PORTAL);
+    PortalWiki wiki = portalWikiContainer.addWiki("classic");
     WikiHome wikiHomePage = wiki.getWikiHome();
     PageImpl wikipage = wiki.createWikiPage();
     wikipage.setName("Hello World Wiki Page");

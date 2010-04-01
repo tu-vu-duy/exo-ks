@@ -22,7 +22,7 @@ package org.exoplatform.wiki.mow.api;
  */
 public interface Model {
 
-  WikiStore getMultiWiki();
+  WikiStore getWikiStore();
 
   void save();
 

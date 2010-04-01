@@ -43,7 +43,6 @@ public class TestXWikiRenderer extends TestCase {
   }
 
   public void testLinks() throws Exception {
-    //System.out.println("\n\n ==> " + renderer.render("[[OK]]"));
     assertTrue(renderer.render("[[OK]]").contains("wikiexternallink")); // <p><span
     // class="wikilink"><a
     // href="#view"><span

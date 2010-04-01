@@ -19,6 +19,7 @@ package org.exoplatform.wiki.mow.core.api;
 import org.exoplatform.wiki.mow.api.Model;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.mow.api.WikiStore;
+import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
 import org.exoplatform.wiki.mow.api.WikiType;
 import org.exoplatform.wiki.mow.core.api.wiki.GroupWiki;
 import org.exoplatform.wiki.mow.core.api.wiki.GroupWikiContainer;
@@ -82,8 +83,23 @@ public class TestWikiStore extends AbstractMOWTestcase {
     WikiContainer<PortalWiki> portalWikiContainer = wStore.getWikiContainer(WikiType.PORTAL);
     PortalWiki wiki = portalWikiContainer.addWiki("classic");
     WikiHome wikiHomePage = wiki.getWikiHome();
+    ContentImpl content = wiki.createContent() ;
+    assertNotNull(content) ;
+    
+    wikiHomePage.setContent(content) ;    
+    
+    content.setSyntax("xwiki_2.0");
+    content.setText("This is exo wiki") ;
+    
+    ContentImpl addedContent = wikiHomePage.getContent() ;
+    
+    assertNotNull(addedContent) ;
+    assertEquals(addedContent.getSyntax(), "xwiki_2.0") ;
+    assertEquals(addedContent.getText(), "This is exo wiki") ;
+    
     PageImpl wikipage = wiki.createWikiPage();
-    wikipage.setName("Hello World Wiki Page");
+    wikipage.setName("Hello World Wiki Page"); 
+    
     wikiHomePage.addWikiPage(wikipage);
     assertSame(wikipage, wikiHomePage.getChildPages().iterator().next());
     PageImpl wikiChildPage = wiki.createWikiPage();

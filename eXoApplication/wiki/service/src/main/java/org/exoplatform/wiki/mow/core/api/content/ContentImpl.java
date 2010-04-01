@@ -16,6 +16,7 @@
  */
 package org.exoplatform.wiki.mow.core.api.content;
 
+import org.chromattic.api.annotations.Name;
 import org.chromattic.api.annotations.PrimaryType;
 import org.chromattic.api.annotations.Property;
 import org.exoplatform.wiki.mow.api.content.Content;
@@ -31,5 +32,10 @@ public abstract class ContentImpl extends AbstractContainerContent implements Co
 
   @Property(name = WikiNodeType.Definition.SYNTAX)
   public abstract String getSyntax();
+  public abstract void setSyntax(String syntax);
+  
+  @Property(name = WikiNodeType.Definition.TEXT)
+  public abstract String getText();
+  public abstract void setText(String text);
 
 }

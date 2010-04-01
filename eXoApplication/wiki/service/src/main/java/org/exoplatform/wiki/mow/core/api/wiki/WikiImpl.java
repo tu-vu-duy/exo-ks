@@ -24,6 +24,7 @@ import org.chromattic.api.annotations.Owner;
 import org.chromattic.api.annotations.Property;
 import org.exoplatform.wiki.mow.api.Wiki;
 import org.exoplatform.wiki.mow.api.WikiNodeType;
+import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
 
 /**
  * @author <a href="mailto:patrice.lamarque@exoplatform.com">Patrice
@@ -44,6 +45,9 @@ public abstract class WikiImpl implements Wiki {
 
   @Create
   public abstract PageImpl createWikiPage();
+  
+  @Create
+  public abstract ContentImpl createContent();
 
   public WikiHome getWikiHome() {
     WikiHome home = getHome();

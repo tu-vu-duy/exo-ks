@@ -48,7 +48,8 @@ public abstract class PageImpl implements Page {
   @OneToOne
   @Owner
   @MappedBy(WikiNodeType.Definition.CONTENT)
-  public abstract ContentImpl getContent();
+  public abstract ContentImpl getContent();  
+  public abstract void setContent(ContentImpl content);
 
   @Property(name = WikiNodeType.Definition.OWNER)
   public abstract String getOwner();

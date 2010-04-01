@@ -54,6 +54,7 @@ public abstract class WikiHome implements Page {
   @Owner
   @MappedBy(WikiNodeType.Definition.CONTENT)
   public abstract ContentImpl getContent();
+  public abstract void setContent(ContentImpl content);
 
   @Property(name = WikiNodeType.Definition.OWNER)
   public abstract String getOwner();
@@ -62,8 +63,10 @@ public abstract class WikiHome implements Page {
 
   @OneToMany
   public abstract Collection<PageImpl> getChildPages();
-
+  
   public void addWikiPage(PageImpl wikiPage) {
     getChildPages().add(wikiPage);
   }
+  
+  
 }

@@ -106,6 +106,15 @@ public class TestWikiStore extends AbstractMOWTestcase {
     wikiChildPage.setName("Hello World Wiki  Child Page");
     wikiChildPage.setParentPage(wikipage);
     assertSame(wikiChildPage, wikipage.getChildPages().iterator().next());
+    
+    ContentImpl pageContent = wiki.createContent() ;
+    wikipage.setContent(pageContent) ;
+    pageContent.setSyntax("exowiki_2.0") ;
+    pageContent.setText("This is the first page's content") ;
+    ContentImpl addedPageContent = wikipage.getContent() ;
+    assertEquals(addedPageContent.getSyntax(), "exowiki_2.0") ;
+    assertEquals(addedPageContent.getText(), "This is the first page's content") ;
+    
   }
 
 }

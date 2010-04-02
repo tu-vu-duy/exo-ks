@@ -17,6 +17,7 @@
 package org.exoplatform.wiki.mow.core.api.wiki;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.chromattic.api.annotations.MappedBy;
 import org.chromattic.api.annotations.OneToMany;
@@ -66,6 +67,15 @@ public abstract class WikiHome implements Page {
   
   public void addWikiPage(PageImpl wikiPage) {
     getChildPages().add(wikiPage);
+  }
+  
+  public PageImpl getWikiPage(String pageId){
+    Iterator<PageImpl> iter = getChildPages().iterator();
+    while(iter.hasNext()) {
+      PageImpl page = (PageImpl)iter.next() ;
+      if (pageId.equals(page.getPageId()))  return page ;         
+    }
+    return null ;
   }
   
   

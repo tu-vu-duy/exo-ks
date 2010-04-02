@@ -200,6 +200,9 @@
       <supertype>mix:referenceable</supertype>
     </supertypes>
     <propertyDefinitions>
+    	<propertyDefinition name="pageId" requiredType="String" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" multiple="false">
+        <valueConstraints/>
+      </propertyDefinition>
       <propertyDefinition name="owner" requiredType="String" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" multiple="false">
         <valueConstraints/>
       </propertyDefinition>

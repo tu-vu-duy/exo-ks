@@ -18,6 +18,7 @@ package org.exoplatform.wiki.mow.core.api.wiki;
 
 import java.util.Collection;
 
+import org.chromattic.api.annotations.Destroy;
 import org.chromattic.api.annotations.ManyToOne;
 import org.chromattic.api.annotations.MappedBy;
 import org.chromattic.api.annotations.Name;
@@ -50,9 +51,15 @@ public abstract class PageImpl implements Page {
   @MappedBy(WikiNodeType.Definition.CONTENT)
   public abstract ContentImpl getContent();  
   public abstract void setContent(ContentImpl content);
+  
 
   @Property(name = WikiNodeType.Definition.OWNER)
   public abstract String getOwner();
+  public abstract void setOwner(String owner);
+  
+  @Property(name = WikiNodeType.Definition.PAGE_ID)
+  public abstract String getPageId();
+  public abstract void setPageId(String pageId);
   
   public abstract Collection<Attachment> getAttachments();
   
@@ -63,5 +70,7 @@ public abstract class PageImpl implements Page {
 
   @OneToMany
   public abstract Collection<PageImpl> getChildPages();
-
+  
+  @Destroy
+  public abstract void remove();
 }

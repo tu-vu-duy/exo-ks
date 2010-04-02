@@ -16,11 +16,11 @@
  */
 package org.exoplatform.wiki.mow.core.api.content;
 
-import org.chromattic.api.annotations.Name;
+import org.chromattic.api.annotations.Destroy;
 import org.chromattic.api.annotations.PrimaryType;
 import org.chromattic.api.annotations.Property;
-import org.exoplatform.wiki.mow.api.content.Content;
 import org.exoplatform.wiki.mow.api.WikiNodeType;
+import org.exoplatform.wiki.mow.api.content.Content;
 
 /**
  * @author <a href="mailto:patrice.lamarque@exoplatform.com">Patrice
@@ -37,5 +37,8 @@ public abstract class ContentImpl extends AbstractContainerContent implements Co
   @Property(name = WikiNodeType.Definition.TEXT)
   public abstract String getText();
   public abstract void setText(String text);
+  
+  @Destroy
+  public abstract void remove() ;
 
 }

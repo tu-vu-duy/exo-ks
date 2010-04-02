@@ -42,11 +42,15 @@ public abstract class GroupWikiContainer extends WikiContainer<GroupWiki> {
 
   public GroupWiki addWiki(String wikiOwner) {
     //Group wikis is stored in /Groups/$wikiOwner/ApplicationData/eXoWiki/WikiHome
+    wikiOwner = validateWikiOwner(wikiOwner);
+    if(wikiOwner == null){
+      return null;
+    }
     ChromatticSession session = getMultiWiki().getSession();
     Node wikiNode = null;
     try {
       Node rootNode = session.getJCRSession().getRootNode();
-      Node groupDataNode = rootNode.getNode("Groups" + "/" + wikiOwner + "/" + "ApplicationData");
+      Node groupDataNode = rootNode.getNode("Groups" + wikiOwner + "/" + "ApplicationData");
       try {
         wikiNode = groupDataNode.getNode(WikiNodeType.Definition.WIKI_APPLICATION);
       } catch (PathNotFoundException e) {
@@ -60,5 +64,18 @@ public abstract class GroupWikiContainer extends WikiContainer<GroupWiki> {
     gwiki.setOwner(wikiOwner);
     gwiki.setGroupWikis(this);
     return gwiki;
+  }
+  
+  protected String validateWikiOwner(String wikiOwner){
+    if(wikiOwner == null || wikiOwner.length() == 0){
+      return null;
+    }
+    if(!wikiOwner.startsWith("/")){
+      wikiOwner = "/" + wikiOwner;
+    }
+    if(wikiOwner.endsWith("/")){
+      wikiOwner = wikiOwner.substring(0,wikiOwner.length()-1);
+    }
+    return wikiOwner;
   }
 }

@@ -44,8 +44,16 @@ public abstract class WikiContainer<T extends Wiki> {
 
   @Create
   public abstract T createWiki();
+  
+  protected String validateWikiOwner(String wikiOwner){
+    return wikiOwner;
+  }
 
   public T getWiki(String wikiOwner) {
+    wikiOwner = validateWikiOwner(wikiOwner);
+    if(wikiOwner == null){
+      return null;
+    }
     for(T wiki : getWikis()){
       if(wiki.getOwner().equals(wikiOwner)){
         return wiki;

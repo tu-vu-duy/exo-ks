@@ -68,6 +68,24 @@ public class TestWikiStore extends AbstractMOWTestcase {
     assertSame(wiki, classicWiki);
   }
 
+  public void testAddAndGetAdministratorsGroupWiki() {
+    Model model = mowService.getModel();
+    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
+    WikiContainer<GroupWiki> groupWikiContainer = wStore.getWikiContainer(WikiType.GROUP);
+    GroupWiki wiki = groupWikiContainer.addWiki("/platform/administrators");
+    GroupWiki organizationWiki = groupWikiContainer.getWiki("/platform/administrators");
+    assertSame(wiki, organizationWiki);
+  }
+  
+  public void testAddAndGetDemoUserWiki() {
+    Model model = mowService.getModel();
+    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
+    WikiContainer<UserWiki> userWikiContainer = wStore.getWikiContainer(WikiType.USER);
+    UserWiki wiki = userWikiContainer.addWiki("demo");
+    UserWiki rootWiki = userWikiContainer.getWiki("demo");
+    assertSame(wiki, rootWiki);
+  }
+  
   public void testGetPortalClassicWikiHomePage() {
     Model model = mowService.getModel();
     WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();

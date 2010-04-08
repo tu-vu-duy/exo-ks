@@ -48,7 +48,7 @@ public abstract class AbstractMOWTestcase extends TestCase {
     begin();
   }
 
-  public void tearDown() throws Exception {
+  protected void tearDown() throws Exception {
     end();
   }
 

@@ -16,15 +16,24 @@
  */
 package org.exoplatform.wiki.rendering.xwiki;
 
-import junit.framework.TestCase;
-
+import org.exoplatform.wiki.mow.api.Model;
+import org.exoplatform.wiki.mow.api.WikiType;
+import org.exoplatform.wiki.mow.core.api.AbstractMOWTestcase;
+import org.exoplatform.wiki.mow.core.api.WikiStoreImpl;
+import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
+import org.exoplatform.wiki.mow.core.api.wiki.PortalWiki;
+import org.exoplatform.wiki.mow.core.api.wiki.WikiContainer;
+import org.exoplatform.wiki.mow.core.api.wiki.WikiHome;
 import org.exoplatform.wiki.rendering.MarkupRenderingService;
+import org.exoplatform.wiki.service.WikiContext;
+import org.xwiki.context.Execution;
+import org.xwiki.context.ExecutionContext;
 
 /**
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Nov
  * 5, 2009
  */
-public class TestXWikiRenderer extends TestCase {
+public class TestXWikiRenderer extends AbstractMOWTestcase {
 
   XWikiRenderer renderer;
 
@@ -43,15 +52,36 @@ public class TestXWikiRenderer extends TestCase {
   }
 
   public void testLinks() throws Exception {
-    assertTrue(renderer.render("[[OK]]").contains("wikiexternallink")); // <p><span
-    // class="wikilink"><a
-    // href="#view"><span
-    // class="wikigeneratedlinkcontent">OK</span></a></span></p>
-    assertFalse(renderer.render("[[KO]]").contains("wikicreatelink")); // <p><span
-    // class="wikicreatelink"><a
-    // href="#edit"><span
-    // class="wikigeneratedlinkcontent">KO</span></a></span></p>
-
+    assertTrue(renderer.render("[[OK]]").contains("wikicreatelink"));
+  }
+  
+  public void testRenderAnExistedInternalLink() throws Exception {
+    Model model = mowService.getModel();
+    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
+    WikiContainer<PortalWiki> portalWikiContainer = wStore.getWikiContainer(WikiType.PORTAL);
+    PortalWiki wiki = portalWikiContainer.addWiki("classic");
+    WikiHome wikiHomePage = wiki.getWikiHome();
+    
+    PageImpl wikipage = wiki.createWikiPage();
+    wikipage.setName("CreateWikiPage1");
+    wikiHomePage.addWikiPage(wikipage);
+    wikipage.setPageId("CreateWikiPage-001") ;
+    
+    Execution ec = renderer.getExecutionContext();
+    ec.setContext(new ExecutionContext());
+    WikiContext wikiContext = new WikiContext();
+    wikiContext.setPortalURI("http://loclahost:8080/portal/classic");
+    wikiContext.setPortletURI("wiki");
+    wikiContext.setType("portal");
+    wikiContext.setOwner("classic");
+    wikiContext.setPageId("CreateWikiPage-001");
+    
+    ec.getContext().setProperty("wikicontext", wikiContext);
+    
+    String expectedHtml = "<p><span class=\"wikilink\"><a href=\"http://loclahost:8080/portal/classic/wiki/CreateWikiPage-001\">CreateWikiPage-001</a></span></p>";
+    assertEquals(expectedHtml, renderer.render("[[CreateWikiPage-001>>CreateWikiPage-001]]"));
+    assertEquals(expectedHtml, renderer.render("[[CreateWikiPage-001>>classic.CreateWikiPage-001]]"));
+    assertEquals(expectedHtml, renderer.render("[[CreateWikiPage-001>>portal:classic.CreateWikiPage-001]]"));
   }
 
 }

@@ -25,6 +25,7 @@ import org.xwiki.component.embed.EmbeddableComponentManager;
 import org.xwiki.component.manager.ComponentLookupException;
 import org.xwiki.component.manager.ComponentManager;
 import org.xwiki.component.manager.ComponentRepositoryException;
+import org.xwiki.context.Execution;
 import org.xwiki.rendering.block.Block;
 import org.xwiki.rendering.block.XDOM;
 import org.xwiki.rendering.converter.ConversionException;
@@ -46,6 +47,10 @@ public class XWikiRenderer implements Renderer {
 
   EmbeddableComponentManager componentManager = null;
 
+  public Execution getExecutionContext() throws ComponentLookupException, ComponentRepositoryException{
+    return getComponentManager().lookup(Execution.class);
+  }
+  
   /*
    * (non-Javadoc)
    * @see poc.wiki.rendering.Renderer#render(java.lang.String)
@@ -69,8 +74,6 @@ public class XWikiRenderer implements Renderer {
       // Initialize Rendering components and allow getting instances
       componentManager = new EmbeddableComponentManager();
       componentManager.initialize(this.getClass().getClassLoader());
-      // componentManager.registerComponent(new
-      // DefaultComponentDescriptor<DefaultWikiModel>());
     }
     return componentManager;
   }

@@ -19,6 +19,7 @@ package org.exoplatform.wiki.mow.core.api.wiki;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.chromattic.api.DuplicateNameException;
 import org.chromattic.api.annotations.MappedBy;
 import org.chromattic.api.annotations.OneToMany;
 import org.chromattic.api.annotations.OneToOne;
@@ -65,7 +66,7 @@ public abstract class WikiHome implements Page {
   @OneToMany
   public abstract Collection<PageImpl> getChildPages();
   
-  public void addWikiPage(PageImpl wikiPage) {
+  public void addWikiPage(PageImpl wikiPage) throws DuplicateNameException {
     getChildPages().add(wikiPage);
   }
   

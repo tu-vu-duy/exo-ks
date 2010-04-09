@@ -17,7 +17,12 @@
 package org.exoplatform.wiki.rendering.xwiki;
 
 import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.container.PortalContainer;
+import org.exoplatform.services.jcr.RepositoryService;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 import org.exoplatform.wiki.mow.api.Page;
+import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 import org.exoplatform.wiki.service.WikiContext;
 import org.exoplatform.wiki.service.WikiService;
 import org.xwiki.component.annotation.Component;
@@ -43,6 +48,8 @@ public class DefaultWikiModel implements WikiModel {
   @Requirement
   private Execution execution;
   
+  private static final Log LOG = ExoLogger.getLogger(DefaultWikiModel.class);
+  
   private static final String DEFAULT_WIKI = "xwiki";
   
   private static final String DEFAULT_SPACE = "Main";
@@ -51,8 +58,41 @@ public class DefaultWikiModel implements WikiModel {
       
   private static final String DEFAULT_ATTACHMENT = "filename";
   
+  private static final String JCR_WEBDAV_SERVICE_BASE_URI = "/jcr";
+  
   public String getAttachmentURL(String documentName, String attachmentName) {
-    return "#attachment";
+    WikiContext wikiMarkupContext = getWikiMarkupContext(documentName);
+    if (DEFAULT_ATTACHMENT.equals(wikiMarkupContext.getAttachmentName())
+        && (attachmentName != null)) {
+      wikiMarkupContext.setAttachmentName(attachmentName);
+    }
+    StringBuilder sb = new StringBuilder();
+    sb.append("/");
+    sb.append(PortalContainer.getCurrentPortalContainerName());
+    sb.append("/");
+    sb.append(PortalContainer.getCurrentRestContextName());
+    sb.append(JCR_WEBDAV_SERVICE_BASE_URI);
+    sb.append("/");
+    RepositoryService repositoryService = (RepositoryService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(RepositoryService.class);
+    sb.append(repositoryService.getConfig().getDefaultRepositoryName());
+    sb.append("/");
+    PageImpl page = null;
+    try {
+      WikiService wikiService = (WikiService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(WikiService.class);
+      page = (PageImpl) wikiService.getPageById(wikiMarkupContext.getType(),wikiMarkupContext.getOwner(),wikiMarkupContext.getPageId());
+      if (page != null) {
+        sb.append(page.getWorkspace());
+        sb.append(page.getPath());
+        sb.append("/");
+        sb.append(wikiMarkupContext.getAttachmentName());
+      }
+    } catch (Exception e) {
+      if (LOG.isWarnEnabled()) {
+        LOG.warn("Couldn't get attachment URL for attachment: " + attachmentName + " in document: "
+            + documentName, e);
+      }
+    }
+    return sb.toString();
   }
 
   public String getDocumentEditURL(String documentName, String anchor, String queryString) {
@@ -87,7 +127,9 @@ public class DefaultWikiModel implements WikiModel {
     WikiService wikiService = (WikiService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(WikiService.class);
     page = wikiService.getPageById(wikiMarkupContext.getType(),wikiMarkupContext.getOwner(),wikiMarkupContext.getPageId());
     } catch (Exception e) {
-      e.printStackTrace();
+      if(LOG.isWarnEnabled()){
+        LOG.warn("An exception happened when checking available status of document: "+ documentName, e);
+      }
     }
     return (page != null);
   }
@@ -107,6 +149,12 @@ public class DefaultWikiModel implements WikiModel {
       wikiMarkupContext.setType(entityReference.extractReference(EntityType.WIKI).getName());
       wikiMarkupContext.setOwner(entityReference.extractReference(EntityType.SPACE).getName());
       wikiMarkupContext.setPageId(entityReference.extractReference(EntityType.DOCUMENT).getName());
+      if(entityReference.extractReference(EntityType.ATTACHMENT) != null){
+        wikiMarkupContext.setAttachmentName(entityReference.extractReference(EntityType.ATTACHMENT).getName());
+      }
+      else {
+        wikiMarkupContext.setAttachmentName(DEFAULT_ATTACHMENT);
+      }
 
       if (wikiContext != null) {
 
@@ -125,7 +173,9 @@ public class DefaultWikiModel implements WikiModel {
 
       }
     } catch (Exception e) {
-      e.printStackTrace();
+      if(LOG.isWarnEnabled()){
+        LOG.warn("Couldn't get wiki context for markup: "+ documentName, e);
+      }
     }
     return wikiMarkupContext;
   }

@@ -83,5 +83,36 @@ public class TestXWikiRenderer extends AbstractMOWTestcase {
     assertEquals(expectedHtml, renderer.render("[[CreateWikiPage-001>>classic.CreateWikiPage-001]]"));
     assertEquals(expectedHtml, renderer.render("[[CreateWikiPage-001>>portal:classic.CreateWikiPage-001]]"));
   }
+  
+  public void testRenderAttachmentsAndImages() throws Exception {
+    Execution ec = renderer.getExecutionContext();
+    ec.setContext(new ExecutionContext());
+    WikiContext wikiContext = new WikiContext();
+    wikiContext.setPortalURI("http://loclahost:8080/portal/classic");
+    wikiContext.setPortletURI("wiki");
+    wikiContext.setType("portal");
+    wikiContext.setOwner("classic");
+    wikiContext.setPageId("CreateWikiPage-001");
+    
+    ec.getContext().setProperty("wikicontext", wikiContext);
+    
+    String expectedAttachmentHtml = "<p><span class=\"wikiexternallink\"><a href=\"/portal/rest/jcr/db1/ws/exo:applications/eXoWiki/wikis/classic/WikiHome/CreateWikiPage/eXoWikiHome.png\">eXoWikiHome.png</a></span></p>";  
+    assertEquals(expectedAttachmentHtml, renderer.render("[[eXoWikiHome.png>>attach:eXoWikiHome.png]]"));
+    assertEquals(expectedAttachmentHtml, renderer.render("[[eXoWikiHome.png>>attach:CreateWikiPage-001@eXoWikiHome.png]]"));
+    assertEquals(expectedAttachmentHtml, renderer.render("[[eXoWikiHome.png>>attach:classic.CreateWikiPage-001@eXoWikiHome.png]]"));
+    assertEquals(expectedAttachmentHtml, renderer.render("[[eXoWikiHome.png>>attach:portal:classic.CreateWikiPage-001@eXoWikiHome.png]]"));
+    
+    String expectedImageHtml = "<p><img src=\"/portal/rest/jcr/db1/ws/exo:applications/eXoWiki/wikis/classic/WikiHome/CreateWikiPage/eXoWikiHome.png\" alt=\"eXoWikiHome.png\"/></p>";
+    assertEquals(expectedImageHtml, renderer.render("[[image:eXoWikiHome.png]]"));
+    assertEquals(expectedImageHtml, renderer.render("[[image:CreateWikiPage-001@eXoWikiHome.png]]"));
+    assertEquals(expectedImageHtml, renderer.render("[[image:classic.CreateWikiPage-001@eXoWikiHome.png]]"));
+    assertEquals(expectedImageHtml, renderer.render("[[image:portal:classic.CreateWikiPage-001@eXoWikiHome.png]]"));
+    
+    String expectedFreeStandingImageHtml = "<p><img src=\"/portal/rest/jcr/db1/ws/exo:applications/eXoWiki/wikis/classic/WikiHome/CreateWikiPage/eXoWikiHome.png\" class=\"wikimodel-freestanding\" alt=\"eXoWikiHome.png\"/></p>";
+    assertEquals(expectedFreeStandingImageHtml, renderer.render("image:eXoWikiHome.png"));
+    assertEquals(expectedFreeStandingImageHtml, renderer.render("image:CreateWikiPage-001@eXoWikiHome.png"));
+    assertEquals(expectedFreeStandingImageHtml, renderer.render("image:classic.CreateWikiPage-001@eXoWikiHome.png"));
+    assertEquals(expectedFreeStandingImageHtml, renderer.render("image:portal:classic.CreateWikiPage-001@eXoWikiHome.png"));
+  }
 
 }

@@ -25,8 +25,10 @@ import org.chromattic.api.annotations.Name;
 import org.chromattic.api.annotations.OneToMany;
 import org.chromattic.api.annotations.OneToOne;
 import org.chromattic.api.annotations.Owner;
+import org.chromattic.api.annotations.Path;
 import org.chromattic.api.annotations.PrimaryType;
 import org.chromattic.api.annotations.Property;
+import org.chromattic.api.annotations.WorkspaceName;
 import org.exoplatform.wiki.mow.api.Attachment;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.mow.api.WikiNodeType;
@@ -45,6 +47,12 @@ public abstract class PageImpl implements Page {
   public abstract String getName();
 
   public abstract void setName(String name);
+  
+  @Path
+  public abstract String getPath();
+
+  @WorkspaceName
+  public abstract String getWorkspace();
   
   @OneToOne
   @Owner

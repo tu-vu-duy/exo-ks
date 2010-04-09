@@ -4,6 +4,7 @@ public class WikiPageParams {
   private String type ;
   private String owner ;
   private String pageId ;
+  private String attachmentName;
   
   
   public void setType(String type) {
@@ -23,5 +24,11 @@ public class WikiPageParams {
   }
   public String getPageId() {
     return pageId;
-  }  
+  }
+  public String getAttachmentName() {
+    return attachmentName;
+  }
+  public void setAttachmentName(String attachmentName) {
+    this.attachmentName = attachmentName;
+  }
 }

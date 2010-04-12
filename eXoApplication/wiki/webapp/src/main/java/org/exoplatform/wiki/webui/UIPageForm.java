@@ -32,7 +32,7 @@ import org.exoplatform.wiki.rendering.Renderer;
  */
 
 @ComponentConfig(lifecycle = UIFormLifecycle.class,
-                 template = "app:/templates/webui/UIPageForm.gtmpl",
+                 template = "app:/templates/wiki/webui/UIPageForm.gtmpl",
                  events = {
                    @EventConfig(listeners = UIPageForm.RenderActionListener.class)
                    }

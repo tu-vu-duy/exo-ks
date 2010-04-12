@@ -23,7 +23,7 @@ import org.exoplatform.webui.core.UIComponent;
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Nov
  * 5, 2009
  */
-@ComponentConfig(template = "app:/templates/UIHtmlPanel.gtmpl")
+@ComponentConfig(template = "app:/templates/wiki/webui/UIHtmlPanel.gtmpl")
 public class UIHtmlPanel extends UIComponent {
 
 }

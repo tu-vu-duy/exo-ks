@@ -29,6 +29,7 @@ import org.exoplatform.webui.application.portlet.PortletRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.core.UIPortletApplication;
 import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
+import org.exoplatform.wiki.commons.URLResolver;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.resolver.PageResolver;
 
@@ -37,7 +38,7 @@ import org.exoplatform.wiki.resolver.PageResolver;
  * 5, 2009
  */
 
-@ComponentConfig(lifecycle = UIApplicationLifecycle.class, template = "app:/templates/webui/UIWikiPortlet.gtmpl")
+@ComponentConfig(lifecycle = UIApplicationLifecycle.class, template = "app:/templates/wiki/webui/UIWikiPortlet.gtmpl")
 public class UIWikiPortlet extends UIPortletApplication {
 
   private String htmlOutput;
@@ -71,6 +72,8 @@ public class UIWikiPortlet extends UIPortletApplication {
     String pageNodeSelected = uiPortal.getSelectedNode().getUri();
     String siteName = uiPortal.getOwner();
     PageResolver pageResolver = (PageResolver)PortalContainer.getComponent(PageResolver.class) ;
+    //TODO:pls refactor, a solution is moving URLResolver in to a wiki common project of jar type and inject URLResolver by xml configuration
+    pageResolver.setResolverPlugin(new URLResolver());
     Page page = pageResolver.resolve(requestURL);
     context.setAttribute("wikiPage", page);
 

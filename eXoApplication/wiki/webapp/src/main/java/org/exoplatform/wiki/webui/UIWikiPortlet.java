@@ -74,8 +74,15 @@ public class UIWikiPortlet extends UIPortletApplication {
     PageResolver pageResolver = (PageResolver)PortalContainer.getComponent(PageResolver.class) ;
     //TODO:pls refactor, a solution is moving URLResolver in to a wiki common project of jar type and inject URLResolver by xml configuration
     pageResolver.setResolverPlugin(new URLResolver());
-    Page page = pageResolver.resolve(requestURL);
-    context.setAttribute("wikiPage", page);
+    try {
+      Page page = pageResolver.resolve(requestURL);
+      context.setAttribute("wikiPage", page);
+    } catch (Exception e) {
+      context.setAttribute("wikiPage", null);
+      if (log.isWarnEnabled()) {
+        log.warn("An exception happens when resolving URL: " + requestURL, e);
+      }
+    }
 
     // if(portletReqContext.getApplicationMode() == PortletMode.VIEW) {
     // Check and remove edit component

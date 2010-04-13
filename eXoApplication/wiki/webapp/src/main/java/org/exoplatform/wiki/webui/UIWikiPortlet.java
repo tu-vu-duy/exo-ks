@@ -72,10 +72,8 @@ public class UIWikiPortlet extends UIPortletApplication {
     String pageNodeSelected = uiPortal.getSelectedNode().getUri();
     String siteName = uiPortal.getOwner();
     PageResolver pageResolver = (PageResolver)PortalContainer.getComponent(PageResolver.class) ;
-    //TODO:pls refactor, a solution is moving URLResolver in to a wiki common project of jar type and inject URLResolver by xml configuration
-    pageResolver.setResolverPlugin(new URLResolver());
     try {
-      Page page = pageResolver.resolve(requestURL);
+      Page page = pageResolver.resolve(requestURL, new URLResolver());
       context.setAttribute("wikiPage", page);
     } catch (Exception e) {
       context.setAttribute("wikiPage", null);

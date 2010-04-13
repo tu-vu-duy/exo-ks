@@ -42,6 +42,10 @@ public abstract class UserWikiContainer extends WikiContainer<UserWiki> {
 
   public UserWiki addWiki(String wikiOwner) {
     //User wikis is stored in /Users/$wikiOwner/ApplicationData/eXoWiki/WikiHome
+    wikiOwner = validateWikiOwner(wikiOwner);
+    if(wikiOwner == null){
+      return null;
+    }
     ChromatticSession session = getMultiWiki().getSession();
     Node wikiNode = null;
     try {

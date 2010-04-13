@@ -59,7 +59,7 @@ public abstract class WikiContainer<T extends Wiki> {
         return wiki;
       }
     }
-    return null;
+    return addWiki(wikiOwner);
   }
 
   public Collection<T> getAllWikis() {

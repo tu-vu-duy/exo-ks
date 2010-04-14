@@ -29,6 +29,7 @@ import org.exoplatform.webui.application.portlet.PortletRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.core.UIPortletApplication;
 import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
+import org.exoplatform.webui.form.UIFormTextAreaInput;
 import org.exoplatform.wiki.commons.URLResolver;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.resolver.PageResolver;
@@ -75,6 +76,9 @@ public class UIWikiPortlet extends UIPortletApplication {
     try {
       Page page = pageResolver.resolve(requestURL, new URLResolver());
       context.setAttribute("wikiPage", page);
+      getChild(UIPageForm.class).getChild(UIFormTextAreaInput.class).setValue(page.getContent().getText());
+      String output = getChild(UIPageForm.class).renderWikiMarkup(page.getContent().getText());
+      setHtmlOutput(output);
     } catch (Exception e) {
       context.setAttribute("wikiPage", null);
       if (log.isWarnEnabled()) {

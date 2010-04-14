@@ -1,9 +1,14 @@
+<%
+  import org.exoplatform.wiki.mow.api.Page;
+%>
 <div class="UIWikiPortlet" id="$uicomponent.id">
 	<div class="ParentMaskLayer">
 		<div id="MaskLayerWikiPOC" class="MaskLayerWikiPOC"><span></span></div>
 	</div>
 	
-	<%=_ctx.getRequestContext().getAttribute("wikiPage") %>
+	<% Page page = _ctx.getRequestContext().getAttribute("wikiPage");	   
+	%>
+	<%= "owner: " + page.getOwner() %>
 		<hr/>
 		
 	<%

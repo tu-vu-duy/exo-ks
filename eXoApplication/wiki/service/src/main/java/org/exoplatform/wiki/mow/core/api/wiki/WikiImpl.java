@@ -54,6 +54,13 @@ public abstract class WikiImpl implements Wiki {
     if (home == null) {
       home = createWikiHome();
       setHome(home);
+      home.setOwner(getOwner());
+      ContentImpl content = createContent() ;
+      home.setContent(content) ;
+      content.setSyntax("xwiki/2.0") ;
+      content.setText("This is a wiki home page of **" + getOwner()+"**") ;
+      //TODO:trace why NoSuchPropertyException happens
+      //home.setPageId(WikiNodeType.Definition.WIKI_HOME_NAME);
     }
     return home;
   }

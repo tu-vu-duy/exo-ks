@@ -38,7 +38,7 @@ import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
  * Mar 29, 2010  
  */
 @PrimaryType(name = WikiNodeType.WIKI_HOME)
-public abstract class WikiHome implements Page {
+public abstract class WikiHome extends PageImpl {
 
   @OneToOne
   @MappedBy(WikiNodeType.Definition.WIKI_HOME_NAME)
@@ -52,25 +52,14 @@ public abstract class WikiHome implements Page {
   @MappedBy(WikiNodeType.Definition.WIKI_HOME_NAME)
   public abstract UserWiki getUserWiki();
   
-  @OneToOne
-  @Owner
-  @MappedBy(WikiNodeType.Definition.CONTENT)
-  public abstract ContentImpl getContent();
-  public abstract void setContent(ContentImpl content);
-
-  @Property(name = WikiNodeType.Definition.OWNER)
-  public abstract String getOwner();
-  
-  public abstract Collection<Attachment> getAttachments();
-
-  @OneToMany
-  public abstract Collection<PageImpl> getChildPages();
-  
   public void addWikiPage(PageImpl wikiPage) throws DuplicateNameException {
     getChildPages().add(wikiPage);
   }
   
   public PageImpl getWikiPage(String pageId){
+    if(WikiNodeType.Definition.WIKI_HOME_NAME.equalsIgnoreCase(pageId)){
+      return this;
+    }
     Iterator<PageImpl> iter = getChildPages().iterator();
     while(iter.hasNext()) {
       PageImpl page = (PageImpl)iter.next() ;

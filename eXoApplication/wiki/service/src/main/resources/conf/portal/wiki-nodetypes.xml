@@ -40,6 +40,7 @@
   <!-- Node type generated for the class org.exoplatform.wiki.mow.core.api.wiki.UserWikiContainer -->
   <nodeType name="wiki:userwikis" isMixin="false" hasOrderableChildNodes="false">
     <supertypes>
+      <supertype>nt:base</supertype>
       <supertype>mix:referenceable</supertype>
     </supertypes>
     <propertyDefinitions/>
@@ -101,6 +102,7 @@
   <!-- Node type generated for the class org.exoplatform.wiki.mow.core.api.content.AbstractContentItem -->
   <nodeType name="wiki:contentItem" isMixin="false" hasOrderableChildNodes="false">
     <supertypes>
+      <supertype>nt:base</supertype>
       <supertype>mix:referenceable</supertype>
     </supertypes>
     <propertyDefinitions>
@@ -197,6 +199,7 @@
   <!-- Node type generated for the class org.exoplatform.wiki.mow.core.api.wiki.PageImpl -->
   <nodeType name="wiki:page" isMixin="false" hasOrderableChildNodes="false">
     <supertypes>
+      <supertype>nt:base</supertype>
       <supertype>mix:referenceable</supertype>
     </supertypes>
     <propertyDefinitions>
@@ -223,6 +226,7 @@
   <!-- Node type generated for the class org.exoplatform.wiki.mow.core.api.wiki.WikiHome -->
   <nodeType name="exo:wikihome" isMixin="false" hasOrderableChildNodes="false">
     <supertypes>
+      <supertype>wiki:page</supertype>
       <supertype>mix:referenceable</supertype>
     </supertypes>
     <propertyDefinitions>
@@ -246,6 +250,7 @@
   <!-- Node type generated for the class org.exoplatform.wiki.mow.core.api.wiki.GroupWikiContainer -->
   <nodeType name="wiki:groupwikis" isMixin="false" hasOrderableChildNodes="false">
     <supertypes>
+      <supertype>nt:base</supertype>
       <supertype>mix:referenceable</supertype>
     </supertypes>
     <propertyDefinitions/>
@@ -254,6 +259,7 @@
   <!-- Node type generated for the class org.exoplatform.wiki.mow.core.api.wiki.PortalWikiContainer -->
   <nodeType name="wiki:portalwikis" isMixin="false" hasOrderableChildNodes="false">
     <supertypes>
+      <supertype>nt:base</supertype>
       <supertype>mix:referenceable</supertype>
     </supertypes>
     <propertyDefinitions/>

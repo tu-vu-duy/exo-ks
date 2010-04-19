@@ -39,6 +39,16 @@
     <type>org.exoplatform.wiki.resolver.PageResolver</type>
   </component>
   
+  <component>
+    <key>org.exoplatform.wiki.rendering.MarkupRenderingService</key>
+    <type>org.exoplatform.wiki.rendering.MarkupRenderingService</type>
+  </component>
+  
+  <component>
+    <key>org.exoplatform.wiki.rendering.xwiki.XWikiRenderer</key>
+    <type>org.exoplatform.wiki.rendering.xwiki.XWikiRenderer</type>
+  </component>
+  
   <external-component-plugins>
     <target-component>org.exoplatform.services.jcr.RepositoryService</target-component>
     <component-plugin>

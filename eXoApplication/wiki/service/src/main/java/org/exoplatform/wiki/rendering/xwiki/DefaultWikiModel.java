@@ -103,7 +103,6 @@ public class DefaultWikiModel implements WikiModel {
     WikiContext wikiMarkupContext = getWikiMarkupContext(documentName);
     StringBuilder sb = new StringBuilder();
     sb.append(wikiMarkupContext.getPortalURI());
-    sb.append("/");
     if("portal".equalsIgnoreCase(wikiMarkupContext.getType())){
       sb.append(wikiMarkupContext.getPortletURI());
       sb.append("/");

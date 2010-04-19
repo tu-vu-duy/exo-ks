@@ -16,26 +16,18 @@
  */
 package org.exoplatform.wiki.rendering;
 
-import junit.framework.TestCase;
-
+import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.wiki.mow.core.api.AbstractMOWTestcase;
 import org.exoplatform.wiki.rendering.xwiki.XWikiRenderer;
 
 /**
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Nov
  * 5, 2009
  */
-public class TestMarkupRenderingService extends TestCase {
-
-  protected void setUp() throws Exception {
-    super.setUp();
-  }
-
-  protected void tearDown() throws Exception {
-    super.tearDown();
-  }
+public class TestMarkupRenderingService extends AbstractMOWTestcase {
 
   public void testGetRenderer() {
-    MarkupRenderingService service = new MarkupRenderingService();
+    MarkupRenderingService service = (MarkupRenderingService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(MarkupRenderingService.class);
     Renderer renderer = service.getRenderer("xwiki");
 
     assertTrue((renderer instanceof XWikiRenderer));
@@ -43,7 +35,7 @@ public class TestMarkupRenderingService extends TestCase {
 
   public void testXDOMToMow() throws Exception {
     String markup = "This is a [[Link]] in the middle";
-    MarkupRenderingService service = new MarkupRenderingService();
+    MarkupRenderingService service = (MarkupRenderingService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(MarkupRenderingService.class);
     Renderer renderer = service.getRenderer("xwiki");
 
   }

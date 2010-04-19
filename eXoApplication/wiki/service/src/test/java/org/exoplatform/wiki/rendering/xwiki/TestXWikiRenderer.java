@@ -70,7 +70,7 @@ public class TestXWikiRenderer extends AbstractMOWTestcase {
     Execution ec = renderer.getExecutionContext();
     ec.setContext(new ExecutionContext());
     WikiContext wikiContext = new WikiContext();
-    wikiContext.setPortalURI("http://loclahost:8080/portal/classic");
+    wikiContext.setPortalURI("http://loclahost:8080/portal/classic/");
     wikiContext.setPortletURI("wiki");
     wikiContext.setType("portal");
     wikiContext.setOwner("classic");

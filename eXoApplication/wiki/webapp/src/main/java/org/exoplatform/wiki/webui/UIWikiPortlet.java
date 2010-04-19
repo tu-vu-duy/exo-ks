@@ -19,6 +19,7 @@ package org.exoplatform.wiki.webui;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
+import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.portal.application.PortalRequestContext;
 import org.exoplatform.portal.webui.portal.UIPortal;
@@ -32,7 +33,13 @@ import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
 import org.exoplatform.wiki.commons.URLResolver;
 import org.exoplatform.wiki.mow.api.Page;
+import org.exoplatform.wiki.rendering.MarkupRenderingService;
+import org.exoplatform.wiki.rendering.xwiki.XWikiRenderer;
 import org.exoplatform.wiki.resolver.PageResolver;
+import org.exoplatform.wiki.service.WikiContext;
+import org.exoplatform.wiki.service.WikiPageParams;
+import org.xwiki.context.Execution;
+import org.xwiki.context.ExecutionContext;
 
 /**
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Nov
@@ -77,6 +84,21 @@ public class UIWikiPortlet extends UIPortletApplication {
       Page page = pageResolver.resolve(requestURL, new URLResolver());
       context.setAttribute("wikiPage", page);
       getChild(UIPageForm.class).getChild(UIFormTextAreaInput.class).setValue(page.getContent().getText());
+      
+      MarkupRenderingService service = (MarkupRenderingService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(MarkupRenderingService.class);
+      XWikiRenderer renderer = (XWikiRenderer) service.getRenderer("xwiki");
+      Execution ec = renderer.getExecutionContext();
+      ec.setContext(new ExecutionContext());
+      WikiContext wikiContext = new WikiContext();
+      wikiContext.setPortalURI(portalURI);
+      wikiContext.setPortletURI(pageNodeSelected);
+      URLResolver urlResolver = new URLResolver();
+      WikiPageParams params = urlResolver.extractPageParams(requestURL);
+      wikiContext.setType(params.getType());
+      wikiContext.setOwner(params.getOwner());
+      wikiContext.setPageId(params.getPageId());      
+      ec.getContext().setProperty("wikicontext", wikiContext);
+      
       String output = getChild(UIPageForm.class).renderWikiMarkup(page.getContent().getText());
       setHtmlOutput(output);
     } catch (Exception e) {

@@ -16,6 +16,7 @@
  */
 package org.exoplatform.wiki.webui;
 
+import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
@@ -83,7 +84,7 @@ public class UIPageForm extends UIForm {
    */
 
   public String renderWikiMarkup(String markup) throws Exception {
-    MarkupRenderingService renderingService = getMarkupRenderingService();
+    MarkupRenderingService renderingService = (MarkupRenderingService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(MarkupRenderingService.class);
     Renderer xwikiRenderer = renderingService.getRenderer("xwiki");
     String output = xwikiRenderer.render(markup);
     return output;

@@ -16,6 +16,7 @@
  */
 package org.exoplatform.wiki.rendering;
 
+import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.wiki.rendering.xwiki.XWikiRenderer;
 
 /**
@@ -25,7 +26,7 @@ import org.exoplatform.wiki.rendering.xwiki.XWikiRenderer;
 public class MarkupRenderingService {
 
   public Renderer getRenderer(String language) {
-    return new XWikiRenderer();
+    return (Renderer) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(XWikiRenderer.class);
   }
 
 }

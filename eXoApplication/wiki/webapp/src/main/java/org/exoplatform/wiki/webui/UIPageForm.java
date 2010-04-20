@@ -24,6 +24,7 @@ import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.form.UIForm;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
+import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.rendering.MarkupRenderingService;
 import org.exoplatform.wiki.rendering.Renderer;
 
@@ -40,6 +41,8 @@ import org.exoplatform.wiki.rendering.Renderer;
                  )
 public class UIPageForm extends UIForm {
 
+  private Page page;
+  
   public UIPageForm() {
     UIFormTextAreaInput markupInput = new UIFormTextAreaInput("Markup",
                                                               "Markup",
@@ -56,6 +59,9 @@ public class UIPageForm extends UIForm {
       UIFormTextAreaInput markupInput = thisForm.findComponentById("Markup");
       String markup = markupInput.getValue();
 
+      if(thisForm.getPage() != null){
+        thisForm.getPage().getContent().setText(markup);
+      }
       String output = thisForm.renderWikiMarkup(markup);
 
       UIWikiPortlet parent = thisForm.getParent();
@@ -90,6 +96,14 @@ public class UIPageForm extends UIForm {
     return output;
   }
 
+  public void setPage(Page page){
+    this.page = page;
+  }
+  
+  public Page getPage(){
+    return this.page;
+  }
+  
   private MarkupRenderingService getMarkupRenderingService() {
 
     return new MarkupRenderingService(); // TODO: replace with

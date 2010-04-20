@@ -48,4 +48,6 @@ public interface ContentItem {
    * @return
    */
   String getText();
+  
+  void setText(String text);
 }

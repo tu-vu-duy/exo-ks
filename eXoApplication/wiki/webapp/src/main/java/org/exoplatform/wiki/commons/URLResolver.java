@@ -45,6 +45,9 @@ public class URLResolver implements Resolver{
     int beginIndex = requestURI.indexOf(nodeuri) + nodeuri.length();
     int endIndex = requestURI.length();
     String pageID = requestURI.substring(beginIndex, endIndex);
+    if(pageID.startsWith("/")){
+      pageID = pageID.substring(1,pageID.length());
+    }
     if (pageID.length() == 0) {
       pageID = "WikiHome"; // TODO use a const
     }

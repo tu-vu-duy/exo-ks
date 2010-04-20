@@ -81,8 +81,10 @@ public class UIWikiPortlet extends UIPortletApplication {
     String siteName = uiPortal.getOwner();
     PageResolver pageResolver = (PageResolver)PortalContainer.getComponent(PageResolver.class) ;
     try {
+      //TODO: ignore request URL of resources
       Page page = pageResolver.resolve(requestURL, new URLResolver());
       context.setAttribute("wikiPage", page);
+      getChild(UIPageForm.class).setPage(page);
       getChild(UIPageForm.class).getChild(UIFormTextAreaInput.class).setValue(page.getContent().getText());
       
       MarkupRenderingService service = (MarkupRenderingService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(MarkupRenderingService.class);

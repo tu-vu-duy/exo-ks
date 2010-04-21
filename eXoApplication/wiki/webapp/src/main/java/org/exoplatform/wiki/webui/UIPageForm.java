@@ -16,7 +16,12 @@
  */
 package org.exoplatform.wiki.webui;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
+
 import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.portal.application.PortalRequestContext;
+import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
@@ -24,9 +29,12 @@ import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.form.UIForm;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
+import org.exoplatform.wiki.commons.URLResolver;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.rendering.MarkupRenderingService;
 import org.exoplatform.wiki.rendering.Renderer;
+import org.exoplatform.wiki.service.WikiPageParams;
+import org.exoplatform.wiki.service.WikiService;
 
 /**
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Nov
@@ -61,7 +69,17 @@ public class UIPageForm extends UIForm {
 
       if(thisForm.getPage() != null){
         thisForm.getPage().getContent().setText(markup);
+        //TODO: study to call ChromatticSession.save() instead of following code
+        PortalRequestContext portalRequestContext = Util.getPortalRequestContext();
+        HttpServletRequest request = portalRequestContext.getRequest();
+        HttpServletRequestWrapper requestWrapper = new HttpServletRequestWrapper(request);
+        String requestURL = requestWrapper.getRequestURL().toString();
+        URLResolver urlResolver = new URLResolver();
+        WikiPageParams params = urlResolver.extractPageParams(requestURL);
+        WikiService wikiService = (WikiService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(WikiService.class);
+        wikiService.updatePage(params.getType(), params.getOwner(), thisForm.getPage());
       }
+      
       String output = thisForm.renderWikiMarkup(markup);
 
       UIWikiPortlet parent = thisForm.getParent();

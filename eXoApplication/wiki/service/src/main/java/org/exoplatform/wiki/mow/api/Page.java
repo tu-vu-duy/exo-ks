@@ -27,6 +27,8 @@ import org.exoplatform.wiki.mow.api.content.Content;
  */
 public interface Page {
 
+  String getPageId();
+  
   /**
    * Get the owner of the page
    * 

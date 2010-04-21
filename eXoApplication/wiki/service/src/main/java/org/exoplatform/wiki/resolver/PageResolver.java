@@ -36,7 +36,15 @@ public class PageResolver {
     }
 
     Page page = wService.getPageById(params.getType(), params.getOwner(), params.getPageId());
-    
+    if (LOG.isTraceEnabled()) {
+      String message = String.format("Resolved URL: %s. Page %s is returned when providing Params[Type: %s, Owner: %s, PageId: %s]",
+                                     requestURI,
+                                     page,
+                                     params.getType(),
+                                     params.getOwner(),
+                                     params.getPageId());
+      LOG.trace(message);
+    }
     return page;
 
   }

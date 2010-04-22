@@ -1,10 +1,10 @@
 package org.exoplatform.wiki.resolver;
 
-import org.exoplatform.container.component.ComponentPlugin;
+import org.exoplatform.container.component.BaseComponentPlugin;
 import org.exoplatform.wiki.service.WikiPageParams;
 
-public interface Resolver extends ComponentPlugin{
+public abstract class Resolver extends BaseComponentPlugin{
   
-  public WikiPageParams extractPageParams(String requestURI) throws Exception ;
+  public abstract WikiPageParams extractPageParams(String requestURL) throws Exception ;
   
 }

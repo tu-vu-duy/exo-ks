@@ -149,4 +149,13 @@
     </component-plugin>
   </external-component-plugins>
   
+  <external-component-plugins>
+    <target-component>org.exoplatform.wiki.resolver.PageResolver</target-component>
+    <component-plugin>
+      <name>urlresolver</name>
+      <set-method>setResolverPlugin</set-method>
+      <type>org.exoplatform.wiki.resolver.URLResolver</type>      
+    </component-plugin>    
+  </external-component-plugins>
+  
 </configuration>

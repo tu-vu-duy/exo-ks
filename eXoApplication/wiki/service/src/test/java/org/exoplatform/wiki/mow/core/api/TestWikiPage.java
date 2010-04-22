@@ -104,4 +104,12 @@ public class TestWikiPage extends AbstractMOWTestcase {
     deletePage.remove() ;
     assertNull(wikiHomePage.getWikiPage("delete-001")) ;    
   }
+  
+  public void testHello() {
+    String str = "http://hostname/$CONTAINER/$ACCESS/$SITE/wiki/[$OWNER_TYPE/$OWNER]/$WIKI_PAGE_URI" ;
+    int i = str.indexOf("/wiki/") ;
+    System.out.println("http://hostname/$CONTAINER/$ACCESS/$SITE/wiki/[$OWNER_TYPE/$OWNER]/$WIKI_PAGE_URI");
+    System.out.println("i==" + i);
+    System.out.println("==>" + str.substring( i + "/wiki/".length()));
+  }
 }

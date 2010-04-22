@@ -1,6 +1,8 @@
 package org.exoplatform.wiki.service;
 
 public class WikiPageParams {
+  public static final String WIKI_HOME = "WikiHome" ;
+  
   private String type ;
   private String owner ;
   private String pageId ;

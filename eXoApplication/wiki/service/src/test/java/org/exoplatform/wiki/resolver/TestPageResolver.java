@@ -19,6 +19,7 @@ package org.exoplatform.wiki.resolver;
 
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.mow.core.api.AbstractMOWTestcase;
+import org.exoplatform.wiki.service.WikiPageParams;
 
 
 public class TestPageResolver extends AbstractMOWTestcase {
@@ -31,6 +32,11 @@ public class TestPageResolver extends AbstractMOWTestcase {
   
   public void testPageResolver() throws Exception{
     assertNotNull(resolver) ;
+  }
+  
+  public void testExtractParams() throws Exception{
+    WikiPageParams params = resolver.extractWikiPageParams("http://hostname/$CONTAINER/$ACCESS/classic/wiki") ;
+    assertNotNull(params) ;    
   }
   
   public void testGetPage() throws Exception{

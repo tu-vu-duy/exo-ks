@@ -19,7 +19,6 @@ package org.exoplatform.wiki.webui;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
-import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.portal.application.PortalRequestContext;
 import org.exoplatform.portal.webui.portal.UIPortal;
@@ -31,7 +30,6 @@ import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.core.UIPortletApplication;
 import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
-import org.exoplatform.wiki.commons.URLResolver;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.rendering.MarkupRenderingService;
 import org.exoplatform.wiki.rendering.xwiki.XWikiRenderer;
@@ -79,28 +77,27 @@ public class UIWikiPortlet extends UIPortletApplication {
     String requestURL = requestWrapper.getRequestURL().toString();
     String pageNodeSelected = uiPortal.getSelectedNode().getUri();
     String siteName = uiPortal.getOwner();
-    PageResolver pageResolver = (PageResolver)PortalContainer.getComponent(PageResolver.class) ;
+    PageResolver pageResolver = (PageResolver) PortalContainer.getComponent(PageResolver.class);
     try {
-      //TODO: ignore request URL of resources
-      Page page = pageResolver.resolve(requestURL, new URLResolver());
+      // TODO: ignore request URL of resources
+      Page page = pageResolver.resolve(requestURL);
       context.setAttribute("wikiPage", page);
       getChild(UIPageForm.class).setPage(page);
       getChild(UIPageForm.class).getChild(UIFormTextAreaInput.class).setValue(page.getContent().getText());
       
-      MarkupRenderingService service = (MarkupRenderingService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(MarkupRenderingService.class);
+      MarkupRenderingService service = (MarkupRenderingService) PortalContainer.getComponent(MarkupRenderingService.class);
       XWikiRenderer renderer = (XWikiRenderer) service.getRenderer("xwiki");
       Execution ec = renderer.getExecutionContext();
       ec.setContext(new ExecutionContext());
       WikiContext wikiContext = new WikiContext();
       wikiContext.setPortalURI(portalURI);
       wikiContext.setPortletURI(pageNodeSelected);
-      URLResolver urlResolver = new URLResolver();
-      WikiPageParams params = urlResolver.extractPageParams(requestURL);
+      WikiPageParams params = pageResolver.extractWikiPageParams(requestURL);
       wikiContext.setType(params.getType());
       wikiContext.setOwner(params.getOwner());
-      wikiContext.setPageId(params.getPageId());      
+      wikiContext.setPageId(params.getPageId());
       ec.getContext().setProperty("wikicontext", wikiContext);
-      
+
       String output = getChild(UIPageForm.class).renderWikiMarkup(page.getContent().getText());
       setHtmlOutput(output);
     } catch (Exception e) {

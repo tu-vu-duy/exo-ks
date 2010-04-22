@@ -34,7 +34,7 @@ public class TestPageResolver extends AbstractMOWTestcase {
   }
   
   public void testGetPage() throws Exception{
-    Page page = resolver.resolve("http://hostname/$CONTAINER/$ACCESS/classic/wiki", null) ;
+    Page page = resolver.resolve("http://hostname/$CONTAINER/$ACCESS/classic/wiki") ;
     assertNotNull(page) ;    
   }
 }

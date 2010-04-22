@@ -2,7 +2,6 @@ package org.exoplatform.wiki.resolver;
 
 import org.exoplatform.portal.config.model.PortalConfig;
 import org.exoplatform.services.organization.OrganizationService;
-import org.exoplatform.wiki.resolver.Resolver;
 import org.exoplatform.wiki.service.WikiPageParams;
 
 public class URLResolver extends Resolver{
@@ -76,7 +75,6 @@ public class URLResolver extends Resolver{
   private String extractPortalOwner(String url) throws Exception{
     if(url.indexOf("/wiki") > 0){
       String temp = url.substring(0, url.indexOf("/wiki")) ;
-      System.out.println("site ==>" + temp.substring(temp.lastIndexOf("/") + 1));
       return temp.substring(temp.lastIndexOf("/") + 1) ;
     }
     return null ;

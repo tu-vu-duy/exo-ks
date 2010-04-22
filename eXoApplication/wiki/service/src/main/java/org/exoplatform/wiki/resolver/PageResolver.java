@@ -21,17 +21,27 @@ public class PageResolver {
     resolver = (Resolver)plugin ;
   }
   
-  //If for some reason (such as difference class loaders), we couldn't set ResolverPlugin, resolver parameter must be provided.
-  public Page resolve(String requestURI, Resolver resolver) throws Exception {
-    
-    WikiPageParams params;
-    if(this.resolver != null){
-      params = this.resolver.extractPageParams(requestURI) ;
+  public WikiPageParams extractWikiPageParams(String requestURI){
+    try {
+      WikiPageParams params;
+      if (this.resolver != null) {
+        params = this.resolver.extractPageParams(requestURI);
+        return params;
+      } else {
+        LOG.error("Couldn't extract WikiPageParams for URI: " + requestURI + ". ResolverPlugin is not set!");
+        return null;
+      }
+    } catch (Exception e) {
+      LOG.error("Couldn't extract WikiPageParams for URI: " + requestURI, e);
+      return null;
     }
-    else if(resolver != null){
-      params = resolver.extractPageParams(requestURI) ;
-    }else{
-      LOG.error("Couldn't resolve URI: " + requestURI+ ". ResolverPlugin is not set!");
+  }
+  
+  public Page resolve(String requestURI) throws Exception {
+
+    WikiPageParams params = extractWikiPageParams(requestURI);
+    if (params == null) {
+      LOG.error("Couldn't resolve URI: " + requestURI);
       return null;
     }
 
@@ -45,7 +55,7 @@ public class PageResolver {
                                      params.getPageId());
       LOG.trace(message);
     }
-    return page;
 
+    return page;
   }
 }

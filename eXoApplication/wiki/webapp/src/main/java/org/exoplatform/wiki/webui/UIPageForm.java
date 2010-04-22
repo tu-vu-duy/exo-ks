@@ -19,7 +19,7 @@ package org.exoplatform.wiki.webui;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
-import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.container.PortalContainer;
 import org.exoplatform.portal.application.PortalRequestContext;
 import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
@@ -29,10 +29,10 @@ import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.form.UIForm;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
-import org.exoplatform.wiki.commons.URLResolver;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.rendering.MarkupRenderingService;
 import org.exoplatform.wiki.rendering.Renderer;
+import org.exoplatform.wiki.resolver.PageResolver;
 import org.exoplatform.wiki.service.WikiPageParams;
 import org.exoplatform.wiki.service.WikiService;
 
@@ -74,9 +74,9 @@ public class UIPageForm extends UIForm {
         HttpServletRequest request = portalRequestContext.getRequest();
         HttpServletRequestWrapper requestWrapper = new HttpServletRequestWrapper(request);
         String requestURL = requestWrapper.getRequestURL().toString();
-        URLResolver urlResolver = new URLResolver();
-        WikiPageParams params = urlResolver.extractPageParams(requestURL);
-        WikiService wikiService = (WikiService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(WikiService.class);
+        PageResolver pageResolver = (PageResolver) PortalContainer.getComponent(PageResolver.class);
+        WikiPageParams params = pageResolver.extractWikiPageParams(requestURL);
+        WikiService wikiService = (WikiService) PortalContainer.getComponent(WikiService.class);
         wikiService.updatePage(params.getType(), params.getOwner(), thisForm.getPage());
       }
       
@@ -108,7 +108,7 @@ public class UIPageForm extends UIForm {
    */
 
   public String renderWikiMarkup(String markup) throws Exception {
-    MarkupRenderingService renderingService = (MarkupRenderingService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(MarkupRenderingService.class);
+    MarkupRenderingService renderingService = (MarkupRenderingService) PortalContainer.getComponent(MarkupRenderingService.class);
     Renderer xwikiRenderer = renderingService.getRenderer("xwiki");
     String output = xwikiRenderer.render(markup);
     return output;

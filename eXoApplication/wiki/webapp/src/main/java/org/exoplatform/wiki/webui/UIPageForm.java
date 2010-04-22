@@ -16,12 +16,7 @@
  */
 package org.exoplatform.wiki.webui;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-
 import org.exoplatform.container.PortalContainer;
-import org.exoplatform.portal.application.PortalRequestContext;
-import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
@@ -29,12 +24,11 @@ import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.form.UIForm;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
+import org.exoplatform.wiki.commons.Utils;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.rendering.MarkupRenderingService;
 import org.exoplatform.wiki.rendering.Renderer;
 import org.exoplatform.wiki.resolver.PageResolver;
-import org.exoplatform.wiki.service.WikiPageParams;
-import org.exoplatform.wiki.service.WikiService;
 
 /**
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Nov
@@ -49,8 +43,6 @@ import org.exoplatform.wiki.service.WikiService;
                  )
 public class UIPageForm extends UIForm {
 
-  private Page page;
-  
   public UIPageForm() {
     UIFormTextAreaInput markupInput = new UIFormTextAreaInput("Markup",
                                                               "Markup",
@@ -67,18 +59,10 @@ public class UIPageForm extends UIForm {
       UIFormTextAreaInput markupInput = thisForm.findComponentById("Markup");
       String markup = markupInput.getValue();
 
-      if(thisForm.getPage() != null){
-        thisForm.getPage().getContent().setText(markup);
-        //TODO: study to call ChromatticSession.save() instead of following code
-        PortalRequestContext portalRequestContext = Util.getPortalRequestContext();
-        HttpServletRequest request = portalRequestContext.getRequest();
-        HttpServletRequestWrapper requestWrapper = new HttpServletRequestWrapper(request);
-        String requestURL = requestWrapper.getRequestURL().toString();
-        PageResolver pageResolver = (PageResolver) PortalContainer.getComponent(PageResolver.class);
-        WikiPageParams params = pageResolver.extractWikiPageParams(requestURL);
-        WikiService wikiService = (WikiService) PortalContainer.getComponent(WikiService.class);
-        wikiService.updatePage(params.getType(), params.getOwner(), thisForm.getPage());
-      }
+      String requestURL = Utils.getCurrentRequestURL();
+      PageResolver pageResolver = (PageResolver) PortalContainer.getComponent(PageResolver.class);
+      Page page = pageResolver.resolve(requestURL);
+      page.getContent().setText(markup);
       
       String output = thisForm.renderWikiMarkup(markup);
 
@@ -112,20 +96,6 @@ public class UIPageForm extends UIForm {
     Renderer xwikiRenderer = renderingService.getRenderer("xwiki");
     String output = xwikiRenderer.render(markup);
     return output;
-  }
-
-  public void setPage(Page page){
-    this.page = page;
-  }
-  
-  public Page getPage(){
-    return this.page;
-  }
-  
-  private MarkupRenderingService getMarkupRenderingService() {
-
-    return new MarkupRenderingService(); // TODO: replace with
-    // getApplicationComponent(MarkupRenderingService.class);
   }
 
 }

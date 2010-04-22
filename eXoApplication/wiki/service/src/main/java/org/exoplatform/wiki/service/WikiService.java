@@ -33,7 +33,6 @@ import org.exoplatform.commons.utils.PageList;
 public interface WikiService {
   
 	public void createPage(String wikiType, String wikiOwner, Page page, String parentId) throws Exception ;
-	public void updatePage(String wikiType, String wikiOwner, Page page) throws Exception ;
 	public void deletePage(String wikiType, String wikiOwner, String pageId) throws Exception ;
 	public boolean movePage(String pageId, String newParentId) throws Exception ;
 	

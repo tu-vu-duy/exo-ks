@@ -77,7 +77,9 @@
         <property name="log4j.appender.file.layout.ConversionPattern"
           value="%d{dd.MM.yyyy HH:mm:ss} *%-5p* [%t] %c{1}: %m (%F, line %L) %n"/>
 
-        <property name="log4j.category.org.exoplatform.wiki.resolver.PageResolver" value="TRACE"/>
+        <property name="log4j.category.org.exoplatform.wiki.resolver.PageResolver" value="TRACE"/>  
+        <property name="log4j.category.org.exoplatform.wiki.rendering.xwiki.XWikiRenderer" value="DEBUG"/>
+        
 
       </properties-param>
     </init-params>

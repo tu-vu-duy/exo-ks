@@ -63,29 +63,5 @@ public class WikiServiceImpl implements WikiService{
     // TODO Auto-generated method stub
     return null;
   }
-
-  //TODO: study to remove this function
-  public void updatePage(String wikiType, String wikiOwner, Page page) throws Exception {
-    //TODO: just an implement for test, pls writing a real implement
-    MOWService mowService = (MOWService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(MOWService.class);
-    Model model = mowService.getModel();
-    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
-    PageImpl wikipage = null;
-    if("portal".equalsIgnoreCase(wikiType)){
-      WikiContainer<PortalWiki> portalWikiContainer = wStore.getWikiContainer(WikiType.PORTAL);
-      PortalWiki wiki = portalWikiContainer.getWiki(wikiOwner);
-      WikiHome wikiHomePage = wiki.getWikiHome();
-      wikipage = wikiHomePage.getWikiPage(page.getPageId());
-    }
-    if(wikipage != null){
-      //TODO: fulfill for all fields
-      wikipage.getContent().setText(page.getContent().getText());
-    }
-    model.save();
-    model.close();
-    
-  }
-
- 
   
 }

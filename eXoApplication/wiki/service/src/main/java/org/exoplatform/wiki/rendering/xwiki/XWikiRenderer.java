@@ -20,6 +20,8 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.List;
 
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 import org.exoplatform.wiki.rendering.Renderer;
 import org.xwiki.component.embed.EmbeddableComponentManager;
 import org.xwiki.component.manager.ComponentLookupException;
@@ -45,6 +47,7 @@ import org.xwiki.rendering.transformation.TransformationManager;
  */
 public class XWikiRenderer implements Renderer {
 
+  private Log LOG = ExoLogger.getExoLogger(XWikiRenderer.class);
   EmbeddableComponentManager componentManager = null;
 
   public Execution getExecutionContext() throws ComponentLookupException, ComponentRepositoryException{
@@ -85,7 +88,9 @@ public class XWikiRenderer implements Renderer {
       buf.append("  ");
     }
     buf.append(parent.getClass().getSimpleName());
-    System.out.println(buf.toString());
+    if(LOG.isDebugEnabled()){
+      LOG.debug(buf.toString());
+    }
     List<Block> children = parent.getChildren();
     for (Block block : children) {
       outputTree(block, level + 1);

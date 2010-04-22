@@ -16,20 +16,17 @@
  */
 package org.exoplatform.wiki.webui;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.portal.application.PortalRequestContext;
 import org.exoplatform.portal.webui.portal.UIPortal;
 import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.webui.application.WebuiApplication;
 import org.exoplatform.webui.application.WebuiRequestContext;
-import org.exoplatform.webui.application.portlet.PortletRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.core.UIPortletApplication;
 import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
+import org.exoplatform.wiki.commons.Utils;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.rendering.MarkupRenderingService;
 import org.exoplatform.wiki.rendering.xwiki.XWikiRenderer;
@@ -63,26 +60,16 @@ public class UIWikiPortlet extends UIPortletApplication {
   }
 
   public void processRender(WebuiApplication app, WebuiRequestContext context) throws Exception {
-    PortletRequestContext portletReqContext = (PortletRequestContext) context;
-
-    PortletRequestContext portletRequestContext = (PortletRequestContext) WebuiRequestContext.getCurrentInstance();
-    // HttpServletRequestWrapper requestWrapper = (HttpServletRequestWrapper)
-    // portletRequestContext.getRequest();
     PortalRequestContext portalRequestContext = Util.getPortalRequestContext();
-    HttpServletRequest request = portalRequestContext.getRequest();
-    HttpServletRequestWrapper requestWrapper = new HttpServletRequestWrapper(request);
     UIPortal uiPortal = Util.getUIPortal();
     String portalURI = portalRequestContext.getPortalURI();
-    String requestURI = requestWrapper.getRequestURI();
-    String requestURL = requestWrapper.getRequestURL().toString();
+    String requestURL = Utils.getCurrentRequestURL();
     String pageNodeSelected = uiPortal.getSelectedNode().getUri();
-    String siteName = uiPortal.getOwner();
     PageResolver pageResolver = (PageResolver) PortalContainer.getComponent(PageResolver.class);
     try {
       // TODO: ignore request URL of resources
       Page page = pageResolver.resolve(requestURL);
       context.setAttribute("wikiPage", page);
-      getChild(UIPageForm.class).setPage(page);
       getChild(UIPageForm.class).getChild(UIFormTextAreaInput.class).setValue(page.getContent().getText());
       
       MarkupRenderingService service = (MarkupRenderingService) PortalContainer.getComponent(MarkupRenderingService.class);

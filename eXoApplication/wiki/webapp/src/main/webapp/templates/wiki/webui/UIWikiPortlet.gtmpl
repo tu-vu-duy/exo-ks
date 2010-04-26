@@ -2,26 +2,16 @@
   import org.exoplatform.wiki.mow.api.Page;
 %>
 <div class="UIWikiPortlet" id="$uicomponent.id">
-	<div class="ParentMaskLayer">
-		<div id="MaskLayerWikiPOC" class="MaskLayerWikiPOC"><span></span></div>
-	</div>
-	
-	<% Page page = _ctx.getRequestContext().getAttribute("wikiPage");	   
-	%>
-	<%= "owner: " + page.getOwner() %>
-		<hr/>
-		
-	<%
-		List children = uicomponent.getChildren() ;
-		for(component in children) {
-			if(component.isRendered()){
-				uicomponent.renderChild(component.getClass()) ; 
-			}
-		}
-	%>
-	<hr/>
-	
-	${uicomponent.htmlOutput}
-	
-
+  <div class="ParentMaskLayer">
+    <div id="MaskLayerWiki" class="MaskLayerWiki"><span></span></div>
+  </div>
+  <% Page page = _ctx.getRequestContext().getAttribute("wikiPage");%>
+  <%
+    List children = uicomponent.getChildren() ;
+    for(component in children) {
+      if(component.isRendered()){
+        uicomponent.renderChild(component.getClass()) ;
+      }
+    }
+  %>
 </div>

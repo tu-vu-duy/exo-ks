@@ -43,20 +43,15 @@ import org.xwiki.context.ExecutionContext;
 
 @ComponentConfig(lifecycle = UIApplicationLifecycle.class, template = "app:/templates/wiki/webui/UIWikiPortlet.gtmpl")
 public class UIWikiPortlet extends UIPortletApplication {
-
-  private String htmlOutput;
-
   public UIWikiPortlet() throws Exception {
     super();
-    addChild(UIPageForm.class, null, null).setRendered(true);
-  }
-
-  public String getHtmlOutput() {
-    return htmlOutput;
-  }
-
-  public void setHtmlOutput(String output) {
-    this.htmlOutput = output;
+    try {
+      addChild(UIWikiUpperArea.class, null, null).setRendered(true);
+      addChild(UIWikiPageArea.class, null, null).setRendered(true);
+      addChild(UIWikiBottomArea.class, null, null).setRendered(true);
+    } catch (Exception e) {
+      log.error("An exception happens when init WikiPortlet", e);
+    }
   }
 
   public void processRender(WebuiApplication app, WebuiRequestContext context) throws Exception {
@@ -70,7 +65,7 @@ public class UIWikiPortlet extends UIPortletApplication {
       // TODO: ignore request URL of resources
       Page page = pageResolver.resolve(requestURL);
       context.setAttribute("wikiPage", page);
-      getChild(UIPageForm.class).getChild(UIFormTextAreaInput.class).setValue(page.getContent().getText());
+      findFirstComponentOfType(UIPageForm.class).getChild(UIFormTextAreaInput.class).setValue(page.getContent().getText());
       
       MarkupRenderingService service = (MarkupRenderingService) PortalContainer.getComponent(MarkupRenderingService.class);
       XWikiRenderer renderer = (XWikiRenderer) service.getRenderer("xwiki");
@@ -85,8 +80,8 @@ public class UIWikiPortlet extends UIPortletApplication {
       wikiContext.setPageId(params.getPageId());
       ec.getContext().setProperty("wikicontext", wikiContext);
 
-      String output = getChild(UIPageForm.class).renderWikiMarkup(page.getContent().getText());
-      setHtmlOutput(output);
+      String output = findFirstComponentOfType(UIPageForm.class).renderWikiMarkup(page.getContent().getText());
+      findFirstComponentOfType(UIWikiPageContentArea.class).setHtmlOutput(output);
     } catch (Exception e) {
       context.setAttribute("wikiPage", null);
       if (log.isWarnEnabled()) {

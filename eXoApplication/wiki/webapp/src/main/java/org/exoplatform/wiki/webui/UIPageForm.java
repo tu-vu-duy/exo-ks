@@ -66,9 +66,9 @@ public class UIPageForm extends UIForm {
       
       String output = thisForm.renderWikiMarkup(markup);
 
-      UIWikiPortlet parent = thisForm.getParent();
-      parent.setHtmlOutput(output);
-      event.getRequestContext().addUIComponentToUpdateByAjax(parent);
+      UIWikiPageContentArea pageContent = ((UIWikiPageArea)thisForm.getParent()).getChild(UIWikiPageContentArea.class);
+      pageContent.setHtmlOutput(output);
+      event.getRequestContext().addUIComponentToUpdateByAjax(pageContent);
 
     }
 

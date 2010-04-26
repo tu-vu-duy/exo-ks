@@ -27,6 +27,7 @@ import org.chromattic.api.annotations.OneToOne;
 import org.chromattic.api.annotations.PrimaryType;
 import org.exoplatform.wiki.mow.api.WikiNodeType;
 import org.exoplatform.wiki.mow.core.api.WikiStoreImpl;
+import org.exoplatform.wiki.utils.Utils;
 
 /**
  * @author <a href="mailto:patrice.lamarque@exoplatform.com">Patrice
@@ -49,10 +50,7 @@ public abstract class PortalWikiContainer extends WikiContainer<PortalWiki> {
     ChromatticSession session = getMultiWiki().getSession();
     Node wikiNode = null;
     try {
-      Node rootNode = session.getJCRSession().getRootNode();
-      Node wikisNode = rootNode.getNode("exo:applications" + "/"
-          + WikiNodeType.Definition.WIKI_APPLICATION + "/"
-          + "wikis");
+      Node wikisNode = (Node)session.getJCRSession().getItem(Utils.getPortalWikisPath()) ;
       try {
         wikiNode = wikisNode.getNode(wikiOwner);
       } catch (PathNotFoundException e) {

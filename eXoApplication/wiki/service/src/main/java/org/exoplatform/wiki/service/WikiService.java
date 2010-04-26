@@ -18,8 +18,8 @@ package org.exoplatform.wiki.service;
 
 import java.util.List;
 
-import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.commons.utils.PageList;
+import org.exoplatform.wiki.mow.api.Page;
 
 /**
  * Created by The eXo Platform SARL.
@@ -31,8 +31,8 @@ import org.exoplatform.commons.utils.PageList;
  * @since   Mar 04, 2010
  */
 public interface WikiService {
-  
-	public void createPage(String wikiType, String wikiOwner, Page page, String parentId) throws Exception ;
+	
+	public Page createPage(String wikiType, String wikiOwner, String title, String parentId) throws Exception ;	
 	public void deletePage(String wikiType, String wikiOwner, String pageId) throws Exception ;
 	public boolean movePage(String pageId, String newParentId) throws Exception ;
 	

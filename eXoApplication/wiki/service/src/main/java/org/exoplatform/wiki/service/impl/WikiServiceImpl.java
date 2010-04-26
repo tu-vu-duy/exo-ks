@@ -1,27 +1,33 @@
 package org.exoplatform.wiki.service.impl;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.exoplatform.commons.utils.PageList;
 import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.portal.config.model.PortalConfig;
+import org.exoplatform.services.jcr.ext.hierarchy.NodeHierarchyCreator;
 import org.exoplatform.wiki.mow.api.Model;
 import org.exoplatform.wiki.mow.api.Page;
-import org.exoplatform.wiki.mow.api.WikiType;
 import org.exoplatform.wiki.mow.core.api.MOWService;
 import org.exoplatform.wiki.mow.core.api.WikiStoreImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
-import org.exoplatform.wiki.mow.core.api.wiki.PortalWiki;
-import org.exoplatform.wiki.mow.core.api.wiki.WikiContainer;
-import org.exoplatform.wiki.mow.core.api.wiki.WikiHome;
 import org.exoplatform.wiki.service.BreadcumbData;
 import org.exoplatform.wiki.service.SearchData;
 import org.exoplatform.wiki.service.WikiService;
+import org.exoplatform.wiki.utils.Utils;
 
 public class WikiServiceImpl implements WikiService{
-
-  public void createPage(String wikiType, String wikiOwner, Page page, String parentId) throws Exception {
-    // TODO Auto-generated method stub
+  
+  private NodeHierarchyCreator nodeCreator ;
+  
+  public WikiServiceImpl(NodeHierarchyCreator creator) {
+    nodeCreator = creator ;
+  }
+  
+  public Page createPage(String wikiType, String wikiOwner, String title, String parentId) throws Exception {
     
+    return null ;
   }
 
   public void deletePage(String wikiType, String wikiOwner, String pageId) throws Exception {
@@ -39,14 +45,28 @@ public class WikiServiceImpl implements WikiService{
     MOWService mowService = (MOWService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(MOWService.class);
     Model model = mowService.getModel();
     WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
-    PageImpl wikipage = null;
-    if("portal".equalsIgnoreCase(wikiType)){
-      WikiContainer<PortalWiki> portalWikiContainer = wStore.getWikiContainer(WikiType.PORTAL);
-      PortalWiki wiki = portalWikiContainer.getWiki(wikiOwner);
-      WikiHome wikiHomePage = wiki.getWikiHome();
-      wikipage = wikiHomePage.getWikiPage(pageId);
+    PageImpl wikiPage = null;    
+    
+    String path = null;
+    if(wikiType.equals(PortalConfig.PORTAL_TYPE)) {
+      path = Utils.getPortalWikisPath() ;      
+      
+    }else if(wikiType.equals(PortalConfig.GROUP_TYPE)) {
+      path = nodeCreator.getJcrPath("groupsPath") ;      
+      
+    }else if(wikiType.equals(PortalConfig.USER_TYPE)) {
+      path = nodeCreator.getJcrPath("usersPath") ;
+      
     }
-    return wikipage;
+    if(path != null) {
+      path = path + "/" + wikiOwner ;      
+      Iterator<PageImpl> result = 
+        wStore.getSession()
+        .createQueryBuilder(PageImpl.class)
+        .where("jcr:path LIKE '"+ path + "/%'" + " AND pageId='" + pageId + "'").get().objects() ;
+      if(result.hasNext()) wikiPage = result.next() ;
+    }
+    return wikiPage;
   }
 
   public Page getPageByUUID(String uuid) throws Exception {

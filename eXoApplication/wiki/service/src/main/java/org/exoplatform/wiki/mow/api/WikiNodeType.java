@@ -56,7 +56,9 @@ public interface WikiNodeType {
 
   public interface Definition {
     
-    public final static String WIKI_APPLICATION           = "eXoWiki";
+    public final static String WIKI_APPLICATION     = "eXoWiki";
+    
+    public final static String WIKIS                = "wikis";
 
     public final static String WIKI_STORE_NAME            = "wikimetadata";
 

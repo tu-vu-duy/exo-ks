@@ -84,6 +84,8 @@ public class UIWikiPortlet extends UIPortletApplication {
       findFirstComponentOfType(UIWikiPageContentArea.class).setHtmlOutput(output);
     } catch (Exception e) {
       context.setAttribute("wikiPage", null);
+      findFirstComponentOfType(UIPageForm.class).getChild(UIFormTextAreaInput.class).setValue(null);
+      findFirstComponentOfType(UIWikiPageContentArea.class).setHtmlOutput(null);
       if (log.isWarnEnabled()) {
         log.warn("An exception happens when resolving URL: " + requestURL, e);
       }

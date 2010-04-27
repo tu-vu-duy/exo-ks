@@ -43,6 +43,9 @@ import org.xwiki.context.ExecutionContext;
 
 @ComponentConfig(lifecycle = UIApplicationLifecycle.class, template = "app:/templates/wiki/webui/UIWikiPortlet.gtmpl")
 public class UIWikiPortlet extends UIPortletApplication {
+  
+  private WikiMode mode = WikiMode.VIEW;
+  
   public UIWikiPortlet() throws Exception {
     super();
     try {
@@ -111,5 +114,13 @@ public class UIWikiPortlet extends UIPortletApplication {
 
     super.processRender(app, context);
   }
-
+  
+  public WikiMode getWikiMode(){
+    return mode;
+  }
+  
+  public void setWikiMode(WikiMode wikiMode){
+    mode = wikiMode;
+  }
+  
 }

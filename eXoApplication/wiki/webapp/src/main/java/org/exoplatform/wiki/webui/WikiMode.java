@@ -16,23 +16,52 @@
  */
 package org.exoplatform.wiki.webui;
 
-import org.exoplatform.webui.config.annotation.ComponentConfig;
-import org.exoplatform.webui.core.UIContainer;
-import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
-import org.exoplatform.wiki.webui.control.UIPageToolBar;
+import java.util.Locale;
 
 /**
  * Created by The eXo Platform SAS
  * Author : viet nguyen
  *          viet.nguyen@exoplatform.com
- * Apr 26, 2010  
+ * Apr 27, 2010  
  */
-@ComponentConfig(
-  lifecycle = UIApplicationLifecycle.class,
-  template = "app:/templates/wiki/webui/UIWikiPageControlArea.gtmpl"
-)
-public class UIWikiPageControlArea extends UIContainer {
-  public UIWikiPageControlArea() throws Exception {
-    addChild(UIPageToolBar.class, null, null);
+public class WikiMode {
+  
+  public static final WikiMode EDIT = new WikiMode("edit");
+  
+  public static final WikiMode VIEW = new WikiMode("view");
+
+  private String name;
+
+  public WikiMode(String name)
+  {
+     if (name == null)
+     {
+        throw new NullPointerException();
+     }
+     this.name = name.toLowerCase(Locale.ENGLISH);
+  }
+
+  public boolean equals(Object o)
+  {
+     if (o == this)
+     {
+        return true;
+     }
+     if (o instanceof WikiMode)
+     {
+       WikiMode that = (WikiMode)o;
+        return name.equals(that.name);
+     }
+     return false;
+  }
+
+  public int hashCode()
+  {
+     return name.hashCode();
+  }
+
+  public String toString()
+  {
+     return name;
   }
 }

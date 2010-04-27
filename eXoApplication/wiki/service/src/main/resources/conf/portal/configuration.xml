@@ -49,6 +49,11 @@
     <type>org.exoplatform.wiki.rendering.xwiki.XWikiRenderer</type>
   </component>
   
+  <component>
+    <key>org.exoplatform.webui.ext.UIExtensionManager</key>
+    <type>org.exoplatform.webui.ext.impl.UIExtensionManagerImpl</type>
+  </component>
+  
   <!-- Only used for debugging and tracing -->
   <!--component>
     <key>org.exoplatform.services.log.LogConfigurationInitializer</key>
@@ -156,6 +161,73 @@
       <set-method>setResolverPlugin</set-method>
       <type>org.exoplatform.wiki.resolver.URLResolver</type>      
     </component-plugin>    
+  </external-component-plugins>
+  
+  <external-component-plugins>
+    <target-component>org.exoplatform.webui.ext.UIExtensionManager</target-component>
+    <component-plugin>
+      <name>add.action</name>
+      <set-method>registerUIExtensionPlugin</set-method>
+      <type>org.exoplatform.webui.ext.UIExtensionPlugin</type>
+      <init-params>
+        <object-param>
+          <name>AddPage</name>
+          <object type="org.exoplatform.webui.ext.UIExtension">
+            <field name="type"><string>org.exoplatform.wiki.UIPageToolBar</string></field>
+            <field name="name"><string>AddPage</string></field>
+            <field name="component"><string>org.exoplatform.wiki.webui.control.action.AddPageActionComponent</string></field>
+          </object>
+        </object-param>
+        <object-param>
+          <name>EditPage</name>
+          <object type="org.exoplatform.webui.ext.UIExtension">
+            <field name="type"><string>org.exoplatform.wiki.UIPageToolBar</string></field>
+            <field name="name"><string>EditPage</string></field>
+            <field name="component"><string>org.exoplatform.wiki.webui.control.action.EditPageActionComponent</string></field>
+          </object>
+        </object-param>
+        <object-param>
+          <name>DeletePage</name>
+          <object type="org.exoplatform.webui.ext.UIExtension">
+            <field name="type"><string>org.exoplatform.wiki.UIPageToolBar</string></field>
+            <field name="name"><string>DeletePage</string></field>
+            <field name="component"><string>org.exoplatform.wiki.webui.control.action.DeletePageActionComponent</string></field>
+          </object>
+        </object-param>
+        <object-param>
+          <name>AttachFile</name>
+          <object type="org.exoplatform.webui.ext.UIExtension">
+            <field name="type"><string>org.exoplatform.wiki.UIPageToolBar</string></field>
+            <field name="name"><string>AttachFile</string></field>
+            <field name="component"><string>org.exoplatform.wiki.webui.control.action.AttachFileActionComponent</string></field>
+          </object>
+        </object-param>
+        <object-param>
+          <name>PreviewPage</name>
+          <object type="org.exoplatform.webui.ext.UIExtension">
+            <field name="type"><string>org.exoplatform.wiki.UIPageToolBar</string></field>
+            <field name="name"><string>PreviewPage</string></field>
+            <field name="component"><string>org.exoplatform.wiki.webui.control.action.PreviewPageActionComponent</string></field>
+          </object>
+        </object-param>
+        <object-param>
+          <name>SavePage</name>
+          <object type="org.exoplatform.webui.ext.UIExtension">
+            <field name="type"><string>org.exoplatform.wiki.UIPageToolBar</string></field>
+            <field name="name"><string>SavePage</string></field>
+            <field name="component"><string>org.exoplatform.wiki.webui.control.action.SavePageActionComponent</string></field>
+          </object>
+        </object-param>
+        <object-param>
+          <name>HelpAction</name>
+          <object type="org.exoplatform.webui.ext.UIExtension">
+            <field name="type"><string>org.exoplatform.wiki.UIPageToolBar</string></field>
+            <field name="name"><string>HelpAction</string></field>
+            <field name="component"><string>org.exoplatform.wiki.webui.control.action.HelpActionComponent</string></field>
+          </object>
+        </object-param>
+      </init-params>
+    </component-plugin>
   </external-component-plugins>
   
 </configuration>

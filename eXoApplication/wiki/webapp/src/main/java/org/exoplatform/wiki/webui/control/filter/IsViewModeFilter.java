@@ -18,8 +18,10 @@ package org.exoplatform.wiki.webui.control.filter;
 
 import java.util.Map;
 
-import org.exoplatform.webui.ext.filter.UIExtensionFilter;
+import org.exoplatform.webui.ext.filter.UIExtensionAbstractFilter;
 import org.exoplatform.webui.ext.filter.UIExtensionFilterType;
+import org.exoplatform.wiki.webui.UIWikiPortlet;
+import org.exoplatform.wiki.webui.WikiMode;
 
 /**
  * Created by The eXo Platform SAS
@@ -27,24 +29,26 @@ import org.exoplatform.webui.ext.filter.UIExtensionFilterType;
  *          viet.nguyen@exoplatform.com
  * Apr 26, 2010  
  */
-public class IsViewModeFilter implements UIExtensionFilter {
+public class IsViewModeFilter extends UIExtensionAbstractFilter {
 
+  public IsViewModeFilter() {
+    this(null);
+  }
+  
+  public IsViewModeFilter(String messageKey) {
+    super(messageKey, UIExtensionFilterType.MANDATORY);
+  }
+  
   @Override
   public boolean accept(Map<String, Object> context) throws Exception {
-    // TODO Auto-generated method stub
-    return false;
-  }
-
-  @Override
-  public UIExtensionFilterType getType() {
-    // TODO Auto-generated method stub
-    return null;
+    UIWikiPortlet wikiPortlet = (UIWikiPortlet) context.get(UIWikiPortlet.class.getName());
+    return(wikiPortlet.getWikiMode() == WikiMode.VIEW);
   }
 
   @Override
   public void onDeny(Map<String, Object> context) throws Exception {
     // TODO Auto-generated method stub
-
+    
   }
 
 }

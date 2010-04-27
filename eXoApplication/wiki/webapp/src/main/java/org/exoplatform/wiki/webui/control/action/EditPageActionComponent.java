@@ -25,7 +25,7 @@ import org.exoplatform.webui.core.UIComponent;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.ext.filter.UIExtensionFilter;
 import org.exoplatform.webui.ext.filter.UIExtensionFilters;
-import org.exoplatform.wiki.webui.control.filter.IsEditModeFilter;
+import org.exoplatform.wiki.webui.control.filter.IsViewModeFilter;
 import org.exoplatform.wiki.webui.control.listener.UIPageToolBarActionListener;
 
 /**
@@ -41,7 +41,7 @@ import org.exoplatform.wiki.webui.control.listener.UIPageToolBarActionListener;
 )
 public class EditPageActionComponent extends UIComponent {
 
-  private static final List<UIExtensionFilter> FILTERS = Arrays.asList(new UIExtensionFilter[] { new IsEditModeFilter() });
+  private static final List<UIExtensionFilter> FILTERS = Arrays.asList(new UIExtensionFilter[] { new IsViewModeFilter() });
 
   @UIExtensionFilters
   public List<UIExtensionFilter> getFilters() {

@@ -16,7 +16,17 @@
  */
 package org.exoplatform.wiki.webui.control.action;
 
+import java.util.Arrays;
+import java.util.List;
+
+import org.exoplatform.webui.config.annotation.ComponentConfig;
+import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIComponent;
+import org.exoplatform.webui.event.Event;
+import org.exoplatform.webui.ext.filter.UIExtensionFilter;
+import org.exoplatform.webui.ext.filter.UIExtensionFilters;
+import org.exoplatform.wiki.webui.control.filter.IsEditModeFilter;
+import org.exoplatform.wiki.webui.control.listener.UIPageToolBarActionListener;
 
 /**
  * Created by The eXo Platform SAS
@@ -24,6 +34,25 @@ import org.exoplatform.webui.core.UIComponent;
  *          viet.nguyen@exoplatform.com
  * Apr 26, 2010  
  */
+@ComponentConfig(
+  events = {
+    @EventConfig(listeners = HelpActionComponent.HelpActionListener.class)
+  }
+)
 public class HelpActionComponent extends UIComponent {
 
+  private static final List<UIExtensionFilter> FILTERS = Arrays.asList(new UIExtensionFilter[] { new IsEditModeFilter() });
+
+  @UIExtensionFilters
+  public List<UIExtensionFilter> getFilters() {
+    return FILTERS;
+  }
+  
+  public static class HelpActionListener extends UIPageToolBarActionListener<HelpActionComponent> {
+    @Override
+    protected void processEvent(Event<HelpActionComponent> event) throws Exception {
+      // TODO Auto-generated method stub
+      super.processEvent(event);
+    }
+  }
 }

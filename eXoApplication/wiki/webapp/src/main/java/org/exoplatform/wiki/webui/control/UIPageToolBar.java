@@ -16,8 +16,10 @@
  */
 package org.exoplatform.wiki.webui.control;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.exoplatform.webui.config.annotation.ComponentConfig;
@@ -26,6 +28,7 @@ import org.exoplatform.webui.core.UIContainer;
 import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
 import org.exoplatform.webui.ext.UIExtension;
 import org.exoplatform.webui.ext.UIExtensionManager;
+import org.exoplatform.wiki.webui.UIWikiPortlet;
 
 /**
  * Created by The eXo Platform SAS
@@ -44,10 +47,13 @@ public class UIPageToolBar extends UIContainer {
   public Map<String, UIComponent> getActions() throws Exception {
     Map<String, UIComponent> activeActions = new ConcurrentHashMap<String, UIComponent>();
     UIExtensionManager manager = getApplicationComponent(UIExtensionManager.class);
+    Map<String, Object> context = new HashMap<String, Object>();
+    UIWikiPortlet wikiPortlet = getAncestorOfType(UIWikiPortlet.class);
+    context.put(UIWikiPortlet.class.getName(), wikiPortlet);
     List<UIExtension> extensions = manager.getUIExtensions(EXTENSION_TYPE);
     if (extensions != null) {
       for (UIExtension extension : extensions) {
-        UIComponent component = manager.addUIExtension(extension, null, this);
+        UIComponent component = manager.addUIExtension(extension, context, this);
         if (component != null) {
           activeActions.put(extension.getName(), component);
         }

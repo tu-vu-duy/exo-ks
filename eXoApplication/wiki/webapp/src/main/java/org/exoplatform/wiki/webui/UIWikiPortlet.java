@@ -25,7 +25,6 @@ import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.core.UIPortletApplication;
 import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
-import org.exoplatform.webui.form.UIFormTextAreaInput;
 import org.exoplatform.wiki.commons.Utils;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.rendering.MarkupRenderingService;
@@ -68,7 +67,8 @@ public class UIWikiPortlet extends UIPortletApplication {
       // TODO: ignore request URL of resources
       Page page = pageResolver.resolve(requestURL);
       context.setAttribute("wikiPage", page);
-      findFirstComponentOfType(UIPageForm.class).getChild(UIFormTextAreaInput.class).setValue(page.getContent().getText());
+      String output = findFirstComponentOfType(UIWikiPageContentArea.class).renderWikiMarkup(page.getContent().getText());
+      findFirstComponentOfType(UIWikiPageContentArea.class).setHtmlOutput(output);
       
       MarkupRenderingService service = (MarkupRenderingService) PortalContainer.getComponent(MarkupRenderingService.class);
       XWikiRenderer renderer = (XWikiRenderer) service.getRenderer("xwiki");
@@ -83,11 +83,8 @@ public class UIWikiPortlet extends UIPortletApplication {
       wikiContext.setPageId(params.getPageId());
       ec.getContext().setProperty("wikicontext", wikiContext);
 
-      String output = findFirstComponentOfType(UIPageForm.class).renderWikiMarkup(page.getContent().getText());
-      findFirstComponentOfType(UIWikiPageContentArea.class).setHtmlOutput(output);
     } catch (Exception e) {
       context.setAttribute("wikiPage", null);
-      findFirstComponentOfType(UIPageForm.class).getChild(UIFormTextAreaInput.class).setValue(null);
       findFirstComponentOfType(UIWikiPageContentArea.class).setHtmlOutput(null);
       if (log.isWarnEnabled()) {
         log.warn("An exception happens when resolving URL: " + requestURL, e);

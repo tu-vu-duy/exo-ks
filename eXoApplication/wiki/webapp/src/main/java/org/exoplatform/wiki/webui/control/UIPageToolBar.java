@@ -28,6 +28,7 @@ import org.exoplatform.webui.core.UIContainer;
 import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
 import org.exoplatform.webui.ext.UIExtension;
 import org.exoplatform.webui.ext.UIExtensionManager;
+import org.exoplatform.wiki.webui.UIWikiPageContentArea;
 import org.exoplatform.wiki.webui.UIWikiPortlet;
 
 /**
@@ -42,7 +43,7 @@ import org.exoplatform.wiki.webui.UIWikiPortlet;
 )
 public class UIPageToolBar extends UIContainer {
 
-  private static final String EXTENSION_TYPE = "org.exoplatform.wiki.UIPageToolBar";
+  public static final String EXTENSION_TYPE = "org.exoplatform.wiki.UIPageToolBar";
   
   public Map<String, UIComponent> getActions() throws Exception {
     Map<String, UIComponent> activeActions = new ConcurrentHashMap<String, UIComponent>();
@@ -60,6 +61,12 @@ public class UIPageToolBar extends UIContainer {
       }
     }
     return activeActions;
+  }
+  
+  public UIComponent getPageContentArea(){
+    UIWikiPortlet wikiPortlet = getAncestorOfType(UIWikiPortlet.class);
+    UIWikiPageContentArea pageContentArea = wikiPortlet.findFirstComponentOfType(UIWikiPageContentArea.class);
+    return pageContentArea;
   }
   
 }

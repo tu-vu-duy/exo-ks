@@ -16,9 +16,15 @@
  */
 package org.exoplatform.wiki.webui;
 
+import org.exoplatform.container.PortalContainer;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
-import org.exoplatform.webui.core.UIContainer;
-import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
+import org.exoplatform.webui.config.annotation.EventConfig;
+import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
+import org.exoplatform.webui.event.Event;
+import org.exoplatform.webui.event.EventListener;
+import org.exoplatform.webui.form.UIForm;
+import org.exoplatform.wiki.rendering.MarkupRenderingService;
+import org.exoplatform.wiki.rendering.Renderer;
 
 /**
  * Created by The eXo Platform SAS
@@ -27,12 +33,19 @@ import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
  * Apr 26, 2010  
  */
 @ComponentConfig(
-  lifecycle = UIApplicationLifecycle.class,
-  template = "app:/templates/wiki/webui/UIWikiPageContentArea.gtmpl"
+  lifecycle = UIFormLifecycle.class,
+  template = "app:/templates/wiki/webui/UIWikiPageContentArea.gtmpl",
+  events = {
+      @EventConfig(listeners = UIWikiPageContentArea.SubmitActionListener.class)
+    }
 )
-public class UIWikiPageContentArea extends UIContainer {
+public class UIWikiPageContentArea extends UIForm {
 
   private String htmlOutput;
+  
+  public UIWikiPageContentArea(){
+    setActions(new String[] { "Submit" });
+  }
   
   public String getHtmlOutput() {
     return htmlOutput;
@@ -42,4 +55,21 @@ public class UIWikiPageContentArea extends UIContainer {
     this.htmlOutput = output;
   }
   
+  public String renderWikiMarkup(String markup) throws Exception {
+    MarkupRenderingService renderingService = (MarkupRenderingService) PortalContainer.getComponent(MarkupRenderingService.class);
+    Renderer xwikiRenderer = renderingService.getRenderer("xwiki");
+    String output = xwikiRenderer.render(markup);
+    return output;
+  }
+  
+  public WikiMode getWikiMode(){
+    return getAncestorOfType(UIWikiPortlet.class).getWikiMode();
+  }
+  
+  static public class SubmitActionListener extends EventListener<UIWikiPageContentArea> {
+    @Override
+    public void execute(Event<UIWikiPageContentArea> event) throws Exception {
+    }
+    
+  }
 }

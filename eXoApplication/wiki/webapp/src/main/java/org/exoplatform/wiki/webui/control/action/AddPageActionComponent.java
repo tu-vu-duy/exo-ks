@@ -25,6 +25,8 @@ import org.exoplatform.webui.core.UIComponent;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.ext.filter.UIExtensionFilter;
 import org.exoplatform.webui.ext.filter.UIExtensionFilters;
+import org.exoplatform.wiki.webui.UIWikiPortlet;
+import org.exoplatform.wiki.webui.WikiMode;
 import org.exoplatform.wiki.webui.control.filter.IsViewModeFilter;
 import org.exoplatform.wiki.webui.control.listener.UIPageToolBarActionListener;
 
@@ -51,7 +53,8 @@ public class AddPageActionComponent extends UIComponent {
   public static class AddPageActionListener extends UIPageToolBarActionListener<AddPageActionComponent> {
     @Override
     protected void processEvent(Event<AddPageActionComponent> event) throws Exception {
-      // TODO Auto-generated method stub
+      UIWikiPortlet wikiPortlet = event.getSource().getAncestorOfType(UIWikiPortlet.class);
+      wikiPortlet.setWikiMode(WikiMode.EDIT);
       super.processEvent(event);
     }
   }

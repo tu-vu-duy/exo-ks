@@ -32,7 +32,6 @@ import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
 )
 public class UIWikiPageArea extends UIContainer {
   public UIWikiPageArea() throws Exception{
-    addChild(UIPageForm.class, null, null).setRendered(true);
     addChild(UIWikiPageContentArea.class, null, null).setRendered(true);
     addChild(UIWikiSidePanelArea.class, null, null).setRendered(true);
   }

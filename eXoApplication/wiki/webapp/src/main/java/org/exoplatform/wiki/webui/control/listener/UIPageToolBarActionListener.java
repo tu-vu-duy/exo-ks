@@ -16,11 +16,14 @@
  */
 package org.exoplatform.wiki.webui.control.listener;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.exoplatform.webui.core.UIComponent;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.ext.UIExtensionEventListener;
+import org.exoplatform.wiki.webui.UIWikiPortlet;
+import org.exoplatform.wiki.webui.control.UIPageToolBar;
 
 /**
  * Created by The eXo Platform SAS
@@ -32,14 +35,15 @@ public class UIPageToolBarActionListener<T extends UIComponent> extends UIExtens
 
   @Override
   protected Map<String, Object> createContext(Event<T> event) throws Exception {
-    // TODO Auto-generated method stub
-    return null;
+    Map<String, Object> context = new HashMap<String, Object>();
+    UIWikiPortlet wikiPortlet = event.getSource().getAncestorOfType(UIWikiPortlet.class);
+    context.put(UIWikiPortlet.class.getName(), wikiPortlet);
+    return context;
   }
 
   @Override
   protected String getExtensionType() {
-    // TODO Auto-generated method stub
-    return null;
+    return UIPageToolBar.EXTENSION_TYPE;
   }
 
   @Override

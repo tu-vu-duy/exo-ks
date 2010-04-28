@@ -19,12 +19,20 @@ package org.exoplatform.wiki.webui.control.action;
 import java.util.Arrays;
 import java.util.List;
 
+import org.exoplatform.container.PortalContainer;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIComponent;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.ext.filter.UIExtensionFilter;
 import org.exoplatform.webui.ext.filter.UIExtensionFilters;
+import org.exoplatform.webui.form.UIFormTextAreaInput;
+import org.exoplatform.wiki.commons.Utils;
+import org.exoplatform.wiki.mow.api.Page;
+import org.exoplatform.wiki.resolver.PageResolver;
+import org.exoplatform.wiki.webui.UIWikiPageContentArea;
+import org.exoplatform.wiki.webui.UIWikiPortlet;
+import org.exoplatform.wiki.webui.WikiMode;
 import org.exoplatform.wiki.webui.control.filter.IsEditModeFilter;
 import org.exoplatform.wiki.webui.control.listener.UIPageToolBarActionListener;
 
@@ -51,7 +59,21 @@ public class SavePageActionComponent extends UIComponent {
   public static class SavePageActionListener extends UIPageToolBarActionListener<SavePageActionComponent> {
     @Override
     protected void processEvent(Event<SavePageActionComponent> event) throws Exception {
-      // TODO Auto-generated method stub
+      UIWikiPortlet wikiPortlet = event.getSource().getAncestorOfType(UIWikiPortlet.class);
+      UIWikiPageContentArea pageContentArea = wikiPortlet.findFirstComponentOfType(UIWikiPageContentArea.class);
+      UIFormTextAreaInput markupInput = pageContentArea.findComponentById("Markup");
+      String markup = markupInput.getValue();
+      pageContentArea.removeChildById("Markup");
+      
+      String requestURL = Utils.getCurrentRequestURL();
+      PageResolver pageResolver = (PageResolver) PortalContainer.getComponent(PageResolver.class);
+      Page page = pageResolver.resolve(requestURL);
+      page.getContent().setText(markup);
+      
+      String output = pageContentArea.renderWikiMarkup(markup);
+      pageContentArea.setHtmlOutput(output);
+      
+      wikiPortlet.setWikiMode(WikiMode.VIEW);
       super.processEvent(event);
     }
   }

@@ -5,7 +5,15 @@
 		<div class="HorizontalLayout">
 			<div class="UIFormInput">
 				<table class="UIFormGrid">
-					<tbody>						
+					<tbody>
+						   <tr>
+									<td class="FieldLabel">
+											Title
+									</td>
+									<td class="FieldComponent">
+											<%uiform.renderField("Title"); %>
+									</td>
+							</tr>						
 							<tr>
 									<td class="FieldLabel">
 											Markup
@@ -13,10 +21,6 @@
 									<td class="FieldComponent">
 											<%uiform.renderField("Markup"); %>
 									</td>
-									
-									
-									
-									
 							</tr>
 					</tbody>
 				</table>

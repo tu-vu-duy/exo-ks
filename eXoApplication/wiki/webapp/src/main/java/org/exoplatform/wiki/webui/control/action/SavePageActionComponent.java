@@ -20,8 +20,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.exoplatform.container.PortalContainer;
+import org.exoplatform.web.application.ApplicationMessage;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
+import org.exoplatform.webui.core.UIApplication;
 import org.exoplatform.webui.core.UIComponent;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.ext.filter.UIExtensionFilter;
@@ -30,6 +32,9 @@ import org.exoplatform.webui.form.UIFormTextAreaInput;
 import org.exoplatform.wiki.commons.Utils;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.resolver.PageResolver;
+import org.exoplatform.wiki.service.WikiPageParams;
+import org.exoplatform.wiki.service.WikiService;
+import org.exoplatform.wiki.webui.PageMode;
 import org.exoplatform.wiki.webui.UIWikiPageContentArea;
 import org.exoplatform.wiki.webui.UIWikiPortlet;
 import org.exoplatform.wiki.webui.WikiMode;
@@ -60,20 +65,37 @@ public class SavePageActionComponent extends UIComponent {
     @Override
     protected void processEvent(Event<SavePageActionComponent> event) throws Exception {
       UIWikiPortlet wikiPortlet = event.getSource().getAncestorOfType(UIWikiPortlet.class);
+      UIApplication uiApp = event.getSource().getAncestorOfType(UIApplication.class);
       UIWikiPageContentArea pageContentArea = wikiPortlet.findFirstComponentOfType(UIWikiPageContentArea.class);
-      UIFormTextAreaInput markupInput = pageContentArea.findComponentById("Markup");
+      UIFormTextAreaInput titleInput = pageContentArea.findComponentById(UIWikiPageContentArea.FIELD_TITLE);
+      UIFormTextAreaInput markupInput = pageContentArea.findComponentById(UIWikiPageContentArea.FIELD_CONTENT);
+      String title = titleInput.getValue();
       String markup = markupInput.getValue();
-      pageContentArea.removeChildById("Markup");
       
-      String requestURL = Utils.getCurrentRequestURL();
-      PageResolver pageResolver = (PageResolver) PortalContainer.getComponent(PageResolver.class);
-      Page page = pageResolver.resolve(requestURL);
-      page.getContent().setText(markup);
-      
-      String output = pageContentArea.renderWikiMarkup(markup);
-      pageContentArea.setHtmlOutput(output);
+      try {
+        String requestURL = Utils.getCurrentRequestURL();
+        PageResolver pageResolver = (PageResolver) PortalContainer.getComponent(PageResolver.class);
+        Page page = pageResolver.resolve(requestURL);
+        if (pageContentArea.getPageMode() == PageMode.EXISTED) {
+          page.getContent().setText(markup);
+        } else if (pageContentArea.getPageMode() == PageMode.NEW) {
+          WikiService wikiService = (WikiService) PortalContainer.getComponent(WikiService.class);
+          WikiPageParams pageParams = pageResolver.extractWikiPageParams(requestURL);
+          Page subPage = wikiService.createPage(pageParams.getType(), pageParams.getOwner(), title, page.getPageId());
+          subPage.getContent().setText(markup);
+        }
+        String output = pageContentArea.renderWikiMarkup(markup);
+        pageContentArea.setHtmlOutput(output);
+      } catch (Exception e) {
+        e.printStackTrace();
+        uiApp.addMessage(new ApplicationMessage("UIPageToolBar.msg.Exception", null, ApplicationMessage.ERROR));
+        event.getRequestContext().addUIComponentToUpdateByAjax(uiApp.getUIPopupMessages());
+        return;
+      }
       
       wikiPortlet.setWikiMode(WikiMode.VIEW);
+      pageContentArea.removeChildById(UIWikiPageContentArea.FIELD_TITLE);
+      pageContentArea.removeChildById(UIWikiPageContentArea.FIELD_CONTENT);
       super.processEvent(event);
     }
   }

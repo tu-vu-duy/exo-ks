@@ -42,11 +42,23 @@ import org.exoplatform.wiki.rendering.Renderer;
 public class UIWikiPageContentArea extends UIForm {
 
   private String htmlOutput;
+  private PageMode pageMode = PageMode.NEW;
+  
+  public static final String FIELD_TITLE   = "Title";
+  public static final String FIELD_CONTENT = "Markup";
   
   public UIWikiPageContentArea(){
     setActions(new String[] { "Submit" });
   }
-  
+
+  public PageMode getPageMode() {
+    return pageMode;
+  }
+
+  public void setPageMode(PageMode pageMode) {
+    this.pageMode = pageMode;
+  }
+
   public String getHtmlOutput() {
     return htmlOutput;
   }

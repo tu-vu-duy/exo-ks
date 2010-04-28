@@ -25,6 +25,9 @@ import org.exoplatform.webui.core.UIComponent;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.ext.filter.UIExtensionFilter;
 import org.exoplatform.webui.ext.filter.UIExtensionFilters;
+import org.exoplatform.webui.form.UIFormTextAreaInput;
+import org.exoplatform.wiki.webui.PageMode;
+import org.exoplatform.wiki.webui.UIWikiPageContentArea;
 import org.exoplatform.wiki.webui.UIWikiPortlet;
 import org.exoplatform.wiki.webui.WikiMode;
 import org.exoplatform.wiki.webui.control.filter.IsViewModeFilter;
@@ -54,6 +57,17 @@ public class AddPageActionComponent extends UIComponent {
     @Override
     protected void processEvent(Event<AddPageActionComponent> event) throws Exception {
       UIWikiPortlet wikiPortlet = event.getSource().getAncestorOfType(UIWikiPortlet.class);
+      UIWikiPageContentArea pageContentArea = wikiPortlet.findFirstComponentOfType(UIWikiPageContentArea.class);
+      UIFormTextAreaInput titleInput = new UIFormTextAreaInput(UIWikiPageContentArea.FIELD_TITLE,
+                                                               UIWikiPageContentArea.FIELD_TITLE,
+                                                               "Title");
+      UIFormTextAreaInput markupInput = new UIFormTextAreaInput(UIWikiPageContentArea.FIELD_CONTENT,
+                                                                UIWikiPageContentArea.FIELD_CONTENT,
+                                                                "This is **sample content**");
+      pageContentArea.setPageMode(PageMode.NEW);
+      pageContentArea.addUIFormInput(titleInput).setRendered(true);
+      pageContentArea.addUIFormInput(markupInput).setRendered(true);
+      
       wikiPortlet.setWikiMode(WikiMode.EDIT);
       super.processEvent(event);
     }

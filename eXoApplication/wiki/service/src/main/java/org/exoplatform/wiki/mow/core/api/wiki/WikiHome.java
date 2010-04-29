@@ -52,11 +52,11 @@ public abstract class WikiHome extends PageImpl {
   @MappedBy(WikiNodeType.Definition.WIKI_HOME_NAME)
   public abstract UserWiki getUserWiki();
   
-  public void addWikiPage(PageImpl wikiPage) throws DuplicateNameException {
+  /*public void addWikiPage(PageImpl wikiPage) throws DuplicateNameException {
     getChildPages().add(wikiPage);
   }
-  
-  public PageImpl getWikiPage(String pageId){
+  */
+  /*public PageImpl getWikiPage(String pageId){
     if(WikiNodeType.Definition.WIKI_HOME_NAME.equalsIgnoreCase(pageId)){
       return this;
     }
@@ -66,7 +66,7 @@ public abstract class WikiHome extends PageImpl {
       if (pageId.equals(page.getPageId()))  return page ;         
     }
     return null ;
-  }
+  }*/
   
   
 }

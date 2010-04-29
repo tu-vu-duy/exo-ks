@@ -17,11 +17,13 @@
 package org.exoplatform.wiki.mow.core.api;
 
 import org.exoplatform.wiki.mow.api.Model;
+import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.mow.api.WikiType;
 import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.PortalWiki;
 import org.exoplatform.wiki.mow.core.api.wiki.WikiContainer;
 import org.exoplatform.wiki.mow.core.api.wiki.WikiHome;
+import org.exoplatform.wiki.service.WikiService;
 
 
 public class TestWikiPage extends AbstractMOWTestcase {
@@ -49,7 +51,7 @@ public class TestWikiPage extends AbstractMOWTestcase {
     assertSame(wikipage, wikiHomePage.getChildPages().iterator().next());
   }
   
-  public void testGetWikiPageById() {
+  public void testGetWikiPageById() throws Exception {
     Model model = mowService.getModel();
     WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
     WikiContainer<PortalWiki> portalWikiContainer = wStore.getWikiContainer(WikiType.PORTAL);
@@ -60,7 +62,21 @@ public class TestWikiPage extends AbstractMOWTestcase {
     wikipage.setName("CreateWikiPage");
     wikiHomePage.addWikiPage(wikipage);
     wikipage.setPageId("CreateWikiPage-001") ;
-    assertNotNull(wikiHomePage.getWikiPage("CreateWikiPage-001")) ;    
+    
+    assertNotNull(wikiHomePage.getWikiPage("CreateWikiPage-001")) ;
+    
+    PageImpl subpage = wiki.createWikiPage();
+    subpage.setName("SubWikiPage") ;
+    wikipage.addWikiPage(subpage) ;
+    subpage.setPageId("SubWikiPage-001") ;
+        
+    assertNotNull(wikipage.getWikiPage("SubWikiPage-001")) ;
+    
+    model.save() ;
+    
+    WikiService wService = (WikiService)container.getComponentInstanceOfType(WikiService.class) ;
+    Page page = wService.getPageById("portal", "classic", "SubWikiPage-001") ;
+    assertNotNull(page) ;
   }
   
   public void testUpdateWikiPage() {
@@ -103,13 +119,5 @@ public class TestWikiPage extends AbstractMOWTestcase {
     
     deletePage.remove() ;
     assertNull(wikiHomePage.getWikiPage("delete-001")) ;    
-  }
-  
-  public void testHello() {
-    String str = "http://hostname/$CONTAINER/$ACCESS/$SITE/wiki/[$OWNER_TYPE/$OWNER]/$WIKI_PAGE_URI" ;
-    int i = str.indexOf("/wiki/") ;
-    System.out.println("http://hostname/$CONTAINER/$ACCESS/$SITE/wiki/[$OWNER_TYPE/$OWNER]/$WIKI_PAGE_URI");
-    System.out.println("i==" + i);
-    System.out.println("==>" + str.substring( i + "/wiki/".length()));
-  }
+  }  
 }

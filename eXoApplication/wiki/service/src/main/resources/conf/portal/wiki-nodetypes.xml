@@ -256,12 +256,12 @@
       <supertype>wiki:page</supertype>
     </supertypes>
     <propertyDefinitions>
-      <propertyDefinition name="owner" requiredType="String" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" multiple="false">
+      <!--propertyDefinition name="owner" requiredType="String" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" multiple="false">
         <valueConstraints/>
-      </propertyDefinition>
+      </propertyDefinition-->
     </propertyDefinitions>
     <childNodeDefinitions>
-      <childNodeDefinition name="content" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
+      <!--childNodeDefinition name="content" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
         <requiredPrimaryTypes>
           <requiredPrimaryType>wiki:content</requiredPrimaryType>
         </requiredPrimaryTypes>
@@ -270,7 +270,7 @@
         <requiredPrimaryTypes>
           <requiredPrimaryType>wiki:page</requiredPrimaryType>
         </requiredPrimaryTypes>
-      </childNodeDefinition>
+      </childNodeDefinition-->
     </childNodeDefinitions>
   </nodeType>  
 </nodeTypes>

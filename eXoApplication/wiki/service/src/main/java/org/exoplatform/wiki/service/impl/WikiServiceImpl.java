@@ -3,6 +3,7 @@ package org.exoplatform.wiki.service.impl;
 import java.util.Iterator;
 import java.util.List;
 
+import org.chromattic.api.ChromatticSession;
 import org.exoplatform.commons.utils.PageList;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.portal.config.model.PortalConfig;
@@ -33,33 +34,61 @@ public class WikiServiceImpl implements WikiService{
   }
   
   public Page createPage(String wikiType, String wikiOwner, String title, String parentId) throws Exception {
-    /*Page parentPage = getPageById(wikiType, wikiOwner, parentId) ;
-    PageImpl childPage = (PageImpl)createPage(wikiType, wikiOwner) ;
-    childPage.setName(title) ;
-    ((PageImpl)parentPage).addWikiPage(childPage) ;    
-    return childPage ;*/
-    return null ;
-  }
-  
-  private PageImpl createPage(String wikiType, String owner) throws Exception {
+    
     MOWService mowService = (MOWService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(MOWService.class);
     Model model = mowService.getModel();
     WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
+    PageImpl page = null ;
     if(wikiType.equals(PortalConfig.PORTAL_TYPE)) {
       WikiContainer<PortalWiki> portalWikiContainer = wStore.getWikiContainer(WikiType.PORTAL);
-      PortalWiki wiki = portalWikiContainer.getWiki(owner);
-      return wiki.createWikiPage() ;
+      PortalWiki wiki = portalWikiContainer.getWiki(wikiOwner);      
+      page = wiki.createWikiPage() ;
+    }else if(wikiType.equals(PortalConfig.GROUP_TYPE)) {
+      WikiContainer<GroupWiki> groupWikiContainer = wStore.getWikiContainer(WikiType.GROUP);
+      GroupWiki wiki = groupWikiContainer.getWiki(wikiOwner);
+      page = wiki.createWikiPage() ;
+    }else if(wikiType.equals(PortalConfig.USER_TYPE)) {
+      WikiContainer<UserWiki> userWikiContainer = wStore.getWikiContainer(WikiType.USER);
+      UserWiki wiki = userWikiContainer.getWiki(wikiOwner);
+      page = wiki.createWikiPage() ;
+    }    
+    
+    String statement = getStatement(wikiType, wikiOwner, parentId) ;
+    
+    PageImpl parentPage = null ;
+    if(statement != null) {            
+      Iterator<PageImpl> result = wStore.getSession()
+        .createQueryBuilder(PageImpl.class)
+        .where(statement).get().objects() ;
+      if(result.hasNext()) parentPage = result.next() ;
+    }
+    
+    if(parentPage == null) throw new Exception() ;
+    
+    page.setName(title) ;
+    parentPage.addWikiPage(page) ;
+    page.setPageId(title) ;    
+    
+    return page ;
+  }
+  
+  /*private PageImpl createPage(String wikiType, String owner, WikiStoreImpl wStore) throws Exception {
+    PageImpl page = null ;
+    if(wikiType.equals(PortalConfig.PORTAL_TYPE)) {
+      WikiContainer<PortalWiki> portalWikiContainer = wStore.getWikiContainer(WikiType.PORTAL);
+      PortalWiki wiki = portalWikiContainer.getWiki(owner);      
+      page = wiki.createWikiPage() ;
     }else if(wikiType.equals(PortalConfig.GROUP_TYPE)) {
       WikiContainer<GroupWiki> groupWikiContainer = wStore.getWikiContainer(WikiType.GROUP);
       GroupWiki wiki = groupWikiContainer.getWiki(owner);
-      return wiki.createWikiPage() ;
+      page = wiki.createWikiPage() ;
     }else if(wikiType.equals(PortalConfig.USER_TYPE)) {
       WikiContainer<UserWiki> userWikiContainer = wStore.getWikiContainer(WikiType.USER);
       UserWiki wiki = userWikiContainer.getWiki(owner);
-      return wiki.createWikiPage() ;
-    }
-    return null ;
-  }
+      page = wiki.createWikiPage() ;
+    }    
+    return page ;
+  }*/
   
   public void deletePage(String wikiType, String wikiOwner, String pageId) throws Exception {
     // TODO Auto-generated method stub
@@ -72,6 +101,23 @@ public class WikiServiceImpl implements WikiService{
   }
 
   public Page getPageById(String wikiType, String wikiOwner, String pageId) throws Exception {
+    String statement = getStatement(wikiType, wikiOwner, pageId);
+    
+    MOWService mowService = (MOWService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(MOWService.class);
+    Model model = mowService.getModel();
+    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
+    
+    if(statement != null) {
+      Page page = searchPage(statement, wStore.getSession()) ;
+      if(page == null && pageId.equals(WikiNodeType.Definition.WIKI_HOME_NAME)) {
+        return getWikiHome(wikiType, wikiOwner) ;        
+      }      
+      return page ;
+    }
+    return null;
+  }
+  
+  private String getStatement(String wikiType, String wikiOwner, String pageId) throws Exception  {
     String path = null;
     if(wikiType.equals(PortalConfig.PORTAL_TYPE)) {
       path = Utils.getPortalWikisPath() ;      
@@ -84,25 +130,18 @@ public class WikiServiceImpl implements WikiService{
     if(path != null) {
       path = path + "/" + wikiOwner ;
       String statement = "jcr:path LIKE '"+ path + "/%'" + " AND pageId='" + pageId + "'" ;
-      Page page = searchPage(statement) ;
-      if(page == null && pageId.equals(WikiNodeType.Definition.WIKI_HOME_NAME)) {
-        return getWikiHome(wikiType, wikiOwner) ;        
-      }
-      return page ;
+      return statement ;
     }
-    
-    
     return null;
   }
-
-  private Page searchPage(String statement) throws Exception {
+  
+  private PageImpl searchPage(String statement, ChromatticSession session) throws Exception {  
     MOWService mowService = (MOWService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(MOWService.class);
     Model model = mowService.getModel();
     WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
     PageImpl wikiPage = null;
-    if(statement != null) {            
-      Iterator<PageImpl> result = 
-        wStore.getSession()
+    if(statement != null) {
+      Iterator<PageImpl> result = wStore.getSession()
         .createQueryBuilder(PageImpl.class)
         .where(statement).get().objects() ;
       if(result.hasNext()) wikiPage = result.next() ;
@@ -117,14 +156,17 @@ public class WikiServiceImpl implements WikiService{
     if(wikiType.equals(PortalConfig.PORTAL_TYPE)) {
       WikiContainer<PortalWiki> portalWikiContainer = wStore.getWikiContainer(WikiType.PORTAL);
       PortalWiki wiki = portalWikiContainer.getWiki(owner);
+      model.save() ;
       return wiki.getWikiHome() ;
     }else if(wikiType.equals(PortalConfig.GROUP_TYPE)) {
       WikiContainer<GroupWiki> groupWikiContainer = wStore.getWikiContainer(WikiType.GROUP);
       GroupWiki wiki = groupWikiContainer.getWiki(owner);
+      model.save() ;
       return wiki.getWikiHome() ;
     }else if(wikiType.equals(PortalConfig.USER_TYPE)) {
       WikiContainer<UserWiki> userWikiContainer = wStore.getWikiContainer(WikiType.USER);
       UserWiki wiki = userWikiContainer.getWiki(owner);
+      model.save() ;
       return wiki.getWikiHome() ;
     }
     return null ;

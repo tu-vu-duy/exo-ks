@@ -14,6 +14,7 @@ import org.exoplatform.wiki.mow.api.WikiNodeType;
 import org.exoplatform.wiki.mow.api.WikiType;
 import org.exoplatform.wiki.mow.core.api.MOWService;
 import org.exoplatform.wiki.mow.core.api.WikiStoreImpl;
+import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.GroupWiki;
 import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.PortalWiki;
@@ -38,19 +39,23 @@ public class WikiServiceImpl implements WikiService{
     MOWService mowService = (MOWService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(MOWService.class);
     Model model = mowService.getModel();
     WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
+    ContentImpl content = null;
     PageImpl page = null ;
     if(wikiType.equals(PortalConfig.PORTAL_TYPE)) {
       WikiContainer<PortalWiki> portalWikiContainer = wStore.getWikiContainer(WikiType.PORTAL);
       PortalWiki wiki = portalWikiContainer.getWiki(wikiOwner);      
       page = wiki.createWikiPage() ;
+      content = wiki.createContent();
     }else if(wikiType.equals(PortalConfig.GROUP_TYPE)) {
       WikiContainer<GroupWiki> groupWikiContainer = wStore.getWikiContainer(WikiType.GROUP);
       GroupWiki wiki = groupWikiContainer.getWiki(wikiOwner);
       page = wiki.createWikiPage() ;
+      content = wiki.createContent();
     }else if(wikiType.equals(PortalConfig.USER_TYPE)) {
       WikiContainer<UserWiki> userWikiContainer = wStore.getWikiContainer(WikiType.USER);
       UserWiki wiki = userWikiContainer.getWiki(wikiOwner);
       page = wiki.createWikiPage() ;
+      content = wiki.createContent();
     }    
     
     String statement = getStatement(wikiType, wikiOwner, parentId) ;
@@ -64,10 +69,17 @@ public class WikiServiceImpl implements WikiService{
     }
     
     if(parentPage == null) throw new Exception() ;
+    // TODO: still don't know reason but following code is necessary.
+    String path = parentPage.getPath();
+    if (path.startsWith("/")) {
+      path = path.substring(1, path.length());
+    }
+    parentPage = wStore.getSession().findByPath(PageImpl.class, path);
     
     page.setName(title) ;
     parentPage.addWikiPage(page) ;
-    page.setPageId(title) ;    
+    page.setPageId(title) ;
+    page.setContent(content);
     
     return page ;
   }

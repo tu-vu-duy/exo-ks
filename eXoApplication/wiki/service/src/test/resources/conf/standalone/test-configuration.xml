@@ -76,6 +76,10 @@
           value="%d{dd.MM.yyyy HH:mm:ss} *%-5p* [%t] %c{1}: %m (%F, line %L) %n"/>
 
         <property name="log4j.category.jcr.FileCleaner" value="DEBUG"/>
+        <!--property name="log4j.category.org.chromattic.core.api.ChromatticSessionImpl" value="TRACE"/>
+        <property name="log4j.category.jcr.NodeImpl" value="DEBUG"/>
+        <property name="log4j.category.jcr.SessionDataManager" value="DEBUG"/-->
+        
 
         <!-- property name="log4j.category.jcr.JDBCStorageConnection" value="DEBUG"/>
         <property name="log4j.category.jcr.NodeImpl" value="DEBUG"/ -->

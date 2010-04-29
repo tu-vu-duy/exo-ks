@@ -84,6 +84,12 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.exoplatform.ecm.dms.core</groupId>
+      <artifactId>exo.ecm.dms.core.webui.ext</artifactId>
+      <version>${org.exoplatform.ecm.dms.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.xwiki.platform</groupId>
       <artifactId>xwiki-core-model</artifactId>
       <version>${org.xwiki.platform.version}</version>

@@ -1,5 +1,6 @@
 package org.exoplatform.wiki.service.impl;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -108,10 +109,9 @@ public class WikiServiceImpl implements WikiService{
   }
 
   public List<BreadcumbData> getBreadcumb(String wikiType, String wikiOwner, String pageId) throws Exception {
-    // TODO Auto-generated method stub
-    return null;
+    return getBreadcumb(null, wikiType, wikiOwner, pageId);
   }
-
+  
   public Page getPageById(String wikiType, String wikiOwner, String pageId) throws Exception {
     String statement = getStatement(wikiType, wikiOwner, pageId);
     
@@ -182,6 +182,26 @@ public class WikiServiceImpl implements WikiService{
       return wiki.getWikiHome() ;
     }
     return null ;
+  }
+  
+  private List<BreadcumbData> getBreadcumb(List<BreadcumbData> list, String wikiType, String wikiOwner, String pageId) throws Exception {
+    if (list == null) {
+      list = new ArrayList<BreadcumbData>(5);
+    }
+    if (pageId == null) {
+      return list;
+    }
+    Page page = getPageById(wikiType, wikiOwner, pageId);
+    if (page == null) {
+      return list;
+    }
+    list.add(0, new BreadcumbData(page.getPageId(), ((PageImpl) page).getPath(), page.getPageId()));
+    Page parentPage = ((PageImpl) page).getParentPage();
+    if (parentPage != null) {
+      getBreadcumb(list, wikiType, wikiOwner, parentPage.getPageId());
+    }
+    
+    return list;
   }
   
   public Page getPageByUUID(String uuid) throws Exception {

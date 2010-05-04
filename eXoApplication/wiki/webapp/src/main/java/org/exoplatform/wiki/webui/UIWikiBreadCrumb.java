@@ -16,9 +16,19 @@
  */
 package org.exoplatform.wiki.webui;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.exoplatform.portal.application.PortalRequestContext;
+import org.exoplatform.portal.config.model.PortalConfig;
+import org.exoplatform.portal.webui.portal.UIPortal;
+import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.core.UIContainer;
 import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
+import org.exoplatform.wiki.commons.Utils;
+import org.exoplatform.wiki.service.BreadcumbData;
+import org.exoplatform.wiki.service.WikiPageParams;
 
 /**
  * Created by The eXo Platform SAS
@@ -32,4 +42,31 @@ import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
 )
 public class UIWikiBreadCrumb extends UIContainer {
 
+  private List<BreadcumbData> breadCumbs = new ArrayList<BreadcumbData>();
+
+  public List<BreadcumbData> getBreadCumbs() {
+    return breadCumbs;
+  }
+
+  public void setBreadCumbs(List<BreadcumbData> breadCumbs) {
+    this.breadCumbs = breadCumbs;
+  }
+  
+  public String createActionLink(BreadcumbData breadCumbData) throws Exception {
+    WikiPageParams currentPageParams = Utils.getCurrentWikiPageParams();
+    PortalRequestContext portalRequestContext = Util.getPortalRequestContext();
+    StringBuilder sb = new StringBuilder(portalRequestContext.getPortalURI());
+    UIPortal uiPortal = Util.getUIPortal();
+    String pageNodeSelected = uiPortal.getSelectedNode().getUri();
+    sb.append(pageNodeSelected);
+    sb.append("/");
+    if (!PortalConfig.PORTAL_TYPE.equalsIgnoreCase(currentPageParams.getType())) {
+      sb.append(currentPageParams.getType());
+      sb.append("/");
+      sb.append(currentPageParams.getOwner());
+      sb.append("/");
+    }
+    sb.append(breadCumbData.getId());
+    return sb.toString();
+  }
 }

@@ -1,0 +1,32 @@
+<%
+  import java.util.List;
+  
+  List breadCumbs = uicomponent.getBreadCumbs();
+%>
+<div class="UIBreadcumbs">
+  <div class="LeftBreadcumbsBar">
+    <div class="RightBreadcumbsBar">
+      <div class="BreadcumbsInfoBar">
+        <%  if(breadCumbs.size() > 0) {
+              String note = "LeftBlock";
+              for(i in 0 .. breadCumbs.size()-1) {
+                breadcumbData = breadCumbs.get(i);
+                String title = breadcumbData.getTitle();
+                String actionLink = uicomponent.createActionLink(breadcumbData);
+                if(i == breadCumbs.size()-1) note = "Selected";
+        %>
+                <a href="<%=(breadcumbData.getId() == null) ? "#" : actionLink%>" class="$note">$title</a>
+        <%      
+                if(i != breadCumbs.size()-1) {
+        %>
+                <div class="RightBlackGridArrowIcon LeftBlock RightBlackGridArrow16x16Icon"><span></span></div>
+        <%
+                }
+              }
+            }
+        %>
+        <div class="ClearLeft"><span></span></div>
+      </div>
+    </div>
+  </div>
+</div>

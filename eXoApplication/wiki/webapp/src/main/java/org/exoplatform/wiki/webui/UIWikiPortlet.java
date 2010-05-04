@@ -32,6 +32,7 @@ import org.exoplatform.wiki.rendering.xwiki.XWikiRenderer;
 import org.exoplatform.wiki.resolver.PageResolver;
 import org.exoplatform.wiki.service.WikiContext;
 import org.exoplatform.wiki.service.WikiPageParams;
+import org.exoplatform.wiki.service.WikiService;
 import org.xwiki.context.Execution;
 import org.xwiki.context.ExecutionContext;
 
@@ -67,7 +68,6 @@ public class UIWikiPortlet extends UIPortletApplication {
       // TODO: ignore request URL of resources
       Page page = pageResolver.resolve(requestURL);
       context.setAttribute("wikiPage", page);
-      findFirstComponentOfType(UIWikiPageContentArea.class).renderWikiMarkup(page.getContent().getText());
       
       MarkupRenderingService service = (MarkupRenderingService) PortalContainer.getComponent(MarkupRenderingService.class);
       XWikiRenderer renderer = (XWikiRenderer) service.getRenderer("xwiki");
@@ -81,7 +81,11 @@ public class UIWikiPortlet extends UIPortletApplication {
       wikiContext.setOwner(params.getOwner());
       wikiContext.setPageId(params.getPageId());
       ec.getContext().setProperty("wikicontext", wikiContext);
-
+      
+      findFirstComponentOfType(UIWikiPageContentArea.class).renderWikiMarkup(page.getContent().getText());
+      UIWikiBreadCrumb wikiBreadCrumb = findFirstComponentOfType(UIWikiBreadCrumb.class);
+      WikiService wikiService = (WikiService) PortalContainer.getComponent(WikiService.class);
+      wikiBreadCrumb.setBreadCumbs(wikiService.getBreadcumb(params.getType(), params.getOwner(), page.getPageId()));
     } catch (Exception e) {
       context.setAttribute("wikiPage", null);
       findFirstComponentOfType(UIWikiPageContentArea.class).setHtmlOutput(null);

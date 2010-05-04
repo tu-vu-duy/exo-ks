@@ -22,21 +22,15 @@ import java.util.List;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
-import org.exoplatform.web.application.ApplicationMessage;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
-import org.exoplatform.webui.core.UIApplication;
 import org.exoplatform.webui.core.UIComponent;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.ext.filter.UIExtensionFilter;
 import org.exoplatform.webui.ext.filter.UIExtensionFilters;
-import org.exoplatform.webui.form.UIFormTextAreaInput;
 import org.exoplatform.wiki.commons.Utils;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.resolver.PageResolver;
-import org.exoplatform.wiki.service.WikiPageParams;
-import org.exoplatform.wiki.service.WikiService;
-import org.exoplatform.wiki.webui.PageMode;
 import org.exoplatform.wiki.webui.UIWikiPageContentArea;
 import org.exoplatform.wiki.webui.UIWikiPortlet;
 import org.exoplatform.wiki.webui.WikiMode;
@@ -47,16 +41,16 @@ import org.exoplatform.wiki.webui.control.listener.UIPageToolBarActionListener;
  * Created by The eXo Platform SAS
  * Author : viet nguyen
  *          viet.nguyen@exoplatform.com
- * Apr 26, 2010  
+ * May 4, 2010  
  */
 @ComponentConfig(
   events = {
-    @EventConfig(listeners = SavePageActionComponent.SavePageActionListener.class)
+    @EventConfig(listeners = CancelActionComponent.CancelActionListener.class)
   }
 )
-public class SavePageActionComponent extends UIComponent {
+public class CancelActionComponent extends UIComponent {
 
-  private static final Log log = ExoLogger.getLogger("wiki:SavePageActionComponent");
+  private static final Log log = ExoLogger.getLogger("wiki:CancelActionComponent");
   
   private static final List<UIExtensionFilter> FILTERS = Arrays.asList(new UIExtensionFilter[] { new IsEditModeFilter() });
 
@@ -64,38 +58,19 @@ public class SavePageActionComponent extends UIComponent {
   public List<UIExtensionFilter> getFilters() {
     return FILTERS;
   }
-  
-  public static class SavePageActionListener extends UIPageToolBarActionListener<SavePageActionComponent> {
+  public static class CancelActionListener extends UIPageToolBarActionListener<CancelActionComponent> {
     @Override
-    protected void processEvent(Event<SavePageActionComponent> event) throws Exception {
+    protected void processEvent(Event<CancelActionComponent> event) throws Exception {
       UIWikiPortlet wikiPortlet = event.getSource().getAncestorOfType(UIWikiPortlet.class);
-      UIApplication uiApp = event.getSource().getAncestorOfType(UIApplication.class);
       UIWikiPageContentArea pageContentArea = wikiPortlet.findFirstComponentOfType(UIWikiPageContentArea.class);
-      UIFormTextAreaInput titleInput = pageContentArea.findComponentById(UIWikiPageContentArea.FIELD_TITLE);
-      UIFormTextAreaInput markupInput = pageContentArea.findComponentById(UIWikiPageContentArea.FIELD_CONTENT);
-      String title = titleInput.getValue();
-      String markup = markupInput.getValue();
-      
       try {
         String requestURL = Utils.getCurrentRequestURL();
         PageResolver pageResolver = (PageResolver) PortalContainer.getComponent(PageResolver.class);
         Page page = pageResolver.resolve(requestURL);
-        if (pageContentArea.getPageMode() == PageMode.EXISTED) {
-          page.getContent().setText(markup);
-        } else if (pageContentArea.getPageMode() == PageMode.NEW) {
-          WikiService wikiService = (WikiService) PortalContainer.getComponent(WikiService.class);
-          WikiPageParams pageParams = pageResolver.extractWikiPageParams(requestURL);
-          Page subPage = wikiService.createPage(pageParams.getType(), pageParams.getOwner(), title, page.getPageId());
-          subPage.getContent().setText(markup);
-        }
-        pageContentArea.renderWikiMarkup(markup);
+        pageContentArea.renderWikiMarkup(page.getContent().getText());
       } catch (Exception e) {
-        log.error("An exception happens when saving the page with title:" + title, e);
-        uiApp.addMessage(new ApplicationMessage("UIPageToolBar.msg.Exception", null, ApplicationMessage.ERROR));
-        event.getRequestContext().addUIComponentToUpdateByAjax(uiApp.getUIPopupMessages());
-        return;
+        log.warn("An exception happens when cancel edit page", e);
       }
-      
       wikiPortlet.setWikiMode(WikiMode.VIEW);
       pageContentArea.removeChildById(UIWikiPageContentArea.FIELD_TITLE);
       pageContentArea.removeChildById(UIWikiPageContentArea.FIELD_CONTENT);

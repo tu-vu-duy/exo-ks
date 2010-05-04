@@ -219,10 +219,18 @@
           </object>
         </object-param>
         <object-param>
-          <name>HelpAction</name>
+          <name>Cancel</name>
           <object type="org.exoplatform.webui.ext.UIExtension">
             <field name="type"><string>org.exoplatform.wiki.UIPageToolBar</string></field>
-            <field name="name"><string>HelpAction</string></field>
+            <field name="name"><string>Cancel</string></field>
+            <field name="component"><string>org.exoplatform.wiki.webui.control.action.CancelActionComponent</string></field>
+          </object>
+        </object-param>
+        <object-param>
+          <name>Help</name>
+          <object type="org.exoplatform.webui.ext.UIExtension">
+            <field name="type"><string>org.exoplatform.wiki.UIPageToolBar</string></field>
+            <field name="name"><string>Help</string></field>
             <field name="component"><string>org.exoplatform.wiki.webui.control.action.HelpActionComponent</string></field>
           </object>
         </object-param>

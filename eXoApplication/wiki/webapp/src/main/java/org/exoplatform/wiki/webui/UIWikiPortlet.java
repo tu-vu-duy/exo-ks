@@ -67,8 +67,7 @@ public class UIWikiPortlet extends UIPortletApplication {
       // TODO: ignore request URL of resources
       Page page = pageResolver.resolve(requestURL);
       context.setAttribute("wikiPage", page);
-      String output = findFirstComponentOfType(UIWikiPageContentArea.class).renderWikiMarkup(page.getContent().getText());
-      findFirstComponentOfType(UIWikiPageContentArea.class).setHtmlOutput(output);
+      findFirstComponentOfType(UIWikiPageContentArea.class).renderWikiMarkup(page.getContent().getText());
       
       MarkupRenderingService service = (MarkupRenderingService) PortalContainer.getComponent(MarkupRenderingService.class);
       XWikiRenderer renderer = (XWikiRenderer) service.getRenderer("xwiki");

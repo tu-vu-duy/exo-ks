@@ -67,11 +67,10 @@ public class UIWikiPageContentArea extends UIForm {
     this.htmlOutput = output;
   }
   
-  public String renderWikiMarkup(String markup) throws Exception {
+  public void renderWikiMarkup(String markup) throws Exception {
     MarkupRenderingService renderingService = (MarkupRenderingService) PortalContainer.getComponent(MarkupRenderingService.class);
     Renderer xwikiRenderer = renderingService.getRenderer("xwiki");
-    String output = xwikiRenderer.render(markup);
-    return output;
+    this.htmlOutput = xwikiRenderer.render(markup);
   }
   
   public WikiMode getWikiMode(){

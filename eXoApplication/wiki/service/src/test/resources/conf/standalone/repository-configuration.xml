@@ -16,14 +16,14 @@
   ~ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
-<repository-service default-repository="db1">
+<repository-service default-repository="repository">
   <repositories>
-    <repository name="db1" system-workspace="ws" default-workspace="ws">
+    <repository name="repository" system-workspace="knowledge" default-workspace="knowledge">
       <security-domain>exo-domain</security-domain>
       <session-max-age>1h</session-max-age>
       <authentication-policy>org.exoplatform.services.jcr.impl.core.access.JAASAuthenticator</authentication-policy>
       <workspaces>
-        <workspace name="ws">
+        <workspace name="knowledge">
           <container class="org.exoplatform.services.jcr.impl.storage.jdbc.optimisation.CQJDBCWorkspaceDataContainer">
             <properties>
               <property name="source-name" value="jdbcjcr" />
@@ -31,12 +31,12 @@
               <property name="multi-db" value="false" />
               <property name="update-storage" value="false" />
               <property name="max-buffer-size" value="200k" />
-              <property name="swap-directory" value="target/temp/swap/ws" />
+              <property name="swap-directory" value="target/temp/swap/knowledge" />
             </properties>
             <value-storages>
-              <value-storage id="ws" class="org.exoplatform.services.jcr.impl.storage.value.fs.TreeFileValueStorage">
+              <value-storage id="knowledge" class="org.exoplatform.services.jcr.impl.storage.value.fs.TreeFileValueStorage">
                 <properties>
-                  <property name="path" value="target/temp/values/ws" />
+                  <property name="path" value="target/temp/values/knowledge" />
                 </properties>
                 <filters>
                   <filter property-type="Binary" />
@@ -57,7 +57,7 @@
           </cache>
           <query-handler class="org.exoplatform.services.jcr.impl.core.query.lucene.SearchIndex">
             <properties>
-              <property name="index-dir" value="target/temp/index/db1/ws" />
+              <property name="index-dir" value="target/temp/index/repository/knowledge" />
             </properties>
           </query-handler>
           <lock-manager>

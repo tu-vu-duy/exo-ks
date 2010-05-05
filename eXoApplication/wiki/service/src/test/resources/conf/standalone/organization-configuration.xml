@@ -276,10 +276,10 @@
           <name>configuration></name>
           <description>description</description>
           <object type="org.exoplatform.services.jcr.ext.hierarchy.impl.HierarchyConfig">
-            <field  name="repository"><string>db1</string></field>
+            <field  name="repository"><string>repository</string></field>
             <field name="workspaces">
               <collection type="java.util.ArrayList">
-                <value><string>ws</string></value>                             
+                <value><string>knowledge</string></value>                             
               </collection>               
             </field>            
             <field  name="jcrPaths">
@@ -320,10 +320,10 @@
           <name>configuration</name>
           <description>description</description>
           <object type="org.exoplatform.services.jcr.ext.hierarchy.impl.HierarchyConfig">
-            <field  name="repository"><string>db1</string></field>
+            <field  name="repository"><string>repository</string></field>
             <field name="workspaces">
               <collection type="java.util.ArrayList">
-                <value><string>ws</string></value>                             
+                <value><string>knowledge</string></value>                             
               </collection>               
             </field>            
             <field  name="jcrPaths">

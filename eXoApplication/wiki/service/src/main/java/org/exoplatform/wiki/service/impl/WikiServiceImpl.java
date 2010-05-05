@@ -29,6 +29,14 @@ import org.exoplatform.wiki.utils.Utils;
 
 public class WikiServiceImpl implements WikiService{
   
+  final static private String USERS_PATH = "usersPath";
+  
+  final static private String GROUPS_PATH = "groupsPath";
+
+  final static private String USER_APPLICATION = "userApplicationData";
+  
+  final static private String GROUP_APPLICATION = "groupApplicationData";
+  
   private NodeHierarchyCreator nodeCreator ;
   
   public WikiServiceImpl(NodeHierarchyCreator creator) {
@@ -81,6 +89,7 @@ public class WikiServiceImpl implements WikiService{
     parentPage.addWikiPage(page) ;
     page.setPageId(title) ;
     page.setContent(content);
+    model.save();
     
     return page ;
   }
@@ -134,17 +143,44 @@ public class WikiServiceImpl implements WikiService{
     if(wikiType.equals(PortalConfig.PORTAL_TYPE)) {
       path = Utils.getPortalWikisPath() ;      
     }else if(wikiType.equals(PortalConfig.GROUP_TYPE)) {
-      path = nodeCreator.getJcrPath("groupsPath") ;    
+      path = nodeCreator.getJcrPath(GROUPS_PATH) ;
+      path = (path != null) ? path : "/Groups";
     }else if(wikiType.equals(PortalConfig.USER_TYPE)) {
-      path = nodeCreator.getJcrPath("usersPath") ;
+      path = nodeCreator.getJcrPath(USERS_PATH) ;
+      path = (path != null) ? path : "/Users";
     }
     
     if(path != null) {
-      path = path + "/" + wikiOwner ;
+      path = path + "/" + validateWikiOwner(wikiType, wikiOwner) ;
+      if(!wikiType.equals(PortalConfig.PORTAL_TYPE)){
+        String appPath = null;
+        if(wikiType.equals(PortalConfig.GROUP_TYPE)){
+          appPath = nodeCreator.getJcrPath(GROUP_APPLICATION);
+        } else {
+          appPath = nodeCreator.getJcrPath(USER_APPLICATION);
+        }
+        appPath = (appPath != null) ? appPath : "ApplicationData";
+        path = path + "/" + appPath + "/" + WikiNodeType.Definition.WIKI_APPLICATION;
+      }
       String statement = "jcr:path LIKE '"+ path + "/%'" + " AND pageId='" + pageId + "'" ;
       return statement ;
     }
     return null;
+  }
+  
+  private String validateWikiOwner(String wikiType, String wikiOwner){
+    if(wikiType.equals(PortalConfig.GROUP_TYPE)) {
+      if(wikiOwner == null || wikiOwner.length() == 0){
+        return null;
+      }
+      if(wikiOwner.startsWith("/")){
+        wikiOwner = wikiOwner.substring(1,wikiOwner.length());
+      }
+      if(wikiOwner.endsWith("/")){
+        wikiOwner = wikiOwner.substring(0,wikiOwner.length()-1);
+      }
+    }
+    return wikiOwner;
   }
   
   private PageImpl searchPage(String statement, ChromatticSession session) throws Exception {  

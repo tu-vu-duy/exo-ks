@@ -25,21 +25,6 @@
    xmlns="http://www.exoplaform.org/xml/ns/kernel_1_0.xsd">
   
   <component>
-    <key>org.exoplatform.wiki.mow.core.api.MOWService</key>
-    <type>org.exoplatform.wiki.mow.core.api.MOWService</type>
-  </component>
-  
-  <component>
-    <key>org.exoplatform.wiki.rendering.MarkupRenderingService</key>
-    <type>org.exoplatform.wiki.rendering.MarkupRenderingService</type>
-  </component>
-  
-  <component>
-    <key>org.exoplatform.wiki.rendering.xwiki.XWikiRenderer</key>
-    <type>org.exoplatform.wiki.rendering.xwiki.XWikiRenderer</type>
-  </component>
-  
-  <component>
     <key>org.exoplatform.commons.chromattic.ChromatticManager</key>
     <type>org.exoplatform.commons.chromattic.ChromatticManager</type>
   </component>
@@ -192,7 +177,7 @@
         </value-param>
         <value-param>
           <name>workspace-name</name>
-          <value>ws</value>
+          <value>knowledge</value>
         </value-param>
         <values-param>
           <name>entities</name>

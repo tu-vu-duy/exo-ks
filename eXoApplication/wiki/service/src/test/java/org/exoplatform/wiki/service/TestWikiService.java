@@ -18,6 +18,7 @@ package org.exoplatform.wiki.service;
 
 
 import java.util.Iterator;
+import java.util.List;
 
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.portal.config.model.PortalConfig;
@@ -156,6 +157,36 @@ public class TestWikiService extends AbstractMOWTestcase {
     assertNotNull(page) ;
     System.out.println("hello ===>" + page);*/
     
+  }
+  
+  public void testGetBreadcumb() throws Exception {
+    wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "Breadcumb1", "WikiHome") ;
+    wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "Breadcumb2", "Breadcumb1") ;
+    wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "Breadcumb3", "Breadcumb2") ;
+    List<BreadcumbData> breadCumbs = wService.getBreadcumb(PortalConfig.PORTAL_TYPE, "classic", "Breadcumb3");
+    assertEquals(4, breadCumbs.size());
+    assertEquals("WikiHome", breadCumbs.get(0).getId());
+    assertEquals("Breadcumb1", breadCumbs.get(1).getId());
+    assertEquals("Breadcumb2", breadCumbs.get(2).getId());
+    assertEquals("Breadcumb3", breadCumbs.get(3).getId());
+    wService.createPage(PortalConfig.GROUP_TYPE, "/platform/users", "GroupBreadcumb1", "WikiHome") ;
+    wService.createPage(PortalConfig.GROUP_TYPE, "/platform/users/", "GroupBreadcumb2", "GroupBreadcumb1") ;
+    wService.createPage(PortalConfig.GROUP_TYPE, "platform/users", "GroupBreadcumb3", "GroupBreadcumb2") ;
+    breadCumbs = wService.getBreadcumb(PortalConfig.GROUP_TYPE, "/platform/users", "GroupBreadcumb3");
+    assertEquals(4, breadCumbs.size());
+    assertEquals("WikiHome", breadCumbs.get(0).getId());
+    assertEquals("GroupBreadcumb1", breadCumbs.get(1).getId());
+    assertEquals("GroupBreadcumb2", breadCumbs.get(2).getId());
+    assertEquals("GroupBreadcumb3", breadCumbs.get(3).getId());
+    wService.createPage(PortalConfig.USER_TYPE, "john", "UserBreadcumb1", "WikiHome") ;
+    wService.createPage(PortalConfig.USER_TYPE, "john", "UserBreadcumb2", "UserBreadcumb1") ;
+    wService.createPage(PortalConfig.USER_TYPE, "john", "UserBreadcumb3", "UserBreadcumb2") ;
+    breadCumbs = wService.getBreadcumb(PortalConfig.USER_TYPE, "john", "UserBreadcumb3");
+    assertEquals(4, breadCumbs.size());
+    assertEquals("WikiHome", breadCumbs.get(0).getId());
+    assertEquals("UserBreadcumb1", breadCumbs.get(1).getId());
+    assertEquals("UserBreadcumb2", breadCumbs.get(2).getId());
+    assertEquals("UserBreadcumb3", breadCumbs.get(3).getId());
   }
   
 }

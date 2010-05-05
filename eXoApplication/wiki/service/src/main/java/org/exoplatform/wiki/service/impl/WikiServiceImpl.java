@@ -89,8 +89,6 @@ public class WikiServiceImpl implements WikiService{
     parentPage.addWikiPage(page) ;
     page.setPageId(title) ;
     page.setContent(content);    
-
-    page.setContent(content);
     model.save();    
 
     return page ;

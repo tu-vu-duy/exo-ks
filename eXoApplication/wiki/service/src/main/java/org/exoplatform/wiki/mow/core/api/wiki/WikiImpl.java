@@ -48,7 +48,7 @@ public abstract class WikiImpl implements Wiki {
   
   @Create
   public abstract ContentImpl createContent();
-
+  
   public WikiHome getWikiHome() {
     WikiHome home = getHome();
     if (home == null) {

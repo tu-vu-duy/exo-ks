@@ -41,7 +41,11 @@ public interface WikiNodeType {
   public final static String WIKI_HOME             = "exo:wikihome";
 
   public final static String WIKI_PAGE             = "wiki:page";
-
+  
+  public final static String WIKI_ATTACHMENT       = "wiki:attachment";
+  
+  public final static String WIKI_ATTACHMENT_CONTENT       = "nt:resource";
+  
   public final static String WIKI_PAGE_CONTENT     = "wiki:content";
 
   public final static String WIKI_CONTENT_ITEM     = "wiki:contentItem";
@@ -85,6 +89,24 @@ public interface WikiNodeType {
     public final static String TEXT                       = "text";
 
     public final static String SYNTAX                     = "syntax";
+    
+    public final static String CREATED              = "jcr:created";
+    
+    public final static String MIMETYPE              = "jcr:mimeType";
+    
+    public final static String DATA                  = "jcr:data";
+
+    public final static String ATTACHMENT_CONTENT   =  "jcr:content";
+    
+    public final static String UPDATED               = "jcr:lastModified";
+    
+    public final static String CREATOR              = "creator";
+    
+    public final static String FILENAME              = "filename";
+    
+    public final static String SIZE                 = "size";  
+    
+    
 
   }
 }

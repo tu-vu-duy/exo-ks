@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.exoplatform.commons.utils.PageList;
 import org.exoplatform.wiki.mow.api.Page;
+import org.exoplatform.wiki.mow.core.api.MOWService;
 
 /**
  * Created by The eXo Platform SARL.

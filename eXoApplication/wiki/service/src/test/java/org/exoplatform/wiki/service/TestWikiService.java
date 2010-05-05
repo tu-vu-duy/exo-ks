@@ -20,6 +20,8 @@ package org.exoplatform.wiki.service;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.jcr.Node;
+
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.portal.config.model.PortalConfig;
 import org.exoplatform.wiki.mow.api.Model;
@@ -111,54 +113,21 @@ public class TestWikiService extends AbstractMOWTestcase {
     
   }
   
-  public void testCreatePageAndSubPage() throws Exception{
-    
+  public void testCreatePageAndSubPage() throws Exception{    
     wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "parentPage", "WikiHome") ;
-    //assertNotNull(wService.getPageById(PortalConfig.PORTAL_TYPE, "classic", "parentPage")) ;
-    //Page child = wService.createPage(PortalConfig.USER_TYPE, "john", "childPage", "parentPage") ;
-    
-   /* Page page = wService.getPageById(PortalConfig.PORTAL_TYPE, "classic", "parentPage") ;
-    assertNotNull(page) ;*/
-    Model model = mowService.getModel();
-    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
-    /*WikiContainer<PortalWiki> userWikiContainer = wStore.getWikiContainer(WikiType.PORTAL);
-    PortalWiki wiki = userWikiContainer.getWiki("classic");
-    WikiHome wikiHomePage = wiki.getWikiHome();
-    PageImpl addedParent = wikiHomePage.getWikiPage("parentPage") ;    
-    assertNotNull(addedParent) ;*/
-    
-    /*MOWService mowService = (MOWService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(MOWService.class);
-    Model model = mowService.getModel();
-    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
-    WikiContainer<PortalWiki> userWikiContainer = wStore.getWikiContainer(WikiType.PORTAL);
-    PortalWiki wiki = userWikiContainer.getWiki("classic");
-    PageImpl child = wiki.createWikiPage() ;
-    WikiHome wikiHomePage = wiki.getWikiHome();
-    child.setName("hello") ;
-    wikiHomePage.addWikiPage(child) ;
-    child.setPageId("hello") ;
-    model.save() ;*/
-    String statement = "jcr:path LIKE '/exo:applications/eXoWiki/wikis/classic/%' AND pageId='parentPage'" ;
-    PageImpl wikiPage = null;
-    if(statement != null) {            
-      Iterator<PageImpl> result = wStore.getSession()
-        .createQueryBuilder(PageImpl.class)
-        .where(statement).get().objects() ;
-      if(result.hasNext()) wikiPage = result.next() ;
-    }
-    //assertNotNull(wikiPage) ;
-    System.out.println("hello ===>" + wikiPage);
-    /*PageImpl haha = wiki.createWikiPage() ;
-    haha.setName("haha") ;
-    wikiPage.addWikiPage(haha) ;
-    haha.setPageId("haha") ;
-    model.save() ;*/
-    /*Page page = wService.getPageById("portal", "classic", "haha") ;
-    assertNotNull(page) ;
-    System.out.println("hello ===>" + page);*/
-    
+    //assertNotNull(wService.getPageById(PortalConfig.PORTAL_TYPE, "classic", "parentPage")) ;   
   }
   
+
+  public void testGetCreatedPageAndSubPage() throws Exception{    
+    assertNotNull(wService.getPageById(PortalConfig.PORTAL_TYPE, "classic", "parentPage")) ;
+    wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "childPage", "parentPage") ;
+  }
+
+  public void testGetSubPage() throws Exception{    
+    assertNotNull(wService.getPageById(PortalConfig.PORTAL_TYPE, "classic", "childPage")) ;
+  }
+
   public void testGetBreadcumb() throws Exception {
     wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "Breadcumb1", "WikiHome") ;
     wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "Breadcumb2", "Breadcumb1") ;
@@ -189,4 +158,5 @@ public class TestWikiService extends AbstractMOWTestcase {
     assertEquals("UserBreadcumb3", breadCumbs.get(3).getId());
   }
   
+
 }

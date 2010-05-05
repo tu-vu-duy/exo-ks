@@ -19,6 +19,7 @@ package org.exoplatform.wiki.mow.api;
 import java.util.Collection;
 
 import org.exoplatform.wiki.mow.api.content.Content;
+import org.exoplatform.wiki.mow.core.api.wiki.AttachmentImpl;
 
 /**
  * @author <a href="mailto:patrice.lamarque@exoplatform.com">Patrice
@@ -48,5 +49,5 @@ public interface Page {
    * 
    * @return
    */
-  Collection<Attachment> getAttachments();
+  Collection<? extends Attachment> getAttachments();
 }

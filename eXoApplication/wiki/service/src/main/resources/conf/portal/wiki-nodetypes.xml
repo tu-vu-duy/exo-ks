@@ -221,7 +221,22 @@
       </childNodeDefinition>
     </childNodeDefinitions>
   </nodeType>
-
+	
+	<nodeType name="wiki:attachment" isMixin="false" hasOrderableChildNodes="false">
+    <supertypes>
+      <supertype>nt:file</supertype>      
+    </supertypes>
+    <propertyDefinitions>
+    	<propertyDefinition name="creator" requiredType="String" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" multiple="false">
+        <valueConstraints/>
+      </propertyDefinition>
+      <propertyDefinition name="filename" requiredType="String" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" multiple="false">
+        <valueConstraints/>
+      </propertyDefinition>
+    </propertyDefinitions>
+    <childNodeDefinitions/>
+  </nodeType>
+  
   <!-- Node type generated for the class org.exoplatform.wiki.mow.core.api.wiki.PageImpl -->
   <nodeType name="wiki:page" isMixin="false" hasOrderableChildNodes="false">
     <supertypes>
@@ -240,6 +255,11 @@
       <childNodeDefinition name="content" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
         <requiredPrimaryTypes>
           <requiredPrimaryType>wiki:content</requiredPrimaryType>
+        </requiredPrimaryTypes>
+      </childNodeDefinition>
+      <childNodeDefinition name="*" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
+        <requiredPrimaryTypes>
+          <requiredPrimaryType>wiki:attachment</requiredPrimaryType>
         </requiredPrimaryTypes>
       </childNodeDefinition>
       <childNodeDefinition name="*" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">

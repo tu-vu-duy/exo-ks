@@ -49,10 +49,10 @@
     <type>org.exoplatform.wiki.rendering.xwiki.XWikiRenderer</type>
   </component>
   
-  <!-- component>
+  <component>
     <key>org.exoplatform.webui.ext.UIExtensionManager</key>
     <type>org.exoplatform.webui.ext.impl.UIExtensionManagerImpl</type>
-  </component-->
+  </component>
   
   <!-- Only used for debugging and tracing -->
   <!--component>
@@ -165,7 +165,7 @@
     </component-plugin>    
   </external-component-plugins>
   
-  <!-- external-component-plugins>
+  <external-component-plugins>
     <target-component>org.exoplatform.services.organization.OrganizationService</target-component>
     <component-plugin>
       <name>ecm.new.group.event.listener</name>
@@ -508,6 +508,6 @@
         </object-param>
       </init-params>
     </component-plugin>
-  </external-component-plugins-->
+  </external-component-plugins>
   
 </configuration>

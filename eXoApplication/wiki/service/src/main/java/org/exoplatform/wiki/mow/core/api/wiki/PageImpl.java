@@ -32,9 +32,7 @@ import org.chromattic.api.annotations.Path;
 import org.chromattic.api.annotations.PrimaryType;
 import org.chromattic.api.annotations.Property;
 import org.chromattic.api.annotations.WorkspaceName;
-import org.chromattic.ext.ntdef.NTFile;
 import org.chromattic.ext.ntdef.Resource;
-import org.exoplatform.wiki.mow.api.Attachment;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.mow.api.WikiNodeType;
 import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
@@ -81,7 +79,8 @@ public abstract class PageImpl implements Page {
       throw new NullPointerException();
     }
     AttachmentImpl file = createAttachment();
-    file.setName("att" + contentResource.hashCode()) ;
+    //TODO: get extension from fileName
+    file.setName("att" + contentResource.hashCode()+".jpg") ;
     addAttachment(file) ;
     file.setFilename(fileName) ;
     if (contentResource != null) {

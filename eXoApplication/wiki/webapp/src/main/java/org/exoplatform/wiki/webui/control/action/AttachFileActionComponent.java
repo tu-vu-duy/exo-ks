@@ -22,11 +22,14 @@ import java.util.List;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIComponent;
+import org.exoplatform.webui.core.UIPopupContainer;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.ext.filter.UIExtensionFilter;
 import org.exoplatform.webui.ext.filter.UIExtensionFilters;
+import org.exoplatform.wiki.webui.UIWikiPortlet;
 import org.exoplatform.wiki.webui.control.filter.IsEditModeFilter;
 import org.exoplatform.wiki.webui.control.listener.UIPageToolBarActionListener;
+import org.exoplatform.wiki.webui.popup.UIAttachFileForm;
 
 /**
  * Created by The eXo Platform SAS
@@ -51,7 +54,10 @@ public class AttachFileActionComponent extends UIComponent {
   public static class AttachFileActionListener extends UIPageToolBarActionListener<AttachFileActionComponent> {
     @Override
     protected void processEvent(Event<AttachFileActionComponent> event) throws Exception {
-      // TODO Auto-generated method stub
+      UIWikiPortlet uiWikiPortlet = event.getSource().getAncestorOfType(UIWikiPortlet.class) ;
+      UIPopupContainer uiPopupContainer = uiWikiPortlet.getChild(UIPopupContainer.class) ;
+      uiPopupContainer.activate(UIAttachFileForm.class, 700);
+      event.getRequestContext().addUIComponentToUpdateByAjax(uiPopupContainer) ;    
       super.processEvent(event);
     }
   }

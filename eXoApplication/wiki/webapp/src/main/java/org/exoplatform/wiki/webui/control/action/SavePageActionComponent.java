@@ -16,6 +16,7 @@
  */
 package org.exoplatform.wiki.webui.control.action;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,8 +34,10 @@ import org.exoplatform.webui.ext.filter.UIExtensionFilters;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
 import org.exoplatform.wiki.commons.Utils;
 import org.exoplatform.wiki.mow.api.Page;
+import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 import org.exoplatform.wiki.resolver.PageResolver;
 import org.exoplatform.wiki.service.WikiPageParams;
+import org.exoplatform.wiki.service.WikiResource;
 import org.exoplatform.wiki.service.WikiService;
 import org.exoplatform.wiki.webui.PageMode;
 import org.exoplatform.wiki.webui.UIWikiPageContentArea;
@@ -82,11 +85,17 @@ public class SavePageActionComponent extends UIComponent {
         Page page = pageResolver.resolve(requestURL);
         if (pageContentArea.getPageMode() == PageMode.EXISTED) {
           page.getContent().setText(markup);
+          for(WikiResource file :  pageContentArea.getAttachments()){
+            ((PageImpl)page).createAttachment(file.getName(), file) ;
+          }
         } else if (pageContentArea.getPageMode() == PageMode.NEW) {
           WikiService wikiService = (WikiService) PortalContainer.getComponent(WikiService.class);
           WikiPageParams pageParams = pageResolver.extractWikiPageParams(requestURL);
           Page subPage = wikiService.createPage(pageParams.getType(), pageParams.getOwner(), title, page.getPageId());
           subPage.getContent().setText(markup);
+          for(WikiResource file :  pageContentArea.getAttachments()){
+            ((PageImpl)subPage).createAttachment(file.getName(), file) ;
+          }
         }
         pageContentArea.renderWikiMarkup(markup);
       } catch (Exception e) {
@@ -97,6 +106,7 @@ public class SavePageActionComponent extends UIComponent {
       }
       
       wikiPortlet.setWikiMode(WikiMode.VIEW);
+      pageContentArea.setAttachments(new ArrayList<WikiResource>());
       pageContentArea.removeChildById(UIWikiPageContentArea.FIELD_TITLE);
       pageContentArea.removeChildById(UIWikiPageContentArea.FIELD_CONTENT);
       super.processEvent(event);

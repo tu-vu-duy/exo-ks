@@ -40,6 +40,12 @@ public class TestPageAttachment extends AbstractMOWTestcase {
     PortalWiki wiki = portalWikiContainer.addWiki("classic");
     WikiHome wikiHomePage = wiki.getWikiHome();
     
+    AttachmentImpl attachment0 = wikiHomePage.createAttachment("attachment0.jpg", Resource.createPlainText("logo")) ;
+    attachment0.setCreator("root") ;    
+    assertEquals(attachment0.getFilename(), "attachment0.jpg") ;
+    assertNotNull(attachment0.getContentResource()) ;
+    attachment0.setContentResource(Resource.createPlainText("logo - Updated")) ;
+    
     PageImpl wikipage = wiki.createWikiPage();
     wikipage.setName("AddPageAttachment");
     wikiHomePage.addWikiPage(wikipage);
@@ -61,10 +67,21 @@ public class TestPageAttachment extends AbstractMOWTestcase {
   
   public void testGetPageAttachment() throws Exception{
     WikiService wService = (WikiService)container.getComponentInstanceOfType(WikiService.class) ;
-    PageImpl wikipage = (PageImpl)wService.getPageById("portal", "classic", "AddPageAttachment-001") ;
+    PageImpl wikipage = (PageImpl)wService.getPageById("portal", "classic", "WikiHome") ;
+    //PageImpl wikipage = (PageImpl)wService.getPageById("portal", "classic", "AddPageAttachment-001") ;
     Collection<AttachmentImpl> attachments = wikipage.getAttachments() ;
-    assertEquals(attachments.size(), 2) ;
+    assertEquals(attachments.size(), 1) ;
     Iterator<AttachmentImpl> iter = attachments.iterator() ;
+    AttachmentImpl att0 = iter.next() ;
+    assertNotNull(att0.getContentResource()) ;
+    assertEquals(new String(att0.getContentResource().getData()), "logo - Updated") ;
+    assertEquals(att0.getWeightInBytes(), "logo - Updated".getBytes().length) ;
+    assertEquals(att0.getCreator(), "root") ;
+    
+    wikipage = (PageImpl)wService.getPageById("portal", "classic", "AddPageAttachment-001") ;
+    attachments = wikipage.getAttachments() ;
+    assertEquals(attachments.size(), 2) ;
+    iter = attachments.iterator() ;
     AttachmentImpl att1 = iter.next() ;
     assertNotNull(att1.getContentResource()) ;
     assertEquals(new String(att1.getContentResource().getData()), "foo - Updated") ;

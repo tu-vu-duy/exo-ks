@@ -17,18 +17,14 @@
 package org.exoplatform.wiki.service;
 
 
-import java.util.Iterator;
 import java.util.List;
 
-import javax.jcr.Node;
-
-import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.commons.utils.PageList;
 import org.exoplatform.portal.config.model.PortalConfig;
 import org.exoplatform.wiki.mow.api.Model;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.mow.api.WikiType;
 import org.exoplatform.wiki.mow.core.api.AbstractMOWTestcase;
-import org.exoplatform.wiki.mow.core.api.MOWService;
 import org.exoplatform.wiki.mow.core.api.WikiStoreImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.GroupWiki;
 import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
@@ -115,19 +111,11 @@ public class TestWikiService extends AbstractMOWTestcase {
   
   public void testCreatePageAndSubPage() throws Exception{    
     wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "parentPage", "WikiHome") ;
-    //assertNotNull(wService.getPageById(PortalConfig.PORTAL_TYPE, "classic", "parentPage")) ;   
-  }
-  
-
-  public void testGetCreatedPageAndSubPage() throws Exception{    
     assertNotNull(wService.getPageById(PortalConfig.PORTAL_TYPE, "classic", "parentPage")) ;
     wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "childPage", "parentPage") ;
-  }
-
-  public void testGetSubPage() throws Exception{    
     assertNotNull(wService.getPageById(PortalConfig.PORTAL_TYPE, "classic", "childPage")) ;
   }
-
+  
   public void testGetBreadcumb() throws Exception {
     wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "Breadcumb1", "WikiHome") ;
     wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "Breadcumb2", "Breadcumb1") ;
@@ -158,5 +146,31 @@ public class TestWikiService extends AbstractMOWTestcase {
     assertEquals("UserBreadcumb3", breadCumbs.get(3).getId());
   }
   
+  public void testMovePage() throws Exception{    
+    wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "oldParent", "WikiHome") ;
+    wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "child", "oldParent") ;
+    wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "newParent", "WikiHome") ;
+    
+    assertNotNull(wService.getPageById(PortalConfig.PORTAL_TYPE, "classic", "oldParent")) ;
+    assertNotNull(wService.getPageById(PortalConfig.PORTAL_TYPE, "classic", "child")) ;
+    assertNotNull(wService.getPageById(PortalConfig.PORTAL_TYPE, "classic", "newParent")) ;
+    
+    assertTrue(wService.movePage("child", "newParent", "portal", "classic")) ;    
+    assertFalse(wService.movePage("childWrong", "newParent", "portal", "classic")) ;
+  }
+  
+  public void testDeletePage() throws Exception{    
+    wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "deletePage", "WikiHome") ;    
+    assertTrue(wService.deletePage("portal", "classic", "deletePage")) ;    
+    assertFalse(wService.deletePage("portal", "classic", "deletePageWrong")) ;
+  }
 
+  public void testSearch() throws Exception {
+    wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "testPage", "WikiHome") ;
+    SearchData data = new SearchData("testPage", null, null, null) ;
+    PageList<Page> result = wService.search("portal", "classic", data) ;
+    assertEquals(1, result.getAll().size()) ;
+    //TODO does not finish yet
+  }
+  
 }

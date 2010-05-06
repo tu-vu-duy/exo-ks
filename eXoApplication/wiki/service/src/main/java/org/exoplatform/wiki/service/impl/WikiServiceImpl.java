@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.chromattic.api.ChromatticSession;
+import org.exoplatform.commons.utils.ObjectPageList;
 import org.exoplatform.commons.utils.PageList;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.portal.config.model.PortalConfig;
@@ -112,9 +113,14 @@ public class WikiServiceImpl implements WikiService{
     return page ;
   }*/
   
-  public void deletePage(String wikiType, String wikiOwner, String pageId) throws Exception {
-    // TODO Auto-generated method stub
-    
+  public boolean deletePage(String wikiType, String wikiOwner, String pageId) throws Exception {
+    try{
+      PageImpl page = (PageImpl)getPageById(wikiType, wikiOwner, pageId) ;
+      page.remove() ;
+    }catch(Exception e) {
+      return false ;
+    }
+    return true ;    
   }
 
   public List<BreadcumbData> getBreadcumb(String wikiType, String wikiOwner, String pageId) throws Exception {
@@ -245,14 +251,36 @@ public class WikiServiceImpl implements WikiService{
     return null;
   }
 
-  public boolean movePage(String pageId, String newParentId) throws Exception {
-    // TODO Auto-generated method stub
-    return false;
+  public boolean movePage(String pageId, String newParentId, String wikiType, String wikiOwner) throws Exception {
+    try {
+      PageImpl movePage = (PageImpl)getPageById(wikiType, wikiOwner, pageId) ;
+      PageImpl destPage = (PageImpl)getPageById(wikiType, wikiOwner, newParentId) ;
+      movePage.setParentPage(destPage) ;
+    }catch(Exception e) {
+      return false ;
+    }    
+    return true;
   }
 
-  public PageList search(String wikiType, String wikiOwner, SearchData data) throws Exception {
-    // TODO Auto-generated method stub
-    return null;
+  public PageList<Page> search(String wikiType, String wikiOwner, SearchData data) throws Exception {
+    MOWService mowService = (MOWService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(MOWService.class);
+    Model model = mowService.getModel();
+    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
+    if(data.getPath() == null || data.getPath().length() <= 0 ) {
+      WikiHome home = getWikiHome(wikiType, wikiOwner) ;
+      data.setPath(home.getPath()) ;
+    }
+    String statement = data.getStatement() ;
+    List<Page> list = new ArrayList<Page>() ;
+    if(statement != null) {
+      Iterator<PageImpl> result = wStore.getSession()
+        .createQueryBuilder(PageImpl.class)
+        .where(statement).get().objects() ;
+      while(result.hasNext()) {
+        list.add(result.next()) ;
+      }
+    }
+    return new ObjectPageList<Page>(list, 10);
   }
   
 }

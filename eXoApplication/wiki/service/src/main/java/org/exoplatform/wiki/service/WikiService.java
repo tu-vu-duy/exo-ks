@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.exoplatform.commons.utils.PageList;
 import org.exoplatform.wiki.mow.api.Page;
-import org.exoplatform.wiki.mow.core.api.MOWService;
 
 /**
  * Created by The eXo Platform SARL.
@@ -34,13 +33,13 @@ import org.exoplatform.wiki.mow.core.api.MOWService;
 public interface WikiService {
 	
 	public Page createPage(String wikiType, String wikiOwner, String title, String parentId) throws Exception ;	
-	public void deletePage(String wikiType, String wikiOwner, String pageId) throws Exception ;
-	public boolean movePage(String pageId, String newParentId) throws Exception ;
+	public boolean deletePage(String wikiType, String wikiOwner, String pageId) throws Exception ;
+	public boolean movePage(String pageId, String newParentId, String wikiType, String wikiOwner) throws Exception ;
 	
 	public Page getPageById(String wikiType, String wikiOwner, String pageId) throws Exception ;
 	public Page getPageByUUID(String uuid) throws Exception ;	
 	
-	public PageList search(String wikiType, String wikiOwner, SearchData data) throws Exception ;
+	public PageList<Page> search(String wikiType, String wikiOwner, SearchData data) throws Exception ;
 	public List<BreadcumbData> getBreadcumb(String wikiType, String wikiOwner, String pageId) throws Exception ;
 
 }

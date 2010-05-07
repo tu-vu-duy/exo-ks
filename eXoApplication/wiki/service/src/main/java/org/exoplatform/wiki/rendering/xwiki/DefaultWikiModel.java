@@ -18,6 +18,7 @@ package org.exoplatform.wiki.rendering.xwiki;
 
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
+import org.exoplatform.portal.config.model.PortalConfig;
 import org.exoplatform.services.jcr.RepositoryService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -25,6 +26,7 @@ import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 import org.exoplatform.wiki.service.WikiContext;
 import org.exoplatform.wiki.service.WikiService;
+import org.exoplatform.wiki.utils.Utils;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.annotation.Requirement;
 import org.xwiki.component.manager.ComponentManager;
@@ -103,14 +105,12 @@ public class DefaultWikiModel implements WikiModel {
     WikiContext wikiMarkupContext = getWikiMarkupContext(documentName);
     StringBuilder sb = new StringBuilder();
     sb.append(wikiMarkupContext.getPortalURI());
-    if("portal".equalsIgnoreCase(wikiMarkupContext.getType())){
-      sb.append(wikiMarkupContext.getPortletURI());
+    sb.append(wikiMarkupContext.getPortletURI());
+    sb.append("/");
+    if(!PortalConfig.PORTAL_TYPE.equalsIgnoreCase(wikiMarkupContext.getType())){
+      sb.append(wikiMarkupContext.getType().toLowerCase());
       sb.append("/");
-    }
-    else{
-      sb.append(wikiMarkupContext.getOwner());
-      sb.append("/");
-      sb.append(wikiMarkupContext.getPortletURI());
+      sb.append(Utils.validateWikiOwner(wikiMarkupContext.getType(), wikiMarkupContext.getOwner()));
       sb.append("/");
     }
     sb.append(wikiMarkupContext.getPageId());

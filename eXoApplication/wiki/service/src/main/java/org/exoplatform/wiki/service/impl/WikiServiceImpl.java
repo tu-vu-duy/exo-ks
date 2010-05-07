@@ -112,8 +112,7 @@ public class WikiServiceImpl implements WikiService{
   }
 
   public PageList<Page> search(String wikiType, String wikiOwner, SearchData data) throws Exception {
-    MOWService mowService = (MOWService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(MOWService.class);
-    Model model = mowService.getModel();
+    Model model = getModel();
     WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
     if(data.getPath() == null || data.getPath().length() <= 0 ) {
       WikiHome home = getWikiHome(wikiType, wikiOwner) ;
@@ -154,7 +153,7 @@ public class WikiServiceImpl implements WikiService{
     }
     
     if(path != null) {
-      path = path + "/" + validateWikiOwner(wikiType, wikiOwner) ;
+      path = path + "/" + Utils.validateWikiOwner(wikiType, wikiOwner) ;
       if(!wikiType.equals(PortalConfig.PORTAL_TYPE)){
         String appPath = null;
         if(wikiType.equals(PortalConfig.GROUP_TYPE)){
@@ -169,21 +168,6 @@ public class WikiServiceImpl implements WikiService{
       return statement ;
     }
     return null;
-  }
-  
-  private String validateWikiOwner(String wikiType, String wikiOwner){
-    if(wikiType.equals(PortalConfig.GROUP_TYPE)) {
-      if(wikiOwner == null || wikiOwner.length() == 0){
-        return null;
-      }
-      if(wikiOwner.startsWith("/")){
-        wikiOwner = wikiOwner.substring(1,wikiOwner.length());
-      }
-      if(wikiOwner.endsWith("/")){
-        wikiOwner = wikiOwner.substring(0,wikiOwner.length()-1);
-      }
-    }
-    return wikiOwner;
   }
   
   private PageImpl searchPage(String statement, ChromatticSession session) throws Exception {  

@@ -30,6 +30,10 @@ import org.exoplatform.wiki.mow.api.content.Content;
 @PrimaryType(name = WikiNodeType.WIKI_PAGE_CONTENT)
 public abstract class ContentImpl extends AbstractContainerContent implements Content {
 
+  @Property(name = WikiNodeType.Definition.TITLE)
+  public abstract String getTitle();
+  public abstract void setTitle(String title);
+  
   @Property(name = WikiNodeType.Definition.SYNTAX)
   public abstract String getSyntax();
   public abstract void setSyntax(String syntax);

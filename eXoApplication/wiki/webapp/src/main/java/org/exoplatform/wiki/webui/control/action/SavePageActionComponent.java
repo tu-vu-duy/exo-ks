@@ -96,6 +96,8 @@ public class SavePageActionComponent extends UIComponent {
           for(WikiResource file :  pageContentArea.getAttachments()){
             ((PageImpl)subPage).createAttachment(file.getName(), file) ;
           }
+          /*String redirect = createUrlOfNewPage();
+         prContext.getResponse().sendRedirect(redirect);*/
         }
         pageContentArea.renderWikiMarkup(markup);
       } catch (Exception e) {

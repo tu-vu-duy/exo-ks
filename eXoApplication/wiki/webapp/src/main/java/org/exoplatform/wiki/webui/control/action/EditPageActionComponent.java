@@ -71,7 +71,7 @@ public class EditPageActionComponent extends UIComponent {
       String requestURL = Utils.getCurrentRequestURL();
       PageResolver pageResolver = (PageResolver) PortalContainer.getComponent(PageResolver.class);
       Page page = pageResolver.resolve(requestURL);
-      titleInput.setValue(page.getPageId());
+      titleInput.setValue(page.getContent().getTitle());
       titleInput.setEditable(false);
       markupInput.setValue(page.getContent().getText());
       pageContentArea.setPageMode(PageMode.EXISTED);

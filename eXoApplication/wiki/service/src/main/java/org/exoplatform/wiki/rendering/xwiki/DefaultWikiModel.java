@@ -24,6 +24,7 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
+import org.exoplatform.wiki.resolver.TitleResolver;
 import org.exoplatform.wiki.service.WikiContext;
 import org.exoplatform.wiki.service.WikiService;
 import org.exoplatform.wiki.utils.Utils;
@@ -148,6 +149,7 @@ public class DefaultWikiModel implements WikiModel {
       wikiMarkupContext.setType(entityReference.extractReference(EntityType.WIKI).getName());
       wikiMarkupContext.setOwner(entityReference.extractReference(EntityType.SPACE).getName());
       wikiMarkupContext.setPageId(entityReference.extractReference(EntityType.DOCUMENT).getName());
+      wikiMarkupContext.setPageId(TitleResolver.getPageId(wikiMarkupContext.getPageId(), false));
       if(entityReference.extractReference(EntityType.ATTACHMENT) != null){
         wikiMarkupContext.setAttachmentName(entityReference.extractReference(EntityType.ATTACHMENT).getName());
       }

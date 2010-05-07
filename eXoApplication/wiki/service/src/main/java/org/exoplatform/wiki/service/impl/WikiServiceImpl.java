@@ -25,6 +25,7 @@ import org.exoplatform.wiki.mow.core.api.wiki.UserWiki;
 import org.exoplatform.wiki.mow.core.api.wiki.WikiContainer;
 import org.exoplatform.wiki.mow.core.api.wiki.WikiHome;
 import org.exoplatform.wiki.mow.core.api.wiki.WikiImpl;
+import org.exoplatform.wiki.resolver.TitleResolver;
 import org.exoplatform.wiki.service.BreadcumbData;
 import org.exoplatform.wiki.service.SearchData;
 import org.exoplatform.wiki.service.WikiService;
@@ -60,10 +61,12 @@ public class WikiServiceImpl implements WikiService{
     parentPage = searchPage(statement, wStore.getSession());
     if(parentPage == null) throw new Exception() ;
     
-    page.setName(title) ;
+    String pageId = TitleResolver.getPageId(title, false);
+    page.setName(pageId) ;
     parentPage.addWikiPage(page) ;
-    page.setPageId(title) ;
-    page.setContent(content);    
+    page.setPageId(pageId) ;
+    page.setContent(content);
+    page.getContent().setTitle(title);
     model.save();    
 
     return page ;

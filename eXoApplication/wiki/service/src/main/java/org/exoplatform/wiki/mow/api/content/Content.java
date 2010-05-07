@@ -31,5 +31,9 @@ public interface Content extends ContentItem {
    * @return
    */
   String getSyntax();
+  
+  String getTitle();
+  
+  void setTitle(String title);
 
 }

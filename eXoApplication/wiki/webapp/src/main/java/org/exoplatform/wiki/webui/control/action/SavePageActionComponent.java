@@ -41,6 +41,7 @@ import org.exoplatform.wiki.service.WikiPageParams;
 import org.exoplatform.wiki.service.WikiResource;
 import org.exoplatform.wiki.service.WikiService;
 import org.exoplatform.wiki.webui.PageMode;
+import org.exoplatform.wiki.webui.UIWikiAttachmentArea;
 import org.exoplatform.wiki.webui.UIWikiPageContentArea;
 import org.exoplatform.wiki.webui.UIWikiPortlet;
 import org.exoplatform.wiki.webui.WikiMode;
@@ -75,6 +76,7 @@ public class SavePageActionComponent extends UIComponent {
       UIWikiPortlet wikiPortlet = event.getSource().getAncestorOfType(UIWikiPortlet.class);
       UIApplication uiApp = event.getSource().getAncestorOfType(UIApplication.class);
       UIWikiPageContentArea pageContentArea = wikiPortlet.findFirstComponentOfType(UIWikiPageContentArea.class);
+      UIWikiAttachmentArea attachmentArea = wikiPortlet.findFirstComponentOfType(UIWikiAttachmentArea.class);
       UIFormTextAreaInput titleInput = pageContentArea.findComponentById(UIWikiPageContentArea.FIELD_TITLE);
       UIFormTextAreaInput markupInput = pageContentArea.findComponentById(UIWikiPageContentArea.FIELD_CONTENT);
       String title = titleInput.getValue();
@@ -102,6 +104,7 @@ public class SavePageActionComponent extends UIComponent {
          prContext.getResponse().sendRedirect(redirect);*/
         }
         pageContentArea.renderWikiMarkup(markup);
+        attachmentArea.refreshAttachmentsList();
       } catch (Exception e) {
         log.error("An exception happens when saving the page with title:" + title, e);
         uiApp.addMessage(new ApplicationMessage("UIPageToolBar.msg.Exception", null, ApplicationMessage.ERROR));

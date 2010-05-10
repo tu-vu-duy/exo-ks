@@ -1,6 +1,14 @@
 
 .UIWindow .UIWikiPortlet {
-	min-width: 900px;
-	border: none;
+  min-width: 900px;
+  border: none;
+}
+
+.WikiAttachmentArea .UIFormGrid {
+  width: 100%;
+}
+
+.WikiAttachmentArea .UIFormGrid .RemoveFile {
+  float: none;
 }
 

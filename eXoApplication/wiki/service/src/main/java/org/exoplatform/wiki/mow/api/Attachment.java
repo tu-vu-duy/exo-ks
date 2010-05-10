@@ -16,7 +16,6 @@
  */
 package org.exoplatform.wiki.mow.api;
 
-import java.net.URL;
 import java.util.Calendar;
 
 /**
@@ -59,6 +58,6 @@ public interface Attachment {
    * 
    * @return
    */
-  URL getDownloadURL();
+  String getDownloadURL();
 
 }

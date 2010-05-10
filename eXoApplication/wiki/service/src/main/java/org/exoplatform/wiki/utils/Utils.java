@@ -1,9 +1,14 @@
 package org.exoplatform.wiki.utils;
 
+import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.container.PortalContainer;
 import org.exoplatform.portal.config.model.PortalConfig;
+import org.exoplatform.services.jcr.RepositoryService;
 import org.exoplatform.wiki.mow.api.WikiNodeType;
 
 public class Utils {
+  
+  private static final String JCR_WEBDAV_SERVICE_BASE_URI = "/jcr";
   
   //The path should get from NodeHierarchyCreator 
   public static String getPortalWikisPath() {    
@@ -28,4 +33,18 @@ public class Utils {
     return wikiOwner;
   }
   
+  public static String getDefaultRepositoryWebDavUri() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("/");
+    sb.append(PortalContainer.getCurrentPortalContainerName());
+    sb.append("/");
+    sb.append(PortalContainer.getCurrentRestContextName());
+    sb.append(JCR_WEBDAV_SERVICE_BASE_URI);
+    sb.append("/");
+    RepositoryService repositoryService = (RepositoryService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(RepositoryService.class);
+    sb.append(repositoryService.getConfig().getDefaultRepositoryName());
+    sb.append("/");
+    return sb.toString();
+  }
+
 }

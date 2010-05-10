@@ -95,11 +95,26 @@ public abstract class PageImpl implements Page {
   @OneToMany
   public abstract Collection<AttachmentImpl> getAttachments() ;
   
+  public AttachmentImpl getAttachment(String attachmentId) {
+    for (AttachmentImpl att : getAttachments()) {
+      if (att.getName().equals(attachmentId)) {
+        return att;
+      }
+    }
+    return null;
+  }
+  
   public void addAttachment(AttachmentImpl attachment) throws DuplicateNameException {
     getAttachments().add(attachment);
     
   }  
   
+  public void removeAttachment(String attachmentId){
+    AttachmentImpl attachment = getAttachment(attachmentId);
+    if(attachment != null){
+      attachment.remove();
+    }
+  }
   
   @ManyToOne
   public abstract PageImpl getParentPage();

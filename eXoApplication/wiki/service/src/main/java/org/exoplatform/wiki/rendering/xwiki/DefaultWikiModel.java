@@ -17,9 +17,7 @@
 package org.exoplatform.wiki.rendering.xwiki;
 
 import org.exoplatform.container.ExoContainerContext;
-import org.exoplatform.container.PortalContainer;
 import org.exoplatform.portal.config.model.PortalConfig;
-import org.exoplatform.services.jcr.RepositoryService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.wiki.mow.api.Page;
@@ -61,8 +59,6 @@ public class DefaultWikiModel implements WikiModel {
       
   private static final String DEFAULT_ATTACHMENT = "filename";
   
-  private static final String JCR_WEBDAV_SERVICE_BASE_URI = "/jcr";
-  
   public String getAttachmentURL(String documentName, String attachmentName) {
     WikiContext wikiMarkupContext = getWikiMarkupContext(documentName);
     if (DEFAULT_ATTACHMENT.equals(wikiMarkupContext.getAttachmentName())
@@ -70,15 +66,7 @@ public class DefaultWikiModel implements WikiModel {
       wikiMarkupContext.setAttachmentName(attachmentName);
     }
     StringBuilder sb = new StringBuilder();
-    sb.append("/");
-    sb.append(PortalContainer.getCurrentPortalContainerName());
-    sb.append("/");
-    sb.append(PortalContainer.getCurrentRestContextName());
-    sb.append(JCR_WEBDAV_SERVICE_BASE_URI);
-    sb.append("/");
-    RepositoryService repositoryService = (RepositoryService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(RepositoryService.class);
-    sb.append(repositoryService.getConfig().getDefaultRepositoryName());
-    sb.append("/");
+    sb.append(Utils.getDefaultRepositoryWebDavUri());
     PageImpl page = null;
     try {
       WikiService wikiService = (WikiService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(WikiService.class);

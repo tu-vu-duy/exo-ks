@@ -16,11 +16,9 @@
  */
 package org.exoplatform.wiki.mow.core.api.wiki;
 
-import java.net.URL;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import org.chromattic.api.annotations.Create;
 import org.chromattic.api.annotations.Destroy;
 import org.chromattic.api.annotations.Name;
 import org.chromattic.api.annotations.Path;
@@ -30,7 +28,7 @@ import org.chromattic.api.annotations.WorkspaceName;
 import org.chromattic.ext.ntdef.NTFile;
 import org.exoplatform.wiki.mow.api.Attachment;
 import org.exoplatform.wiki.mow.api.WikiNodeType;
-import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
+import org.exoplatform.wiki.utils.Utils;
 
 /**
  * Created by The eXo Platform SAS
@@ -86,8 +84,12 @@ public abstract class AttachmentImpl extends NTFile implements Attachment {
     return null ;
   }
   
-  public URL getDownloadURL(){
-    return null ;
+  public String getDownloadURL(){
+    StringBuilder sb = new StringBuilder();
+    sb.append(Utils.getDefaultRepositoryWebDavUri());
+    sb.append(getWorkspace());
+    sb.append(getPath());
+    return sb.toString();
   }
   
   @Destroy

@@ -25,6 +25,7 @@ import org.exoplatform.portal.application.PortalRequestContext;
 import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.jcr.access.PermissionType;
 import org.exoplatform.services.jcr.core.ExtendedNode;
+import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.mow.core.api.MOWService;
 import org.exoplatform.wiki.mow.core.api.WikiStoreImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.AttachmentImpl;
@@ -54,8 +55,7 @@ public class Utils {
     return params;
   }
   
-public static void reparePermissions(AttachmentImpl att) throws Exception {
-    
+  public static void reparePermissions(AttachmentImpl att) throws Exception {
     MOWService mowService = (MOWService)PortalContainer.getComponent(MOWService.class) ;
     WikiStoreImpl store = (WikiStoreImpl)mowService.getModel().getWikiStore() ;
     Node attNode = (Node)store.getSession().getJCRSession().getItem(att.getPath()) ;
@@ -64,5 +64,12 @@ public static void reparePermissions(AttachmentImpl att) throws Exception {
     String[] arrayPers = {PermissionType.READ};
     extNode.setPermission("any", arrayPers) ;    
     attNode.getSession().save() ;
+  }
+  
+  public static Page getCurrentWikiPage() throws Exception{
+    String requestURL = Utils.getCurrentRequestURL();
+    PageResolver pageResolver = (PageResolver) PortalContainer.getComponent(PageResolver.class);
+    Page page = pageResolver.resolve(requestURL);
+    return page;
   }
 }

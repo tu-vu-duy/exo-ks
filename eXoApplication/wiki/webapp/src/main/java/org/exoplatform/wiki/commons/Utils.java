@@ -16,12 +16,18 @@
  */
 package org.exoplatform.wiki.commons;
 
+import javax.jcr.Node;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.portal.application.PortalRequestContext;
 import org.exoplatform.portal.webui.util.Util;
+import org.exoplatform.services.jcr.access.PermissionType;
+import org.exoplatform.services.jcr.core.ExtendedNode;
+import org.exoplatform.wiki.mow.core.api.MOWService;
+import org.exoplatform.wiki.mow.core.api.WikiStoreImpl;
+import org.exoplatform.wiki.mow.core.api.wiki.AttachmentImpl;
 import org.exoplatform.wiki.resolver.PageResolver;
 import org.exoplatform.wiki.service.WikiPageParams;
 
@@ -48,4 +54,15 @@ public class Utils {
     return params;
   }
   
+public static void reparePermissions(AttachmentImpl att) throws Exception {
+    
+    MOWService mowService = (MOWService)PortalContainer.getComponent(MOWService.class) ;
+    WikiStoreImpl store = (WikiStoreImpl)mowService.getModel().getWikiStore() ;
+    Node attNode = (Node)store.getSession().getJCRSession().getItem(att.getPath()) ;
+    ExtendedNode extNode = (ExtendedNode)attNode ;
+    if (extNode.canAddMixin("exo:privilegeable")) extNode.addMixin("exo:privilegeable");
+    String[] arrayPers = {PermissionType.READ};
+    extNode.setPermission("any", arrayPers) ;    
+    attNode.getSession().save() ;
+  }
 }

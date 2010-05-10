@@ -34,6 +34,7 @@ import org.exoplatform.webui.ext.filter.UIExtensionFilters;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
 import org.exoplatform.wiki.commons.Utils;
 import org.exoplatform.wiki.mow.api.Page;
+import org.exoplatform.wiki.mow.core.api.wiki.AttachmentImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 import org.exoplatform.wiki.resolver.PageResolver;
 import org.exoplatform.wiki.service.WikiPageParams;
@@ -78,7 +79,6 @@ public class SavePageActionComponent extends UIComponent {
       UIFormTextAreaInput markupInput = pageContentArea.findComponentById(UIWikiPageContentArea.FIELD_CONTENT);
       String title = titleInput.getValue();
       String markup = markupInput.getValue();
-      
       try {
         String requestURL = Utils.getCurrentRequestURL();
         PageResolver pageResolver = (PageResolver) PortalContainer.getComponent(PageResolver.class);
@@ -86,7 +86,8 @@ public class SavePageActionComponent extends UIComponent {
         if (pageContentArea.getPageMode() == PageMode.EXISTED) {
           page.getContent().setText(markup);
           for(WikiResource file :  pageContentArea.getAttachments()){
-            ((PageImpl)page).createAttachment(file.getName(), file) ;
+            AttachmentImpl att = ((PageImpl)page).createAttachment(file.getName(), file) ;
+            Utils.reparePermissions(att) ;
           }
         } else if (pageContentArea.getPageMode() == PageMode.NEW) {
           WikiService wikiService = (WikiService) PortalContainer.getComponent(WikiService.class);
@@ -94,7 +95,8 @@ public class SavePageActionComponent extends UIComponent {
           Page subPage = wikiService.createPage(pageParams.getType(), pageParams.getOwner(), title, page.getPageId());
           subPage.getContent().setText(markup);
           for(WikiResource file :  pageContentArea.getAttachments()){
-            ((PageImpl)subPage).createAttachment(file.getName(), file) ;
+            AttachmentImpl att = ((PageImpl)subPage).createAttachment(file.getName(), file) ;
+            Utils.reparePermissions(att) ;            
           }
           /*String redirect = createUrlOfNewPage();
          prContext.getResponse().sendRedirect(redirect);*/

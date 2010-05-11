@@ -40,11 +40,17 @@ import org.exoplatform.wiki.service.WikiPageParams;
  */
 public class Utils {
 
+  public static final String WIKIURI = "wiki";
+  
   public static String getCurrentRequestURL(){
     PortalRequestContext portalRequestContext = Util.getPortalRequestContext();
     HttpServletRequest request = portalRequestContext.getRequest();
     HttpServletRequestWrapper requestWrapper = new HttpServletRequestWrapper(request);
     String requestURL = requestWrapper.getRequestURL().toString();
+    if(!requestURL.contains(WIKIURI)){
+      //Happens at the first time processRender() called when add wiki portlet manually
+      requestURL = portalRequestContext.getPortalURI()+WIKIURI;
+    }
     return requestURL;
   }
   

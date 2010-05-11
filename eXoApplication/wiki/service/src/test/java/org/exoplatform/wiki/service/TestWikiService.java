@@ -166,11 +166,41 @@ public class TestWikiService extends AbstractMOWTestcase {
   }
 
   public void testSearch() throws Exception {
-    wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "testPage", "WikiHome") ;
-    SearchData data = new SearchData("testPage", null, null, null) ;
+    
+    PageImpl kspage = (PageImpl)wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "knowledge suite", "WikiHome") ;
+    kspage.getContent().setText("forum faq wiki") ;
+    
+    PageImpl cspage = (PageImpl)wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "collaboration suite", "WikiHome") ;
+    cspage.getContent().setText("calendar mail contact chat") ;
+    
+    //fulltext search
+    SearchData data = new SearchData("suite", null, null, "/exo:applications/eXoWiki/wikis/classic") ;
     PageList<Page> result = wService.search("portal", "classic", data) ;
+    assertEquals(2, result.getAll().size()) ;
+    
+  //title search
+    data = new SearchData(null, "knowledge", null, null) ;
+    result = wService.search("portal", "classic", data) ;
     assertEquals(1, result.getAll().size()) ;
-    //TODO does not finish yet
+    
+    data = new SearchData(null, "collaboration", null, null) ;
+    result = wService.search("portal", "classic", data) ;
+    assertEquals(1, result.getAll().size()) ;
+    
+  //content search
+    data = new SearchData(null, null, "forum", null) ;
+    result = wService.search("portal", "classic", data) ;
+    assertEquals(1, result.getAll().size()) ;
+    
+    data = new SearchData(null, null, "calendar", null) ;
+    result = wService.search("portal", "classic", data) ;
+    assertEquals(1, result.getAll().size()) ;
+    
+  //content & title search
+    data = new SearchData(null, "suite", "forum", null) ;
+    result = wService.search("portal", "classic", data) ;
+    assertEquals(1, result.getAll().size()) ;
+    
   }
   
 }

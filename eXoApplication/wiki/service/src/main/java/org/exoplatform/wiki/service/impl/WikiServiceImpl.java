@@ -124,11 +124,11 @@ public class WikiServiceImpl implements WikiService{
     String statement = data.getStatement() ;
     List<Page> list = new ArrayList<Page>() ;
     if(statement != null) {
-      Iterator<PageImpl> result = wStore.getSession()
-        .createQueryBuilder(PageImpl.class)
+      Iterator<ContentImpl> result = wStore.getSession()
+        .createQueryBuilder(ContentImpl.class)
         .where(statement).get().objects() ;
       while(result.hasNext()) {
-        list.add(result.next()) ;
+        list.add(result.next().getParent()) ;
       }
     }
     return new ObjectPageList<Page>(list, 10);

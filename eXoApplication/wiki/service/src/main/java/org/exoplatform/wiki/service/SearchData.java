@@ -50,7 +50,6 @@ public class SearchData {
         statement.append("jcr:path LIKE '"+ path + "/%'") ;
         isAnd = true ;
       }
-      
       if(text != null && text.length() > 0) {
         if(isAnd) statement.append(" AND ") ;
         statement.append(" CONTAINS(*, '").append(text).append("')") ; 
@@ -58,15 +57,16 @@ public class SearchData {
       }else {        
         if(title != null && title.length() > 0) {
           if(isAnd) statement.append(" AND ") ;
-          statement.append(" CONTAINS(wiki:title, '").append(title).append("') ") ;
+          statement.append(" CONTAINS(title, '").append(title).append("') ") ;
           isAnd = true ;
         }
         if(content != null && content.length() > 0) {
-          // search on content 
+          if(isAnd) statement.append(" AND ") ;
+          statement.append(" CONTAINS(text, '").append(content).append("') ") ; 
         }
       }
     }catch(Exception e) {}
-    
+    System.out.println("statement ==>" + statement);
     return statement.toString() ;
   }
 

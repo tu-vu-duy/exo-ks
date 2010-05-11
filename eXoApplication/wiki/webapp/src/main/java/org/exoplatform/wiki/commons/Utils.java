@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.portal.application.PortalRequestContext;
+import org.exoplatform.portal.webui.portal.UIPortal;
 import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.jcr.access.PermissionType;
 import org.exoplatform.services.jcr.core.ExtendedNode;
@@ -39,22 +40,22 @@ import org.exoplatform.wiki.service.WikiPageParams;
  * Apr 22, 2010  
  */
 public class Utils {
-
-  public static final String WIKIURI = "wiki";
   
-  public static String getCurrentRequestURL(){
+  public static String getCurrentRequestURL() throws Exception{
     PortalRequestContext portalRequestContext = Util.getPortalRequestContext();
     HttpServletRequest request = portalRequestContext.getRequest();
     HttpServletRequestWrapper requestWrapper = new HttpServletRequestWrapper(request);
     String requestURL = requestWrapper.getRequestURL().toString();
-    if(!requestURL.contains(WIKIURI)){
-      //Happens at the first time processRender() called when add wiki portlet manually
-      requestURL = portalRequestContext.getPortalURI()+WIKIURI;
+    UIPortal uiPortal = Util.getUIPortal();
+    String pageNodeSelected = uiPortal.getSelectedNode().getUri();
+    if (!requestURL.contains(pageNodeSelected)) {
+      // Happens at the first time processRender() called when add wiki portlet manually
+      requestURL = portalRequestContext.getPortalURI() + pageNodeSelected;
     }
     return requestURL;
   }
   
-  public static WikiPageParams getCurrentWikiPageParams(){
+  public static WikiPageParams getCurrentWikiPageParams() throws Exception{
     String requestURL = getCurrentRequestURL();
     PageResolver pageResolver = (PageResolver) PortalContainer.getComponent(PageResolver.class);
     WikiPageParams params = pageResolver.extractWikiPageParams(requestURL);

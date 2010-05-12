@@ -24,18 +24,30 @@ package org.exoplatform.wiki.service;
  */
 public class WikiContext extends WikiPageParams {
   
-  private String portalURI ;
-  private String portletURI ;
-  
+  public static final String WIKICONTEXT = "wikicontext";
+
+  public static final String ACTION      = "action";
+
+  public static final String ADDPAGE     = "AddPage";
+
+  public static final String PAGEID      = "pageId";
+
+  private String             portalURI;
+
+  private String             portletURI;
+
   public String getPortalURI() {
     return portalURI;
   }
+
   public void setPortalURI(String portalURI) {
     this.portalURI = portalURI;
   }
+
   public String getPortletURI() {
     return portletURI;
   }
+
   public void setPortletURI(String portletURI) {
     this.portletURI = portletURI;
   }

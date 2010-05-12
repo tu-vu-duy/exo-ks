@@ -26,6 +26,8 @@ import org.exoplatform.wiki.mow.core.api.wiki.WikiContainer;
 import org.exoplatform.wiki.mow.core.api.wiki.WikiHome;
 import org.exoplatform.wiki.rendering.MarkupRenderingService;
 import org.exoplatform.wiki.service.WikiContext;
+import org.xwiki.component.manager.ComponentLookupException;
+import org.xwiki.component.manager.ComponentRepositoryException;
 import org.xwiki.context.Execution;
 import org.xwiki.context.ExecutionContext;
 
@@ -76,12 +78,36 @@ public class TestXWikiRenderer extends AbstractMOWTestcase {
     wikiContext.setOwner("classic");
     wikiContext.setPageId("CreateWikiPage-001");
     
-    ec.getContext().setProperty("wikicontext", wikiContext);
+    ec.getContext().setProperty(WikiContext.WIKICONTEXT, wikiContext);
     
     String expectedHtml = "<p><span class=\"wikilink\"><a href=\"http://loclahost:8080/portal/classic/wiki/CreateWikiPage-001\">CreateWikiPage-001</a></span></p>";
     assertEquals(expectedHtml, renderer.render("[[CreateWikiPage-001>>CreateWikiPage-001]]"));
     assertEquals(expectedHtml, renderer.render("[[CreateWikiPage-001>>classic.CreateWikiPage-001]]"));
     assertEquals(expectedHtml, renderer.render("[[CreateWikiPage-001>>portal:classic.CreateWikiPage-001]]"));
+  }
+  
+  public void testRenderCreatePageLink() throws Exception {
+    Model model = mowService.getModel();
+    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
+    WikiContainer<PortalWiki> portalWikiContainer = wStore.getWikiContainer(WikiType.PORTAL);
+    PortalWiki wiki = portalWikiContainer.addWiki("classic");
+    wiki.getWikiHome();
+    
+    Execution ec = renderer.getExecutionContext();
+    ec.setContext(new ExecutionContext());
+    WikiContext wikiContext = new WikiContext();
+    wikiContext.setPortalURI("http://loclahost:8080/portal/classic/");
+    wikiContext.setPortletURI("wiki");
+    wikiContext.setType("portal");
+    wikiContext.setOwner("classic");
+    wikiContext.setPageId("WikiHome");
+    
+    ec.getContext().setProperty(WikiContext.WIKICONTEXT, wikiContext);
+    
+    String expectedHtml = "<p><span class=\"wikicreatelink\"><a href=\"http://loclahost:8080/portal/classic/wiki/WikiHome?action=AddPage&amp;pageId=NonExistedWikiPage-001\">NonExistedWikiPage-001</a></span></p>";
+    assertEquals(expectedHtml, renderer.render("[[NonExistedWikiPage-001>>NonExistedWikiPage-001]]"));
+    assertEquals(expectedHtml, renderer.render("[[NonExistedWikiPage-001>>classic.NonExistedWikiPage-001]]"));
+    assertEquals(expectedHtml, renderer.render("[[NonExistedWikiPage-001>>portal:classic.NonExistedWikiPage-001]]"));
   }
   
   public void testRenderAttachmentsAndImages() throws Exception {
@@ -94,7 +120,7 @@ public class TestXWikiRenderer extends AbstractMOWTestcase {
     wikiContext.setOwner("classic");
     wikiContext.setPageId("CreateWikiPage-001");
     
-    ec.getContext().setProperty("wikicontext", wikiContext);
+    ec.getContext().setProperty(WikiContext.WIKICONTEXT, wikiContext);
     
     String expectedAttachmentHtml = "<p><span class=\"wikiexternallink\"><a href=\"/portal/rest/jcr/repository/knowledge/exo:applications/eXoWiki/wikis/classic/WikiHome/CreateWikiPage/eXoWikiHome.png\">eXoWikiHome.png</a></span></p>";  
     assertEquals(expectedAttachmentHtml, renderer.render("[[eXoWikiHome.png>>attach:eXoWikiHome.png]]"));

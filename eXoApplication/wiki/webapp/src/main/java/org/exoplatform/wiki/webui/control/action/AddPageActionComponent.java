@@ -17,7 +17,9 @@
 package org.exoplatform.wiki.webui.control.action;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
@@ -26,6 +28,7 @@ import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.ext.filter.UIExtensionFilter;
 import org.exoplatform.webui.ext.filter.UIExtensionFilters;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
+import org.exoplatform.wiki.service.WikiContext;
 import org.exoplatform.wiki.webui.PageMode;
 import org.exoplatform.wiki.webui.UIWikiPageContentArea;
 import org.exoplatform.wiki.webui.UIWikiPortlet;
@@ -57,19 +60,32 @@ public class AddPageActionComponent extends UIComponent {
     @Override
     protected void processEvent(Event<AddPageActionComponent> event) throws Exception {
       UIWikiPortlet wikiPortlet = event.getSource().getAncestorOfType(UIWikiPortlet.class);
-      UIWikiPageContentArea pageContentArea = wikiPortlet.findFirstComponentOfType(UIWikiPageContentArea.class);
-      UIFormTextAreaInput titleInput = new UIFormTextAreaInput(UIWikiPageContentArea.FIELD_TITLE,
-                                                               UIWikiPageContentArea.FIELD_TITLE,
-                                                               "Title");
-      UIFormTextAreaInput markupInput = new UIFormTextAreaInput(UIWikiPageContentArea.FIELD_CONTENT,
-                                                                UIWikiPageContentArea.FIELD_CONTENT,
-                                                                "This is **sample content**");
-      pageContentArea.setPageMode(PageMode.NEW);
-      pageContentArea.addUIFormInput(titleInput).setRendered(true);
-      pageContentArea.addUIFormInput(markupInput).setRendered(true);
-      
-      wikiPortlet.setWikiMode(WikiMode.EDIT);
+      Map<String, Object> uiExtensionContext = new HashMap<String, Object>();
+      uiExtensionContext.put(UIWikiPortlet.class.getName(), wikiPortlet);
+      processAddPageAction(uiExtensionContext);
       super.processEvent(event);
     }
   }
+
+  public static void processAddPageAction(Map<String, Object> uiExtensionContext) {
+    UIWikiPortlet wikiPortlet = (UIWikiPortlet) uiExtensionContext.get(UIWikiPortlet.class.getName());
+    String pageId = (String) uiExtensionContext.get(WikiContext.PAGEID);
+    UIWikiPageContentArea pageContentArea = wikiPortlet.findFirstComponentOfType(UIWikiPageContentArea.class);
+    UIFormTextAreaInput titleInput = new UIFormTextAreaInput(UIWikiPageContentArea.FIELD_TITLE,
+                                                             UIWikiPageContentArea.FIELD_TITLE,
+                                                             "Title");
+    if(pageId != null && pageId.length() > 0){
+      titleInput.setValue(pageId);
+      titleInput.setEditable(false);
+    }
+    UIFormTextAreaInput markupInput = new UIFormTextAreaInput(UIWikiPageContentArea.FIELD_CONTENT,
+                                                              UIWikiPageContentArea.FIELD_CONTENT,
+                                                              "This is **sample content**");
+    pageContentArea.setPageMode(PageMode.NEW);
+    pageContentArea.addUIFormInput(titleInput).setRendered(true);
+    pageContentArea.addUIFormInput(markupInput).setRendered(true);
+
+    wikiPortlet.setWikiMode(WikiMode.EDIT);
+  }
+  
 }

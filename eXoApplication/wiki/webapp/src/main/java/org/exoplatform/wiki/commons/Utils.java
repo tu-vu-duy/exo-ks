@@ -16,9 +16,11 @@
  */
 package org.exoplatform.wiki.commons;
 
+import java.util.Map;
+import java.util.Set;
+
 import javax.jcr.Node;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.portal.application.PortalRequestContext;
@@ -41,11 +43,10 @@ import org.exoplatform.wiki.service.WikiPageParams;
  */
 public class Utils {
   
-  public static String getCurrentRequestURL() throws Exception{
+  public static String getCurrentRequestURL() throws Exception {
     PortalRequestContext portalRequestContext = Util.getPortalRequestContext();
     HttpServletRequest request = portalRequestContext.getRequest();
-    HttpServletRequestWrapper requestWrapper = new HttpServletRequestWrapper(request);
-    String requestURL = requestWrapper.getRequestURL().toString();
+    String requestURL = request.getRequestURL().toString();
     UIPortal uiPortal = Util.getUIPortal();
     String pageNodeSelected = uiPortal.getSelectedNode().getUri();
     if (!requestURL.contains(pageNodeSelected)) {
@@ -54,29 +55,37 @@ public class Utils {
     }
     return requestURL;
   }
-  
-  public static WikiPageParams getCurrentWikiPageParams() throws Exception{
+
+  public static WikiPageParams getCurrentWikiPageParams() throws Exception {
     String requestURL = getCurrentRequestURL();
     PageResolver pageResolver = (PageResolver) PortalContainer.getComponent(PageResolver.class);
     WikiPageParams params = pageResolver.extractWikiPageParams(requestURL);
+    HttpServletRequest request = Util.getPortalRequestContext().getRequest();
+    Map<String, String[]> paramsMap = request.getParameterMap();
+    Set<String> keys = paramsMap.keySet();
+    for (String key : keys) {
+      params.setParameter(key, paramsMap.get(key));
+    }
     return params;
   }
-  
+
   public static void reparePermissions(AttachmentImpl att) throws Exception {
-    MOWService mowService = (MOWService)PortalContainer.getComponent(MOWService.class) ;
-    WikiStoreImpl store = (WikiStoreImpl)mowService.getModel().getWikiStore() ;
-    Node attNode = (Node)store.getSession().getJCRSession().getItem(att.getPath()) ;
-    ExtendedNode extNode = (ExtendedNode)attNode ;
-    if (extNode.canAddMixin("exo:privilegeable")) extNode.addMixin("exo:privilegeable");
-    String[] arrayPers = {PermissionType.READ};
-    extNode.setPermission("any", arrayPers) ;    
-    attNode.getSession().save() ;
+    MOWService mowService = (MOWService) PortalContainer.getComponent(MOWService.class);
+    WikiStoreImpl store = (WikiStoreImpl) mowService.getModel().getWikiStore();
+    Node attNode = (Node) store.getSession().getJCRSession().getItem(att.getPath());
+    ExtendedNode extNode = (ExtendedNode) attNode;
+    if (extNode.canAddMixin("exo:privilegeable"))
+      extNode.addMixin("exo:privilegeable");
+    String[] arrayPers = { PermissionType.READ };
+    extNode.setPermission("any", arrayPers);
+    attNode.getSession().save();
   }
-  
-  public static Page getCurrentWikiPage() throws Exception{
+
+  public static Page getCurrentWikiPage() throws Exception {
     String requestURL = Utils.getCurrentRequestURL();
     PageResolver pageResolver = (PageResolver) PortalContainer.getComponent(PageResolver.class);
     Page page = pageResolver.resolve(requestURL);
     return page;
   }
+  
 }

@@ -16,6 +16,9 @@
  */
 package org.exoplatform.wiki.webui;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.portal.application.PortalRequestContext;
 import org.exoplatform.portal.webui.portal.UIPortal;
@@ -27,6 +30,7 @@ import org.exoplatform.webui.core.UIPopupContainer;
 import org.exoplatform.webui.core.UIPopupWindow;
 import org.exoplatform.webui.core.UIPortletApplication;
 import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
+import org.exoplatform.webui.ext.UIExtensionManager;
 import org.exoplatform.wiki.commons.Utils;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.rendering.MarkupRenderingService;
@@ -35,6 +39,8 @@ import org.exoplatform.wiki.resolver.PageResolver;
 import org.exoplatform.wiki.service.WikiContext;
 import org.exoplatform.wiki.service.WikiPageParams;
 import org.exoplatform.wiki.service.WikiService;
+import org.exoplatform.wiki.webui.control.UIPageToolBar;
+import org.exoplatform.wiki.webui.control.action.AddPageActionComponent;
 import org.xwiki.context.Execution;
 import org.xwiki.context.ExecutionContext;
 
@@ -63,6 +69,16 @@ public class UIWikiPortlet extends UIPortletApplication {
   }
 
   public void processRender(WebuiApplication app, WebuiRequestContext context) throws Exception {
+    WikiPageParams pageParams = Utils.getCurrentWikiPageParams();
+    if (WikiContext.ADDPAGE.equalsIgnoreCase(pageParams.getParameter(WikiContext.ACTION))) {
+      UIExtensionManager manager = getApplicationComponent(UIExtensionManager.class);
+      Map<String, Object> uiExtensionContext = new HashMap<String, Object>();
+      uiExtensionContext.put(UIWikiPortlet.class.getName(), this);
+      uiExtensionContext.put(WikiContext.PAGEID, pageParams.getParameter(WikiContext.PAGEID));
+      if(manager.accept(UIPageToolBar.EXTENSION_TYPE, WikiContext.ADDPAGE, uiExtensionContext)){
+        AddPageActionComponent.processAddPageAction(uiExtensionContext);
+      }
+    }
     PortalRequestContext portalRequestContext = Util.getPortalRequestContext();
     UIPortal uiPortal = Util.getUIPortal();
     String portalURI = portalRequestContext.getPortalURI();
@@ -85,7 +101,7 @@ public class UIWikiPortlet extends UIPortletApplication {
       wikiContext.setType(params.getType());
       wikiContext.setOwner(params.getOwner());
       wikiContext.setPageId(params.getPageId());
-      ec.getContext().setProperty("wikicontext", wikiContext);
+      ec.getContext().setProperty(WikiContext.WIKICONTEXT, wikiContext);
       
       findFirstComponentOfType(UIWikiPageContentArea.class).renderWikiMarkup(page.getContent().getText());
       UIWikiBreadCrumb wikiBreadCrumb = findFirstComponentOfType(UIWikiBreadCrumb.class);

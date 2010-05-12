@@ -87,23 +87,31 @@ public class DefaultWikiModel implements WikiModel {
   }
 
   public String getDocumentEditURL(String documentName, String anchor, String queryString) {
-    return "#edit";
+    ExecutionContext ec = execution.getContext();
+    WikiContext wikiContext = null;
+    if (ec != null) {
+      wikiContext = (WikiContext) ec.getProperty(WikiContext.WIKICONTEXT);
+    }
+    if (wikiContext != null) {
+      String viewURL = getDocumentViewURL(wikiContext);
+      StringBuilder sb = new StringBuilder(viewURL);
+      sb.append("?");
+      sb.append(WikiContext.ACTION);
+      sb.append("=");
+      sb.append(WikiContext.ADDPAGE);
+      sb.append("&");
+      sb.append(WikiContext.PAGEID);
+      sb.append("=");
+      WikiContext wikiMarkupContext = getWikiMarkupContext(documentName);
+      sb.append(wikiMarkupContext.getPageId());
+      return sb.toString();
+    }
+    return "";
   }
 
   public String getDocumentViewURL(String documentName, String anchor, String queryString) {
     WikiContext wikiMarkupContext = getWikiMarkupContext(documentName);
-    StringBuilder sb = new StringBuilder();
-    sb.append(wikiMarkupContext.getPortalURI());
-    sb.append(wikiMarkupContext.getPortletURI());
-    sb.append("/");
-    if(!PortalConfig.PORTAL_TYPE.equalsIgnoreCase(wikiMarkupContext.getType())){
-      sb.append(wikiMarkupContext.getType().toLowerCase());
-      sb.append("/");
-      sb.append(Utils.validateWikiOwner(wikiMarkupContext.getType(), wikiMarkupContext.getOwner()));
-      sb.append("/");
-    }
-    sb.append(wikiMarkupContext.getPageId());
-    return sb.toString();
+    return getDocumentViewURL(wikiMarkupContext);
   }
 
   public boolean isDocumentAvailable(String documentName) {
@@ -122,6 +130,21 @@ public class DefaultWikiModel implements WikiModel {
     return (page != null);
   }
 
+  private String getDocumentViewURL(WikiContext context) {
+    StringBuilder sb = new StringBuilder();
+    sb.append(context.getPortalURI());
+    sb.append(context.getPortletURI());
+    sb.append("/");
+    if(!PortalConfig.PORTAL_TYPE.equalsIgnoreCase(context.getType())){
+      sb.append(context.getType().toLowerCase());
+      sb.append("/");
+      sb.append(Utils.validateWikiOwner(context.getType(), context.getOwner()));
+      sb.append("/");
+    }
+    sb.append(context.getPageId());
+    return sb.toString();
+  }
+  
   private WikiContext getWikiMarkupContext(String documentName) {
     WikiContext wikiMarkupContext = new WikiContext();
     try {
@@ -131,7 +154,7 @@ public class DefaultWikiModel implements WikiModel {
       ExecutionContext ec = execution.getContext();
       WikiContext wikiContext = null;
       if (ec != null) {
-        wikiContext = (WikiContext) ec.getProperty("wikicontext");
+        wikiContext = (WikiContext) ec.getProperty(WikiContext.WIKICONTEXT);
       }
 
       wikiMarkupContext.setType(entityReference.extractReference(EntityType.WIKI).getName());

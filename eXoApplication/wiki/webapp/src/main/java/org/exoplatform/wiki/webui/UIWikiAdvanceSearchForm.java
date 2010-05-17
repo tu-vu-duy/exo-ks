@@ -16,17 +16,20 @@
  */
 package org.exoplatform.wiki.webui;
 
+import org.exoplatform.webui.config.annotation.ComponentConfig;
+import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
+import org.exoplatform.webui.form.UIForm;
 
 /**
  * Created by The eXo Platform SAS
  * Author : viet nguyen
  *          viet.nguyen@exoplatform.com
- * Apr 28, 2010  
+ * May 14, 2010  
  */
-public enum PageMode {
-  
-  NEW ,
-  
-  EXISTED
+@ComponentConfig(
+  lifecycle = UIFormLifecycle.class,
+  template = "app:/templates/wiki/webui/UIWikiAdvanceSearchForm.gtmpl"
+)
+public class UIWikiAdvanceSearchForm extends UIForm {
 
 }

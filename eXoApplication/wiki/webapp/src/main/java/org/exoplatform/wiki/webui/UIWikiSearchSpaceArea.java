@@ -16,17 +16,23 @@
  */
 package org.exoplatform.wiki.webui;
 
+import org.exoplatform.webui.config.annotation.ComponentConfig;
+import org.exoplatform.webui.core.UIContainer;
+import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
 
 /**
  * Created by The eXo Platform SAS
  * Author : viet nguyen
  *          viet.nguyen@exoplatform.com
- * Apr 28, 2010  
+ * May 14, 2010  
  */
-public enum PageMode {
-  
-  NEW ,
-  
-  EXISTED
-
+@ComponentConfig(
+  lifecycle = UIApplicationLifecycle.class,
+  template = "app:/templates/wiki/webui/UIWikiSearchSpaceArea.gtmpl"
+)
+public class UIWikiSearchSpaceArea extends UIContainer {
+  public UIWikiSearchSpaceArea() throws Exception{
+    addChild(UIWikiAdvanceSearchForm.class, null, null).setRendered(true);
+    addChild(UIWikiAdvanceSearchResult.class, null, null).setRendered(true);
+  }
 }

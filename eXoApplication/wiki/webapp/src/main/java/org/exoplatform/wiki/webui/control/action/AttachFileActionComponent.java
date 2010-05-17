@@ -24,6 +24,7 @@ import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIComponent;
 import org.exoplatform.webui.core.UIPopupContainer;
 import org.exoplatform.webui.event.Event;
+import org.exoplatform.webui.event.Event.Phase;
 import org.exoplatform.webui.ext.filter.UIExtensionFilter;
 import org.exoplatform.webui.ext.filter.UIExtensionFilters;
 import org.exoplatform.wiki.webui.UIWikiPortlet;
@@ -39,7 +40,7 @@ import org.exoplatform.wiki.webui.popup.UIAttachFileForm;
  */
 @ComponentConfig(
   events = {
-    @EventConfig(listeners = AttachFileActionComponent.AttachFileActionListener.class)
+    @EventConfig(listeners = AttachFileActionComponent.AttachFileActionListener.class, phase = Phase.DECODE)
   }
 )
 public class AttachFileActionComponent extends UIComponent {

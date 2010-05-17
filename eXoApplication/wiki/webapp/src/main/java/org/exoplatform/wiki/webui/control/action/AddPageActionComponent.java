@@ -31,6 +31,7 @@ import org.exoplatform.webui.form.UIFormTextAreaInput;
 import org.exoplatform.wiki.service.WikiContext;
 import org.exoplatform.wiki.webui.PageMode;
 import org.exoplatform.wiki.webui.UIWikiPageContentArea;
+import org.exoplatform.wiki.webui.UIWikiPageEditForm;
 import org.exoplatform.wiki.webui.UIWikiPortlet;
 import org.exoplatform.wiki.webui.WikiMode;
 import org.exoplatform.wiki.webui.control.filter.IsViewModeFilter;
@@ -70,22 +71,18 @@ public class AddPageActionComponent extends UIComponent {
   public static void processAddPageAction(Map<String, Object> uiExtensionContext) {
     UIWikiPortlet wikiPortlet = (UIWikiPortlet) uiExtensionContext.get(UIWikiPortlet.class.getName());
     String pageId = (String) uiExtensionContext.get(WikiContext.PAGEID);
-    UIWikiPageContentArea pageContentArea = wikiPortlet.findFirstComponentOfType(UIWikiPageContentArea.class);
-    UIFormTextAreaInput titleInput = new UIFormTextAreaInput(UIWikiPageContentArea.FIELD_TITLE,
-                                                             UIWikiPageContentArea.FIELD_TITLE,
-                                                             "Title");
+    UIWikiPageEditForm pageEditForm = wikiPortlet.findFirstComponentOfType(UIWikiPageEditForm.class);
+    UIFormTextAreaInput titleInput = pageEditForm.findComponentById(UIWikiPageEditForm.FIELD_TITLE);
+    UIFormTextAreaInput markupInput = pageEditForm.findComponentById(UIWikiPageEditForm.FIELD_CONTENT);
+    titleInput.setValue("Untitle");
+    markupInput.setValue("This is **sample content**");
+    
     if(pageId != null && pageId.length() > 0){
       titleInput.setValue(pageId);
       titleInput.setEditable(false);
     }
-    UIFormTextAreaInput markupInput = new UIFormTextAreaInput(UIWikiPageContentArea.FIELD_CONTENT,
-                                                              UIWikiPageContentArea.FIELD_CONTENT,
-                                                              "This is **sample content**");
-    pageContentArea.setPageMode(PageMode.NEW);
-    pageContentArea.addUIFormInput(titleInput).setRendered(true);
-    pageContentArea.addUIFormInput(markupInput).setRendered(true);
 
-    wikiPortlet.setWikiMode(WikiMode.EDIT);
+    wikiPortlet.changeMode(WikiMode.NEW);
   }
   
 }

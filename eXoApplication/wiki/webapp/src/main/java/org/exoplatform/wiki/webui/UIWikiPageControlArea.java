@@ -33,6 +33,7 @@ import org.exoplatform.wiki.webui.control.UIPageToolBar;
 )
 public class UIWikiPageControlArea extends UIContainer {
   public UIWikiPageControlArea() throws Exception {
-    addChild(UIPageToolBar.class, null, null);
+    addChild(UIWikiPageTitleControlForm.class, null, null);
+    addChild(UIPageToolBar.class, null, "UIWikiPageControlArea_PageToolBar");
   }
 }

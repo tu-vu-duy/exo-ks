@@ -16,17 +16,20 @@
  */
 package org.exoplatform.wiki.webui;
 
+import org.exoplatform.webui.config.annotation.ComponentConfig;
+import org.exoplatform.webui.core.UIContainer;
+import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
 
 /**
  * Created by The eXo Platform SAS
  * Author : viet nguyen
  *          viet.nguyen@exoplatform.com
- * Apr 28, 2010  
+ * May 14, 2010  
  */
-public enum PageMode {
-  
-  NEW ,
-  
-  EXISTED
+@ComponentConfig(
+  lifecycle = UIApplicationLifecycle.class,
+  template = "app:/templates/wiki/webui/UIWikiAdvanceSearchResult.gtmpl"
+)
+public class UIWikiAdvanceSearchResult extends UIContainer {
 
 }

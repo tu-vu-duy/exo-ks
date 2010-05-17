@@ -25,6 +25,7 @@ import org.exoplatform.portal.webui.portal.UIPortal;
 import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.webui.application.WebuiApplication;
 import org.exoplatform.webui.application.WebuiRequestContext;
+import org.exoplatform.webui.application.portlet.PortletRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.core.UIPopupContainer;
 import org.exoplatform.webui.core.UIPopupWindow;
@@ -60,6 +61,8 @@ public class UIWikiPortlet extends UIPortletApplication {
       addChild(UIWikiUpperArea.class, null, null).setRendered(true);
       addChild(UIWikiPageArea.class, null, null).setRendered(true);
       addChild(UIWikiBottomArea.class, null, null).setRendered(true);
+      addChild(UIWikiSearchSpaceArea.class, null, null).setRendered(false);
+      
       UIPopupContainer uiPopupContainer = addChild(UIPopupContainer.class, null, null) ;
       uiPopupContainer.setId("UIWikiPopupContainer") ;
       uiPopupContainer.getChild(UIPopupWindow.class).setId("UIWikiPopupWindow") ;
@@ -140,8 +143,66 @@ public class UIWikiPortlet extends UIPortletApplication {
     return mode;
   }
   
-  public void setWikiMode(WikiMode wikiMode){
-    mode = wikiMode;
+  public void changeMode(WikiMode newMode){
+    WikiMode oldMode = mode;
+    mode = newMode;
+    switch(oldMode){
+      case VIEW:
+        switch(mode){
+          case EDIT:
+            switchViewEditMode(true);
+            break;
+          case NEW:
+            switchViewNewMode(true);
+            break;
+          case SEARCH:
+            switchViewSearchMode(true);
+            break;
+        }
+        break;
+      case EDIT:
+        switch(mode){
+          case VIEW:
+            switchViewEditMode(false);
+            break;
+          
+        }
+        break;
+      case NEW:
+        switch(mode){
+          case VIEW:
+            switchViewNewMode(false);
+            break;
+        }
+        break;
+      case SEARCH:
+        switch(mode){
+          case VIEW:
+            switchViewSearchMode(false);
+            break;
+        }
+        break;
+    }
+  }
+  
+  private void switchViewEditMode(boolean isViewToEdit){
+    findFirstComponentOfType(UIWikiPageControlArea.class).setRendered(!isViewToEdit);
+    findFirstComponentOfType(UIWikiPageContentArea.class).setRendered(!isViewToEdit);
+    findFirstComponentOfType(UIWikiPageEditForm.class).setRendered(isViewToEdit);
+  }
+  
+  private void switchViewNewMode(boolean isViewToNew){
+    findFirstComponentOfType(UIWikiPageControlArea.class).setRendered(!isViewToNew);
+    findFirstComponentOfType(UIWikiPageContentArea.class).setRendered(!isViewToNew);
+    findFirstComponentOfType(UIWikiPageEditForm.class).setRendered(isViewToNew);
+    findFirstComponentOfType(UIWikiBottomArea.class).setRendered(!isViewToNew);
+  }
+  
+  private void switchViewSearchMode(boolean isViewToSearch){
+    findFirstComponentOfType(UIWikiPageControlArea.class).setRendered(!isViewToSearch);
+    findFirstComponentOfType(UIWikiPageArea.class).setRendered(!isViewToSearch);
+    findFirstComponentOfType(UIWikiBottomArea.class).setRendered(!isViewToSearch);
+    findFirstComponentOfType(UIWikiSearchSpaceArea.class).setRendered(isViewToSearch);
   }
   
 }

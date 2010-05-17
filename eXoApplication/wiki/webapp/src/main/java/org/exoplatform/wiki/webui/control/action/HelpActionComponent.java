@@ -23,6 +23,7 @@ import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIComponent;
 import org.exoplatform.webui.event.Event;
+import org.exoplatform.webui.event.Event.Phase;
 import org.exoplatform.webui.ext.filter.UIExtensionFilter;
 import org.exoplatform.webui.ext.filter.UIExtensionFilters;
 import org.exoplatform.wiki.webui.control.filter.IsEditModeFilter;
@@ -36,7 +37,7 @@ import org.exoplatform.wiki.webui.control.listener.UIPageToolBarActionListener;
  */
 @ComponentConfig(
   events = {
-    @EventConfig(listeners = HelpActionComponent.HelpActionListener.class)
+    @EventConfig(listeners = HelpActionComponent.HelpActionListener.class, phase = Phase.DECODE)
   }
 )
 public class HelpActionComponent extends UIComponent {

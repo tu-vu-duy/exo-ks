@@ -2,14 +2,16 @@
   <table class="ActionContainer">
     <tr>
       <td>
-        <% String submitPageContent = uicomponent.getPageContentArea().event("Submit", "");
-           for(entry in uicomponent.getActions().entrySet()) {
+        <% for(entry in uicomponent.getActions().entrySet()) {
              String action = entry.getKey();
              def actionComponent = entry.getValue();
              String actionLabel = _ctx.appRes(uicomponent.getName() + ".action." + action);
              String link = actionComponent.event(action);
+             if(uicomponent.parentIsForm()){
+               link = uicomponent.getParent().event(action, actionComponent.getId(), action);
+             }
         %>
-        <div onclick="$submitPageContent" class="ActionButton LightBlueStyle" onmouseover="this.style.color = '#058ee6'" onmouseout="this.style.color='black'">
+        <div class="ActionButton LightBlueStyle" onmouseover="this.style.color = '#058ee6'" onmouseout="this.style.color='black'">
           <div class="ButtonLeft">
             <div class="ButtonRight">
               <div class="ButtonMiddle">

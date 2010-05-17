@@ -26,6 +26,7 @@ import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIComponent;
 import org.exoplatform.webui.event.Event;
+import org.exoplatform.webui.event.Event.Phase;
 import org.exoplatform.webui.ext.filter.UIExtensionFilter;
 import org.exoplatform.webui.ext.filter.UIExtensionFilters;
 import org.exoplatform.wiki.commons.Utils;
@@ -45,7 +46,7 @@ import org.exoplatform.wiki.webui.control.listener.UIPageToolBarActionListener;
  */
 @ComponentConfig(
   events = {
-    @EventConfig(listeners = CancelActionComponent.CancelActionListener.class)
+    @EventConfig(listeners = CancelActionComponent.CancelActionListener.class, phase = Phase.DECODE)
   }
 )
 public class CancelActionComponent extends UIComponent {
@@ -71,7 +72,7 @@ public class CancelActionComponent extends UIComponent {
       } catch (Exception e) {
         log.warn("An exception happens when cancel edit page", e);
       }
-      wikiPortlet.setWikiMode(WikiMode.VIEW);
+      wikiPortlet.changeMode(WikiMode.VIEW);
       pageContentArea.removeChildById(UIWikiPageContentArea.FIELD_TITLE);
       pageContentArea.removeChildById(UIWikiPageContentArea.FIELD_CONTENT);
       super.processEvent(event);

@@ -32,6 +32,7 @@ import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.resolver.PageResolver;
 import org.exoplatform.wiki.webui.PageMode;
 import org.exoplatform.wiki.webui.UIWikiPageContentArea;
+import org.exoplatform.wiki.webui.UIWikiPageEditForm;
 import org.exoplatform.wiki.webui.UIWikiPortlet;
 import org.exoplatform.wiki.webui.WikiMode;
 import org.exoplatform.wiki.webui.control.filter.IsViewModeFilter;
@@ -61,24 +62,18 @@ public class EditPageActionComponent extends UIComponent {
     @Override
     protected void processEvent(Event<EditPageActionComponent> event) throws Exception {
       UIWikiPortlet wikiPortlet = event.getSource().getAncestorOfType(UIWikiPortlet.class);
-      UIWikiPageContentArea pageContentArea = wikiPortlet.findFirstComponentOfType(UIWikiPageContentArea.class);
-      UIFormTextAreaInput titleInput = new UIFormTextAreaInput(UIWikiPageContentArea.FIELD_TITLE,
-                                                               UIWikiPageContentArea.FIELD_TITLE,
-                                                               "Title");
-      UIFormTextAreaInput markupInput = new UIFormTextAreaInput(UIWikiPageContentArea.FIELD_CONTENT,
-                                                                UIWikiPageContentArea.FIELD_CONTENT,
-                                                                "This is **bold**");
+      UIWikiPageEditForm pageEditForm = wikiPortlet.findFirstComponentOfType(UIWikiPageEditForm.class);
+      UIFormTextAreaInput titleInput = pageEditForm.findComponentById(UIWikiPageEditForm.FIELD_TITLE);
+      UIFormTextAreaInput markupInput = pageEditForm.findComponentById(UIWikiPageEditForm.FIELD_CONTENT);
+      
       String requestURL = Utils.getCurrentRequestURL();
       PageResolver pageResolver = (PageResolver) PortalContainer.getComponent(PageResolver.class);
       Page page = pageResolver.resolve(requestURL);
       titleInput.setValue(page.getContent().getTitle());
       titleInput.setEditable(false);
       markupInput.setValue(page.getContent().getText());
-      pageContentArea.setPageMode(PageMode.EXISTED);
-      pageContentArea.addUIFormInput(titleInput).setRendered(true);
-      pageContentArea.addUIFormInput(markupInput).setRendered(true);
       
-      wikiPortlet.setWikiMode(WikiMode.EDIT);
+      wikiPortlet.changeMode(WikiMode.EDIT);
       super.processEvent(event);
     }
   }

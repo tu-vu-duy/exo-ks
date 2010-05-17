@@ -1,0 +1,29 @@
+<% uiform.begin(); %>
+<div class="UIWikiPageEditForm">
+<%uiform.renderChild("UIWikiPageEditForm_PageToolBar"); %>
+		<div class="HorizontalLayout">
+			<div class="UIFormInput">
+				<table class="UIFormGrid">
+					<tbody>
+						   <tr>
+									<td class="FieldLabel">
+											Title
+									</td>
+									<td class="FieldComponent">
+											<%uiform.renderField("Title"); %>
+									</td>
+							</tr>						
+							<tr>
+									<td class="FieldLabel">
+											Markup
+									</td>
+									<td class="FieldComponent">
+											<%uiform.renderField("Markup"); %>
+									</td>
+							</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+</div>
+<%uiform.end();%>

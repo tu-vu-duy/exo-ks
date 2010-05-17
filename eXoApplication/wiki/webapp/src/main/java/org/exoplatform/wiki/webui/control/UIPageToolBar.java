@@ -28,6 +28,7 @@ import org.exoplatform.webui.core.UIContainer;
 import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
 import org.exoplatform.webui.ext.UIExtension;
 import org.exoplatform.webui.ext.UIExtensionManager;
+import org.exoplatform.webui.form.UIForm;
 import org.exoplatform.wiki.webui.UIWikiPageContentArea;
 import org.exoplatform.wiki.webui.UIWikiPortlet;
 
@@ -67,6 +68,14 @@ public class UIPageToolBar extends UIContainer {
     UIWikiPortlet wikiPortlet = getAncestorOfType(UIWikiPortlet.class);
     UIWikiPageContentArea pageContentArea = wikiPortlet.findFirstComponentOfType(UIWikiPageContentArea.class);
     return pageContentArea;
+  }
+  
+  public boolean parentIsForm(){
+    UIComponent uiComponent = getParent();
+    if(uiComponent != null && uiComponent instanceof UIForm){
+      return true;
+    }
+    return false;
   }
   
 }

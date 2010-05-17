@@ -1,33 +1,3 @@
-<% import org.exoplatform.wiki.webui.WikiMode; %>
 <% uiform.begin(); %>
-<% if(uicomponent.getWikiMode() == WikiMode.EDIT) { %>
-<div class="UIWikiPageContentArea">
-		<div class="HorizontalLayout">
-			<div class="UIFormInput">
-				<table class="UIFormGrid">
-					<tbody>
-						   <tr>
-									<td class="FieldLabel">
-											Title
-									</td>
-									<td class="FieldComponent">
-											<%uiform.renderField("Title"); %>
-									</td>
-							</tr>						
-							<tr>
-									<td class="FieldLabel">
-											Markup
-									</td>
-									<td class="FieldComponent">
-											<%uiform.renderField("Markup"); %>
-									</td>
-							</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
-</div>
-<%} else {%>
 ${uicomponent.htmlOutput}
-<%}%>
 <%uiform.end();%>

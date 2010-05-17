@@ -16,7 +16,6 @@
  */
 package org.exoplatform.wiki.webui;
 
-import java.util.Locale;
 
 /**
  * Created by The eXo Platform SAS
@@ -24,44 +23,14 @@ import java.util.Locale;
  *          viet.nguyen@exoplatform.com
  * Apr 27, 2010  
  */
-public class WikiMode {
+public enum WikiMode {
   
-  public static final WikiMode EDIT = new WikiMode("edit");
+  VIEW,
   
-  public static final WikiMode VIEW = new WikiMode("view");
+  EDIT,
+  
+  NEW,
+  
+  SEARCH
 
-  private String name;
-
-  public WikiMode(String name)
-  {
-     if (name == null)
-     {
-        throw new NullPointerException();
-     }
-     this.name = name.toLowerCase(Locale.ENGLISH);
-  }
-
-  public boolean equals(Object o)
-  {
-     if (o == this)
-     {
-        return true;
-     }
-     if (o instanceof WikiMode)
-     {
-       WikiMode that = (WikiMode)o;
-        return name.equals(that.name);
-     }
-     return false;
-  }
-
-  public int hashCode()
-  {
-     return name.hashCode();
-  }
-
-  public String toString()
-  {
-     return name;
-  }
 }

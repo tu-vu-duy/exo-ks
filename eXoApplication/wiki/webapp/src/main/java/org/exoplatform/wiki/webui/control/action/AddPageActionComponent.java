@@ -75,6 +75,7 @@ public class AddPageActionComponent extends UIComponent {
     UIFormTextAreaInput titleInput = pageEditForm.findComponentById(UIWikiPageEditForm.FIELD_TITLE);
     UIFormTextAreaInput markupInput = pageEditForm.findComponentById(UIWikiPageEditForm.FIELD_CONTENT);
     titleInput.setValue("Untitle");
+    titleInput.setEditable(true);
     markupInput.setValue("This is **sample content**");
     
     if(pageId != null && pageId.length() > 0){

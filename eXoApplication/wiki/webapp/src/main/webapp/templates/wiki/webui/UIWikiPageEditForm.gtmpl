@@ -1,5 +1,5 @@
+<div class="UIWikiPageEditForm Border">
 <% uiform.begin(); %>
-<div class="UIWikiPageEditForm">
 <%uiform.renderChild("UIWikiPageEditForm_PageToolBar"); %>
 		<div class="HorizontalLayout">
 			<div class="UIFormInput">
@@ -25,5 +25,5 @@
 				</table>
 			</div>
 		</div>
-</div>
 <%uiform.end();%>
+</div>

@@ -21,11 +21,8 @@ import java.util.List;
 
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
-import org.exoplatform.webui.config.annotation.EventConfig;
-import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
-import org.exoplatform.webui.event.Event;
-import org.exoplatform.webui.event.EventListener;
-import org.exoplatform.webui.form.UIForm;
+import org.exoplatform.webui.core.UIContainer;
+import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
 import org.exoplatform.wiki.rendering.MarkupRenderingService;
 import org.exoplatform.wiki.rendering.Renderer;
 import org.exoplatform.wiki.service.WikiResource;
@@ -37,13 +34,10 @@ import org.exoplatform.wiki.service.WikiResource;
  * Apr 26, 2010  
  */
 @ComponentConfig(
-  lifecycle = UIFormLifecycle.class,
-  template = "app:/templates/wiki/webui/UIWikiPageContentArea.gtmpl",
-  events = {
-      @EventConfig(listeners = UIWikiPageContentArea.SubmitActionListener.class)
-    }
+  lifecycle = UIApplicationLifecycle.class,
+  template = "app:/templates/wiki/webui/UIWikiPageContentArea.gtmpl"
 )
-public class UIWikiPageContentArea extends UIForm {
+public class UIWikiPageContentArea extends UIContainer {
 
   private String htmlOutput;
   private PageMode pageMode = PageMode.NEW;
@@ -53,7 +47,6 @@ public class UIWikiPageContentArea extends UIForm {
   public static final String FIELD_CONTENT = "Markup";
   
   public UIWikiPageContentArea(){
-    setActions(new String[] { "Submit" });
   }
 
   public PageMode getPageMode() {
@@ -94,10 +87,4 @@ public class UIWikiPageContentArea extends UIForm {
     return getAncestorOfType(UIWikiPortlet.class).getWikiMode();
   }
   
-  static public class SubmitActionListener extends EventListener<UIWikiPageContentArea> {
-    @Override
-    public void execute(Event<UIWikiPageContentArea> event) throws Exception {
-    }
-    
-  }
 }

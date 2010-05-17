@@ -1,4 +1,4 @@
-<hr/>
+<div class="UIWikiAttachmentArea Border">
 <% uiform.begin(); %>
 <%
   List children = uicomponent.getChildren() ;
@@ -9,3 +9,4 @@
   }
 %>
 <%uiform.end();%>
+</div>

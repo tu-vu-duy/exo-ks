@@ -3,7 +3,7 @@
   
   List breadCumbs = uicomponent.getBreadCumbs();
 %>
-<div class="UIBreadcumbs">
+<div class="UIWikiBreadCrumb UIBreadcumbs">
   <div class="LeftBreadcumbsBar">
     <div class="RightBreadcumbsBar">
       <div class="BreadcumbsInfoBar">

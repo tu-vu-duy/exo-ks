@@ -16,7 +16,9 @@
  */
 package org.exoplatform.wiki.webui.control;
 
+import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.core.UIContainer;
+import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
 
 /**
  * Created by The eXo Platform SAS
@@ -24,6 +26,10 @@ import org.exoplatform.webui.core.UIContainer;
  *          viet.nguyen@exoplatform.com
  * Apr 26, 2010  
  */
+@ComponentConfig(
+  lifecycle = UIApplicationLifecycle.class,
+  template = "app:/templates/wiki/webui/UIWikiToolbar.gtmpl"
+)
 public class UIWikiToolBar extends UIContainer {
 
 }

@@ -17,24 +17,19 @@
 package org.exoplatform.wiki.webui;
 
 import org.exoplatform.webui.config.annotation.ComponentConfig;
-import org.exoplatform.webui.core.UIContainer;
-import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
-import org.exoplatform.wiki.webui.control.UIWikiToolBar;
+import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
+import org.exoplatform.webui.form.UIForm;
 
 /**
  * Created by The eXo Platform SAS
  * Author : viet nguyen
  *          viet.nguyen@exoplatform.com
- * Apr 26, 2010  
+ * May 17, 2010  
  */
 @ComponentConfig(
-  lifecycle = UIApplicationLifecycle.class,
-  template = "app:/templates/wiki/webui/UIWikiApplicationControlArea.gtmpl"
+  lifecycle = UIFormLifecycle.class,
+  template = "app:/templates/wiki/webui/UIWikiSearchBox.gtmpl"
 )
-public class UIWikiApplicationControlArea extends UIContainer {
-  public UIWikiApplicationControlArea() throws Exception{
-    addChild(UIWikiBreadCrumb.class, null, null).setRendered(true);
-    addChild(UIWikiToolBar.class, null, null).setRendered(true);
-    addChild(UIWikiSearchBox.class, null, null).setRendered(true);
-  }
+public class UIWikiSearchBox extends UIForm {
+
 }

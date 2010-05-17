@@ -1,3 +1,4 @@
+<div class="UIPageToolBar Border" >
 <div class="UIAction">
   <table class="ActionContainer">
     <tr>
@@ -24,4 +25,5 @@
       </td>
     </tr>
   </table>
+</div>
 </div>

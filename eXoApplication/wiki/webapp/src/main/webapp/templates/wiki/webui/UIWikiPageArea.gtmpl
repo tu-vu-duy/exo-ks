@@ -1,3 +1,4 @@
+<div class="UIWikiPageArea Border">
 <%
   List children = uicomponent.getChildren() ;
   for(component in children) {
@@ -6,3 +7,4 @@
     }
   }
 %>
+</div>

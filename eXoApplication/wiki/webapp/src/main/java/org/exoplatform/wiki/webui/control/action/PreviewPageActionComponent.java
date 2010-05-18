@@ -19,6 +19,7 @@ package org.exoplatform.wiki.webui.control.action;
 import java.util.Arrays;
 import java.util.List;
 
+import org.exoplatform.portal.webui.workspace.UIMaskWorkspace;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIComponent;
@@ -26,8 +27,12 @@ import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.Event.Phase;
 import org.exoplatform.webui.ext.filter.UIExtensionFilter;
 import org.exoplatform.webui.ext.filter.UIExtensionFilters;
+import org.exoplatform.webui.form.UIFormTextAreaInput;
+import org.exoplatform.wiki.webui.UIWikiPageEditForm;
+import org.exoplatform.wiki.webui.UIWikiPortlet;
 import org.exoplatform.wiki.webui.control.filter.IsEditModeFilter;
 import org.exoplatform.wiki.webui.control.listener.UIPageToolBarActionListener;
+import org.exoplatform.wiki.webui.popup.UIWikiPagePreview;
 
 /**
  * Created by The eXo Platform SAS
@@ -52,7 +57,19 @@ public class PreviewPageActionComponent extends UIComponent {
   public static class PreviewPageActionListener extends UIPageToolBarActionListener<PreviewPageActionComponent> {
     @Override
     protected void processEvent(Event<PreviewPageActionComponent> event) throws Exception {
-      // TODO Auto-generated method stub
+      UIWikiPortlet wikiPortlet = event.getSource().getAncestorOfType(UIWikiPortlet.class);
+      UIMaskWorkspace uiMaskWS = wikiPortlet.getChild(UIMaskWorkspace.class);
+      UIWikiPageEditForm wikiPageEditForm = event.getSource().getAncestorOfType(UIWikiPageEditForm.class);
+      UIFormTextAreaInput markupInput = wikiPageEditForm.findComponentById(UIWikiPageEditForm.FIELD_CONTENT);
+      String markup = markupInput.getValue();
+
+      UIWikiPagePreview wikiPagePreview = uiMaskWS.createUIComponent(UIWikiPagePreview.class, null, null);
+      wikiPagePreview.renderWikiMarkup(markup);
+      
+      uiMaskWS.setUIComponent(wikiPagePreview);
+      uiMaskWS.setShow(true);
+      event.getRequestContext().addUIComponentToUpdateByAjax(uiMaskWS);
+      
       super.processEvent(event);
     }
   }

@@ -18,3 +18,12 @@
   padding: 2px 2px 2px 2px;
 }
 
+.UIWikiSidePanelArea {
+  width: 300px;
+  float:right;
+}
+
+.UIWikiPageEditForm .UIWikiPageContentMarginRight {
+  margin-right: 310px;
+}
+

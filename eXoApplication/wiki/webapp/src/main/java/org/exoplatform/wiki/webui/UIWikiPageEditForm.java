@@ -39,6 +39,7 @@ public class UIWikiPageEditForm extends UIForm {
   
   public UIWikiPageEditForm() throws Exception{
     addChild(UIPageToolBar.class, null, "UIWikiPageEditForm_PageToolBar").setRendered(true);
+    addChild(UIWikiSidePanelArea.class, null, "UIWikiSidePanelArea").setRendered(false);
     UIFormTextAreaInput titleInput = new UIFormTextAreaInput(UIWikiPageContentArea.FIELD_TITLE,
                                                              UIWikiPageContentArea.FIELD_TITLE,
                                                              "Untitle");
@@ -47,6 +48,10 @@ public class UIWikiPageEditForm extends UIForm {
                                                               "This is **sample content**");
     addUIFormInput(titleInput).setRendered(true);
     addUIFormInput(markupInput).setRendered(true);
+  }
+  
+  public boolean isSidePanelRendered(){
+    return getChild(UIWikiSidePanelArea.class).isRendered();
   }
   
 }

@@ -1,29 +1,36 @@
 <div class="UIWikiPageEditForm Border">
 <% uiform.begin(); %>
 <%uiform.renderChild("UIWikiPageEditForm_PageToolBar"); %>
-		<div class="HorizontalLayout">
-			<div class="UIFormInput">
-				<table class="UIFormGrid">
-					<tbody>
-						   <tr>
-									<td class="FieldLabel">
-											Title
-									</td>
-									<td class="FieldComponent">
-											<%uiform.renderField("Title"); %>
-									</td>
-							</tr>						
-							<tr>
-									<td class="FieldLabel">
-											Markup
-									</td>
-									<td class="FieldComponent">
-											<%uiform.renderField("Markup"); %>
-									</td>
-							</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
+<%uiform.renderChild("UIWikiSidePanelArea"); %>
+<% if(uicomponent.isSidePanelRendered()){
+%>
+   <div class="UIWikiPageContentInputContainer UIWikiPageContentMarginRight HorizontalLayout">
+<% } else {
+%>
+   <div class="UIWikiPageContentInputContainer HorizontalLayout">
+<% } %>
+     <div class="UIFormInput">
+       <table class="UIFormGrid">
+         <tbody>
+           <tr>
+             <td class="FieldLabel">
+               Title
+             </td>
+             <td class="FieldComponent">
+               <%uiform.renderField("Title"); %>
+             </td>
+           </tr>
+           <tr>
+             <td class="FieldLabel">
+               Markup
+             </td>
+             <td class="FieldComponent">
+               <%uiform.renderField("Markup"); %>
+             </td>
+           </tr>
+         </tbody>
+       </table>
+     </div>
+   </div>
 <%uiform.end();%>
 </div>

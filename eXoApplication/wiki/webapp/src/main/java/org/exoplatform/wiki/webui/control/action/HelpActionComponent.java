@@ -26,6 +26,8 @@ import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.Event.Phase;
 import org.exoplatform.webui.ext.filter.UIExtensionFilter;
 import org.exoplatform.webui.ext.filter.UIExtensionFilters;
+import org.exoplatform.wiki.webui.UIWikiPageEditForm;
+import org.exoplatform.wiki.webui.UIWikiSidePanelArea;
 import org.exoplatform.wiki.webui.control.filter.IsEditModeFilter;
 import org.exoplatform.wiki.webui.control.listener.UIPageToolBarActionListener;
 
@@ -52,7 +54,9 @@ public class HelpActionComponent extends UIComponent {
   public static class HelpActionListener extends UIPageToolBarActionListener<HelpActionComponent> {
     @Override
     protected void processEvent(Event<HelpActionComponent> event) throws Exception {
-      // TODO Auto-generated method stub
+      UIWikiPageEditForm wikiPageEditForm = event.getSource().getAncestorOfType(UIWikiPageEditForm.class);
+      UIWikiSidePanelArea wikiSidePanelArea = wikiPageEditForm.getChild(UIWikiSidePanelArea.class);
+      wikiSidePanelArea.setRendered(true);
       super.processEvent(event);
     }
   }

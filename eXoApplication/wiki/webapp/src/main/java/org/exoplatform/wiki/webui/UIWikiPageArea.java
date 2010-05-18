@@ -34,6 +34,5 @@ public class UIWikiPageArea extends UIContainer {
   public UIWikiPageArea() throws Exception{
     addChild(UIWikiPageContentArea.class, null, null).setRendered(true);
     addChild(UIWikiPageEditForm.class, null, null).setRendered(false);
-    addChild(UIWikiSidePanelArea.class, null, null).setRendered(true);
   }
 }

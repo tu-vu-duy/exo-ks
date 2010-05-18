@@ -187,14 +187,20 @@ public class UIWikiPortlet extends UIPortletApplication {
   private void switchViewEditMode(boolean isViewToEdit){
     findFirstComponentOfType(UIWikiPageControlArea.class).setRendered(!isViewToEdit);
     findFirstComponentOfType(UIWikiPageContentArea.class).setRendered(!isViewToEdit);
-    findFirstComponentOfType(UIWikiPageEditForm.class).setRendered(isViewToEdit);
+    UIWikiPageEditForm wikiPageEditForm = findFirstComponentOfType(UIWikiPageEditForm.class).setRendered(isViewToEdit);
+    if(!isViewToEdit){
+      wikiPageEditForm.getChild(UIWikiSidePanelArea.class).setRendered(isViewToEdit);
+    }
   }
   
   private void switchViewNewMode(boolean isViewToNew){
     findFirstComponentOfType(UIWikiPageControlArea.class).setRendered(!isViewToNew);
     findFirstComponentOfType(UIWikiPageContentArea.class).setRendered(!isViewToNew);
-    findFirstComponentOfType(UIWikiPageEditForm.class).setRendered(isViewToNew);
+    UIWikiPageEditForm wikiPageEditForm = findFirstComponentOfType(UIWikiPageEditForm.class).setRendered(isViewToNew);
     findFirstComponentOfType(UIWikiBottomArea.class).setRendered(!isViewToNew);
+    if(!isViewToNew){
+      wikiPageEditForm.getChild(UIWikiSidePanelArea.class).setRendered(isViewToNew);
+    }
   }
   
   private void switchViewSearchMode(boolean isViewToSearch){

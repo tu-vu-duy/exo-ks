@@ -17,8 +17,11 @@
 package org.exoplatform.wiki.webui;
 
 import org.exoplatform.webui.config.annotation.ComponentConfig;
+import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIContainer;
 import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
+import org.exoplatform.webui.event.Event;
+import org.exoplatform.webui.event.EventListener;
 
 /**
  * Created by The eXo Platform SAS
@@ -28,11 +31,22 @@ import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
  */
 @ComponentConfig(
   lifecycle = UIApplicationLifecycle.class,
-  template = "app:/templates/wiki/webui/UIWikiSearchSpaceArea.gtmpl"
+  template = "app:/templates/wiki/webui/UIWikiSearchSpaceArea.gtmpl",
+  events = {
+      @EventConfig(listeners = UIWikiSearchSpaceArea.CloseActionListener.class)
+    }
 )
 public class UIWikiSearchSpaceArea extends UIContainer {
   public UIWikiSearchSpaceArea() throws Exception{
     addChild(UIWikiAdvanceSearchForm.class, null, null).setRendered(true);
     addChild(UIWikiAdvanceSearchResult.class, null, null).setRendered(true);
+  }
+  
+  static public class CloseActionListener extends EventListener<UIWikiSearchSpaceArea> {
+    @Override
+    public void execute(Event<UIWikiSearchSpaceArea> event) throws Exception {
+      UIWikiPortlet wikiPortlet = event.getSource().getAncestorOfType(UIWikiPortlet.class);
+      wikiPortlet.changeMode(WikiMode.VIEW);
+    }
   }
 }

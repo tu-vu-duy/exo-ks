@@ -1,0 +1,19 @@
+
+.UIWikiPortlet .UIWikiUpperArea .UIWikiApplicationControlArea .UIWikiSearchBox {
+  float: right;
+}
+
+.UIWikiPortlet .UIWikiUpperArea .UIWikiApplicationControlArea .UIWikiSearchBox .AdvancedSearch {
+  background: url('icons/16x16/FindIcon.gif') no-repeat ;
+  height: 16px;
+  width: 16px;
+  float: right;
+  cursor: pointer;
+  margin: 3px 0px 0px 2px;
+}
+
+.UIWikiPortlet .UIWikiUpperArea .UIWikiApplicationControlArea .UIWikiSearchBox .Input {
+  margin: 0px 8px 0px 10px;
+  float: right ;
+}
+

@@ -17,8 +17,12 @@
 package org.exoplatform.wiki.webui;
 
 import org.exoplatform.webui.config.annotation.ComponentConfig;
+import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
+import org.exoplatform.webui.event.Event;
+import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.form.UIForm;
+import org.exoplatform.webui.form.UIFormStringInput;
 
 /**
  * Created by The eXo Platform SAS
@@ -28,8 +32,25 @@ import org.exoplatform.webui.form.UIForm;
  */
 @ComponentConfig(
   lifecycle = UIFormLifecycle.class,
-  template = "app:/templates/wiki/webui/UIWikiSearchBox.gtmpl"
+  template = "app:/templates/wiki/webui/UIWikiSearchBox.gtmpl",
+  events = {
+    @EventConfig(listeners = UIWikiSearchBox.AdvancedSearchActionListener.class)
+  }
 )
 public class UIWikiSearchBox extends UIForm {
 
+  final static  private String FIELD_SEARCHVALUE = "searchValue" ;
+  
+  public UIWikiSearchBox() {
+    addChild(new UIFormStringInput(FIELD_SEARCHVALUE, FIELD_SEARCHVALUE, null)) ;
+  }
+  
+  public static class AdvancedSearchActionListener extends EventListener<UIWikiSearchBox> {
+    @Override
+    public void execute(Event<UIWikiSearchBox> event) throws Exception {
+      UIWikiPortlet wikiPortlet = event.getSource().getAncestorOfType(UIWikiPortlet.class);
+      wikiPortlet.changeMode(WikiMode.SEARCH);
+    }
+    
+  }
 }

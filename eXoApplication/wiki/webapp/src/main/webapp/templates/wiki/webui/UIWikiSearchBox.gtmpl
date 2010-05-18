@@ -1,2 +1,15 @@
-<div class="UIWikiSearchBox">
+<div class="UIWikiSearchBox Border">
+  <% uiform.begin() %>
+    <div class="SearchForm">
+      <a class="AdvancedSearch" title="<%=_ctx.appRes("UIWikiPortlet.label.AdvancedSearch")%>" href="<%=uicomponent.event("AdvancedSearch");%>"></a>
+      <div class="Input">
+        <%
+          uiform.renderChildren() ;
+        %>
+      </div>
+      <div class="ClearRight">
+        <span></span>
+      </div>
+    </div>
+  <%uiform.end()%>
 </div>

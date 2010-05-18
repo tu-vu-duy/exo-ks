@@ -1,3 +1,5 @@
+@import url('UIWikiBreadCrumb/Stylesheet.css') ;
+@import url('UIWikiSearchBox/Stylesheet.css') ;
 
 .UIWindow .UIWikiPortlet {
   min-width: 900px;

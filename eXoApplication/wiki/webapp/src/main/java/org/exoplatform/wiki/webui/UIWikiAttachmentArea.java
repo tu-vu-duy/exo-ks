@@ -33,6 +33,7 @@ import org.exoplatform.wiki.commons.Utils;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.mow.core.api.wiki.AttachmentImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
+import org.exoplatform.wiki.webui.form.UIFormUploadInput;
 
 /**
  * Created by The eXo Platform SAS
@@ -44,6 +45,7 @@ import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
   lifecycle = UIFormLifecycle.class,
   template = "app:/templates/wiki/webui/UIWikiAttachmentArea.gtmpl",
   events = {
+    @EventConfig(listeners = UIWikiAttachmentArea.UploadActionListener.class),
     @EventConfig(listeners = UIWikiAttachmentArea.DownloadAttachmentActionListener.class, phase = Phase.DECODE),
     @EventConfig(listeners = UIWikiAttachmentArea.RemoveAttachmentActionListener.class, phase = Phase.DECODE)
   }
@@ -55,6 +57,9 @@ public class UIWikiAttachmentArea extends UIForm {
     formInputWithActions.addUIFormInput(new UIFormInputInfo("attachments", "attachments", null));
     formInputWithActions.setActionField("attachments", getAttachmentsList());
     addUIFormInput(formInputWithActions).setRendered(true);
+    
+    UIFormUploadInput uiInput = new UIFormUploadInput("upload", "upload");
+    addUIFormInput(uiInput);
   }
 
   private List<ActionData> getAttachmentsList() throws Exception {
@@ -85,6 +90,12 @@ public class UIWikiAttachmentArea extends UIForm {
     getChild(UIFormInputWithActions.class).setActionField("attachments", getAttachmentsList());
   }
 
+  static public class UploadActionListener extends EventListener<UIWikiAttachmentArea> {
+    @Override
+    public void execute(Event<UIWikiAttachmentArea> event) throws Exception {
+    }
+  }
+  
   static public class DownloadAttachmentActionListener extends EventListener<UIWikiAttachmentArea> {
     public void execute(Event<UIWikiAttachmentArea> event) throws Exception {
       String attId = event.getRequestContext().getRequestParameter(OBJECTID);

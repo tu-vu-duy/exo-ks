@@ -16,16 +16,12 @@
  */
 package org.exoplatform.wiki.webui;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.core.UIContainer;
 import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
 import org.exoplatform.wiki.rendering.MarkupRenderingService;
 import org.exoplatform.wiki.rendering.Renderer;
-import org.exoplatform.wiki.service.WikiResource;
 
 /**
  * Created by The eXo Platform SAS
@@ -41,7 +37,6 @@ public class UIWikiPageContentArea extends UIContainer {
 
   private String htmlOutput;
   private PageMode pageMode = PageMode.NEW;
-  protected List<WikiResource> attachments = new ArrayList<WikiResource>() ;
   
   public static final String FIELD_TITLE   = "Title";
   public static final String FIELD_CONTENT = "Markup";
@@ -63,18 +58,6 @@ public class UIWikiPageContentArea extends UIContainer {
 
   public void setHtmlOutput(String output) {
     this.htmlOutput = output;
-  }
-  
-  public List<WikiResource> getAttachments() {
-    return attachments;
-  }
-
-  public void setAttachments(List<WikiResource> attachments) {
-    this.attachments = attachments;
-  }
-
-  public void addToUploadFileList(WikiResource file){
-    attachments.add(file);
   }
   
   public void renderWikiMarkup(String markup) throws Exception {

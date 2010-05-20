@@ -16,7 +16,6 @@
  */
 package org.exoplatform.wiki.webui.control.action;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -35,11 +34,8 @@ import org.exoplatform.webui.ext.filter.UIExtensionFilters;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
 import org.exoplatform.wiki.commons.Utils;
 import org.exoplatform.wiki.mow.api.Page;
-import org.exoplatform.wiki.mow.core.api.wiki.AttachmentImpl;
-import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 import org.exoplatform.wiki.resolver.PageResolver;
 import org.exoplatform.wiki.service.WikiPageParams;
-import org.exoplatform.wiki.service.WikiResource;
 import org.exoplatform.wiki.service.WikiService;
 import org.exoplatform.wiki.webui.UIWikiAttachmentArea;
 import org.exoplatform.wiki.webui.UIWikiPageContentArea;
@@ -90,19 +86,11 @@ public class SavePageActionComponent extends UIComponent {
         Page page = pageResolver.resolve(requestURL);
         if (wikiPortlet.getWikiMode() == WikiMode.EDIT) {
           page.getContent().setText(markup);
-          for(WikiResource file :  pageContentArea.getAttachments()){
-            AttachmentImpl att = ((PageImpl)page).createAttachment(file.getName(), file) ;
-            Utils.reparePermissions(att) ;
-          }
         } else if (wikiPortlet.getWikiMode() == WikiMode.NEW) {
           WikiService wikiService = (WikiService) PortalContainer.getComponent(WikiService.class);
           WikiPageParams pageParams = pageResolver.extractWikiPageParams(requestURL);
           Page subPage = wikiService.createPage(pageParams.getType(), pageParams.getOwner(), title, page.getPageId());
           subPage.getContent().setText(markup);
-          for(WikiResource file :  pageContentArea.getAttachments()){
-            AttachmentImpl att = ((PageImpl)subPage).createAttachment(file.getName(), file) ;
-            Utils.reparePermissions(att) ;            
-          }
           /*String redirect = createUrlOfNewPage();
          prContext.getResponse().sendRedirect(redirect);*/
         }
@@ -116,7 +104,6 @@ public class SavePageActionComponent extends UIComponent {
       }
       
       wikiPortlet.changeMode(WikiMode.VIEW);
-      pageContentArea.setAttachments(new ArrayList<WikiResource>());
       super.processEvent(event);
     }
   }

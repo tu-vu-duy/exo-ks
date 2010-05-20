@@ -467,14 +467,6 @@
           </object>
         </object-param>
         <object-param>
-          <name>AttachFile</name>
-          <object type="org.exoplatform.webui.ext.UIExtension">
-            <field name="type"><string>org.exoplatform.wiki.UIPageToolBar</string></field>
-            <field name="name"><string>AttachFile</string></field>
-            <field name="component"><string>org.exoplatform.wiki.webui.control.action.AttachFileActionComponent</string></field>
-          </object>
-        </object-param>
-        <object-param>
           <name>PreviewPage</name>
           <object type="org.exoplatform.webui.ext.UIExtension">
             <field name="type"><string>org.exoplatform.wiki.UIPageToolBar</string></field>

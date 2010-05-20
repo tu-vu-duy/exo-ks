@@ -119,6 +119,7 @@ UIUpload.prototype.refeshProgress = function(elementId) {
     if(percent == 100) {
       var postUploadActionNode = eXo.core.DOMUtil.findFirstDescendantByClass(container, "div", "PostUploadAction") ;
       if(postUploadActionNode) {
+    	eXo.wiki.UIUpload.listUpload.remove(elementId);
         postUploadActionNode.onclick();
       } else {
         this.showUploaded(id, "");

@@ -19,6 +19,7 @@ package org.exoplatform.wiki.mow.core.api.content;
 import org.chromattic.api.annotations.Destroy;
 import org.chromattic.api.annotations.MappedBy;
 import org.chromattic.api.annotations.OneToOne;
+import org.chromattic.api.annotations.Path;
 import org.chromattic.api.annotations.PrimaryType;
 import org.chromattic.api.annotations.Property;
 import org.exoplatform.wiki.mow.api.WikiNodeType;
@@ -32,7 +33,10 @@ import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
  */
 @PrimaryType(name = WikiNodeType.WIKI_PAGE_CONTENT)
 public abstract class ContentImpl extends AbstractContainerContent implements Content {
-
+  
+  @Path
+  public abstract String getPath();
+  
   @Property(name = WikiNodeType.Definition.TITLE)
   public abstract String getTitle();
   public abstract void setTitle(String title);

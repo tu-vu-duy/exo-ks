@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.exoplatform.commons.utils.PageList;
 import org.exoplatform.wiki.mow.api.Page;
+import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
 
 /**
  * Created by The eXo Platform SARL.
@@ -39,7 +40,7 @@ public interface WikiService {
 	public Page getPageById(String wikiType, String wikiOwner, String pageId) throws Exception ;
 	public Page getPageByUUID(String uuid) throws Exception ;	
 	
-	public PageList<Page> search(String wikiType, String wikiOwner, SearchData data) throws Exception ;
+	public PageList<ContentImpl> searchContent(String wikiType, String wikiOwner, SearchData data) throws Exception ;
 	public List<BreadcumbData> getBreadcumb(String wikiType, String wikiOwner, String pageId) throws Exception ;
 
 }

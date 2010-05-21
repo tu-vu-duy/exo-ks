@@ -1,2 +1,34 @@
 <div class="UIWikiAdvanceSearchForm Border">
+HELLO
+<% uiform.begin() %>
+
+<%for(field in uiform.getChildren()) { 
+%>
+ <div><%uiform.renderChild(field)%></div>
+<%
+}
+%>
+<div class="UIAction"> 
+			<table class="ActionContainer" style="text-align:center">
+				<tr>
+					<td>
+	        <% for(action in uicomponent.getActions()) { 
+	        	 String actionLabel = _ctx.appRes(uicomponent.getName() + ".action." + action); 
+	           String link = uicomponent.event(action) ;
+	        %>
+	        		<div onmousedown="$link" class="ActionButton LightBlueStyle">
+		      	  	<div class="ButtonLeft">
+		        	  	<div class="ButtonRight">
+		          	  	<div class="ButtonMiddle">
+		          	  		<a href="javascript:void(0);">$actionLabel</a>
+		          	  	</div>
+		            	</div>
+		          	</div>
+		        	</div>
+	          <%}%>
+	      	</td>
+				</tr>
+		  </table> 
+		</div>
+<% uiform.end() %>
 </div>

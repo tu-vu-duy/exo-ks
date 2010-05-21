@@ -1,2 +1,13 @@
+<%
+import org.exoplatform.wiki.mow.api.Page ;
+import org.exoplatform.wiki.mow.core.api.content.ContentImpl ;
+%>
+
 <div class="UIWikiAdvanceSearchResult Border">
+<div> resutls: <%=uicomponent.getResults().getAll().size()%></div>
+<%
+	for(content in uicomponent.getResults().getAll()) {
+		%><div> <%=content.getTitle()%></div><%
+	}
+%>
 </div>

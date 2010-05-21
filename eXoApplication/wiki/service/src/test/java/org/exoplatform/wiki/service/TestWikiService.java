@@ -26,6 +26,7 @@ import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.mow.api.WikiType;
 import org.exoplatform.wiki.mow.core.api.AbstractMOWTestcase;
 import org.exoplatform.wiki.mow.core.api.WikiStoreImpl;
+import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.GroupWiki;
 import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.PortalWiki;
@@ -175,30 +176,30 @@ public class TestWikiService extends AbstractMOWTestcase {
     
     //fulltext search
     SearchData data = new SearchData("suite", null, null, "/exo:applications/eXoWiki/wikis/classic") ;
-    PageList<Page> result = wService.search("portal", "classic", data) ;
+    PageList<ContentImpl> result = wService.searchContent("portal", "classic", data) ;
     assertEquals(2, result.getAll().size()) ;
     
   //title search
     data = new SearchData(null, "knowledge", null, null) ;
-    result = wService.search("portal", "classic", data) ;
+    result = wService.searchContent("portal", "classic", data) ;
     assertEquals(1, result.getAll().size()) ;
     
     data = new SearchData(null, "collaboration", null, null) ;
-    result = wService.search("portal", "classic", data) ;
+    result = wService.searchContent("portal", "classic", data) ;
     assertEquals(1, result.getAll().size()) ;
     
   //content search
     data = new SearchData(null, null, "forum", null) ;
-    result = wService.search("portal", "classic", data) ;
+    result = wService.searchContent("portal", "classic", data) ;
     assertEquals(1, result.getAll().size()) ;
     
     data = new SearchData(null, null, "calendar", null) ;
-    result = wService.search("portal", "classic", data) ;
+    result = wService.searchContent("portal", "classic", data) ;
     assertEquals(1, result.getAll().size()) ;
     
   //content & title search
     data = new SearchData(null, "suite", "forum", null) ;
-    result = wService.search("portal", "classic", data) ;
+    result = wService.searchContent("portal", "classic", data) ;
     assertEquals(1, result.getAll().size()) ;
     
   }

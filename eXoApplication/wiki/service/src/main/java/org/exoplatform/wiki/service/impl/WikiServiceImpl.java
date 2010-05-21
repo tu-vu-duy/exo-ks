@@ -114,7 +114,7 @@ public class WikiServiceImpl implements WikiService{
     return null;
   }
 
-  public PageList<Page> search(String wikiType, String wikiOwner, SearchData data) throws Exception {
+  public PageList<ContentImpl> searchContent(String wikiType, String wikiOwner, SearchData data) throws Exception {
     Model model = getModel();
     WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
     if(data.getPath() == null || data.getPath().length() <= 0 ) {
@@ -122,16 +122,16 @@ public class WikiServiceImpl implements WikiService{
       data.setPath(home.getPath()) ;
     }
     String statement = data.getStatement() ;
-    List<Page> list = new ArrayList<Page>() ;
+    List<ContentImpl> list = new ArrayList<ContentImpl>() ;
     if(statement != null) {
       Iterator<ContentImpl> result = wStore.getSession()
         .createQueryBuilder(ContentImpl.class)
         .where(statement).get().objects() ;
       while(result.hasNext()) {
-        list.add(result.next().getParent()) ;
+        list.add(result.next()) ;
       }
     }
-    return new ObjectPageList<Page>(list, 10);
+    return new ObjectPageList<ContentImpl>(list, 10);
   }
   
   public List<BreadcumbData> getBreadcumb(String wikiType, String wikiOwner, String pageId) throws Exception {

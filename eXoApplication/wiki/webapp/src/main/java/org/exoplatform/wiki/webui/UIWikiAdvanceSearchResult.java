@@ -16,9 +16,17 @@
  */
 package org.exoplatform.wiki.webui;
 
+import java.util.ArrayList;
+
+import org.exoplatform.commons.utils.ObjectPageList;
+import org.exoplatform.commons.utils.PageList;
+import org.exoplatform.container.PortalContainer;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.core.UIContainer;
 import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
+import org.exoplatform.wiki.mow.api.Page;
+import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
+import org.exoplatform.wiki.service.WikiService;
 
 /**
  * Created by The eXo Platform SAS
@@ -31,5 +39,19 @@ import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
   template = "app:/templates/wiki/webui/UIWikiAdvanceSearchResult.gtmpl"
 )
 public class UIWikiAdvanceSearchResult extends UIContainer {
-
+  private PageList<ContentImpl> results_ = new ObjectPageList<ContentImpl>(new ArrayList<ContentImpl>(), 10);
+  
+  public void setResult(PageList<ContentImpl> results) {
+    results_ = results ;
+  }
+  
+  private PageList<ContentImpl> getResults() {
+    return results_ ;
+  }
+  
+  private Page getPage(String pageId) throws Exception {
+    WikiService wservice = (WikiService)PortalContainer.getComponent(WikiService.class) ;
+    Page page = wservice.getPageById("portal", "classic", pageId) ;
+    return page ;
+  }
 }

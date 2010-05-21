@@ -16,6 +16,7 @@
   
   <properties>
     <org.chromattic.version>1.0.0</org.chromattic.version>
+    <org.exoplatform.platform.version>3.0.0-Alpha04-SNAPSHOT</org.exoplatform.platform.version>
     <org.exoplatform.ecm.dms.version>3.0.0-Alpha04</org.exoplatform.ecm.dms.version>
     <org.xwiki.platform.version>2.2.4</org.xwiki.platform.version>
 	<!--commons-lang version for xwiki 2.2.4-->
@@ -26,6 +27,9 @@
   <modules>
     <module>eXoApplication/wiki/service</module>
     <module>eXoApplication/wiki/webapp</module>
+    <module>extension</module>
+    <module>demo</module>
+    <module>packaging</module>
   </modules>
 
 </project>

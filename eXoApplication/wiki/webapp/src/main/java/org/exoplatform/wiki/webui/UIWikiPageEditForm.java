@@ -36,17 +36,19 @@ public class UIWikiPageEditForm extends UIForm {
 
   public static final String FIELD_TITLE   = "Title";
   public static final String FIELD_CONTENT = "Markup";
+  public static final String TITLE_CONTROL   = "UIWikiPageTitleControlForm_PageEditForm";
   
   public UIWikiPageEditForm() throws Exception{
+    addChild(UIWikiPageTitleControlForm.class, null, TITLE_CONTROL).toInputMode();
     addChild(UIPageToolBar.class, null, "UIWikiPageEditForm_PageToolBar").setRendered(true);
     addChild(UIWikiSidePanelArea.class, null, "UIWikiSidePanelArea").setRendered(false);
-    UIFormTextAreaInput titleInput = new UIFormTextAreaInput(UIWikiPageContentArea.FIELD_TITLE,
+    /*UIFormTextAreaInput titleInput = new UIFormTextAreaInput(UIWikiPageContentArea.FIELD_TITLE,
                                                              UIWikiPageContentArea.FIELD_TITLE,
-                                                             "Untitle");
+                                                             "Untitle");*/
     UIFormTextAreaInput markupInput = new UIFormTextAreaInput(UIWikiPageContentArea.FIELD_CONTENT,
                                                               UIWikiPageContentArea.FIELD_CONTENT,
                                                               "This is **sample content**");
-    addUIFormInput(titleInput).setRendered(true);
+    /*addUIFormInput(titleInput).setRendered(true);*/
     addUIFormInput(markupInput).setRendered(true);
   }
   

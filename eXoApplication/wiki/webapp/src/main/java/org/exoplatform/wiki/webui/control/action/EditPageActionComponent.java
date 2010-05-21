@@ -26,13 +26,13 @@ import org.exoplatform.webui.core.UIComponent;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.ext.filter.UIExtensionFilter;
 import org.exoplatform.webui.ext.filter.UIExtensionFilters;
+import org.exoplatform.webui.form.UIFormStringInput;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
 import org.exoplatform.wiki.commons.Utils;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.resolver.PageResolver;
-import org.exoplatform.wiki.webui.PageMode;
-import org.exoplatform.wiki.webui.UIWikiPageContentArea;
 import org.exoplatform.wiki.webui.UIWikiPageEditForm;
+import org.exoplatform.wiki.webui.UIWikiPageTitleControlForm;
 import org.exoplatform.wiki.webui.UIWikiPortlet;
 import org.exoplatform.wiki.webui.WikiMode;
 import org.exoplatform.wiki.webui.control.filter.IsViewModeFilter;
@@ -63,7 +63,7 @@ public class EditPageActionComponent extends UIComponent {
     protected void processEvent(Event<EditPageActionComponent> event) throws Exception {
       UIWikiPortlet wikiPortlet = event.getSource().getAncestorOfType(UIWikiPortlet.class);
       UIWikiPageEditForm pageEditForm = wikiPortlet.findFirstComponentOfType(UIWikiPageEditForm.class);
-      UIFormTextAreaInput titleInput = pageEditForm.findComponentById(UIWikiPageEditForm.FIELD_TITLE);
+      UIFormStringInput titleInput = pageEditForm.getChild(UIWikiPageTitleControlForm.class).getUIStringInput();
       UIFormTextAreaInput markupInput = pageEditForm.findComponentById(UIWikiPageEditForm.FIELD_CONTENT);
       
       String requestURL = Utils.getCurrentRequestURL();

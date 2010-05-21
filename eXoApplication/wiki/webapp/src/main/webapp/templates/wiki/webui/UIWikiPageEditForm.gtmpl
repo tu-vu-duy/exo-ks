@@ -1,5 +1,6 @@
 <div class="UIWikiPageEditForm Border">
 <% uiform.begin(); %>
+<%uiform.renderChild("UIWikiPageTitleControlForm_PageEditForm"); %>
 <%uiform.renderChild("UIWikiPageEditForm_PageToolBar"); %>
 <%uiform.renderChild("UIWikiSidePanelArea"); %>
 <% if(uicomponent.isSidePanelRendered()){
@@ -12,14 +13,6 @@
      <div class="UIFormInput">
        <table class="UIFormGrid">
          <tbody>
-           <tr>
-             <td class="FieldLabel">
-               Title
-             </td>
-             <td class="FieldComponent">
-               <%uiform.renderField("Title"); %>
-             </td>
-           </tr>
            <tr>
              <td class="FieldLabel">
                Markup

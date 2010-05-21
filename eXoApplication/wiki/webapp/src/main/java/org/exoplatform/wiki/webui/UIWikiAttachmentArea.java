@@ -126,9 +126,14 @@ public class UIWikiAttachmentArea extends UIForm {
         attachfile.setResourceId(uploadResource.getUploadId());
       }
       if (attachfile != null) {
-        Page page = Utils.getCurrentWikiPage();
-        AttachmentImpl att = ((PageImpl) page).createAttachment(attachfile.getName(), attachfile);
-        Utils.reparePermissions(att);
+        try {
+          Page page = Utils.getCurrentWikiPage();
+          AttachmentImpl att = ((PageImpl) page).createAttachment(attachfile.getName(), attachfile);
+          Utils.reparePermissions(att);
+        } catch (ClassNotFoundException e) {
+          uiApp.addMessage(new ApplicationMessage("UIApplication.msg.unknown-error", null, ApplicationMessage.ERROR));
+          event.getRequestContext().addUIComponentToUpdateByAjax(uiApp.getUIPopupMessages());
+        }
         wikiAttachmentArea.refreshAttachmentsList();
         wikiAttachmentArea.removeChildById(FIELD_UPLOAD);
         UIFormUploadInput uiInput = new UIFormUploadInput(FIELD_UPLOAD, FIELD_UPLOAD);

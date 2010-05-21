@@ -31,15 +31,17 @@ import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.Event.Phase;
 import org.exoplatform.webui.ext.filter.UIExtensionFilter;
 import org.exoplatform.webui.ext.filter.UIExtensionFilters;
+import org.exoplatform.webui.form.UIFormStringInput;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
 import org.exoplatform.wiki.commons.Utils;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.resolver.PageResolver;
 import org.exoplatform.wiki.service.WikiPageParams;
 import org.exoplatform.wiki.service.WikiService;
-import org.exoplatform.wiki.webui.UIWikiAttachmentArea;
 import org.exoplatform.wiki.webui.UIWikiPageContentArea;
+import org.exoplatform.wiki.webui.UIWikiPageControlArea;
 import org.exoplatform.wiki.webui.UIWikiPageEditForm;
+import org.exoplatform.wiki.webui.UIWikiPageTitleControlForm;
 import org.exoplatform.wiki.webui.UIWikiPortlet;
 import org.exoplatform.wiki.webui.WikiMode;
 import org.exoplatform.wiki.webui.control.filter.IsEditModeFilter;
@@ -72,10 +74,10 @@ public class SavePageActionComponent extends UIComponent {
     protected void processEvent(Event<SavePageActionComponent> event) throws Exception {
       UIWikiPortlet wikiPortlet = event.getSource().getAncestorOfType(UIWikiPortlet.class);
       UIApplication uiApp = event.getSource().getAncestorOfType(UIApplication.class);
+      UIWikiPageTitleControlForm pageTitleControlForm = wikiPortlet.findComponentById(UIWikiPageControlArea.TITLE_CONTROL);
       UIWikiPageContentArea pageContentArea = wikiPortlet.findFirstComponentOfType(UIWikiPageContentArea.class);
-      UIWikiAttachmentArea attachmentArea = wikiPortlet.findFirstComponentOfType(UIWikiAttachmentArea.class);
       UIWikiPageEditForm pageEditForm = wikiPortlet.findFirstComponentOfType(UIWikiPageEditForm.class);
-      UIFormTextAreaInput titleInput = pageEditForm.findComponentById(UIWikiPageEditForm.FIELD_TITLE);
+      UIFormStringInput titleInput = pageEditForm.getChild(UIWikiPageTitleControlForm.class).getUIStringInput();
       UIFormTextAreaInput markupInput = pageEditForm.findComponentById(UIWikiPageEditForm.FIELD_CONTENT);
       
       String title = titleInput.getValue();
@@ -94,8 +96,8 @@ public class SavePageActionComponent extends UIComponent {
           /*String redirect = createUrlOfNewPage();
          prContext.getResponse().sendRedirect(redirect);*/
         }
+        pageTitleControlForm.getUIFormInputInfo().setValue(page.getContent().getTitle());
         pageContentArea.renderWikiMarkup(markup);
-        attachmentArea.refreshAttachmentsList();
       } catch (Exception e) {
         log.error("An exception happens when saving the page with title:" + title, e);
         uiApp.addMessage(new ApplicationMessage("UIPageToolBar.msg.Exception", null, ApplicationMessage.ERROR));

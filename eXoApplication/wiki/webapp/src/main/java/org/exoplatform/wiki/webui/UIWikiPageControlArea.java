@@ -32,8 +32,11 @@ import org.exoplatform.wiki.webui.control.UIPageToolBar;
   template = "app:/templates/wiki/webui/UIWikiPageControlArea.gtmpl"
 )
 public class UIWikiPageControlArea extends UIContainer {
+  
+  public static final String TITLE_CONTROL   = "UIWikiPageTitleControlForm_PageControlArea";
+  
   public UIWikiPageControlArea() throws Exception {
-    addChild(UIWikiPageTitleControlForm.class, null, null);
+    addChild(UIWikiPageTitleControlForm.class, null, TITLE_CONTROL).toInfoMode();
     addChild(UIPageToolBar.class, null, "UIWikiPageControlArea_PageToolBar");
   }
 }

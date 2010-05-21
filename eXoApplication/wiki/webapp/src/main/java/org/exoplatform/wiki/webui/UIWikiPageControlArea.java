@@ -36,7 +36,7 @@ public class UIWikiPageControlArea extends UIContainer {
   public static final String TITLE_CONTROL   = "UIWikiPageTitleControlForm_PageControlArea";
   
   public UIWikiPageControlArea() throws Exception {
-    addChild(UIWikiPageTitleControlForm.class, null, TITLE_CONTROL).toInfoMode();
+    addChild(UIWikiPageTitleControlArea.class, null, TITLE_CONTROL).toInfoMode();
     addChild(UIPageToolBar.class, null, "UIWikiPageControlArea_PageToolBar");
   }
 }

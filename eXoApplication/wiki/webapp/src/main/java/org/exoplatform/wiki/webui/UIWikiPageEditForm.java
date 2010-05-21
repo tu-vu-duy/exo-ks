@@ -39,7 +39,7 @@ public class UIWikiPageEditForm extends UIForm {
   public static final String TITLE_CONTROL   = "UIWikiPageTitleControlForm_PageEditForm";
   
   public UIWikiPageEditForm() throws Exception{
-    addChild(UIWikiPageTitleControlForm.class, null, TITLE_CONTROL).toInputMode();
+    addChild(UIWikiPageTitleControlArea.class, null, TITLE_CONTROL).toInputMode();
     addChild(UIPageToolBar.class, null, "UIWikiPageEditForm_PageToolBar").setRendered(true);
     addChild(UIWikiSidePanelArea.class, null, "UIWikiSidePanelArea").setRendered(false);
     /*UIFormTextAreaInput titleInput = new UIFormTextAreaInput(UIWikiPageContentArea.FIELD_TITLE,

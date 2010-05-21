@@ -17,10 +17,10 @@
 package org.exoplatform.wiki.webui;
 
 import org.exoplatform.webui.config.annotation.ComponentConfig;
-import org.exoplatform.webui.form.UIForm;
+import org.exoplatform.webui.core.UIContainer;
+import org.exoplatform.webui.core.lifecycle.UIContainerLifecycle;
 import org.exoplatform.webui.form.UIFormInputInfo;
 import org.exoplatform.webui.form.UIFormStringInput;
-import org.exoplatform.wiki.webui.lifecycle.UIFormLifecycle;
 
 /**
  * Created by The eXo Platform SAS
@@ -29,39 +29,39 @@ import org.exoplatform.wiki.webui.lifecycle.UIFormLifecycle;
  * May 14, 2010  
  */
 @ComponentConfig(
-  lifecycle = UIFormLifecycle.class,
-  template = "app:/templates/wiki/webui/UIWikiPageTitleControlForm.gtmpl"
+  lifecycle = UIContainerLifecycle.class,
+  template = "app:/templates/wiki/webui/UIWikiPageTitleControlArea.gtmpl"
 )
-public class UIWikiPageTitleControlForm extends UIForm {
+public class UIWikiPageTitleControlArea extends UIContainer {
 
   public static final String FIELD_TITLEINFO   = "TitleInfo";
   public static final String FIELD_TITLEINPUT   = "TitleInput";
   
-  public UIWikiPageTitleControlForm() {
+  public UIWikiPageTitleControlArea() {
     UIFormInputInfo titleInfo = new UIFormInputInfo(FIELD_TITLEINFO, FIELD_TITLEINFO, FIELD_TITLEINFO);
     titleInfo.setRendered(false);
-    addUIFormInput(titleInfo);
+    addChild(titleInfo);
     UIFormStringInput titleInput = new UIFormStringInput(FIELD_TITLEINPUT, FIELD_TITLEINPUT, FIELD_TITLEINPUT);
     titleInput.setRendered(false);
-    addUIFormInput(titleInput);
+    addChild(titleInput);
   }
   
   public UIFormInputInfo getUIFormInputInfo(){
-    return getUIFormInputInfo(FIELD_TITLEINFO);
+    return findComponentById(FIELD_TITLEINFO);
   }
   
   public UIFormStringInput getUIStringInput(){
-    return getUIStringInput(FIELD_TITLEINPUT);
+    return findComponentById(FIELD_TITLEINPUT);
   }
   
   public void toInfoMode(){
-    getUIFormInputInfo(FIELD_TITLEINFO).setRendered(true);
-    getUIStringInput(FIELD_TITLEINPUT).setRendered(false);
+    findComponentById(FIELD_TITLEINFO).setRendered(true);
+    findComponentById(FIELD_TITLEINPUT).setRendered(false);
   }
   
   public void toInputMode(){
-    getUIFormInputInfo(FIELD_TITLEINFO).setRendered(false);
-    getUIStringInput(FIELD_TITLEINPUT).setRendered(true);
+    findComponentById(FIELD_TITLEINFO).setRendered(false);
+    findComponentById(FIELD_TITLEINPUT).setRendered(true);
   }
   
 }

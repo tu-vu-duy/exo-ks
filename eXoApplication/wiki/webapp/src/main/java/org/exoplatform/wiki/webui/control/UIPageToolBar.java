@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.exoplatform.webui.application.WebuiRequestContext;
+import org.exoplatform.webui.application.portlet.PortletRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.core.UIComponent;
 import org.exoplatform.webui.core.UIContainer;
@@ -30,6 +32,8 @@ import org.exoplatform.webui.ext.UIExtensionManager;
 import org.exoplatform.webui.form.UIForm;
 import org.exoplatform.wiki.webui.UIWikiPageContentArea;
 import org.exoplatform.wiki.webui.UIWikiPortlet;
+import org.exoplatform.wiki.webui.WikiMode;
+import org.exoplatform.wiki.webui.control.action.SavePageActionComponent;
 
 /**
  * Created by The eXo Platform SAS
@@ -75,6 +79,36 @@ public class UIPageToolBar extends UIContainer {
       return true;
     }
     return false;
+  }
+  
+  public String getSaveAction() {
+    return SavePageActionComponent.ACTION;
+  }
+
+  public boolean isNewMode() {
+    return (getAncestorOfType(UIWikiPortlet.class).getWikiMode() == WikiMode.NEW);
+  }
+
+  public String getUrlToSavePage(String componentId, String beanId) throws Exception {
+    StringBuilder b = new StringBuilder();
+    b.append("javascript:eXo.wiki.UIForm.submitSavePageEvent('")
+     .append(getParentFormId())
+     .append("','");
+    b.append(SavePageActionComponent.ACTION).append("','");
+    b.append("&amp;").append(UIForm.SUBCOMPONENT_ID).append("=").append(componentId);
+    if (beanId != null) {
+      b.append("&amp;").append(OBJECTID).append("=").append(beanId);
+    }
+    b.append("')");
+    return b.toString();
+  }
+
+  private String getParentFormId() {
+    WebuiRequestContext context = WebuiRequestContext.getCurrentInstance();
+    if (context instanceof PortletRequestContext) {
+      return ((PortletRequestContext) context).getWindowId() + "#" + getParent().getId();
+    }
+    return getParent().getId();
   }
   
 }

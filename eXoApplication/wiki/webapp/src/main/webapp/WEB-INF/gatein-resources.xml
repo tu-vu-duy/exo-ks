@@ -34,6 +34,13 @@
   
   <javascript>
     <param>
+      <js-module>eXo.wiki.UIForm</js-module>
+      <js-path>/javascript/eXo/wiki/UIForm.js</js-path>
+    </param>
+  </javascript>
+  
+  <javascript>
+    <param>
       <js-module>eXo.wiki.UIUpload</js-module>
       <js-path>/javascript/eXo/wiki/UIUpload.js</js-path>
     </param>

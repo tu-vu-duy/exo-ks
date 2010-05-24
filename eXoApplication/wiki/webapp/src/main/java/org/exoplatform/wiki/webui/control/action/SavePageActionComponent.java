@@ -20,6 +20,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.exoplatform.container.PortalContainer;
+import org.exoplatform.portal.application.PortalRequestContext;
+import org.exoplatform.portal.config.model.PortalConfig;
+import org.exoplatform.portal.webui.portal.UIPortal;
+import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.web.application.ApplicationMessage;
@@ -60,6 +64,8 @@ import org.exoplatform.wiki.webui.control.listener.UIPageToolBarActionListener;
 )
 public class SavePageActionComponent extends UIComponent {
 
+  public static final String ACTION = "SavePage";
+  
   private static final Log log = ExoLogger.getLogger("wiki:SavePageActionComponent");
   
   private static final List<UIExtensionFilter> FILTERS = Arrays.asList(new UIExtensionFilter[] { new IsEditModeFilter() });
@@ -93,8 +99,10 @@ public class SavePageActionComponent extends UIComponent {
           WikiPageParams pageParams = pageResolver.extractWikiPageParams(requestURL);
           Page subPage = wikiService.createPage(pageParams.getType(), pageParams.getOwner(), title, page.getPageId());
           subPage.getContent().setText(markup);
-          /*String redirect = createUrlOfNewPage();
-         prContext.getResponse().sendRedirect(redirect);*/
+          
+          wikiPortlet.changeMode(WikiMode.VIEW);
+          event.getSource().redirectToNewPage(pageParams, title);
+          return;
         }
         pageTitleControlForm.getUIFormInputInfo().setValue(page.getContent().getTitle());
         pageContentArea.renderWikiMarkup(markup);
@@ -109,4 +117,24 @@ public class SavePageActionComponent extends UIComponent {
       super.processEvent(event);
     }
   }
+  
+  private void redirectToNewPage(WikiPageParams currentPageParams, String newPageId) throws Exception {
+    PortalRequestContext portalRequestContext = Util.getPortalRequestContext();
+    String portalURI = portalRequestContext.getPortalURI();
+    UIPortal uiPortal = Util.getUIPortal();
+    String pageNodeSelected = uiPortal.getSelectedNode().getUri();
+    StringBuilder sb = new StringBuilder();
+    sb.append(portalURI);
+    sb.append(pageNodeSelected);
+    sb.append("/");
+    if(!PortalConfig.PORTAL_TYPE.equalsIgnoreCase(currentPageParams.getType())){
+      sb.append(currentPageParams.getType().toLowerCase());
+      sb.append("/");
+      sb.append(org.exoplatform.wiki.utils.Utils.validateWikiOwner(currentPageParams.getType(), currentPageParams.getOwner()));
+      sb.append("/");
+    }
+    sb.append(newPageId);
+    portalRequestContext.sendRedirect(sb.toString());
+  }
+  
 }

@@ -9,7 +9,11 @@
              String actionLabel = _ctx.appRes(uicomponent.getName() + ".action." + action);
              String link = actionComponent.event(action);
              if(uicomponent.parentIsForm()){
-               link = uicomponent.getParent().event(action, actionComponent.getId(), action);
+               if(uicomponent.getSaveAction().equals(action) && uicomponent.isNewMode()){
+                 link = uicomponent.getUrlToSavePage(actionComponent.getId(), action);
+               }else{
+                 link = uicomponent.getParent().event(action, actionComponent.getId(), action);
+               }
              }
         %>
         <div class="ActionButton LightBlueStyle" onmouseover="this.style.color = '#058ee6'" onmouseout="this.style.color='black'">

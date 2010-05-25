@@ -79,7 +79,7 @@ function getModule(params)
 
   // CRASH
   module.eXoApplication.crash = 
-    new Project("org.crsh", "crsh", "war", "1.0.0-beta3");
+    new Project("org.crsh", "crsh", "war", "1.0.0-beta4");
     
   module.eXoApplication.crash.deployName = "crash";
   

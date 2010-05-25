@@ -19,6 +19,11 @@ package org.exoplatform.wiki.service;
 
 import java.util.List;
 
+import javax.jcr.Value;
+import javax.jcr.query.Row;
+import javax.jcr.query.RowIterator;
+
+import org.chromattic.ext.ntdef.Resource;
 import org.exoplatform.commons.utils.PageList;
 import org.exoplatform.portal.config.model.PortalConfig;
 import org.exoplatform.wiki.mow.api.Model;
@@ -27,6 +32,7 @@ import org.exoplatform.wiki.mow.api.WikiType;
 import org.exoplatform.wiki.mow.core.api.AbstractMOWTestcase;
 import org.exoplatform.wiki.mow.core.api.WikiStoreImpl;
 import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
+import org.exoplatform.wiki.mow.core.api.wiki.AttachmentImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.GroupWiki;
 import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.PortalWiki;
@@ -166,7 +172,7 @@ public class TestWikiService extends AbstractMOWTestcase {
     assertFalse(wService.deletePage("portal", "classic", "deletePageWrong")) ;
   }
 
-  public void testSearch() throws Exception {
+  public void testSearchContent() throws Exception {
     
     PageImpl kspage = (PageImpl)wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "knowledge suite", "WikiHome") ;
     kspage.getContent().setText("forum faq wiki") ;
@@ -204,4 +210,27 @@ public class TestWikiService extends AbstractMOWTestcase {
     
   }
   
+public void testSearch() throws Exception {
+    
+    PageImpl kspage = (PageImpl)wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "knowledge", "WikiHome") ;
+    kspage.getContent().setText("forum faq wiki exoplatform") ;
+    
+    AttachmentImpl attachment1 = kspage.createAttachment("attachment1.txt", Resource.createPlainText("foo")) ;
+    attachment1.setCreator("you") ;    
+    assertEquals(attachment1.getFilename(), "attachment1.txt") ;
+    assertNotNull(attachment1.getContentResource()) ;
+    attachment1.setContentResource(Resource.createPlainText("exoplatform content mamagement")) ;    
+    
+    SearchData data = new SearchData("exoplatform", null, null, null) ;
+    
+    RowIterator iter = (RowIterator)wService.search("portal", "classic", data) ;
+    assertEquals(2, iter.getSize()) ; 
+    
+    while(iter.hasNext()) {
+      Row r = iter.nextRow();
+      Value type = r.getValue("jcr:primaryType");        
+      Value path = r.getValue("jcr:path");        
+      assertNotNull(wService.findByPath(path.getString(), type.getString())) ;      
+    }  
+  }
 }

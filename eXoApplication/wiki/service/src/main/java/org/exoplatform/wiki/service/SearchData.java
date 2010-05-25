@@ -42,7 +42,7 @@ public class SearchData {
     return text;
   }
   
-  public String getStatement() {
+  public String getChromatticStatement() {
     StringBuilder statement = new StringBuilder();    
     try {
       boolean isAnd = false ;
@@ -68,7 +68,36 @@ public class SearchData {
     }catch(Exception e) {}
     return statement.toString() ;
   }
-
+  
+  public String getStatement() {
+    StringBuilder statement = new StringBuilder();    
+    try {
+      statement.append("SELECT jcr:primaryType, path, excerpt(.) ")
+               .append("FROM nt:base ")
+               .append("WHERE ") ;
+      boolean isAnd = false ;
+      if(path != null && path.length() > 0) {
+        statement.append("jcr:path LIKE '"+ path + "/%'") ;
+        isAnd = true ;
+      }
+      if(text != null && text.length() > 0) {
+        if(isAnd) statement.append(" AND ") ;
+        statement.append(" CONTAINS(*, '").append(text).append("')") ; 
+        isAnd = true ;
+      }else {        
+        if(title != null && title.length() > 0) {
+          if(isAnd) statement.append(" AND ") ;
+          statement.append(" CONTAINS(title, '").append(title).append("') ") ;
+          isAnd = true ;
+        }
+        if(content != null && content.length() > 0) {
+          if(isAnd) statement.append(" AND ") ;
+          statement.append(" CONTAINS(text, '").append(content).append("') ") ; 
+        }
+      }
+    }catch(Exception e) {}
+    return statement.toString() ;
+  }
   
   
 }

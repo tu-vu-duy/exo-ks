@@ -4,6 +4,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.jcr.Session;
+import javax.jcr.Value;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
+import javax.jcr.query.Row;
+import javax.jcr.query.RowIterator;
+
 import org.chromattic.api.ChromatticSession;
 import org.exoplatform.commons.utils.ObjectPageList;
 import org.exoplatform.commons.utils.PageList;
@@ -18,6 +26,7 @@ import org.exoplatform.wiki.mow.api.WikiType;
 import org.exoplatform.wiki.mow.core.api.MOWService;
 import org.exoplatform.wiki.mow.core.api.WikiStoreImpl;
 import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
+import org.exoplatform.wiki.mow.core.api.wiki.AttachmentImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.GroupWiki;
 import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.PortalWiki;
@@ -121,7 +130,7 @@ public class WikiServiceImpl implements WikiService{
       WikiHome home = getWikiHome(wikiType, wikiOwner) ;
       data.setPath(home.getPath()) ;
     }
-    String statement = data.getStatement() ;
+    String statement = data.getChromatticStatement() ;
     List<ContentImpl> list = new ArrayList<ContentImpl>() ;
     if(statement != null) {
       Iterator<ContentImpl> result = wStore.getSession()
@@ -134,6 +143,35 @@ public class WikiServiceImpl implements WikiService{
     return new ObjectPageList<ContentImpl>(list, 10);
   }
   
+  public Iterator search(String wikiType, String wikiOwner, SearchData data) throws Exception {
+    Model model = getModel();
+    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
+    if(data.getPath() == null || data.getPath().length() <= 0 ) {
+      WikiHome home = getWikiHome(wikiType, wikiOwner) ;
+      data.setPath(home.getPath()) ;
+    }
+    Session session = wStore.getSession().getJCRSession() ;
+    String statement = data.getStatement() ;
+    
+    QueryManager qm = session.getWorkspace().getQueryManager();
+    Query q = qm.createQuery(statement, Query.SQL);
+    QueryResult result = q.execute();
+    return result.getRows() ;
+  }
+  
+  public Object findByPath(String path, String objectNodeType) throws Exception  {
+    String relPath  = path;
+    if (relPath.startsWith("/")) relPath = relPath.substring(1) ;
+    Model model = getModel();
+    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
+    if(objectNodeType.equals("wiki:content")) {
+      return wStore.getSession().findByPath(ContentImpl.class, relPath) ;
+    }else if (objectNodeType.equals("nt:resource")){
+      relPath = relPath.substring(0, relPath.lastIndexOf("/")) ;
+      return wStore.getSession().findByPath(AttachmentImpl.class, relPath) ;
+    }    
+    return null ;
+  }
   public List<BreadcumbData> getBreadcumb(String wikiType, String wikiOwner, String pageId) throws Exception {
     return getBreadcumb(null, wikiType, wikiOwner, pageId);
   }

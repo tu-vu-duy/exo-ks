@@ -1,5 +1,13 @@
-<div class="UIWikiPageEditForm Border">
+<div class="UIWikiPageEditForm">
 <% uiform.begin(); %>
+	<div class="UIWikiToolbar ClearFix">
+		<div class="Title">Lorem ipsum dolor sit amet</div>
+		<a href="javascript:eXo.webui.UIForm.submitEvent('5e8b5dd7-41aa-4bb1-91aa-ce804473a13c#UIWikiPageEditForm','Cancel','&subComponentId=UIWikiPageEditForm_PageToolBar_Cancel_&objectId=Cancel')" class="Delete Icon">&nbsp;</a>
+		<a href="" class="Edit Icon">&nbsp;</a>
+		<a href="javascript:eXo.webui.UIForm.submitEvent('5e8b5dd7-41aa-4bb1-91aa-ce804473a13c#UIWikiPageEditForm','Help','&subComponentId=UIWikiPageEditForm_PageToolBar_Help_&objectId=Help')" class="FAQ Icon">&nbsp;</a>
+		<a href="javascript:eXo.webui.UIForm.submitEvent('5e8b5dd7-41aa-4bb1-91aa-ce804473a13c#UIWikiPageEditForm','PreviewPage','&subComponentId=UIWikiPageEditForm_PageToolBar_PreviewPage_&objectId=PreviewPage')" class="View Icon">&nbsp;</a>
+		<a href="javascript:eXo.webui.UIForm.submitEvent('5e8b5dd7-41aa-4bb1-91aa-ce804473a13c#UIWikiPageEditForm','SavePage','&subComponentId=UIWikiPageEditForm_PageToolBar_SavePage_&objectId=SavePage')" class="Save Icon">&nbsp;</a>
+	</div>
 <%uiform.renderChild("UIWikiPageTitleControlForm_PageEditForm"); %>
 <%uiform.renderChild("UIWikiPageEditForm_PageToolBar"); %>
 <%uiform.renderChild("UIWikiSidePanelArea"); %>

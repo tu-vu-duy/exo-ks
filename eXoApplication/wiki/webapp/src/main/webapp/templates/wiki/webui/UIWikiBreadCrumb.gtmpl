@@ -3,7 +3,7 @@
   
   List breadCumbs = uicomponent.getBreadCumbs();
 %>
-<div class="UIWikiBreadCrumb UIBreadcumbs Border">
+<div class="UIWikiBreadCrumb UIBreadcumbs">
   <div class="LeftBreadcumbsBar">
     <div class="RightBreadcumbsBar">
       <div class="BreadcumbsInfoBar">
@@ -29,4 +29,37 @@
       </div>
     </div>
   </div>
+</div>
+<div class="BreadcumPopup">
+	<div class="BreadcumPopupTL">
+		<div class="BreadcumPopupTR">
+			<div class="BreadcumPopupTC"><span></span></div>
+	  	</div>
+	</div>
+	<div class="BreadcumPopupML">
+		<div class="BreadcumPopupMR">
+			<div class="BreadcumPopupMC">
+				<div class="SubBlock">
+
+							<div class="MenuItem">	
+								<a class="ItemIcon MenuIcon" title="" href="#">Forum</a>
+							</div>
+
+							<div class="MenuItem">
+								<a class="ItemIcon MenuIcon" title="" href="#">Thread</a>
+							</div>
+
+							<div class="MenuItem">	
+								<a class="ItemIcon MenuIcon" title="" href="#">Topic</a>
+							</div>
+
+				</div>
+			</div>
+		</div>
+	</div>	
+	<div class="BreadcumPopupBL">
+		<div class="BreadcumPopupBR">
+			<div class="BreadcumPopupBC"><span></span></div>
+	  	</div>
+	</div>
 </div>

@@ -1,4 +1,9 @@
-<div class="UIWikiPageControlArea Border" >
+<div class="UIWikiPageControlArea" >
+	<div class="UIWikiToolbar ClearFix">
+		<a href="javascript:ajaxGet('/ksdemo/private/classic/wiki?portal:componentId=5e8b5dd7-41aa-4bb1-91aa-ce804473a13c&portal:type=action&uicomponent=UIWikiPageControlArea_PageToolBar_DeletePage_&op=DeletePage&ajaxRequest=true')" class="Delete Icon">&nbsp;</a>
+		<a href="javascript:ajaxGet('/ksdemo/private/classic/wiki?portal:componentId=5e8b5dd7-41aa-4bb1-91aa-ce804473a13c&portal:type=action&uicomponent=UIWikiPageControlArea_PageToolBar_EditPage_&op=EditPage&ajaxRequest=true')" class="Edit Icon">&nbsp;</a>
+		<a href="javascript:ajaxGet('/ksdemo/private/classic/wiki?portal:componentId=5e8b5dd7-41aa-4bb1-91aa-ce804473a13c&portal:type=action&uicomponent=UIWikiPageControlArea_PageToolBar_AddPage_&op=AddPage&ajaxRequest=true')" class="Add Icon">&nbsp;</a>
+	</div>
 <%
   List children = uicomponent.getChildren() ;
   for(component in children) {

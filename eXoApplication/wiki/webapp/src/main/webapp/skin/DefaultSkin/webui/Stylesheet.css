@@ -29,3 +29,69 @@
   margin-right: 310px;
 }
 
+
+.UIWikiPortlet .UIWikiToolbar {
+	margin: 8px 8px 0px 8px;
+	border-bottom: 1px solid #c7c7c7;
+	padding-bottom: 8px;
+}
+
+.UIWikiPortlet .UIWikiPageControlArea .Icon {
+	float:right;
+	padding: 2px 6px;
+	margin: 4px 0px 0px 8px;	
+}
+
+.UIWikiPortlet .UIWikiPageControlArea .Delete {
+	background:url("background/Delete.gif") no-repeat center center;
+}
+
+.UIWikiPortlet .UIWikiPageControlArea .Edit {
+	background:url("background/Edit.gif") no-repeat center center;
+}
+
+.UIWikiPortlet .UIWikiPageControlArea .Add {
+	background:url("background/Add.gif") no-repeat center center;
+}
+
+
+
+
+.UIWikiPageEditForm .UIWikiToolbar {
+	margin: 8px 8px 0px 8px;
+	border-bottom: 1px solid #c7c7c7;
+	padding-bottom: 8px;
+}
+
+.UIWikiPageEditForm .Title {
+	Float: left;
+	font-weight: bold;
+	font-size: 18px;
+	color: #636363;
+}
+
+.UIWikiPageEditForm .UIWikiToolbar .Icon {
+	float:right;
+	margin:4px 0 0 1px;
+	padding:6px 12px;
+}
+
+.UIWikiPageEditForm .UIWikiToolbar .Delete {
+	background:url("background/Delete1.png") no-repeat center center;
+}
+
+.UIWikiPageEditForm .UIWikiToolbar .Edit {
+	background:url("background/Edit1.png") no-repeat center center;
+}
+
+.UIWikiPageEditForm .UIWikiToolbar .FAQ {
+	background:url("background/FAQ.png") no-repeat center center;
+}
+
+.UIWikiPageEditForm .UIWikiToolbar .View {
+	background:url("background/View.png") no-repeat center center;
+}
+
+.UIWikiPageEditForm .UIWikiToolbar .Save{
+	background:url("background/Save.png") no-repeat center center;
+}

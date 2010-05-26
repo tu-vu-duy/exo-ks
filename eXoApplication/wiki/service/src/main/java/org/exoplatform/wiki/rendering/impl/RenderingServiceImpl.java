@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see<http://www.gnu.org/licenses/>.
  */
-package org.exoplatform.wiki.rendering.xwiki;
+package org.exoplatform.wiki.rendering.impl;
 
 import java.io.Reader;
 import java.io.StringReader;
@@ -22,10 +22,10 @@ import java.util.List;
 
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
-import org.exoplatform.wiki.rendering.Renderer;
+import org.exoplatform.wiki.rendering.RenderingService;
+import org.picocontainer.Startable;
 import org.xwiki.component.embed.EmbeddableComponentManager;
 import org.xwiki.component.manager.ComponentLookupException;
-import org.xwiki.component.manager.ComponentManager;
 import org.xwiki.component.manager.ComponentRepositoryException;
 import org.xwiki.context.Execution;
 import org.xwiki.rendering.block.Block;
@@ -45,40 +45,58 @@ import org.xwiki.rendering.transformation.TransformationManager;
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Nov
  * 5, 2009
  */
-public class XWikiRenderer implements Renderer {
+public class RenderingServiceImpl implements RenderingService, Startable {
 
-  private Log LOG = ExoLogger.getExoLogger(XWikiRenderer.class);
+  private Log LOG = ExoLogger.getExoLogger(RenderingServiceImpl.class);
   EmbeddableComponentManager componentManager = null;
 
   public Execution getExecutionContext() throws ComponentLookupException, ComponentRepositoryException{
-    return getComponentManager().lookup(Execution.class);
+    return componentManager.lookup(Execution.class);
   }
   
   /*
    * (non-Javadoc)
    * @see poc.wiki.rendering.Renderer#render(java.lang.String)
    */
-  public String render(String markup) throws Exception {
+  public String render(String markup, String syntaxId) throws Exception {
 
+    Syntax syntax = Syntax.XWIKI_2_0;
+    if (Syntax.XWIKI_1_0.toIdString().equals(syntaxId)) {
+      syntax = Syntax.XWIKI_1_0;
+    } else if (Syntax.XWIKI_2_0.toIdString().equals(syntaxId)) {
+      syntax = Syntax.XWIKI_2_0;
+    } else if (Syntax.CREOLE_1_0.toIdString().equals(syntaxId)) {
+      syntax = Syntax.CREOLE_1_0;
+    } else if (Syntax.CONFLUENCE_1_0.toIdString().equals(syntaxId)) {
+      syntax = Syntax.CONFLUENCE_1_0;
+    } else if (Syntax.MEDIAWIKI_1_0.toIdString().equals(syntaxId)) {
+      syntax = Syntax.MEDIAWIKI_1_0;
+    } else if (Syntax.JSPWIKI_1_0.toIdString().equals(syntaxId)) {
+      syntax = Syntax.JSPWIKI_1_0;
+    } else if (Syntax.TWIKI_1_0.toIdString().equals(syntaxId)) {
+      syntax = Syntax.TWIKI_1_0;
+    }
+    
     // Step 1: Find the parser and generate a XDOM
-    XDOM xdom = parse(new StringReader(markup), Syntax.XWIKI_2_0);
+    XDOM xdom = parse(new StringReader(markup), syntax);
     outputTree(xdom, 0);
-    WikiPrinter printer = convert(xdom, Syntax.XWIKI_2_0, Syntax.XHTML_1_0);
+    WikiPrinter printer = convert(xdom, syntax, Syntax.XHTML_1_0);
     return printer.toString();
   }
 
-  private Converter getConverter() throws Exception {
-    Converter converter = getComponentManager().lookup(Converter.class);
-    return converter;
+  @Override
+  public void start() {
+    componentManager = new EmbeddableComponentManager();
+    componentManager.initialize(this.getClass().getClassLoader());
   }
 
-  private ComponentManager getComponentManager() throws ComponentRepositoryException {
-    if (this.componentManager == null) {
-      // Initialize Rendering components and allow getting instances
-      componentManager = new EmbeddableComponentManager();
-      componentManager.initialize(this.getClass().getClassLoader());
-    }
-    return componentManager;
+  @Override
+  public void stop() {
+  }
+  
+  private Converter getConverter() throws Exception {
+    Converter converter = componentManager.lookup(Converter.class);
+    return converter;
   }
 
   private void outputTree(Block parent, int level) {
@@ -109,7 +127,7 @@ public class XWikiRenderer implements Renderer {
 
     // Step 2: Run transformations
     try {
-      TransformationManager transformationManager = getComponentManager().lookup(TransformationManager.class);
+      TransformationManager transformationManager = componentManager.lookup(TransformationManager.class);
       transformationManager.performTransformations(xdom, sourceSyntax);
     } catch (TransformationException e) {
       throw new ConversionException("Failed to execute some transformations", e);
@@ -119,7 +137,7 @@ public class XWikiRenderer implements Renderer {
     WikiPrinter printer = new DefaultWikiPrinter();
     BlockRenderer renderer;
     try {
-      renderer = getComponentManager().lookup(BlockRenderer.class, targetSyntax.toIdString());
+      renderer = componentManager.lookup(BlockRenderer.class, targetSyntax.toIdString());
     } catch (ComponentLookupException e) {
       throw new ConversionException("Failed to locate Renderer for syntax [" + targetSyntax + "]",
                                     e);
@@ -132,7 +150,7 @@ public class XWikiRenderer implements Renderer {
   private XDOM parse(Reader source, Syntax sourceSyntax) throws Exception {
     XDOM xdom;
     try {
-      Parser parser = getComponentManager().lookup(Parser.class, sourceSyntax.toIdString());
+      Parser parser = componentManager.lookup(Parser.class, sourceSyntax.toIdString());
       xdom = parser.parse(source);
     } catch (ComponentLookupException e) {
       throw new ConversionException("Failed to locate Parser for syntax [" + sourceSyntax + "]", e);

@@ -20,8 +20,8 @@ package org.exoplatform.wiki.rendering;
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Nov
  * 5, 2009
  */
-public interface Renderer {
+public interface RenderingService {
 
-  public abstract String render(String markup) throws Exception;
+  public abstract String render(String markup, String syntaxId) throws Exception;
 
 }

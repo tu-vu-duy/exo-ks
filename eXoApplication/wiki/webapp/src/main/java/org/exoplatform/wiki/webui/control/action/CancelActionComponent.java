@@ -72,13 +72,11 @@ public class CancelActionComponent extends UIComponent {
         PageResolver pageResolver = (PageResolver) PortalContainer.getComponent(PageResolver.class);
         Page page = pageResolver.resolve(requestURL);
         pageTitleControlForm.getUIFormInputInfo().setValue(page.getContent().getTitle());
-        pageContentArea.renderWikiMarkup(page.getContent().getText());
+        pageContentArea.renderWikiMarkup(page.getContent().getText(), page.getContent().getSyntax());
       } catch (Exception e) {
         log.warn("An exception happens when cancel edit page", e);
       }
       wikiPortlet.changeMode(WikiMode.VIEW);
-      pageContentArea.removeChildById(UIWikiPageContentArea.FIELD_TITLE);
-      pageContentArea.removeChildById(UIWikiPageContentArea.FIELD_CONTENT);
       super.processEvent(event);
     }
   }

@@ -25,8 +25,7 @@ import org.exoplatform.webui.core.UIContainer;
 import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
-import org.exoplatform.wiki.rendering.MarkupRenderingService;
-import org.exoplatform.wiki.rendering.Renderer;
+import org.exoplatform.wiki.rendering.RenderingService;
 import org.exoplatform.wiki.webui.UIWikiPortlet;
 
 /**
@@ -52,10 +51,9 @@ public class UIWikiPagePreview extends UIContainer {
     return ACTIONS;
   }
 
-  public void renderWikiMarkup(String markup) throws Exception {
-    MarkupRenderingService renderingService = (MarkupRenderingService) PortalContainer.getComponent(MarkupRenderingService.class);
-    Renderer xwikiRenderer = renderingService.getRenderer("xwiki");
-    this.htmlOutput = xwikiRenderer.render(markup);
+  public void renderWikiMarkup(String markup, String syntaxId) throws Exception {
+    RenderingService renderingService = (RenderingService) PortalContainer.getComponent(RenderingService.class);
+    this.htmlOutput = renderingService.render(markup, syntaxId);
   }
   
   static public class CloseActionListener extends EventListener<UIWikiPagePreview> {

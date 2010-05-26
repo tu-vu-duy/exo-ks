@@ -25,6 +25,7 @@
        </table>
      </div>
    </div>
+   <%uiform.renderField(uiform.FIELD_SYNTAX); %>
  <div class="ClearRight">
    <span></span>
  </div>

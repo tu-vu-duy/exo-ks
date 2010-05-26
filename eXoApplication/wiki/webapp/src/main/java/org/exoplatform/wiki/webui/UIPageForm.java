@@ -26,8 +26,7 @@ import org.exoplatform.webui.form.UIForm;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
 import org.exoplatform.wiki.commons.Utils;
 import org.exoplatform.wiki.mow.api.Page;
-import org.exoplatform.wiki.rendering.MarkupRenderingService;
-import org.exoplatform.wiki.rendering.Renderer;
+import org.exoplatform.wiki.rendering.RenderingService;
 import org.exoplatform.wiki.resolver.PageResolver;
 
 /**
@@ -64,7 +63,7 @@ public class UIPageForm extends UIForm {
       Page page = pageResolver.resolve(requestURL);
       page.getContent().setText(markup);
       
-      String output = thisForm.renderWikiMarkup(markup);
+      String output = thisForm.renderWikiMarkup(markup, null);
 
       UIWikiPageContentArea pageContent = ((UIWikiPageArea)thisForm.getParent()).getChild(UIWikiPageContentArea.class);
       pageContent.setHtmlOutput(output);
@@ -91,10 +90,9 @@ public class UIPageForm extends UIForm {
    * workspace + node.getPath(); return link; }
    */
 
-  public String renderWikiMarkup(String markup) throws Exception {
-    MarkupRenderingService renderingService = (MarkupRenderingService) PortalContainer.getComponent(MarkupRenderingService.class);
-    Renderer xwikiRenderer = renderingService.getRenderer("xwiki");
-    String output = xwikiRenderer.render(markup);
+  public String renderWikiMarkup(String markup, String syntaxId) throws Exception {
+    RenderingService renderingService = (RenderingService) PortalContainer.getComponent(RenderingService.class);
+    String output = renderingService.render(markup, null);
     return output;
   }
 

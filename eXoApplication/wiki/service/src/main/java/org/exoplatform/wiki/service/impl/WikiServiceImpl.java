@@ -39,6 +39,7 @@ import org.exoplatform.wiki.service.BreadcumbData;
 import org.exoplatform.wiki.service.SearchData;
 import org.exoplatform.wiki.service.WikiService;
 import org.exoplatform.wiki.utils.Utils;
+import org.xwiki.rendering.syntax.Syntax;
 
 public class WikiServiceImpl implements WikiService{
   
@@ -174,6 +175,10 @@ public class WikiServiceImpl implements WikiService{
   }
   public List<BreadcumbData> getBreadcumb(String wikiType, String wikiOwner, String pageId) throws Exception {
     return getBreadcumb(null, wikiType, wikiOwner, pageId);
+  }
+  
+  public String getDefaultWikiSyntaxId() {
+    return Syntax.XWIKI_2_0.toIdString();
   }
   
   private Model getModel(){

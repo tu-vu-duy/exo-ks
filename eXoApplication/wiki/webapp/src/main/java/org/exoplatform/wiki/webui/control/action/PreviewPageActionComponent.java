@@ -27,6 +27,7 @@ import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.Event.Phase;
 import org.exoplatform.webui.ext.filter.UIExtensionFilter;
 import org.exoplatform.webui.ext.filter.UIExtensionFilters;
+import org.exoplatform.webui.form.UIFormSelectBox;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
 import org.exoplatform.wiki.webui.UIWikiPageEditForm;
 import org.exoplatform.wiki.webui.UIWikiPortlet;
@@ -61,10 +62,11 @@ public class PreviewPageActionComponent extends UIComponent {
       UIMaskWorkspace uiMaskWS = wikiPortlet.getChild(UIMaskWorkspace.class);
       UIWikiPageEditForm wikiPageEditForm = event.getSource().getAncestorOfType(UIWikiPageEditForm.class);
       UIFormTextAreaInput markupInput = wikiPageEditForm.findComponentById(UIWikiPageEditForm.FIELD_CONTENT);
+      UIFormSelectBox syntaxTypeSelectBox = wikiPageEditForm.findComponentById(UIWikiPageEditForm.FIELD_SYNTAX);
       String markup = markupInput.getValue();
 
       UIWikiPagePreview wikiPagePreview = uiMaskWS.createUIComponent(UIWikiPagePreview.class, null, null);
-      wikiPagePreview.renderWikiMarkup(markup);
+      wikiPagePreview.renderWikiMarkup(markup, syntaxTypeSelectBox.getValue());
       
       uiMaskWS.setUIComponent(wikiPagePreview);
       uiMaskWS.setShow(true);

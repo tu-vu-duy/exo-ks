@@ -20,8 +20,7 @@ import org.exoplatform.container.PortalContainer;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.core.UIContainer;
 import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
-import org.exoplatform.wiki.rendering.MarkupRenderingService;
-import org.exoplatform.wiki.rendering.Renderer;
+import org.exoplatform.wiki.rendering.RenderingService;
 
 /**
  * Created by The eXo Platform SAS
@@ -37,9 +36,6 @@ public class UIWikiPageContentArea extends UIContainer {
 
   private String htmlOutput;
   private PageMode pageMode = PageMode.NEW;
-  
-  public static final String FIELD_TITLE   = "Title";
-  public static final String FIELD_CONTENT = "Markup";
   
   public UIWikiPageContentArea(){
   }
@@ -60,10 +56,9 @@ public class UIWikiPageContentArea extends UIContainer {
     this.htmlOutput = output;
   }
   
-  public void renderWikiMarkup(String markup) throws Exception {
-    MarkupRenderingService renderingService = (MarkupRenderingService) PortalContainer.getComponent(MarkupRenderingService.class);
-    Renderer xwikiRenderer = renderingService.getRenderer("xwiki");
-    this.htmlOutput = xwikiRenderer.render(markup);
+  public void renderWikiMarkup(String markup, String syntaxId) throws Exception {
+    RenderingService renderingService = (RenderingService) PortalContainer.getComponent(RenderingService.class);
+    this.htmlOutput = renderingService.render(markup, syntaxId);
   }
   
   public WikiMode getWikiMode(){

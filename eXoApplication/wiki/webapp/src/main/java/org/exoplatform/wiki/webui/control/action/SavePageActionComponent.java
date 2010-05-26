@@ -35,6 +35,7 @@ import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.Event.Phase;
 import org.exoplatform.webui.ext.filter.UIExtensionFilter;
 import org.exoplatform.webui.ext.filter.UIExtensionFilters;
+import org.exoplatform.webui.form.UIFormSelectBox;
 import org.exoplatform.webui.form.UIFormStringInput;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
 import org.exoplatform.wiki.commons.Utils;
@@ -85,6 +86,7 @@ public class SavePageActionComponent extends UIComponent {
       UIWikiPageEditForm pageEditForm = wikiPortlet.findFirstComponentOfType(UIWikiPageEditForm.class);
       UIFormStringInput titleInput = pageEditForm.getChild(UIWikiPageTitleControlArea.class).getUIStringInput();
       UIFormTextAreaInput markupInput = pageEditForm.findComponentById(UIWikiPageEditForm.FIELD_CONTENT);
+      UIFormSelectBox syntaxTypeSelectBox = pageEditForm.findComponentById(UIWikiPageEditForm.FIELD_SYNTAX);
       
       String title = titleInput.getValue();
       String markup = markupInput.getValue();
@@ -94,18 +96,20 @@ public class SavePageActionComponent extends UIComponent {
         Page page = pageResolver.resolve(requestURL);
         if (wikiPortlet.getWikiMode() == WikiMode.EDIT) {
           page.getContent().setText(markup);
+          page.getContent().setSyntax(syntaxTypeSelectBox.getValue());
         } else if (wikiPortlet.getWikiMode() == WikiMode.NEW) {
           WikiService wikiService = (WikiService) PortalContainer.getComponent(WikiService.class);
           WikiPageParams pageParams = pageResolver.extractWikiPageParams(requestURL);
           Page subPage = wikiService.createPage(pageParams.getType(), pageParams.getOwner(), title, page.getPageId());
           subPage.getContent().setText(markup);
+          subPage.getContent().setSyntax(syntaxTypeSelectBox.getValue());
           
           wikiPortlet.changeMode(WikiMode.VIEW);
           event.getSource().redirectToNewPage(pageParams, title);
           return;
         }
         pageTitleControlForm.getUIFormInputInfo().setValue(page.getContent().getTitle());
-        pageContentArea.renderWikiMarkup(markup);
+        pageContentArea.renderWikiMarkup(markup, syntaxTypeSelectBox.getValue());
       } catch (Exception e) {
         log.error("An exception happens when saving the page with title:" + title, e);
         uiApp.addMessage(new ApplicationMessage("UIPageToolBar.msg.Exception", null, ApplicationMessage.ERROR));

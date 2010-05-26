@@ -16,11 +16,17 @@
  */
 package org.exoplatform.wiki.webui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
+import org.exoplatform.webui.core.model.SelectItemOption;
 import org.exoplatform.webui.form.UIForm;
+import org.exoplatform.webui.form.UIFormSelectBox;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
 import org.exoplatform.wiki.webui.control.UIPageToolBar;
+import org.xwiki.rendering.syntax.Syntax;
 
 /**
  * Created by The eXo Platform SAS
@@ -34,22 +40,28 @@ import org.exoplatform.wiki.webui.control.UIPageToolBar;
 )
 public class UIWikiPageEditForm extends UIForm {
 
-  public static final String FIELD_TITLE   = "Title";
   public static final String FIELD_CONTENT = "Markup";
+  public static final String FIELD_SYNTAX  = "SyntaxType";
   public static final String TITLE_CONTROL   = "UIWikiPageTitleControlForm_PageEditForm";
   
   public UIWikiPageEditForm() throws Exception{
     addChild(UIWikiPageTitleControlArea.class, null, TITLE_CONTROL).toInputMode();
     addChild(UIPageToolBar.class, null, "UIWikiPageEditForm_PageToolBar").setRendered(true);
     addChild(UIWikiSidePanelArea.class, null, "UIWikiSidePanelArea").setRendered(false);
-    /*UIFormTextAreaInput titleInput = new UIFormTextAreaInput(UIWikiPageContentArea.FIELD_TITLE,
-                                                             UIWikiPageContentArea.FIELD_TITLE,
-                                                             "Untitle");*/
-    UIFormTextAreaInput markupInput = new UIFormTextAreaInput(UIWikiPageContentArea.FIELD_CONTENT,
-                                                              UIWikiPageContentArea.FIELD_CONTENT,
+    UIFormTextAreaInput markupInput = new UIFormTextAreaInput(UIWikiPageEditForm.FIELD_CONTENT,
+                                                              UIWikiPageEditForm.FIELD_CONTENT,
                                                               "This is **sample content**");
-    /*addUIFormInput(titleInput).setRendered(true);*/
     addUIFormInput(markupInput).setRendered(true);
+    List<SelectItemOption<String>> syntaxTypes = new ArrayList<SelectItemOption<String>>();
+    syntaxTypes.add(new SelectItemOption<String>(Syntax.XWIKI_1_0.toString(),Syntax.XWIKI_1_0.toIdString()));
+    syntaxTypes.add(new SelectItemOption<String>(Syntax.XWIKI_2_0.toString(),Syntax.XWIKI_2_0.toIdString()));
+    syntaxTypes.add(new SelectItemOption<String>(Syntax.CREOLE_1_0.toString(),Syntax.CREOLE_1_0.toIdString()));
+    syntaxTypes.add(new SelectItemOption<String>(Syntax.CONFLUENCE_1_0.toString(),Syntax.CONFLUENCE_1_0.toIdString()));
+    syntaxTypes.add(new SelectItemOption<String>(Syntax.MEDIAWIKI_1_0.toString(),Syntax.MEDIAWIKI_1_0.toIdString()));
+    syntaxTypes.add(new SelectItemOption<String>(Syntax.JSPWIKI_1_0.toString(),Syntax.JSPWIKI_1_0.toIdString()));
+    syntaxTypes.add(new SelectItemOption<String>(Syntax.TWIKI_1_0.toString(),Syntax.TWIKI_1_0.toIdString()));
+    UIFormSelectBox syntaxTypeSelectBox = new UIFormSelectBox(FIELD_SYNTAX,FIELD_SYNTAX,syntaxTypes);
+    addUIFormInput(syntaxTypeSelectBox).setRendered(true);
   }
   
   public boolean isSidePanelRendered(){

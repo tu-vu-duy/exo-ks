@@ -35,8 +35,8 @@ import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
 import org.exoplatform.webui.ext.UIExtensionManager;
 import org.exoplatform.wiki.commons.Utils;
 import org.exoplatform.wiki.mow.api.Page;
-import org.exoplatform.wiki.rendering.MarkupRenderingService;
-import org.exoplatform.wiki.rendering.xwiki.XWikiRenderer;
+import org.exoplatform.wiki.rendering.RenderingService;
+import org.exoplatform.wiki.rendering.impl.RenderingServiceImpl;
 import org.exoplatform.wiki.resolver.PageResolver;
 import org.exoplatform.wiki.service.WikiContext;
 import org.exoplatform.wiki.service.WikiPageParams;
@@ -96,9 +96,8 @@ public class UIWikiPortlet extends UIPortletApplication {
       Page page = pageResolver.resolve(requestURL);
       context.setAttribute("wikiPage", page);
       
-      MarkupRenderingService service = (MarkupRenderingService) PortalContainer.getComponent(MarkupRenderingService.class);
-      XWikiRenderer renderer = (XWikiRenderer) service.getRenderer("xwiki");
-      Execution ec = renderer.getExecutionContext();
+      RenderingServiceImpl renderingService = (RenderingServiceImpl) PortalContainer.getComponent(RenderingService.class);
+      Execution ec = renderingService.getExecutionContext();
       ec.setContext(new ExecutionContext());
       WikiContext wikiContext = new WikiContext();
       wikiContext.setPortalURI(portalURI);
@@ -110,7 +109,7 @@ public class UIWikiPortlet extends UIPortletApplication {
       ec.getContext().setProperty(WikiContext.WIKICONTEXT, wikiContext);
       
       ((UIWikiPageTitleControlArea)findComponentById(UIWikiPageControlArea.TITLE_CONTROL)).getUIFormInputInfo().setValue(page.getContent().getTitle());
-      findFirstComponentOfType(UIWikiPageContentArea.class).renderWikiMarkup(page.getContent().getText());
+      findFirstComponentOfType(UIWikiPageContentArea.class).renderWikiMarkup(page.getContent().getText(), page.getContent().getSyntax());
       findFirstComponentOfType(UIWikiAttachmentArea.class).refreshAttachmentsList();
       UIWikiBreadCrumb wikiBreadCrumb = findFirstComponentOfType(UIWikiBreadCrumb.class);
       WikiService wikiService = (WikiService) PortalContainer.getComponent(WikiService.class);

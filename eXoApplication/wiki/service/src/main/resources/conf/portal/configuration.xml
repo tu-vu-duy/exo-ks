@@ -40,13 +40,8 @@
   </component>
   
   <component>
-    <key>org.exoplatform.wiki.rendering.MarkupRenderingService</key>
-    <type>org.exoplatform.wiki.rendering.MarkupRenderingService</type>
-  </component>
-  
-  <component>
-    <key>org.exoplatform.wiki.rendering.xwiki.XWikiRenderer</key>
-    <type>org.exoplatform.wiki.rendering.xwiki.XWikiRenderer</type>
+    <key>org.exoplatform.wiki.rendering.RenderingService</key>
+    <type>org.exoplatform.wiki.rendering.impl.RenderingServiceImpl</type>
   </component>
   
   <component>

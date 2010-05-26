@@ -17,9 +17,9 @@
 package org.exoplatform.wiki.webui;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-import org.exoplatform.commons.utils.PageList;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
@@ -31,7 +31,6 @@ import org.exoplatform.webui.form.UIForm;
 import org.exoplatform.webui.form.UIFormSelectBox;
 import org.exoplatform.webui.form.UIFormStringInput;
 import org.exoplatform.wiki.commons.Utils;
-import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
 import org.exoplatform.wiki.service.SearchData;
 import org.exoplatform.wiki.service.WikiPageParams;
 import org.exoplatform.wiki.service.WikiService;
@@ -74,7 +73,7 @@ public class UIWikiAdvanceSearchForm extends UIForm {
       WikiPageParams  params = Utils.getCurrentWikiPageParams() ;      
       WikiService wservice = (WikiService)PortalContainer.getComponent(WikiService.class) ;
       SearchData data = new SearchData(text, null, null, null) ;
-      PageList<ContentImpl> results = wservice.searchContent(params.getType(), params.getOwner(), data) ;
+      Iterator results = wservice.search(params.getType(), params.getOwner(), data) ;
       UIWikiAdvanceSearchResult uiSearchResults = uiSearch.getParent().findFirstComponentOfType(UIWikiAdvanceSearchResult.class) ;
       uiSearchResults.setResult(results) ;   
       

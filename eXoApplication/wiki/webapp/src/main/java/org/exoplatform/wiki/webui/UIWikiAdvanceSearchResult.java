@@ -16,16 +16,16 @@
  */
 package org.exoplatform.wiki.webui;
 
-import java.util.ArrayList;
+import java.util.Iterator;
 
-import org.exoplatform.commons.utils.ObjectPageList;
-import org.exoplatform.commons.utils.PageList;
+import javax.jcr.query.RowIterator;
+
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.core.UIContainer;
 import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
+import org.exoplatform.wiki.commons.Utils;
 import org.exoplatform.wiki.mow.api.Page;
-import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
 import org.exoplatform.wiki.service.WikiService;
 
 /**
@@ -39,19 +39,22 @@ import org.exoplatform.wiki.service.WikiService;
   template = "app:/templates/wiki/webui/UIWikiAdvanceSearchResult.gtmpl"
 )
 public class UIWikiAdvanceSearchResult extends UIContainer {
-  private PageList<ContentImpl> results_ = new ObjectPageList<ContentImpl>(new ArrayList<ContentImpl>(), 10);
+  private RowIterator results_ ;
   
-  public void setResult(PageList<ContentImpl> results) {
-    results_ = results ;
+  public void setResult(Iterator results) {
+    results_ = (RowIterator)results ;
   }
   
-  private PageList<ContentImpl> getResults() {
+  private RowIterator getResults() {
     return results_ ;
   }
   
-  private Page getPage(String pageId) throws Exception {
+  private String getCurrentWiki() throws Exception {
+    return Utils.getCurrentWikiPageParams().getType();
+  }
+  
+  private Object getObject(String path, String type) throws Exception {
     WikiService wservice = (WikiService)PortalContainer.getComponent(WikiService.class) ;
-    Page page = wservice.getPageById("portal", "classic", pageId) ;
-    return page ;
+    return wservice.findByPath(path, type) ;    
   }
 }

@@ -1,13 +1,41 @@
 <%
 import org.exoplatform.wiki.mow.api.Page ;
 import org.exoplatform.wiki.mow.core.api.content.ContentImpl ;
+import javax.jcr.query.RowIterator ;
+import javax.jcr.query.Row;
+import org.exoplatform.wiki.mow.api.WikiNodeType ;
+import org.exoplatform.wiki.mow.core.api.wiki.AttachmentImpl ;
 %>
 
-<div class="UIWikiAdvanceSearchResult Border">
-<div> resutls: <%=uicomponent.getResults().getAll().size()%></div>
 <%
-	for(content in uicomponent.getResults().getAll()) {
-		%><div> <%=content.getTitle()%></div><%
+	RowIterator rowIter = uicomponent.getResults() ;
+	String type = uicomponent.getCurrentWiki() ;
+%>
+<div class="UIWikiAdvanceSearchResult Border">
+
+<%
+	if(rowIter != null) {
+	%>
+		<div> resutls: <%=rowIter.getSize()%></div>
+	<%
+		while(rowIter.hasNext()) {
+      Row row = rowIter.nextRow();
+      if(WikiNodeType.WIKI_PAGE_CONTENT.equals(row.getValue("jcr:primaryType").getString())){
+      	%><div><a href="#" style="color: blue"> <%=row.getValue("title").getString()%></a></div><%
+      	%><div> <%=row.getValue("rep:excerpt(.)").getString()%></div>
+      		<div>>>$type</div>
+      	<%	
+      } else if (WikiNodeType.WIKI_ATTACHMENT_CONTENT.equals(row.getValue("jcr:primaryType").getString())){
+      	AttachmentImpl att = (AttachmentImpl)uicomponent.getObject(row.getValue("jcr:path").getString(), row.getValue("jcr:primaryType").getString())
+      	%><div><a href="#" style="color: blue"> <%=att.getFilename()%></a></div><%
+      	%><div> <%=row.getValue("rep:excerpt(.)").getString()%></div>
+      		<div>>>$type</div>
+      	<%
+      }      
+    }
+	%>	
+	<%	
 	}
 %>
+
 </div>

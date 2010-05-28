@@ -39,7 +39,7 @@ import org.exoplatform.webui.form.UIFormStringInput;
 )
 public class UIWikiSearchBox extends UIForm {
 
-  final static  private String FIELD_SEARCHVALUE = "searchValue" ;
+  final static  private String FIELD_SEARCHVALUE = "wikiSearchValue" ;
   
   public UIWikiSearchBox() {
     addChild(new UIFormStringInput(FIELD_SEARCHVALUE, FIELD_SEARCHVALUE, null)) ;

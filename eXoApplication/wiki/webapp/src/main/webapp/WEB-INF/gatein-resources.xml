@@ -34,6 +34,20 @@
   
   <javascript>
     <param>
+      <js-module>eXo.wiki.UIWikiPortlet</js-module>
+      <js-path>/javascript/eXo/wiki/UIWikiPortlet.js</js-path>
+    </param>
+  </javascript>
+  
+  <javascript>
+    <param>
+      <js-module>eXo.wiki.UIWikiSearchBox</js-module>
+      <js-path>/javascript/eXo/wiki/UIWikiSearchBox.js</js-path>
+    </param>
+  </javascript>
+  
+  <javascript>
+    <param>
       <js-module>eXo.wiki.UIForm</js-module>
       <js-path>/javascript/eXo/wiki/UIForm.js</js-path>
     </param>

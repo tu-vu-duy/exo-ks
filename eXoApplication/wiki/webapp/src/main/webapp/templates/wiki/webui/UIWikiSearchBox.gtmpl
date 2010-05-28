@@ -1,7 +1,12 @@
+<%
+  def rcontext = _ctx.getRequestContext() ;
+  String inputId = uicomponent.FIELD_SEARCHVALUE;
+  rcontext.getJavascriptManager().addJavascript("eXo.wiki.UIWikiSearchBox.init(\"" + inputId + "\");");
+%>
 <div class="UIWikiSearchBox">
   <% uiform.begin() %>
     <div class="SearchForm">
-      <a class="AdvancedSearch" title="<%=_ctx.appRes("UIWikiPortlet.label.AdvancedSearch")%>" href="<%=uicomponent.event("AdvancedSearch");%>"></a>
+      <a class="AdvancedSearch" title="<%=_ctx.appRes("UIWikiPortlet.label.AdvancedSearch")%>" onclick="<%=uicomponent.event("AdvancedSearch");%>"></a>
       <div class="Input">
 		<div class="SearchBoxL">
 			<div class="SearchBoxR">

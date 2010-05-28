@@ -1,4 +1,44 @@
-<div class="UIWikiAttachmentArea Border">
+<div class="UIWikiAttachmentArea">
+	<div class="AttachmentTit">Attachments</div>
+	<table cellspacing="1" cellpadding="0" border="0" class="UIFormGrid">
+		<thead>
+			<tr>
+				<th style="width: 40%">File</th>
+				<th style="width: 30%">Creator</th>
+				<th style="width: 15%">Last update</th>
+				<th style="width: 15%"></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr class="EvenRow">
+				<td class="Tit">Donec vestibulum dui eu erat.doc</td>
+				<td>Alpha Romeo</td>
+				<td>22-12-2009</td>
+				<td><img alt="" class="RemoveFile" src="/eXoResources/skin/DefaultSkin/background/Blank.gif"/></td>
+			</tr>
+			
+			<tr class="OddRow">
+				<td class="Tit">Baculis porta.pdf</td>
+				<td>Alpha Romeo</td>
+				<td>22-12-2009</td>
+				<td><img alt="" class="RemoveFile" src="/eXoResources/skin/DefaultSkin/background/Blank.gif"/></td>
+			</tr>
+			
+			<tr class="EvenRow">
+				<td class="Tit">Duis ut nunc quis ligula .jpg</td>
+				<td>Alpha Romeo</td>
+				<td>22-12-2009</td>
+				<td><img alt="" class="RemoveFile" src="/eXoResources/skin/DefaultSkin/background/Blank.gif"/></td>
+			</tr>
+			
+			<tr class="OddRow">
+				<td class="Tit">Aliquet accumsan.txt </td>
+				<td>Alpha Romeo</td>
+				<td>22-12-2009</td>
+				<td><img alt="" class="RemoveFile" src="/eXoResources/skin/DefaultSkin/background/Blank.gif"/></td>
+			</tr>
+		</tbody>
+	</table>
 <% uiform.begin(); %>
 <%
   List children = uicomponent.getChildren() ;

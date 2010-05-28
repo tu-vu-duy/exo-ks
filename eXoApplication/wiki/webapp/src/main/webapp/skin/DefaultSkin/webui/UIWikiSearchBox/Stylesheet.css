@@ -40,14 +40,11 @@
 	padding:0px;
 }
 
-
-
-
-
 .UIWikiPortlet .SearchPopup{
   width: 100px;
   position: absolute;
   left: 200px;
+  display: none;
 }
 
 .UIWikiPortlet .SearchPopup .SearchPopupTL{

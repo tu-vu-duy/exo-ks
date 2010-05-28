@@ -41,6 +41,7 @@
 .UIWikiPortlet .BreadcumPopup{
   width: 100px;
   position: absolute;
+  display: none;
 }
 
 .UIWikiPortlet .BreadcumPopup .BreadcumPopupTL{

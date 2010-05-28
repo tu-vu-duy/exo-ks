@@ -1,7 +1,7 @@
 <div class="UIWikiPageEditForm">
 <% uiform.begin(); %>
 	<div class="UIWikiToolbar ClearFix">
-		<div class="Title">Lorem ipsum dolor sit amet</div>
+		<div id="UIWikiPageTitleControlForm_PageEditForm" class="UIWikiPageTitleControlForm_PageEditForm"><input type="text" readonly="readonly" value="WikiHome" id="TitleInput" name="TitleInput"></div>
 		<a href="javascript:eXo.webui.UIForm.submitEvent('5e8b5dd7-41aa-4bb1-91aa-ce804473a13c#UIWikiPageEditForm','Cancel','&subComponentId=UIWikiPageEditForm_PageToolBar_Cancel_&objectId=Cancel')" class="Delete Icon">&nbsp;</a>
 		<a href="" class="Edit Icon">&nbsp;</a>
 		<a href="javascript:eXo.webui.UIForm.submitEvent('5e8b5dd7-41aa-4bb1-91aa-ce804473a13c#UIWikiPageEditForm','Help','&subComponentId=UIWikiPageEditForm_PageToolBar_Help_&objectId=Help')" class="FAQ Icon">&nbsp;</a>
@@ -13,11 +13,14 @@
 <%uiform.renderChild("UIWikiSidePanelArea"); %>
 <% if(uicomponent.isSidePanelRendered()){
 %>
+
    <div class="UIWikiPageContentInputContainer UIWikiPageContentMarginRight HorizontalLayout">
 <% } else {
 %>
    <div class="UIWikiPageContentInputContainer HorizontalLayout">
 <% } %>
+	<textarea cols="122" rows="10" id="Markup" name="Markup" class="textarea">input text here ...</textarea>
+	<!--
      <div class="UIFormInput">
        <table class="UIFormGrid">
          <tbody>
@@ -32,10 +35,11 @@
          </tbody>
        </table>
      </div>
+     -->
    </div>
-   <%uiform.renderField(uiform.FIELD_SYNTAX); %>
- <div class="ClearRight">
-   <span></span>
- </div>
+ <!--  <%uiform.renderField(uiform.FIELD_SYNTAX); %>
+   
+   -->
+
 <%uiform.end();%>
 </div>

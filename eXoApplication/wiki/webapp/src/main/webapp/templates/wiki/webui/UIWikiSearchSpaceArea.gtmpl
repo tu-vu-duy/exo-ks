@@ -1,5 +1,4 @@
-<div class="UIWikiSearchSpaceArea Border">
-Advance search space is located here
+<div class="UIWikiSearchSpaceArea">
 <%
   List children = uicomponent.getChildren() ;
   for(component in children) {

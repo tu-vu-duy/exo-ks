@@ -1,17 +1,71 @@
 @import url('UIWikiBreadCrumb/Stylesheet.css') ;
 @import url('UIWikiSearchBox/Stylesheet.css') ;
 
+p {
+	margin: 0;
+	padding: 8px 0;
+	text-align: justify;
+}
+
+.ClearFix:after {
+	content: ".";
+	display: block;
+	height: 0;
+	clear: both;
+	visibility: hidden;
+}
+
+.ClearFix {
+	!display: inline-block;
+	!zoom: 1;
+	!display: block; 
+}
+
+.UIFormGrid {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.UIFormGrid th {
+	background: #d7d7d7;
+	text-align: left;
+	line-height: 30px;
+	padding-left: 10px;
+	border-right: 1px solid #FFFFFF;
+	border-top: 1px solid #ffffff;
+}
+
+.UIFormGrid td {
+	text-align: left;
+	padding: 5px 10px;
+	border-right: 1px solid #FFFFFF;
+	border-top: 1px solid #ffffff;
+}
+
+.UIFormGrid .EvenRow {
+	background: #F2F2F2;
+}
+
+.UIFormGrid .OddRow {
+	background: #F9F9F9;
+}
+
+.FL {
+	float: left;
+}
+
+.FR {
+	float: right;
+}
+
+/*===========================*/
+
+
 .UIWindow .UIWikiPortlet {
-  min-width: 900px;
-  border: none;
-}
-
-.WikiAttachmentArea .UIFormGrid {
-  width: 100%;
-}
-
-.WikiAttachmentArea .UIFormGrid .RemoveFile {
-  float: none;
+	min-width: 900px;
+	border: none;
+	color: #636363;
+	font-size: 12px;
 }
 
 .Border {
@@ -20,20 +74,24 @@
   padding: 2px 2px 2px 2px;
 }
 
-.UIWikiSidePanelArea {
-  width: 300px;
-  float:right;
-}
-
 .UIWikiPageEditForm .UIWikiPageContentMarginRight {
-  margin-right: 310px;
+
 }
 
+.UIWikiPageArea .UIWikiPageEditForm .HorizontalLayout {
+	padding: 0;
+	border: none;
+	background: none;
+	text-align: center;
+}
 
 .UIWikiPortlet .UIWikiToolbar {
-	margin: 8px 8px 0px 8px;
 	border-bottom: 1px solid #c7c7c7;
 	padding-bottom: 8px;
+}
+
+.UIWikiPortlet .UIWikiPageControlArea {
+	margin: 10px 15px;
 }
 
 .UIWikiPortlet .UIWikiPageControlArea .Icon {
@@ -54,25 +112,38 @@
 	background:url("background/Add.gif") no-repeat center center;
 }
 
-
-
-
 .UIWikiPageEditForm .UIWikiToolbar {
-	margin: 8px 8px 0px 8px;
+	margin: 15px 0 0;
 	border-bottom: 1px solid #c7c7c7;
 	padding-bottom: 8px;
 }
 
-.UIWikiPageEditForm .Title {
-	Float: left;
+.UIWikiToolbar .UIWikiPageTitleControlForm_PageEditForm {
+	float: left;
+	width: 30%;
 	font-weight: bold;
 	font-size: 18px;
 	color: #636363;
 }
 
+.UIWikiToolbar .UIWikiPageTitleControlForm_PageEditForm #TitleInput {
+	width: 295px;
+	border: 1px dashed #707070;
+	background-color: #ffffff;
+	font-size: 24px;
+	color: #636363;
+	padding-left: 10px;
+}
+
+.UIWikiPageEditForm .UIForm .HorizontalLayout textarea {
+	width: auto;
+	border: 1px dashed #707070;
+	padding: 8px;
+}
+
 .UIWikiPageEditForm .UIWikiToolbar .Icon {
 	float:right;
-	margin:4px 0 0 1px;
+	margin-left: 1px;
 	padding:6px 12px;
 }
 
@@ -94,4 +165,336 @@
 
 .UIWikiPageEditForm .UIWikiToolbar .Save{
 	background:url("background/Save.png") no-repeat center center;
+}
+
+/* wiki homepage */
+.UIWikiPageArea {
+	padding: 0 15px;
+}
+
+.UIWikiPageContentArea {
+	
+}
+
+.UIWikiPageContentArea .Tit {
+	font-weight: bold;
+	padding-left: 35px;
+}
+
+/* wiki mask workspace */
+#UIWikiMaskWorkspace {
+	width: 915px;
+	background-color: #ffffff;
+	line-height: 16px;
+}
+
+#UIWikiMaskWorkspace .TopLeftDecorator {
+	background:url("/eXoResources/skin/DefaultSkin/webui/component/UIMaskWorkspace/background/MaskWorkspace.png") no-repeat left top;
+	padding: 0;
+}
+
+#UIWikiMaskWorkspace .TopLeftDecorator {
+	background-color: #d7d7d7;
+	background-image: none;
+	padding: 0;
+}
+
+#UIWikiMaskWorkspace .TopRightDecorator {
+	background-color: #d7d7d7;
+	background-image: none;
+	padding: 0;
+}
+
+#UIWikiMaskWorkspace .TopCenterDecorator {
+	background-color: #d7d7d7;
+	background-image: none;
+	height: 20px;
+}
+
+#UIWikiMaskWorkspace .MiddleLeftDecorator {
+	background: none;
+	padding: 0;
+}
+
+#UIWikiMaskWorkspace .MiddleRightDecorator {
+	background: none;
+	padding: 0;
+}
+
+#UIWikiMaskWorkspace .MaskContainer {
+	background: #ffffff;
+	font-size: 12px;
+	color: #636363;
+	padding: 0 12px;
+}
+
+#UIWikiMaskWorkspace .MaskContainer .Tit {
+	font-weight: bold;
+	padding-left: 35px;
+}
+
+#UIWikiMaskWorkspace .BottomLeftDecorator {
+	background: none;
+	padding: 0;
+}
+
+#UIWikiMaskWorkspace .BottomRightDecorator {
+	background: none;
+	padding: 0;
+}
+
+#UIWikiMaskWorkspace .BottomCenterDecorator {
+	background: none;
+}
+
+#UIWikiMaskWorkspace .CloseButton {
+	background: url("/wiki/skin/DefaultSkin/webui/UIWikiPagePreview/background/CloseIcon.gif") no-repeat right top;
+	float: right;
+	height: 16px;
+	margin: 2px 5px 0 0;
+	width: 16px;
+}
+
+#UIWikiMaskWorkspace .PopupTitle {
+	font-size: 14px;
+	font-weight: bold;
+	color: #464646;
+	padding: 0 0 0 7px;
+}
+
+/* Wiki help */
+
+.UIWikiSidePanelArea {
+	margin: 0 0 10px;
+	padding: 0;
+	line-height: 16px;
+}
+
+.UIWikiSidePanelArea .LeltContainer {
+	width: 630px;
+	float: left;
+	padding: 0 8px;
+	border: 1px dashed #707070;
+}
+
+.UIWikiSidePanelArea .RightContainer {
+	width: 235px;
+	float: right;
+	border: 1px dashed #707070;
+	border-top: none;
+}
+
+.UIWikiSidePanelArea .Tit {
+	font-weight: bold;
+	padding-left: 35px;
+}
+
+.UIWikiSidePanelArea .RightContainer a {
+	color: #165fb3;
+	text-decoration: underline;
+}
+
+.UIWikiSidePanelArea .BarTit {
+	background: #165fb3;
+	font-size: 12px;
+	font-weight: bold;
+	color: #ffffff;
+	line-height: 23px;
+	padding-left: 7px;
+}
+
+.UIWikiSidePanelArea .Content {
+	padding: 12px 8px;
+}
+
+/* Advance search */
+.UIWikiSearchSpaceArea {
+	padding: 8px 20px;
+}
+
+.UIWikiAdvanceSearchForm {
+	
+}
+
+.UIWikiAdvanceSearchForm .SearchInfo {
+	float: left;
+	width: 415px;
+}
+
+.UIWikiAdvanceSearchForm .SearchInfo input {
+	width: 395px;
+	border: 1px solid #ebebeb;
+	color: #363636;
+	margin-bottom: 15px;
+	padding: 2px 0 2px 8px;
+}
+
+.UIWikiAdvanceSearchForm .SearchInfo label {
+	color: #555555;
+	font-weight: bold;
+	font-size: 12px;
+	padding-right: 10px;
+}
+
+.UIWikiAdvanceSearchForm .SearchInfo select {
+	border: 1px solid #ebebeb;
+	color: #165fb3;
+	font-size: 11px;
+	height: 20px;
+	width: 125px;
+}
+
+.UIWikiAdvanceSearchForm .SearchBtn {
+	background: url("/wiki/skin/DefaultSkin/webui/background/BtnSearch.gif") no-repeat left top;
+	float: left;
+	width: 65px;
+	height: 21px;
+	padding: 3px 0 0 12px;
+	cursor: pointer;
+}
+
+.UIWikiAdvanceSearchForm .SearchBtn a {
+	color: #ffffff;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+/* Advance Search Result */
+.UIWikiAdvanceSearchResult {
+	
+}
+
+.UIWikiAdvanceSearchResult .ResultInfo {
+	border-bottom: 1px solid #c2c2c2;
+	color: #363636;
+	margin: 20px 0 0 0;
+	padding-bottom: 5px;
+}
+
+.UIWikiAdvanceSearchResult .BlockResultFeed {
+	margin: 20px 0 10px;
+}
+
+.UIWikiAdvanceSearchResult .BlockResultFeed .TxtTitFeed {
+	color: #165fb3;
+	font-weight: bold;
+}
+
+.UIWikiAdvanceSearchResult .BlockResultFeed .TxtDetail {
+	color: #363636;
+	padding: 8px 0;
+	text-align: justify;
+}
+
+.UIWikiAdvanceSearchResult .BlockResultFeed .TxtMark {
+	color: #b7b7b7;
+	font-size: 11px;
+}
+
+/*Page iterator*/
+.UIWikiAdvanceSearchResult .UIPageIterator {
+	margin: 35px 0 10px 370px;
+	width: auto;
+}
+
+.UIWikiAdvanceSearchResult .UIPageIterator a {
+	color: #165fb3;
+	font-weight: bold;
+	font-size: 11px;
+	float: left;
+	line-height: 15px;
+}
+
+.UIWikiAdvanceSearchResult .UIPageIterator span {
+	color: #165fb3;
+	font-weight: bold;
+	font-size: 11px;
+	float: left;
+}
+
+.UIWikiAdvanceSearchResult .UIPageIterator .PrevPage {
+	padding-right: 5px;
+}
+
+.UIWikiAdvanceSearchResult .UIPageIterator .PrevPage:hover {
+	text-decoration: underline;
+}
+
+.UIWikiAdvanceSearchResult .UIPageIterator .Number {
+	border: none;
+	margin: 0 4px;
+	padding: 0;
+}
+
+.UIWikiAdvanceSearchResult .UIPageIterator .Number:hover {
+	border: none;
+	margin: 0 4px;
+	padding: 0;
+	text-decoration: underline;
+	color: #165fb3;
+}
+
+.UIWikiAdvanceSearchResult .UIPageIterator .Selected {
+	font-size: 12px;
+	color: #2a2a2a;
+}
+
+.UIWikiAdvanceSearchResult .UIPageIterator .NextPage {
+	padding-left: 5px;
+}
+
+.UIWikiAdvanceSearchResult .UIPageIterator .NextPage:hover {
+	text-decoration: underline;
+}
+
+.UIWikiAdvanceSearchResult .UIPageIterator .Separator {
+	margin: 0 4px;
+	padding: 0;
+}
+/* wiki attachment */
+.UIWikiBottomArea {
+	padding: 20px 15px;
+}
+
+.UIWikiPageInfoArea {
+	border-top: 1px solid #e2e2e2;
+	padding-top: 5px;
+}
+
+.UIWikiPageInfoArea .TxtFeed {
+	text-align: right;
+	font-size: 10px;
+}
+
+.UIWikiPageInfoArea .TxtFeed .Link {
+	background: none;
+	color: #165fb3;
+}
+
+/* File Attachment */
+.UIWikiAttachmentArea {
+	margin-top: 25px;
+}
+
+.UIWikiAttachmentArea .AttachmentTit {
+	background: #165fb3;
+	color: #ffffff;
+	font-size: 11px;
+	font-weight: bold;
+	padding: 3px 0 3px 10px;
+}
+
+.UIWikiAttachmentArea .UIFormGrid .Tit {
+	color: #165fb3;
+}
+
+.UIWikiAttachmentArea .UIFormGrid .RemoveFile {
+	margin-left: 47px;
+}
+
+.UploadButton {
+	background: url("/wiki/skin/DefaultSkin/webui/background/UploadBtn.gif") no-repeat left center;
+	cursor: pointer;
+	height: 20px;
+	width:20px;
 }

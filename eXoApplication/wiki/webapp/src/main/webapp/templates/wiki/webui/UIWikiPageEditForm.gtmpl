@@ -29,9 +29,7 @@
      </div>
      -->
    </div>
- <!--  <%uiform.renderField(uiform.FIELD_SYNTAX); %>
-   
-   -->
+ <!--  <%uiform.renderField(uiform.FIELD_SYNTAX); %> -->
 
 <%uiform.end();%>
 </div>

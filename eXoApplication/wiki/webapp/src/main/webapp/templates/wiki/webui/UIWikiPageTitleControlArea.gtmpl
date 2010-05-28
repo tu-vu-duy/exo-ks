@@ -1,4 +1,5 @@
 <div class="UIWikiPageTitleControlArea Border">
+<!--
 <%
   List children = uicomponent.getChildren() ;
   for(component in children) {
@@ -7,4 +8,6 @@
     }
   }
 %>
+-->
+<div id="UIWikiPageTitleControlForm_PageEditForm" class="UIWikiPageTitleControlForm_PageEditForm"><input type="text" readonly="readonly" value="WikiHome" id="TitleInput" name="TitleInput"></div>
 </div>

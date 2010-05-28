@@ -33,8 +33,8 @@
 .UIWikiPortlet .UIWikiBreadCrumb .LeftBreadcumbsBar .RightBlackGridArrowIcon {
 	float:left;
 	margin:5px 0 0;
-	background:url("background/BreadcumbsArrowIcon.png") no-repeat center center;
-	height:16px;
+	background:url("background/BreadcumPopupBG.png") no-repeat 6px -58px;
+	height:20px;
 	width:16px;
 }
 
@@ -45,17 +45,17 @@
 }
 
 .UIWikiPortlet .BreadcumPopup .BreadcumPopupTL{
-  background:url("background/BreadcumPopupTL.png") no-repeat left top;
+  background:url("background/BreadcumPopupBG.png") no-repeat left top;
   padding-left: 29px;
 }
 
 .UIWikiPortlet .BreadcumPopup .BreadcumPopupTR{
-  background:url("background/BreadcumPopupTR.png") no-repeat right;
+  background:url("background/BreadcumPopupBG.png") no-repeat right -12px;
   padding-right: 7px;
 }
 
 .UIWikiPortlet .BreadcumPopup .BreadcumPopupTC{
-  background:url("background/BreadcumPopupTC.png") repeat-x;
+  background:url("background/BreadcumPopupBG.png") repeat-x center -25px;
   height: 10px;
 }
 
@@ -74,17 +74,17 @@
 }
 
 .UIWikiPortlet .BreadcumPopup .BreadcumPopupBL{
-  background:url("background/BreadcumPopupBL.png") no-repeat left;
+  background:url("background/BreadcumPopupBG.png") no-repeat left -37px;
   padding-left: 7px;
 }
 
 .UIWikiPortlet .BreadcumPopup .BreadcumPopupBR{
-  background:url("background/BreadcumPopupBR.png") no-repeat right;
+  background:url("background/BreadcumPopupBG.png") no-repeat right -46px;
   padding-right: 7px;
 }
 
 .UIWikiPortlet .BreadcumPopup .BreadcumPopupBC{
-  background:url("background/BreadcumPopupBC.png") repeat-x;
+  background:url("background/BreadcumPopupBG.png") repeat-x center -55px;
   height: 7px;
 }
 
@@ -103,9 +103,9 @@
 }
 
 .UIWikiPortlet .BreadcumPopup .MenuItem a:hover {
-	background: white url("background/MenuIcon.png") no-repeat 12px center;
+	background: white url("background/BreadcumPopupBG.png") no-repeat 12px -77px;
 }
 
 .UIWikiPortlet .BreadcumPopup .MenuIcon {
-	background:url("background/MenuIcon.png") no-repeat 12px center;
+	background:url("background/BreadcumPopupBG.png") no-repeat 12px -77px;
 }

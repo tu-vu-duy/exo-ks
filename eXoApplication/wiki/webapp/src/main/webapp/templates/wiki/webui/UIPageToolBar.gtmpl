@@ -1,5 +1,58 @@
 <div class="UIPageToolBar" >
-<div class="UIAction">
+<div class="UIWikiToolbar ClearFix">
+
+<% for(entry in uicomponent.getActions().entrySet()) {
+             String action = entry.getKey();
+             def actionComponent = entry.getValue();
+             String actionLabel = _ctx.appRes(uicomponent.getName() + ".action." + action);
+             String link = actionComponent.event(action);
+             if(uicomponent.parentIsForm()){
+               if(uicomponent.getSaveAction().equals(action) && uicomponent.isNewMode()){
+                 link = uicomponent.getUrlToSavePage(actionComponent.getId(), action);
+               }else{
+                 link = uicomponent.getParent().event(action, actionComponent.getId(), action);
+               }
+             }
+        %>
+		<% if(action.equals("AddPage")){
+		%>
+		<a href="$link" class="Add Icon">&nbsp;</a>
+		<%} else if(action.equals("EditPage")){
+		%>
+		<a href="$link" class="Edit Icon">&nbsp;</a>
+		<%} else if(action.equals("DeletePage")){
+		%>
+		<a href="$link" class="Delete Icon">&nbsp;</a>
+		<%} else if(action.equals("Cancel")){
+		%>
+		<a href="$link" class="Delete Icon">&nbsp;</a>
+		<%} else if(action.equals("Help")){
+		%>
+		<a href="$link" class="FAQ Icon">&nbsp;</a>
+		<%} else if(action.equals("PreviewPage")){
+		%>
+		<a href="$link" class="View Icon">&nbsp;</a>
+		<%} else if(action.equals("SavePage")){
+		%>
+		<a href="$link" class="Save Icon">&nbsp;</a>
+		<a href="" class="Edit Icon">&nbsp;</a>
+		<%}%>
+<%}%>
+
+<!--
+<div id="UIWikiPageTitleControlForm_PageEditForm" class="UIWikiPageTitleControlForm_PageEditForm"><input type="text" readonly="readonly" value="WikiHome" id="TitleInput" name="TitleInput"></div>
+		<a href="javascript:eXo.webui.UIForm.submitEvent('5e8b5dd7-41aa-4bb1-91aa-ce804473a13c#UIWikiPageEditForm','Cancel','&subComponentId=UIWikiPageEditForm_PageToolBar_Cancel_&objectId=Cancel')" class="Delete Icon">&nbsp;</a>
+		<a href="" class="Edit Icon">&nbsp;</a>
+		<a href="javascript:eXo.webui.UIForm.submitEvent('5e8b5dd7-41aa-4bb1-91aa-ce804473a13c#UIWikiPageEditForm','Help','&subComponentId=UIWikiPageEditForm_PageToolBar_Help_&objectId=Help')" class="FAQ Icon">&nbsp;</a>
+		<a href="javascript:eXo.webui.UIForm.submitEvent('5e8b5dd7-41aa-4bb1-91aa-ce804473a13c#UIWikiPageEditForm','PreviewPage','&subComponentId=UIWikiPageEditForm_PageToolBar_PreviewPage_&objectId=PreviewPage')" class="View Icon">&nbsp;</a>
+		<a href="javascript:eXo.webui.UIForm.submitEvent('5e8b5dd7-41aa-4bb1-91aa-ce804473a13c#UIWikiPageEditForm','SavePage','&subComponentId=UIWikiPageEditForm_PageToolBar_SavePage_&objectId=SavePage')" class="Save Icon">&nbsp;</a>
+		
+		<a href="javascript:ajaxGet('/ksdemo/private/classic/wiki?portal:componentId=5e8b5dd7-41aa-4bb1-91aa-ce804473a13c&portal:type=action&uicomponent=UIWikiPageControlArea_PageToolBar_DeletePage_&op=DeletePage&ajaxRequest=true')" class="Delete Icon">&nbsp;</a>
+		<a href="javascript:ajaxGet('/ksdemo/private/classic/wiki?portal:componentId=5e8b5dd7-41aa-4bb1-91aa-ce804473a13c&portal:type=action&uicomponent=UIWikiPageControlArea_PageToolBar_EditPage_&op=EditPage&ajaxRequest=true')" class="Edit Icon">&nbsp;</a>
+		<a href="javascript:ajaxGet('/ksdemo/private/classic/wiki?portal:componentId=5e8b5dd7-41aa-4bb1-91aa-ce804473a13c&portal:type=action&uicomponent=UIWikiPageControlArea_PageToolBar_AddPage_&op=AddPage&ajaxRequest=true')" class="Add Icon">&nbsp;</a>
+		-->
+	</div>
+<!--<div class="UIAction">
   <table class="ActionContainer">
     <tr>
       <td>
@@ -29,5 +82,5 @@
       </td>
     </tr>
   </table>
-</div>
-</div>
+</div> -->
+</div> 

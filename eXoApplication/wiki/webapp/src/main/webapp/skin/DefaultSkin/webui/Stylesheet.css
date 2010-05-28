@@ -86,12 +86,19 @@ p {
 }
 
 .UIWikiPortlet .UIWikiToolbar {
-	border-bottom: 1px solid #c7c7c7;
 	padding-bottom: 8px;
+	float:right;
+}
+
+.UIWikiPortlet .UIWikiPageTitleControlForm_PageControlArea {
+	float:left;
+	font-size:18px;
+	font-weight:bold;
 }
 
 .UIWikiPortlet .UIWikiPageControlArea {
 	margin: 10px 15px;
+	border-bottom:1px solid #C7C7C7;
 }
 
 .UIWikiPortlet .UIWikiPageControlArea .Icon {
@@ -101,21 +108,29 @@ p {
 }
 
 .UIWikiPortlet .UIWikiPageControlArea .Delete {
-	background:url("background/Delete.gif") no-repeat center center;
+	background:url("background/UIPageToolBarIcon.png") no-repeat left top;
 }
 
 .UIWikiPortlet .UIWikiPageControlArea .Edit {
-	background:url("background/Edit.gif") no-repeat center center;
+	background:url("background/UIPageToolBarIcon.png") no-repeat left -22px;
 }
 
 .UIWikiPortlet .UIWikiPageControlArea .Add {
-	background:url("background/Add.gif") no-repeat center center;
+	background:url("background/UIPageToolBarIcon.png") no-repeat left -43px;
 }
 
 .UIWikiPageEditForm .UIWikiToolbar {
-	margin: 15px 0 0;
-	border-bottom: 1px solid #c7c7c7;
+	margin: 8px 0 0;
 	padding-bottom: 8px;
+}
+
+.UIWikiPageEditForm .UIWikiPageTitleControlForm_PageEditForm{
+	float:left;
+	margin-top: 8px;
+}
+
+.UIWikiPageEditForm .UIPageToolBar{
+	float: right;
 }
 
 .UIWikiToolbar .UIWikiPageTitleControlForm_PageEditForm {
@@ -148,23 +163,23 @@ p {
 }
 
 .UIWikiPageEditForm .UIWikiToolbar .Delete {
-	background:url("background/Delete1.png") no-repeat center center;
+	background:url("background/UIPageToolBarIcon.png") no-repeat left -62px;
 }
 
 .UIWikiPageEditForm .UIWikiToolbar .Edit {
-	background:url("background/Edit1.png") no-repeat center center;
+	background:url("background/UIPageToolBarIcon.png") no-repeat left -89px;
 }
 
 .UIWikiPageEditForm .UIWikiToolbar .FAQ {
-	background:url("background/FAQ.png") no-repeat center center;
+	background:url("background/UIPageToolBarIcon.png") no-repeat left -170px;
 }
 
 .UIWikiPageEditForm .UIWikiToolbar .View {
-	background:url("background/View.png") no-repeat center center;
+	background:url("background/UIPageToolBarIcon.png") no-repeat left -116px;
 }
 
 .UIWikiPageEditForm .UIWikiToolbar .Save{
-	background:url("background/Save.png") no-repeat center center;
+	background:url("background/UIPageToolBarIcon.png") no-repeat left -143px;
 }
 
 /* wiki homepage */

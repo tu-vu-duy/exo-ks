@@ -1,11 +1,6 @@
 @import url('UIWikiBreadCrumb/Stylesheet.css') ;
 @import url('UIWikiSearchBox/Stylesheet.css') ;
 
-p {
-	margin: 0;
-	padding: 8px 0;
-	text-align: justify;
-}
 
 .ClearFix:after {
 	content: ".";
@@ -21,47 +16,118 @@ p {
 	!display: block; 
 }
 
-.UIFormGrid {
+.UIWikiPortlet hr {
+	border-color:#CCCCCC;
+	border-style:solid;
+	border-width:1px 0 0;
+	clear:both;
+	height:0;
+}
+
+.UIWikiPortlet h1 {
+	font-size:24px;
+	font-weight: bold;
+	color: #252525;
+}
+
+.UIWikiPortlet h2 {
+	font-size:18px;
+	font-weight: bold;
+	color: #555555;
+}
+
+.UIWikiPortlet h3 {
+	font-size:14px;
+	font-weight: bold;
+}
+
+.UIWikiPortlet h4 {
+	font-size:12px;
+	font-weight: bold;
+}
+
+.UIWikiPortlet h5 {
+	font-size:11px;
+	font-weight: bold;
+}
+
+.UIWikiPortlet h6 {
+	font-size:10px;
+	font-weight: bold;
+}
+
+.UIWikiPortlet ol {
+	list-style-type:decimal outside none;
+}
+
+.UIWikiPortlet ul {
+	list-style-type: disc;
+}
+
+.UIWikiPortlet ul li ul {
+	list-style-type: circle;
+}
+
+.UIWikiPortlet ul li ul li ul{
+	list-style-type: square;
+}
+
+.UIWikiPortlet ul li ul li ul li ul {
+	list-style-type: none;
+	background: url("/wiki/skin/DefaultSkin/webui/background/EmptySquare.png") no-repeat 27px 6px;
+}
+
+.UIWikiPortlet ul li ul li ul li ul li ul {
+	list-style-type: none;
+	background: url("/wiki/skin/DefaultSkin/webui/background/AddIcon.png") no-repeat 27px 6px;
+}
+
+.UIWikiPortlet a {
+	color: #165fb3;
+}
+
+.UIWikiPortlet a span {
+	cursor: pointer;
+}
+
+.UIWikiPortlet a:hover {
+	text-decoration: underline;
+}
+
+.UIWikiPortlet p, .UIWikiPortlet dl, .UIWikiPortlet hr, .UIWikiPortlet h1, .UIWikiPortlet h2, .UIWikiPortlet h3, .UIWikiPortlet h4, .UIWikiPortlet h5, .UIWikiPortlet h6, .UIWikiPortlet ol, .UIWikiPortlet ul, .UIWikiPortlet pre, .UIWikiPortlet table, .UIWikiPortlet address, .UIWikiPortlet fieldset {
+	margin-bottom:20px;
+}
+
+.UIWikiPortlet .FL {
+	float: left;
+}
+
+.UIWikiPortlet .FR {
+	float: right;
+}
+
+.UIWikiPortlet table {
 	width: 100%;
 	border-collapse: collapse;
 }
 
-.UIFormGrid th {
-	background: #d7d7d7;
+.UIWikiPortlet th {
+	background: #165fb3;
+	color: #ffffff;
 	text-align: left;
 	line-height: 30px;
 	padding-left: 10px;
-	border-right: 1px solid #FFFFFF;
-	border-top: 1px solid #ffffff;
+	border: 1px solid #FFFFFF;
 }
 
-.UIFormGrid td {
+.UIWikiPortlet td {
 	text-align: left;
 	padding: 5px 10px;
-	border-right: 1px solid #FFFFFF;
-	border-top: 1px solid #ffffff;
-}
-
-.UIFormGrid .EvenRow {
-	background: #F2F2F2;
-}
-
-.UIFormGrid .OddRow {
-	background: #F9F9F9;
-}
-
-.FL {
-	float: left;
-}
-
-.FR {
-	float: right;
+	border: 1px solid #d3d3d3;
 }
 
 /*===========================*/
-
-
-.UIWindow .UIWikiPortlet {
+.UIWikiPortlet {
 	min-width: 900px;
 	border: none;
 	color: #636363;
@@ -466,7 +532,9 @@ p {
 	margin: 0 4px;
 	padding: 0;
 }
+
 /* wiki attachment */
+
 .UIWikiBottomArea {
 	padding: 20px 15px;
 }
@@ -489,6 +557,36 @@ p {
 /* File Attachment */
 .UIWikiAttachmentArea {
 	margin-top: 25px;
+}
+
+.UIWikiAttachmentArea .UIFormGrid {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.UIWikiAttachmentArea .UIFormGrid th {
+	background: #d7d7d7;
+	color: #636363;
+	text-align: left;
+	line-height: 30px;
+	padding-left: 10px;
+	border-right: 1px solid #FFFFFF;
+	border-top: 1px solid #ffffff;
+}
+
+.UIWikiAttachmentArea .UIFormGrid td {
+	text-align: left;
+	padding: 5px 10px;
+	border-right: 1px solid #FFFFFF;
+	border-top: 1px solid #ffffff;
+}
+
+.UIWikiAttachmentArea .UIFormGrid .EvenRow {
+	background: #F2F2F2;
+}
+
+.UIWikiAttachmentArea .UIFormGrid .OddRow {
+	background: #F9F9F9;
 }
 
 .UIWikiAttachmentArea .AttachmentTit {

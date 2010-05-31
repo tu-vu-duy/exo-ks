@@ -23,8 +23,6 @@ import org.exoplatform.container.PortalContainer;
 import org.exoplatform.portal.application.PortalRequestContext;
 import org.exoplatform.portal.webui.portal.UIPortal;
 import org.exoplatform.portal.webui.util.Util;
-import org.exoplatform.portal.webui.workspace.UIMaskWorkspace;
-import org.exoplatform.portal.webui.workspace.UIPortalApplication;
 import org.exoplatform.webui.application.WebuiApplication;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
@@ -59,16 +57,15 @@ public class UIWikiPortlet extends UIPortletApplication {
   public UIWikiPortlet() throws Exception {
     super();
     try {
-      addChild(UIWikiUpperArea.class, null, null).setRendered(true);
-      addChild(UIWikiPageArea.class, null, null).setRendered(true);
-      addChild(UIWikiBottomArea.class, null, null).setRendered(true);
-      addChild(UIWikiSearchSpaceArea.class, null, null).setRendered(false);
-      
       UIPopupContainer uiPopupContainer = addChild(UIPopupContainer.class, null, null) ;
       uiPopupContainer.setId("UIWikiPopupContainer") ;
       uiPopupContainer.getChild(UIPopupWindow.class).setId("UIWikiPopupWindow") ;
       
-      addChild(UIMaskWorkspace.class, UIPortalApplication.UI_MASK_WS_ID, "UIWikiMaskWorkspace");
+      addChild(UIWikiUpperArea.class, null, null).setRendered(true);
+      addChild(UIWikiPageArea.class, null, null).setRendered(true);
+      addChild(UIWikiBottomArea.class, null, null).setRendered(true);
+      addChild(UIWikiSearchSpaceArea.class, null, null).setRendered(false);
+      addChild(UIWikiMaskWorkspace.class, null, "UIWikiMaskWorkspace");
     } catch (Exception e) {
       log.error("An exception happens when init WikiPortlet", e);
     }

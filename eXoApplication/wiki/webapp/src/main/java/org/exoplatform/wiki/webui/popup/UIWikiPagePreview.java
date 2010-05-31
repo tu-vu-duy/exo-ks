@@ -18,7 +18,6 @@ package org.exoplatform.wiki.webui.popup;
 
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.portal.webui.util.Util;
-import org.exoplatform.portal.webui.workspace.UIMaskWorkspace;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIContainer;
@@ -26,6 +25,7 @@ import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.wiki.rendering.RenderingService;
+import org.exoplatform.wiki.webui.UIWikiMaskWorkspace;
 import org.exoplatform.wiki.webui.UIWikiPortlet;
 
 /**
@@ -59,7 +59,7 @@ public class UIWikiPagePreview extends UIContainer {
   static public class CloseActionListener extends EventListener<UIWikiPagePreview> {
     public void execute(Event<UIWikiPagePreview> event) throws Exception {
       UIWikiPortlet wikiPortlet = event.getSource().getAncestorOfType(UIWikiPortlet.class);
-      UIMaskWorkspace uiMaskWS = wikiPortlet.getChild(UIMaskWorkspace.class);
+      UIWikiMaskWorkspace uiMaskWS = wikiPortlet.getChild(UIWikiMaskWorkspace.class);
 
       if (uiMaskWS == null || !uiMaskWS.isShow()) {
         return;

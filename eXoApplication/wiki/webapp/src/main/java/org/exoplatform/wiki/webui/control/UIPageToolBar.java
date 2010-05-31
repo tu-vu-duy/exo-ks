@@ -16,6 +16,7 @@
  */
 package org.exoplatform.wiki.webui.control;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,8 +50,8 @@ public class UIPageToolBar extends UIContainer {
 
   public static final String EXTENSION_TYPE = "org.exoplatform.wiki.UIPageToolBar";
   
-  public Map<String, UIComponent> getActions() throws Exception {
-    Map<String, UIComponent> activeActions = new ConcurrentHashMap<String, UIComponent>();
+  public List<ActionComponent> getActions() throws Exception {
+    List<ActionComponent> activeActions = new ArrayList<ActionComponent>();
     UIExtensionManager manager = getApplicationComponent(UIExtensionManager.class);
     Map<String, Object> context = new HashMap<String, Object>();
     UIWikiPortlet wikiPortlet = getAncestorOfType(UIWikiPortlet.class);
@@ -60,7 +61,7 @@ public class UIPageToolBar extends UIContainer {
       for (UIExtension extension : extensions) {
         UIComponent component = manager.addUIExtension(extension, context, this);
         if (component != null) {
-          activeActions.put(extension.getName(), component);
+          activeActions.add(new ActionComponent(extension.getName(), component));
         }
       }
     }

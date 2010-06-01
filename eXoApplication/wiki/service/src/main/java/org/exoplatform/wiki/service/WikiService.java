@@ -17,7 +17,6 @@
 package org.exoplatform.wiki.service;
 
 import java.io.InputStream;
-import java.util.Iterator;
 import java.util.List;
 
 import org.exoplatform.commons.utils.PageList;

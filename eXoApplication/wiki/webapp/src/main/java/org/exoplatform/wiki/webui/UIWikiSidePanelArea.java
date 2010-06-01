@@ -17,8 +17,11 @@
 package org.exoplatform.wiki.webui;
 
 import org.exoplatform.webui.config.annotation.ComponentConfig;
+import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIContainer;
 import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
+import org.exoplatform.webui.event.Event;
+import org.exoplatform.webui.event.EventListener;
 
 /**
  * Created by The eXo Platform SAS
@@ -28,8 +31,20 @@ import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
  */
 @ComponentConfig(
   lifecycle = UIApplicationLifecycle.class,
-  template = "app:/templates/wiki/webui/UIWikiSidePanelArea.gtmpl"
+  template = "app:/templates/wiki/webui/UIWikiSidePanelArea.gtmpl",
+  events = {
+      @EventConfig(listeners = UIWikiSidePanelArea.CloseActionListener.class)
+    }
 )
 public class UIWikiSidePanelArea extends UIContainer {
 
+  public static final String CLOSE = "Close"; 
+  
+  static public class CloseActionListener extends EventListener<UIWikiSidePanelArea> {
+    @Override
+    public void execute(Event<UIWikiSidePanelArea> event) throws Exception {
+      event.getSource().setRendered(false);
+    }
+  }
+  
 }

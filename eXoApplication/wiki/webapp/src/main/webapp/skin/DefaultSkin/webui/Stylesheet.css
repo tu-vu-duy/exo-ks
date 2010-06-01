@@ -141,14 +141,13 @@
 }
 
 .UIWikiPageEditForm .UIWikiPageContentMarginRight {
-
+  margin-right: 235px;
 }
 
 .UIWikiPageArea .UIWikiPageEditForm .HorizontalLayout {
 	padding: 0;
 	border: none;
 	background: none;
-	text-align: center;
 }
 
 .UIWikiPortlet .UIWikiPageTitleControlForm_PageControlArea {
@@ -347,16 +346,6 @@
 	margin: 0 0 10px;
 	padding: 0;
 	line-height: 16px;
-}
-
-.UIWikiSidePanelArea .LeltContainer {
-	width: 630px;
-	float: left;
-	padding: 0 8px;
-	border: 1px dashed #707070;
-}
-
-.UIWikiSidePanelArea .RightContainer {
 	width: 235px;
 	float: right;
 	border: 1px dashed #707070;
@@ -368,9 +357,17 @@
 	padding-left: 35px;
 }
 
-.UIWikiSidePanelArea .RightContainer a {
+.UIWikiSidePanelArea a {
 	color: #165fb3;
 	text-decoration: underline;
+}
+
+.UIWikiSidePanelArea .CloseButton {
+	background: url("/wiki/skin/DefaultSkin/webui/background/CloseIcon.gif") no-repeat right top;
+	float: right;
+	height: 16px;
+	margin: 3px 5px 0 0;
+	width: 16px;
 }
 
 .UIWikiSidePanelArea .BarTit {

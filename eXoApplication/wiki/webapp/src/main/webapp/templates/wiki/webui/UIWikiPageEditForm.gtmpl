@@ -2,19 +2,27 @@
 <% uiform.begin();
    uiform.renderChild(uiform.TITLE_CONTROL);
    uiform.renderChild(uiform.PAGE_TOOLBAR);
-   uiform.renderChild(uiform.HELP_PANEL);
 %>
-<% if(uicomponent.isSidePanelRendered()){ %>
+   <div class="ClearBoth"></div>
+<% uiform.renderChild(uiform.HELP_PANEL);%>
+
+<% textAreaInput = uiform.getUIFormTextAreaInput(uiform.FIELD_CONTENT)
+   textAreaInput.setRows(25);
+%>
+<% if(uicomponent.isSidePanelRendered()){
+     textAreaInput.setColumns(92);
+%>
    <div class="UIWikiPageContentInputContainer UIWikiPageContentMarginRight HorizontalLayout">
-<% } else { %>
+<% } else {
+     textAreaInput.setColumns(128);
+%>
    <div class="UIWikiPageContentInputContainer HorizontalLayout">
 <% } %>
-    <% textAreaInput = uiform.getUIFormTextAreaInput(uiform.FIELD_CONTENT)
-       textAreaInput.setRows(25);
-       textAreaInput.setColumns(128);
-    %>
-    <% uiform.renderField(uiform.FIELD_CONTENT); %>
+     <% uiform.renderField(uiform.FIELD_CONTENT); %>
    </div>
-   <% uiform.renderField(uiform.FIELD_SYNTAX); %>
+<% if(uiform.getChildById(uiform.HELP_PANEL).isRendered()) { %>
+   <div class="ClearRight"></div>
+<% } %>
+<% uiform.renderField(uiform.FIELD_SYNTAX); %>
 <% uiform.end();%>
 </div>

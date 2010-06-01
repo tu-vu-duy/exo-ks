@@ -218,6 +218,7 @@
 
 .UIWikiPageEditForm .UIForm .HorizontalLayout textarea {
 	width: auto;
+	height: auto;
 	border: 1px dashed #707070;
 	padding: 8px;
 }

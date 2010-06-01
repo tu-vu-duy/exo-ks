@@ -42,12 +42,14 @@ public class UIWikiPageEditForm extends UIForm {
 
   public static final String FIELD_CONTENT = "Markup";
   public static final String FIELD_SYNTAX  = "SyntaxType";
-  public static final String TITLE_CONTROL   = "UIWikiPageTitleControlForm_PageEditForm";
+  public static final String TITLE_CONTROL = "UIWikiPageTitleControlForm_PageEditForm";
+  public static final String PAGE_TOOLBAR  = "UIWikiPageEditForm_PageToolBar";
+  public static final String HELP_PANEL    = "UIWikiSidePanelArea";
   
   public UIWikiPageEditForm() throws Exception{
     addChild(UIWikiPageTitleControlArea.class, null, TITLE_CONTROL).toInputMode();
-    addChild(UIPageToolBar.class, null, "UIWikiPageEditForm_PageToolBar").setRendered(true);
-    addChild(UIWikiSidePanelArea.class, null, "UIWikiSidePanelArea").setRendered(false);
+    addChild(UIPageToolBar.class, null, PAGE_TOOLBAR).setRendered(true);
+    addChild(UIWikiSidePanelArea.class, null, HELP_PANEL).setRendered(false);
     UIFormTextAreaInput markupInput = new UIFormTextAreaInput(UIWikiPageEditForm.FIELD_CONTENT,
                                                               UIWikiPageEditForm.FIELD_CONTENT,
                                                               "This is **sample content**");

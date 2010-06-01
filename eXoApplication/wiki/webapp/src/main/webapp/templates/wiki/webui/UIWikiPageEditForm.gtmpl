@@ -1,35 +1,20 @@
 <div class="UIWikiPageEditForm">
-<% uiform.begin(); %>
-<%uiform.renderChild("UIWikiPageTitleControlForm_PageEditForm"); %>
-<%uiform.renderChild("UIWikiPageEditForm_PageToolBar"); %>
-<%uiform.renderChild("UIWikiSidePanelArea"); %>
-<% if(uicomponent.isSidePanelRendered()){
+<% uiform.begin();
+   uiform.renderChild(uiform.TITLE_CONTROL);
+   uiform.renderChild(uiform.PAGE_TOOLBAR);
+   uiform.renderChild(uiform.HELP_PANEL);
 %>
-
+<% if(uicomponent.isSidePanelRendered()){ %>
    <div class="UIWikiPageContentInputContainer UIWikiPageContentMarginRight HorizontalLayout">
-<% } else {
-%>
+<% } else { %>
    <div class="UIWikiPageContentInputContainer HorizontalLayout">
 <% } %>
-	<textarea cols="122" rows="10" id="Markup" name="Markup" class="textarea">input text here ...</textarea>
-	<!--
-     <div class="UIFormInput">
-       <table class="UIFormGrid">
-         <tbody>
-           <tr>
-             <td class="FieldLabel">
-               Markup
-             </td>
-             <td class="FieldComponent">
-               <%uiform.renderField("Markup"); %>
-             </td>
-           </tr>
-         </tbody>
-       </table>
-     </div>
-     -->
+    <% textAreaInput = uiform.getUIFormTextAreaInput(uiform.FIELD_CONTENT)
+       textAreaInput.setRows(25);
+       textAreaInput.setColumns(128);
+    %>
+    <% uiform.renderField(uiform.FIELD_CONTENT); %>
    </div>
- <!--  <%uiform.renderField(uiform.FIELD_SYNTAX); %> -->
-
-<%uiform.end();%>
+   <% uiform.renderField(uiform.FIELD_SYNTAX); %>
+<% uiform.end();%>
 </div>

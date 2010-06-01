@@ -1,5 +1,6 @@
 package org.exoplatform.wiki.service.impl;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -150,9 +151,7 @@ public class WikiServiceImpl implements WikiService{
       }
       PageList<SearchResult> result = jcrDataStorage.search(wStore.getSession(), data) ;      
       return result;
-    }catch(Exception e) {
-      e.printStackTrace() ;
-    }
+    }catch(Exception e) {}
     return null ;
   }
   
@@ -183,6 +182,15 @@ public class WikiServiceImpl implements WikiService{
       return content.getTitle() ;
     }catch (Exception e) {}
     return null ;    
+  }
+  
+  public InputStream getAttachmentAsStream(String path) throws Exception  {
+    Model model = getModel();
+    try{
+      WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();      
+      return jcrDataStorage.getAttachmentAsStream(path, wStore.getSession()) ;
+    }catch(Exception e) {}
+    return null ; 
   }
   
   public List<BreadcumbData> getBreadcumb(String wikiType, String wikiOwner, String pageId) throws Exception {

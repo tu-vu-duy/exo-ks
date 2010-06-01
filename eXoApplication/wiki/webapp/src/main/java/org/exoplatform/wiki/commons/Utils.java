@@ -16,13 +16,18 @@
  */
 package org.exoplatform.wiki.commons;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.Node;
 import javax.servlet.http.HttpServletRequest;
 
+import org.exoplatform.commons.utils.MimeTypeResolver;
 import org.exoplatform.container.PortalContainer;
+import org.exoplatform.download.DownloadService;
+import org.exoplatform.download.InputStreamDownloadResource;
 import org.exoplatform.portal.application.PortalRequestContext;
 import org.exoplatform.portal.webui.portal.UIPortal;
 import org.exoplatform.portal.webui.util.Util;
@@ -34,6 +39,7 @@ import org.exoplatform.wiki.mow.core.api.WikiStoreImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.AttachmentImpl;
 import org.exoplatform.wiki.resolver.PageResolver;
 import org.exoplatform.wiki.service.WikiPageParams;
+import org.exoplatform.wiki.service.WikiService;
 
 /**
  * Created by The eXo Platform SAS
@@ -88,4 +94,24 @@ public class Utils {
     return page;
   }
   
+  public static String getDownloadLink(String path, String filename, DownloadService dservice){
+    if(dservice == null)dservice = (DownloadService)PortalContainer.getComponent(DownloadService.class) ;
+    WikiService wservice = (WikiService)PortalContainer.getComponent(WikiService.class) ;
+    try {
+      InputStream input = wservice.getAttachmentAsStream(path) ;      
+      byte[] attBytes = null;
+      if (input != null) {
+        attBytes = new byte[input.available()];
+        input.read(attBytes);
+        ByteArrayInputStream bytearray = new ByteArrayInputStream(attBytes);
+        MimeTypeResolver mimeTypeResolver = new MimeTypeResolver() ;
+        String mimeType = mimeTypeResolver.getMimeType(filename) ;
+        InputStreamDownloadResource dresource = new InputStreamDownloadResource(bytearray, mimeType);
+        dresource.setDownloadName(filename);
+        return dservice.getDownloadLink(dservice.addDownloadResource(dresource));
+      }
+    } catch (Exception e) {     
+    }
+    return null;
+  }
 }

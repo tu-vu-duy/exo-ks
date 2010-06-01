@@ -19,8 +19,11 @@ package org.exoplatform.wiki.webui;
 import org.exoplatform.commons.utils.PageList;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
+import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIContainer;
 import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
+import org.exoplatform.webui.event.Event;
+import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.wiki.commons.Utils;
 import org.exoplatform.wiki.service.SearchResult;
 import org.exoplatform.wiki.service.WikiService;
@@ -33,7 +36,10 @@ import org.exoplatform.wiki.service.WikiService;
  */
 @ComponentConfig(
   lifecycle = UIApplicationLifecycle.class,
-  template = "app:/templates/wiki/webui/UIWikiAdvanceSearchResult.gtmpl"
+  template = "app:/templates/wiki/webui/UIWikiAdvanceSearchResult.gtmpl",
+  events = {
+      @EventConfig(listeners = UIWikiAdvanceSearchResult.DownloadAttachActionListener.class)
+  }    
 )
 public class UIWikiAdvanceSearchResult extends UIContainer {
   private PageList<SearchResult> results_ ;
@@ -63,5 +69,12 @@ public class UIWikiAdvanceSearchResult extends UIContainer {
   private String getPageTitle(String path) throws Exception {
     WikiService wservice = (WikiService)PortalContainer.getComponent(WikiService.class) ;
     return wservice.getPageTitleOfAttachment(path) ;    
+  }
+  
+  static public class DownloadAttachActionListener extends EventListener<UIWikiAdvanceSearchResult> {
+    public void execute(Event<UIWikiAdvanceSearchResult> event) throws Exception {
+      UIWikiAdvanceSearchResult search = event.getSource() ; 
+      event.getRequestContext().addUIComponentToUpdateByAjax(search) ;
+    }
   }
 }

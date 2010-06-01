@@ -1,9 +1,11 @@
 package org.exoplatform.wiki.service.impl;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.jcr.Node;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
@@ -40,4 +42,10 @@ public class JCRDataStorage implements DataStorage{
     SearchResult result = new SearchResult(excerpt,title, path, type) ;
     return result ;
   }
+  
+  public InputStream getAttachmentAsStream(String path, ChromatticSession session) throws Exception {
+    Node attContent = (Node)session.getJCRSession().getItem(path) ;
+    return attContent.getProperty("jcr:data").getStream() ;    
+  }
+  
 }

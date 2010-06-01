@@ -16,6 +16,7 @@
  */
 package org.exoplatform.wiki.service;
 
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
 
@@ -47,6 +48,7 @@ public interface WikiService {
 	public Object findByPath(String path, String objectNodeType) throws Exception  ;
 	public String getDefaultWikiSyntaxId();
 	public String getPageTitleOfAttachment(String path) throws Exception ;
+	public InputStream getAttachmentAsStream(String path) throws Exception ;
 
 }
 

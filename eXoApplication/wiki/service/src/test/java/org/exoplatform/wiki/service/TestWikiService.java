@@ -240,4 +240,17 @@ public class TestWikiService extends AbstractMOWTestcase {
     assertEquals("GetPageTitleOfAttachment", wService.getPageTitleOfAttachment(attachment1.getPath())) ;
     
   }
+  
+  public void testGetAttachmentAsStream() throws Exception {
+    PageImpl kspage = (PageImpl)wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "GetAttachmentAsStream", "WikiHome") ;
+    kspage.getContent().setText("forum faq wiki exoplatform") ;
+    AttachmentImpl attachment1 = kspage.createAttachment("attachment.txt", Resource.createPlainText("this is a text attachment")) ;
+    attachment1.setCreator("john") ;    
+    assertEquals(attachment1.getFilename(), "attachment.txt") ;
+    assertNotNull(attachment1.getContentResource()) ;
+    
+    assertNotNull(wService.getAttachmentAsStream(attachment1.getPath()+"/jcr:content")) ;
+    
+  }
+  
 }

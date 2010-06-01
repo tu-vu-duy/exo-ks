@@ -16,16 +16,13 @@
  */
 package org.exoplatform.wiki.webui;
 
-import java.util.Iterator;
-
-import javax.jcr.query.RowIterator;
-
+import org.exoplatform.commons.utils.PageList;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.core.UIContainer;
 import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
 import org.exoplatform.wiki.commons.Utils;
-import org.exoplatform.wiki.mow.api.Page;
+import org.exoplatform.wiki.service.SearchResult;
 import org.exoplatform.wiki.service.WikiService;
 
 /**
@@ -39,15 +36,20 @@ import org.exoplatform.wiki.service.WikiService;
   template = "app:/templates/wiki/webui/UIWikiAdvanceSearchResult.gtmpl"
 )
 public class UIWikiAdvanceSearchResult extends UIContainer {
-  private RowIterator results_ ;
+  private PageList<SearchResult> results_ ;
+  private String keyword ;
   
-  public void setResult(Iterator results) {
-    results_ = (RowIterator)results ;
+  public void setResult(PageList<SearchResult> results) {
+    results_ = results ;
   }
   
-  private RowIterator getResults() {
+  private PageList<SearchResult> getResults() {
     return results_ ;
   }
+  
+  public void setKeyword(String keyword) { this.keyword = keyword ;}
+  
+  private String getKeyword () {return keyword ;}
   
   private String getCurrentWiki() throws Exception {
     return Utils.getCurrentWikiPageParams().getType();
@@ -56,5 +58,10 @@ public class UIWikiAdvanceSearchResult extends UIContainer {
   private Object getObject(String path, String type) throws Exception {
     WikiService wservice = (WikiService)PortalContainer.getComponent(WikiService.class) ;
     return wservice.findByPath(path, type) ;    
+  }
+  
+  private String getPageTitle(String path) throws Exception {
+    WikiService wservice = (WikiService)PortalContainer.getComponent(WikiService.class) ;
+    return wservice.getPageTitleOfAttachment(path) ;    
   }
 }

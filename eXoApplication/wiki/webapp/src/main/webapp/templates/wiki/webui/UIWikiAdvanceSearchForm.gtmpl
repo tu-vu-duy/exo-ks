@@ -1,4 +1,4 @@
-<div class="UIWikiAdvanceSearchForm">
+<!-- <div class="UIWikiAdvanceSearchForm">
 	<form class="ClearFix" method="" action="">
 		<div class="SearchInfo">
 			<input type="text" value="Car" name=""/>
@@ -10,38 +10,25 @@
 			</select>
 		</div>
 		<div class="SearchBtn"><a href="">Search</a></div>
-	</form>
-	<!--
-<% uiform.begin() %>
+	</form> -->
 
-<%for(field in uiform.getChildren()) { 
-%>
- <div><%uiform.renderChild(field)%></div>
-<%
-}
-%>
-<div class="UIAction"> 
-			<table class="ActionContainer" style="text-align:center">
-				<tr>
-					<td>
-	        <% for(action in uicomponent.getActions()) { 
-	        	 String actionLabel = _ctx.appRes(uicomponent.getName() + ".action." + action); 
-	           String link = uicomponent.event(action) ;
-	        %>
-	        		<div onmousedown="$link" class="ActionButton LightBlueStyle">
-		      	  	<div class="ButtonLeft">
-		        	  	<div class="ButtonRight">
-		          	  	<div class="ButtonMiddle">
-		          	  		<a href="javascript:void(0);">$actionLabel</a>
-		          	  	</div>
-		            	</div>
-		          	</div>
-		        	</div>
-	          <%}%>
-	      	</td>
-				</tr>
-		  </table> 
+<div class="UIWikiAdvanceSearchForm">
+	<% uiform.begin() %>
+		<div class="ClearFix">
+			<div class="SearchInfo">
+				<%uiform.renderChild("text")%>
+				<label><%=_ctx.appRes("UIWikiAdvanceSearchForm.label.space")%></label><%uiform.renderChild("wikiSpaces")%>
+			</div>
+			<div class="SearchBtn"> 			
+		    <% for(action in uicomponent.getActions()) { 
+		    	 String actionLabel = _ctx.appRes(uicomponent.getName() + ".action." + action); 
+		       String link = uicomponent.event(action) ;
+		    %>
+		    		<div onmousedown="$link" >	      	  	
+		          <a href="javascript:void(0);">$actionLabel</a>
+		        </div>
+		    <%}%>	     
+			</div>
 		</div>
-		-->
-<% uiform.end() %>
+	<% uiform.end() %>
 </div>

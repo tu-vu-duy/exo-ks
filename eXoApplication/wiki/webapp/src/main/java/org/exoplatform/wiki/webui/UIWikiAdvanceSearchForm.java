@@ -17,9 +17,9 @@
 package org.exoplatform.wiki.webui;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
+import org.exoplatform.commons.utils.PageList;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
@@ -32,6 +32,7 @@ import org.exoplatform.webui.form.UIFormSelectBox;
 import org.exoplatform.webui.form.UIFormStringInput;
 import org.exoplatform.wiki.commons.Utils;
 import org.exoplatform.wiki.service.SearchData;
+import org.exoplatform.wiki.service.SearchResult;
 import org.exoplatform.wiki.service.WikiPageParams;
 import org.exoplatform.wiki.service.WikiService;
 
@@ -54,11 +55,14 @@ public class UIWikiAdvanceSearchForm extends UIForm {
   final static String TEXT = "text".intern() ;
   final static String WIKI_SPACES = "wikiSpaces".intern() ;
   
+  private String getCurrentWiki() throws Exception {
+    return Utils.getCurrentWikiPageParams().getType();
+  }
   
   public UIWikiAdvanceSearchForm() throws Exception {
     addChild(new UIFormStringInput(TEXT, TEXT, null)) ;
     List<SelectItemOption<String>> spaces = new ArrayList<SelectItemOption<String>>() ;
-    spaces.add(new SelectItemOption<String>("current", "current")) ;
+    spaces.add(new SelectItemOption<String>(getCurrentWiki(), getCurrentWiki())) ;
     UIFormSelectBox selectSpaces = new UIFormSelectBox(WIKI_SPACES, WIKI_SPACES, spaces);
     addChild(selectSpaces) ;
     this.setActions(new String[]{"Search"});
@@ -73,8 +77,9 @@ public class UIWikiAdvanceSearchForm extends UIForm {
       WikiPageParams  params = Utils.getCurrentWikiPageParams() ;      
       WikiService wservice = (WikiService)PortalContainer.getComponent(WikiService.class) ;
       SearchData data = new SearchData(text, null, null, null) ;
-      Iterator results = wservice.search(params.getType(), params.getOwner(), data) ;
+      PageList<SearchResult> results = wservice.search(space, params.getOwner(), data) ;
       UIWikiAdvanceSearchResult uiSearchResults = uiSearch.getParent().findFirstComponentOfType(UIWikiAdvanceSearchResult.class) ;
+      uiSearchResults.setKeyword(text) ;
       uiSearchResults.setResult(results) ;   
       
     }

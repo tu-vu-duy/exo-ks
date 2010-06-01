@@ -1,62 +1,57 @@
 <%
 import org.exoplatform.wiki.mow.api.Page ;
 import org.exoplatform.wiki.mow.core.api.content.ContentImpl ;
-import javax.jcr.query.RowIterator ;
-import javax.jcr.query.Row;
 import org.exoplatform.wiki.mow.api.WikiNodeType ;
 import org.exoplatform.wiki.mow.core.api.wiki.AttachmentImpl ;
+import org.exoplatform.commons.utils.PageList ;
+import org.exoplatform.wiki.service.SearchResult;
 %>
 
 <%
-	RowIterator rowIter = uicomponent.getResults() ;
+	PageList<SearchResult> results = uicomponent.getResults() ;
 	String type = uicomponent.getCurrentWiki() ;
-%>
-<div class="UIWikiAdvanceSearchResult">
-	<div class="ResultInfo">Showing 1-2 of 10 of <b>"Car"</b></div>
-	<div class="BlockResultFeed">
-		<a class="TxtTitFeed" href="">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</a>
-		<div class="TxtDetail">Nunc ac velit tortor. Cras nibh metus, sollicitudin et molestie viverra, tristique vel nunc. Aliquam commodo, nunc rutrum tempus ultrices, urna augue interdum nisi, malesuada faucibus risus velit eget risus. Sed ipsum orci, lobortis id volutpat condimentum, adipiscing ut leo. Curabitur vel sem lacus. Nam consequat ligula et tellus egestas nec viverra leo feugiat. Curabitur tincidunt elementum tortor, a aliquam purus euismod et. Quisque placerat facilisis aliquet. Nulla convallis fringilla velit vel adipiscing. Duis laoreet eleifend nunc, sit amet pretium augue lobortis in. Fusce lobortis, diam in tincidunt consequat, erat lorem ornare magna, ac sagittis odio purus vel enim.</div>
-		<div class="TxtMark">Industrial trends ,Dec 02 2009</div>
-	</div>
-	<div class="BlockResultFeed">	
-		<a class="TxtTitFeed" href="">Aliquam erat volutpat.</a>
-		<div class="TxtDetail">Nunc ac velit tortor. Cras nibh metus, sollicitudin et molestie viverra, tristique vel nunc. Aliquam commodo, nunc rutrum tempus ultrices, urna augue interdum nisi, malesuada faucibus risus velit eget risus. Sed ipsum orci, lobortis id volutpat condimentum, adipiscing ut leo. Curabitur vel sem lacus. Nam consequat ligula et tellus egestas nec viverra leo feugiat. Curabitur tincidunt elementum tortor, a aliquam purus euismod et. Quisque placerat facilisis aliquet. Nulla convallis fringilla velit vel adipiscing. Duis laoreet eleifend nunc, sit amet pretium augue lobortis in. Fusce lobortis, diam in tincidunt consequat, erat lorem ornare magna, ac sagittis odio purus vel enim. </div>
-		<div class="TxtMark">Industrial trends ,Dec 02 2009</div>
-	</div>
 	
-	<!-- Page iterator -->
-	<div class="UIPageIterator ClearFix">
-		<a class="PrevPage" href="">Previous</a>
-		<a class="Number Selected" href="#">1</a>
-		<a class="Number" href="">2</a>
-		<a class="Number" href="#">3</a>
-		<span class="Separator"> ... </span>
-		<a class="Number" href="#">26</a>
-		<a class="NextPage" href="#">Next</a>
-	</div>
-<%
-	if(rowIter != null) {
-	%>
-		<div> resutls: <%=rowIter.getSize()%></div>
-	<%
-		while(rowIter.hasNext()) {
-      Row row = rowIter.nextRow();
-      if(WikiNodeType.WIKI_PAGE_CONTENT.equals(row.getValue("jcr:primaryType").getString())){
-      	%><div><a href="#" style="color: blue"> <%=row.getValue("title").getString()%></a></div><%
-      	%><div> <%=row.getValue("rep:excerpt(.)").getString()%></div>
-      		<div>>>$type</div>
-      	<%	
-      } else if (WikiNodeType.WIKI_ATTACHMENT_CONTENT.equals(row.getValue("jcr:primaryType").getString())){
-      	AttachmentImpl att = (AttachmentImpl)uicomponent.getObject(row.getValue("jcr:path").getString(), row.getValue("jcr:primaryType").getString())
-      	%><div><a href="#" style="color: blue"> <%=att.getFilename()%></a></div><%
-      	%><div> <%=row.getValue("rep:excerpt(.)").getString()%></div>
-      		<div>>>$type</div>
-      	<%
-      }      
-    }
-	%>	
-	<%	
+	if(results != null) {
+		%>
+		<div class="UIWikiAdvanceSearchResult">
+			<div class="ResultInfo">Showing 1- <%= results.currentPage().size() %> of <%= results.getPageSize() %> of <b>"<%=uicomponent.getKeyword()%>"</b></div>
+			<%
+				for(SearchResult result in results.getAll()) {
+		      if(WikiNodeType.WIKI_PAGE_CONTENT.equals(result.getType())){
+		      	%>
+		      	<div class="BlockResultFeed">
+							<a class="TxtTitFeed" href=""><%=result.getTitle()%></a>
+							<div class="TxtDetail"><%=result.getExcerpt()%></div>
+							<div class="TxtMark">$type</div>
+						</div>
+		      	<%	
+		      } else if (WikiNodeType.WIKI_ATTACHMENT_CONTENT.equals(result.getType())){
+		      	AttachmentImpl att = (AttachmentImpl)uicomponent.getObject(result.getPath(), result.getType()) ;
+		      	%>
+		      	<div class="BlockResultFeed">
+							<a class="TxtTitFeed" href=""><%=att.getFilename()%></a>
+							<div class="TxtDetail"><%=result.getExcerpt()%></div>
+							<div class="TxtMark">$type > <%=uicomponent.getPageTitle(result.getPath())%></div>
+						</div>      	
+		      	<%
+		      }      
+		    }
+			%>
+						
+			<!-- Page iterator -->
+			<div class="UIPageIterator ClearFix">
+				<a class="PrevPage" href="">Previous</a>
+				<a class="Number Selected" href="#">1</a>
+				<a class="Number" href="">2</a>
+				<a class="Number" href="#">3</a>
+				<span class="Separator"> ... </span>
+				<a class="Number" href="#">26</a>
+				<a class="NextPage" href="#">Next</a>
+			</div> 	
+	<%} else {
+		%><div style="align:center">There is no search result...!</div><%
 	}
-%>
-
+	%>
+	
+	
 </div>

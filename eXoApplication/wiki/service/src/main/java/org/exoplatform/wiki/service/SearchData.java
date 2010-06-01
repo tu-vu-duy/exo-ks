@@ -72,7 +72,7 @@ public class SearchData {
   public String getStatement() {
     StringBuilder statement = new StringBuilder();    
     try {
-      statement.append("SELECT jcr:primaryType, path, excerpt(.) ")
+      statement.append("SELECT title, jcr:primaryType, path, excerpt(.) ")
                .append("FROM nt:base ")
                .append("WHERE ") ;
       boolean isAnd = false ;
@@ -96,6 +96,7 @@ public class SearchData {
         }
       }
     }catch(Exception e) {}
+    System.out.println("statement ==>" + statement.toString());
     return statement.toString() ;
   }
   

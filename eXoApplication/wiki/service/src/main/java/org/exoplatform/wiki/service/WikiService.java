@@ -43,9 +43,10 @@ public interface WikiService {
 	
 	public PageList<ContentImpl> searchContent(String wikiType, String wikiOwner, SearchData data) throws Exception ;
 	public List<BreadcumbData> getBreadcumb(String wikiType, String wikiOwner, String pageId) throws Exception ;
-	public Iterator search(String wikiType, String wikiOwner, SearchData data) throws Exception ;
+	public PageList<SearchResult> search(String wikiType, String wikiOwner, SearchData data) throws Exception ;
 	public Object findByPath(String path, String objectNodeType) throws Exception  ;
 	public String getDefaultWikiSyntaxId();
+	public String getPageTitleOfAttachment(String path) throws Exception ;
 
 }
 

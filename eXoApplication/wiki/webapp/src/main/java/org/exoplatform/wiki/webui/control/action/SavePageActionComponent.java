@@ -99,6 +99,7 @@ public class SavePageActionComponent extends UIComponent {
           page.getContent().setSyntax(syntaxTypeSelectBox.getValue());
         } else if (wikiPortlet.getWikiMode() == WikiMode.NEW) {
           WikiService wikiService = (WikiService) PortalContainer.getComponent(WikiService.class);
+          System.out.println("wikiService ==>" + wikiService);
           WikiPageParams pageParams = pageResolver.extractWikiPageParams(requestURL);
           Page subPage = wikiService.createPage(pageParams.getType(), pageParams.getOwner(), title, page.getPageId());
           subPage.getContent().setText(markup);
@@ -111,6 +112,7 @@ public class SavePageActionComponent extends UIComponent {
         pageTitleControlForm.getUIFormInputInfo().setValue(page.getContent().getTitle());
         pageContentArea.renderWikiMarkup(markup, syntaxTypeSelectBox.getValue());
       } catch (Exception e) {
+        e.printStackTrace() ;
         log.error("An exception happens when saving the page with title:" + title, e);
         uiApp.addMessage(new ApplicationMessage("UIPageToolBar.msg.Exception", null, ApplicationMessage.ERROR));
         event.getRequestContext().addUIComponentToUpdateByAjax(uiApp.getUIPopupMessages());

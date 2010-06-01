@@ -4,14 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.jcr.Session;
-import javax.jcr.Value;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
-import javax.jcr.query.QueryResult;
-import javax.jcr.query.Row;
-import javax.jcr.query.RowIterator;
-
 import org.chromattic.api.ChromatticSession;
 import org.exoplatform.commons.utils.ObjectPageList;
 import org.exoplatform.commons.utils.PageList;
@@ -37,6 +29,7 @@ import org.exoplatform.wiki.mow.core.api.wiki.WikiImpl;
 import org.exoplatform.wiki.resolver.TitleResolver;
 import org.exoplatform.wiki.service.BreadcumbData;
 import org.exoplatform.wiki.service.SearchData;
+import org.exoplatform.wiki.service.SearchResult;
 import org.exoplatform.wiki.service.WikiService;
 import org.exoplatform.wiki.utils.Utils;
 import org.xwiki.rendering.syntax.Syntax;
@@ -52,9 +45,11 @@ public class WikiServiceImpl implements WikiService{
   final static private String GROUP_APPLICATION = "groupApplicationData";
   
   private NodeHierarchyCreator nodeCreator ;
+  private JCRDataStorage jcrDataStorage ;
   
-  public WikiServiceImpl(NodeHierarchyCreator creator) {
+  public WikiServiceImpl(NodeHierarchyCreator creator, JCRDataStorage jcrDataStorage) {
     nodeCreator = creator ;
+    this.jcrDataStorage = jcrDataStorage ;
   }
   
   public Page createPage(String wikiType, String wikiOwner, String title, String parentId) throws Exception {
@@ -144,20 +139,21 @@ public class WikiServiceImpl implements WikiService{
     return new ObjectPageList<ContentImpl>(list, 10);
   }
   
-  public Iterator search(String wikiType, String wikiOwner, SearchData data) throws Exception {
-    Model model = getModel();
-    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
-    if(data.getPath() == null || data.getPath().length() <= 0 ) {
-      WikiHome home = getWikiHome(wikiType, wikiOwner) ;
-      data.setPath(home.getPath()) ;
-    }
-    Session session = wStore.getSession().getJCRSession() ;
-    String statement = data.getStatement() ;
+  public PageList<SearchResult> search(String wikiType, String wikiOwner, SearchData data) throws Exception {
     
-    QueryManager qm = session.getWorkspace().getQueryManager();
-    Query q = qm.createQuery(statement, Query.SQL);
-    QueryResult result = q.execute();
-    return result.getRows() ;
+    Model model = getModel();
+    try{
+      WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
+      if(data.getPath() == null || data.getPath().length() <= 0 ) {
+        WikiHome home = getWikiHome(wikiType, wikiOwner) ;
+        data.setPath(home.getPath()) ;
+      }
+      PageList<SearchResult> result = jcrDataStorage.search(wStore.getSession(), data) ;      
+      return result;
+    }catch(Exception e) {
+      e.printStackTrace() ;
+    }
+    return null ;
   }
   
   public Object findByPath(String path, String objectNodeType) throws Exception  {
@@ -165,14 +161,30 @@ public class WikiServiceImpl implements WikiService{
     if (relPath.startsWith("/")) relPath = relPath.substring(1) ;
     Model model = getModel();
     WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
-    if(objectNodeType.equals("wiki:content")) {
+    if(objectNodeType.equals(WikiNodeType.WIKI_PAGE_CONTENT)) {
       return wStore.getSession().findByPath(ContentImpl.class, relPath) ;
-    }else if (objectNodeType.equals("nt:resource")){
+    }else if (objectNodeType.equals(WikiNodeType.WIKI_ATTACHMENT_CONTENT)){
       relPath = relPath.substring(0, relPath.lastIndexOf("/")) ;
       return wStore.getSession().findByPath(AttachmentImpl.class, relPath) ;
     }    
     return null ;
   }
+  
+  public String getPageTitleOfAttachment(String path) throws Exception  {
+    try{
+      String relPath  = path;
+      if (relPath.startsWith("/")) relPath = relPath.substring(1) ;
+      if(relPath.indexOf("/att") > 0) {
+        relPath = relPath.substring(0, relPath.indexOf("/att")) + "/" + WikiNodeType.Definition.CONTENT;
+      }
+      Model model = getModel();
+      WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();      
+      ContentImpl content =  wStore.getSession().findByPath(ContentImpl.class, relPath) ;
+      return content.getTitle() ;
+    }catch (Exception e) {}
+    return null ;    
+  }
+  
   public List<BreadcumbData> getBreadcumb(String wikiType, String wikiOwner, String pageId) throws Exception {
     return getBreadcumb(null, wikiType, wikiOwner, pageId);
   }

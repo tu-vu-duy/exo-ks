@@ -210,7 +210,7 @@ public class TestWikiService extends AbstractMOWTestcase {
     
   }
   
-public void testSearch() throws Exception {
+  public void testSearch() throws Exception {
     
     PageImpl kspage = (PageImpl)wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "knowledge", "WikiHome") ;
     kspage.getContent().setText("forum faq wiki exoplatform") ;
@@ -223,14 +223,21 @@ public void testSearch() throws Exception {
     
     SearchData data = new SearchData("exoplatform", null, null, null) ;
     
-    RowIterator iter = (RowIterator)wService.search("portal", "classic", data) ;
-    assertEquals(2, iter.getSize()) ; 
+    PageList<SearchResult> result = wService.search("portal", "classic", data) ;
+    assertEquals(2, result.getAll().size()) ;    
+      
+  }
+  
+  public void testGetPageTitleOfAttachment() throws Exception {
+    PageImpl kspage = (PageImpl)wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "GetPageTitleOfAttachment", "WikiHome") ;
+    kspage.getContent().setText("forum faq wiki exoplatform") ;
+    AttachmentImpl attachment1 = kspage.createAttachment("attachment1.txt", Resource.createPlainText("foo")) ;
+    attachment1.setCreator("you") ;    
+    assertEquals(attachment1.getFilename(), "attachment1.txt") ;
+    assertNotNull(attachment1.getContentResource()) ;
+    attachment1.setContentResource(Resource.createPlainText("exoplatform content mamagement")) ;
     
-    while(iter.hasNext()) {
-      Row r = iter.nextRow();
-      Value type = r.getValue("jcr:primaryType");        
-      Value path = r.getValue("jcr:path");        
-      assertNotNull(wService.findByPath(path.getString(), type.getString())) ;      
-    }  
+    assertEquals("GetPageTitleOfAttachment", wService.getPageTitleOfAttachment(attachment1.getPath())) ;
+    
   }
 }

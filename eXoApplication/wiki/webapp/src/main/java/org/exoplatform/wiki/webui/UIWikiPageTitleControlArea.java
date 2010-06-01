@@ -29,8 +29,7 @@ import org.exoplatform.webui.form.UIFormStringInput;
  * May 14, 2010  
  */
 @ComponentConfig(
-  lifecycle = UIContainerLifecycle.class,
-  template = "app:/templates/wiki/webui/UIWikiPageTitleControlArea.gtmpl"
+  lifecycle = UIContainerLifecycle.class
 )
 public class UIWikiPageTitleControlArea extends UIContainer {
 

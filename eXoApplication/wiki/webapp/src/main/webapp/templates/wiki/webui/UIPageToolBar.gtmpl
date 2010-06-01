@@ -1,6 +1,4 @@
-<div class="UIPageToolBar" >
-  <div class="UIWikiToolbar ClearFix">
-
+<div class="UIPageToolBar ClearFix" >
 <% for(entry in uicomponent.getActions()) {
      String action = entry.getActionName();
      def actionComponent = entry.getActionComponent();
@@ -40,6 +38,4 @@
 		<a href="" class="Edit Icon">&nbsp;</a>
 		<%}%>
 <%}%>
-
-	</div>
 </div> 

@@ -49,11 +49,6 @@
     <type>org.exoplatform.wiki.rendering.impl.RenderingServiceImpl</type>
   </component>
   
-  <component>
-    <key>org.exoplatform.webui.ext.UIExtensionManager</key>
-    <type>org.exoplatform.webui.ext.impl.UIExtensionManagerImpl</type>
-  </component>
-  
   <!-- Only used for debugging and tracing -->
   <!--component>
     <key>org.exoplatform.services.log.LogConfigurationInitializer</key>

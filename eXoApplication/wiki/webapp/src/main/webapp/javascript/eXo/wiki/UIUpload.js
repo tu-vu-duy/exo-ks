@@ -58,7 +58,13 @@ UIUpload.prototype.createUploadEntry = function(uploadId, isAutoUpload) {
   idoc.write("<head>");
   idoc.write("<style type='text/css'>");
   idoc.write(".UploadButton {width: 20px; height: 20px; cursor: pointer; vertical-align: bottom;");
-  idoc.write(" background: url('/eXoResources/skin/DefaultSkin/webui/component/UIUpload/background/UpArrow16x16.gif') no-repeat left; }");
+  idoc.write(" background: url('/wiki/skin/DefaultSkin/webui/background/UploadBtn.gif') no-repeat left; }");
+  idoc.write(".UIUploadForm {position: relative; }");
+  idoc.write(".FileHidden {position: relative; width: 300px; text-align: right; -moz-opacity:0 ; filter:alpha(opacity: 0); opacity: 0; z-index: 2; }");
+  idoc.write(".StylingFileUpload {position: absolute; width: 300px; top: 0px; left: 0px; z-index: 1; }");
+  idoc.write(".FileName {width: 225px; margin-right: 5px; padding:0; }");
+  idoc.write(".BrowseButton {float: right; width: 65px; text-align: center; background: url('/wiki/skin/DefaultSkin/webui/background/BtnSearch.gif') no-repeat left; }");
+  idoc.write(".ClearRight {clear: right; }");
   idoc.write("</style>");
   idoc.write("<script type='text/javascript'>var eXo = parent.eXo</script>");
   idoc.write("</head>");
@@ -74,8 +80,41 @@ UIUpload.prototype.createUploadEntry = function(uploadId, isAutoUpload) {
   idoc.write("</body>");
   idoc.write("</html>");
   idoc.close();
+  this.stylingUploadEntry(uploadId);
 };
 
+UIUpload.prototype.stylingUploadEntry = function(uploadId){
+  var DOMUtil = eXo.core.DOMUtil;  
+  var container = document.getElementById(uploadId);  
+  var uploadFrame = document.getElementById(uploadId+"uploadFrame");
+  var form = uploadFrame.contentWindow.document.getElementById(uploadId);
+  var file  = DOMUtil.findDescendantById(form, "file");
+  
+  var fdocument = uploadFrame.contentWindow.document;
+  var stylingFileUpload = fdocument.createElement('div');
+  stylingFileUpload.className = 'StylingFileUpload';
+  //
+  var browseButton = fdocument.createElement('div');
+  browseButton.className = 'BrowseButton';
+  browseButton.innerHTML = 'Upload';
+  stylingFileUpload.appendChild(browseButton);
+  //
+  var fileName = fdocument.createElement('input');
+  fileName.className = 'FileName';
+  stylingFileUpload.appendChild(fileName);
+  //
+  var clearRight = fdocument.createElement('div');
+  clearRight.className = 'ClearRight';
+  stylingFileUpload.appendChild(clearRight);
+  
+  file.className = 'FileHidden';
+  var clone = stylingFileUpload.cloneNode(true);
+  file.parentNode.appendChild(clone);
+  file.relatedElement = clone.getElementsByTagName('input')[0];
+  file.onchange = file.onmouseout = function () {
+    this.relatedElement.value = this.value;
+  }
+}
 
 UIUpload.prototype.refeshProgress = function(elementId) {
   var list =  eXo.wiki.UIUpload.listUpload;

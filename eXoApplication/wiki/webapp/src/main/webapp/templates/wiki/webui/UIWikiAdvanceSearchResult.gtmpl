@@ -1,6 +1,5 @@
 <%
 import org.exoplatform.wiki.mow.api.Page ;
-import org.exoplatform.wiki.mow.core.api.content.ContentImpl ;
 import org.exoplatform.wiki.mow.api.WikiNodeType ;
 import org.exoplatform.wiki.mow.core.api.wiki.AttachmentImpl ;
 import org.exoplatform.commons.utils.PageList ;
@@ -11,32 +10,34 @@ import org.exoplatform.wiki.commons.Utils ;
 <%
 	PageList<SearchResult> results = uicomponent.getResults() ;
 	String type = uicomponent.getCurrentWiki() ;
+	String wikiURI = uicomponent.getWikiURI() ;
 	
 	if(results != null) {
 		%>
 		<div class="UIWikiAdvanceSearchResult">
 			<div class="ResultInfo">Showing 1- <%= results.currentPage().size() %> of <%= results.getPageSize() %> of <b>"<%=uicomponent.getKeyword()%>"</b></div>
 			<%
+				String viewPage = uicomponent.event("ViewPage") ;
 				for(SearchResult result in results.getAll()) {
-		      if(WikiNodeType.WIKI_PAGE_CONTENT.equals(result.getType())){
-		      	%>
+					String pageURI = wikiURI + result.getNodeName() ;					
+					if(WikiNodeType.WIKI_PAGE_CONTENT.equals(result.getType())){		      	
+		      	%>		      	
 		      	<div class="BlockResultFeed">
-							<a class="TxtTitFeed" href=""><%=result.getTitle()%></a>
+							<a class="TxtTitFeed" onclick="$viewPage" href="$pageURI"><%=result.getTitle()%></a>
 							<div class="TxtDetail"><%=result.getExcerpt()%></div>
-							<div class="TxtMark">$type</div>
+							<div><a class="TxtMark" onclick="$viewPage" href="$wikiURI">$type</a></div>
 						</div>
 		      	<%	
 		      } else if (WikiNodeType.WIKI_ATTACHMENT_CONTENT.equals(result.getType())){
 		      	AttachmentImpl att = (AttachmentImpl)uicomponent.getObject(result.getPath(), result.getType()) ;
 		      	String linkDownload = Utils.getDownloadLink(result.getPath(), att.getFilename(), null) ;
 		      	String downloadAction = uicomponent.event("DownloadAttach") ;
-		      	%>
+		      	%>		      	
 		      	<div class="BlockResultFeed">
 		      		<a class="TxtTitFeed" onclick="ajaxRedirect('$linkDownload'); if(eXo.core.Browser.browserType === 'ie') {$downloadAction ; } return false;" href="javaScript:void(0);">
 							<span><%=att.getFilename()%></span></a>
-							<!-- a class="TxtTitFeed" href=""><%=att.getFilename()%></a-->
 							<div class="TxtDetail"><%=result.getExcerpt()%></div>
-							<div class="TxtMark">$type > <%=uicomponent.getPageTitle(result.getPath())%></div>
+							<div> <a class="TxtMark" onclick="$viewPage" href="$wikiURI">$type</a> > <a class="TxtMark" onclick="$viewPage" href="$pageURI"><%=uicomponent.getPageTitle(result.getPath())%></a></div>
 						</div>      	
 		      	<%
 		      }      

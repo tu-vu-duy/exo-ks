@@ -1,16 +1,20 @@
 package org.exoplatform.wiki.service;
 
+import org.exoplatform.wiki.mow.api.WikiNodeType;
+
 public class SearchResult {
   private String excerpt ;
   private String title ;
   private String path ;
   private String type ;
+  private String nodeName ;
   
   public SearchResult(String excerpt, String title, String path, String type) {
     this.excerpt = excerpt ;
     this.title = title ;
     this.path = path ;
     this.type = type;
+    evaluateNodeName(path) ;
   }
   
   public void setTitle(String title) {
@@ -43,5 +47,23 @@ public class SearchResult {
     return type;
   }
   
+  
+  private void evaluateNodeName(String path) {
+    if(WikiNodeType.WIKI_PAGE_CONTENT.equals(getType())) {
+      String temp = path.substring(0,path.lastIndexOf("/")) ;
+      this.setNodeName(temp.substring(temp.lastIndexOf("/")));
+    }else if(WikiNodeType.WIKI_ATTACHMENT_CONTENT.equals(getType())) {
+      String temp = path.substring(0,path.lastIndexOf("/att")) ;
+      this.setNodeName(temp.substring(temp.lastIndexOf("/")));
+    }
+  }
+
+  public void setNodeName(String nodeName) {
+    this.nodeName = nodeName;
+  }
+
+  public String getNodeName() {
+    return nodeName;
+  }
   
 }

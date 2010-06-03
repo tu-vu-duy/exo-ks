@@ -128,7 +128,8 @@ public class UIWikiAttachmentArea extends UIForm {
       String attId = event.getRequestContext().getRequestParameter(OBJECTID);
       Page page = Utils.getCurrentWikiPage();
       AttachmentImpl attach = ((PageImpl) page).getAttachment(attId);
-      String downloadLink = attach.getDownloadURL();
+      String downloadLink = attach.getContentPath();
+      downloadLink = org.exoplatform.wiki.commons.Utils.getDownloadLink(downloadLink, attach.getFilename(), null);
       event.getRequestContext().getJavascriptManager().addJavascript("ajaxRedirect('" + downloadLink + "');");
     }
   }

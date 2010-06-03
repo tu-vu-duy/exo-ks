@@ -21,6 +21,7 @@ import org.exoplatform.portal.config.model.PortalConfig;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.wiki.mow.api.Page;
+import org.exoplatform.wiki.mow.core.api.wiki.AttachmentImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 import org.exoplatform.wiki.resolver.TitleResolver;
 import org.exoplatform.wiki.service.WikiContext;
@@ -75,7 +76,12 @@ public class DefaultWikiModel implements WikiModel {
         sb.append(page.getWorkspace());
         sb.append(page.getPath());
         sb.append("/");
-        sb.append(wikiMarkupContext.getAttachmentName());
+        AttachmentImpl att = page.getAttachmentByFileName(wikiMarkupContext.getAttachmentName());
+        if (att != null) {
+          sb.append(att.getName());
+        } else {
+          sb.append(wikiMarkupContext.getAttachmentName());
+        }
       }
     } catch (Exception e) {
       if (LOG.isWarnEnabled()) {

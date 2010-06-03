@@ -104,6 +104,17 @@ public abstract class PageImpl implements Page {
     return null;
   }
   
+  public AttachmentImpl getAttachmentByFileName(String fileName) {
+    if (fileName != null) {
+      for (AttachmentImpl att : getAttachments()) {
+        if (fileName.equalsIgnoreCase(att.getFilename())) {
+          return att;
+        }
+      }
+    }
+    return null;
+  }
+  
   public void addAttachment(AttachmentImpl attachment) throws DuplicateNameException {
     getAttachments().add(attachment);
     

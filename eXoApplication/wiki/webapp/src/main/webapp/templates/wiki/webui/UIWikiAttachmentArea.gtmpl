@@ -1,52 +1,52 @@
-<div class="UIWikiAttachmentArea">
-	<div class="AttachmentTit">Attachments</div>
-	<table cellspacing="1" cellpadding="0" border="0" class="UIFormGrid">
-		<thead>
-			<tr>
-				<th style="width: 40%">File</th>
-				<th style="width: 30%">Creator</th>
-				<th style="width: 15%">Last update</th>
-				<th style="width: 15%"></th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr class="EvenRow">
-				<td class="Tit">Donec vestibulum dui eu erat.doc</td>
-				<td>Alpha Romeo</td>
-				<td>22-12-2009</td>
-				<td><img alt="" class="RemoveFile" src="/eXoResources/skin/DefaultSkin/background/Blank.gif"/></td>
-			</tr>
-			
-			<tr class="OddRow">
-				<td class="Tit">Baculis porta.pdf</td>
-				<td>Alpha Romeo</td>
-				<td>22-12-2009</td>
-				<td><img alt="" class="RemoveFile" src="/eXoResources/skin/DefaultSkin/background/Blank.gif"/></td>
-			</tr>
-			
-			<tr class="EvenRow">
-				<td class="Tit">Duis ut nunc quis ligula .jpg</td>
-				<td>Alpha Romeo</td>
-				<td>22-12-2009</td>
-				<td><img alt="" class="RemoveFile" src="/eXoResources/skin/DefaultSkin/background/Blank.gif"/></td>
-			</tr>
-			
-			<tr class="OddRow">
-				<td class="Tit">Aliquet accumsan.txt </td>
-				<td>Alpha Romeo</td>
-				<td>22-12-2009</td>
-				<td><img alt="" class="RemoveFile" src="/eXoResources/skin/DefaultSkin/background/Blank.gif"/></td>
-			</tr>
-		</tbody>
-	</table>
-<% uiform.begin(); %>
 <%
-  List children = uicomponent.getChildren() ;
-  for(component in children) {
-    if(component.isRendered()){
-      uicomponent.renderChild(component.getClass()) ;
-    }
-  }
+  import java.util.Locale;
+  import java.text.DateFormat;
+  import org.exoplatform.portal.webui.util.Util;
+  
+  Locale currentLocale = Util.getPortalRequestContext().getLocale();
 %>
-<%uiform.end();%>
+<div class="UIWikiAttachmentArea">
+  <% uiform.begin(); %>
+    <div class="AttachmentTit">Attachments</div>
+    <table cellspacing="1" cellpadding="0" border="0" class="UIFormGrid">
+      <thead>
+        <tr>
+          <th style="width: 40%">File</th>
+          <th style="width: 30%">Creator</th>
+          <th style="width: 15%">Last update</th>
+          <th style="width: 15%"></th>
+        </tr>
+      </thead>
+      <tbody>
+    <%
+      attachments = uicomponent.getAttachmentsList();
+      int index = 0;
+      String rowClass;
+      DateFormat df = DateFormat.getDateInstance(DateFormat.LONG, currentLocale);
+      String downloadLink;
+      String deleteLink;
+      for(attachment in attachments){
+        index++;
+        if(index%2 == 1){
+          rowClass = "EvenRow";
+        }else{
+          rowClass = "OddRow";
+        }
+        downloadLink = uicomponent.event(uicomponent.DOWNLOAD_ACTION, attachment.getName());
+        deleteLink = uicomponent.event(uicomponent.DELETE_ACTION, attachment.getName());
+    %>
+        <tr class="$rowClass">
+          <td class="Tit"><a title="Download Attachment" href="$downloadLink"><%= attachment.getName() %></a></td>
+          <td><%= attachment.getCreator() %></td>
+          <td><%= df.format(attachment.getUpdatedDate().getTime())%></td>
+          <td><img title="Remove Attachment" onclick="$deleteLink" alt="" class="RemoveFile" src="/eXoResources/skin/DefaultSkin/background/Blank.gif"/></td>
+        </tr>
+        
+    <%}%>
+    
+      </tbody>
+    </table>
+    
+    <% uiform.renderChild(uiform.FIELD_UPLOAD)%>
+  <% uiform.end();%>
 </div>

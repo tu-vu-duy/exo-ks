@@ -18,8 +18,10 @@ package org.exoplatform.wiki.webui;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 import org.exoplatform.upload.UploadResource;
 import org.exoplatform.web.application.ApplicationMessage;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
@@ -30,9 +32,6 @@ import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.event.Event.Phase;
 import org.exoplatform.webui.form.UIForm;
-import org.exoplatform.webui.form.UIFormInputInfo;
-import org.exoplatform.webui.form.UIFormInputWithActions;
-import org.exoplatform.webui.form.UIFormInputWithActions.ActionData;
 import org.exoplatform.wiki.commons.Utils;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.mow.core.api.wiki.AttachmentImpl;
@@ -57,45 +56,27 @@ import org.exoplatform.wiki.webui.form.UIFormUploadInput;
 )
 public class UIWikiAttachmentArea extends UIForm {
 
-  final static public String FIELD_UPLOAD = "upload" ; 
-  public static final long MAX_SIZE = 10*1024*1024 ;
+  private static final Log log = ExoLogger.getLogger("wiki:UIWikiAttachmentArea");
+  final static public String FIELD_UPLOAD    = "upload";
+  final static public String DOWNLOAD_ACTION = "DownloadAttachment";
+  final static public String DELETE_ACTION   = "RemoveAttachment";
+  public static final long   MAX_SIZE        = 10 * 1024 * 1024;
   
   public UIWikiAttachmentArea() throws Exception {
-    UIFormInputWithActions formInputWithActions = new UIFormInputWithActions("WikiAttachmentArea");
-    formInputWithActions.addUIFormInput(new UIFormInputInfo("attachments", "attachments", null));
-    formInputWithActions.setActionField("attachments", getAttachmentsList());
-    addUIFormInput(formInputWithActions).setRendered(true);
-    
     UIFormUploadInput uiInput = new UIFormUploadInput(FIELD_UPLOAD, FIELD_UPLOAD);
     addUIFormInput(uiInput);
   }
-
-  private List<ActionData> getAttachmentsList() throws Exception {
-    List<ActionData> attachments = new ArrayList<ActionData>();
-    Page page = Utils.getCurrentWikiPage();
-    for (AttachmentImpl attachdata : ((PageImpl) page).getAttachments()) {
-      ActionData downloadAction = new ActionData();
-      downloadAction.setActionListener("DownloadAttachment");
-      downloadAction.setActionParameter(attachdata.getName());
-      downloadAction.setActionType(ActionData.TYPE_LINK);
-      downloadAction.setCssIconClass("AttachmentIcon ZipFileIcon");
-      downloadAction.setActionName(attachdata.getName());
-      downloadAction.setShowLabel(true);
-      attachments.add(downloadAction);
-      ActionData removeAction = new ActionData();
-      removeAction.setActionListener("RemoveAttachment");
-      removeAction.setActionName("RemoveAttachment");
-      removeAction.setActionParameter(attachdata.getName());
-      removeAction.setActionType(ActionData.TYPE_ICON);
-      removeAction.setCssIconClass("RemoveFile");
-      removeAction.setBreakLine(true);
-      attachments.add(removeAction);
+  
+  private Collection<AttachmentImpl> getAttachmentsList() {
+    Collection<AttachmentImpl> attachments = null;
+    try {
+      Page page = Utils.getCurrentWikiPage();
+      attachments = ((PageImpl) page).getAttachments();
+    } catch (Exception e) {
+      attachments = new ArrayList<AttachmentImpl>();
+      log.warn("An error happened when get attachments list", e);
     }
     return attachments;
-  }
-
-  public void refreshAttachmentsList() throws Exception {
-    getChild(UIFormInputWithActions.class).setActionField("attachments", getAttachmentsList());
   }
 
   static public class UploadActionListener extends EventListener<UIWikiAttachmentArea> {
@@ -134,7 +115,6 @@ public class UIWikiAttachmentArea extends UIForm {
           uiApp.addMessage(new ApplicationMessage("UIApplication.msg.unknown-error", null, ApplicationMessage.ERROR));
           event.getRequestContext().addUIComponentToUpdateByAjax(uiApp.getUIPopupMessages());
         }
-        wikiAttachmentArea.refreshAttachmentsList();
         wikiAttachmentArea.removeChildById(FIELD_UPLOAD);
         UIFormUploadInput uiInput = new UIFormUploadInput(FIELD_UPLOAD, FIELD_UPLOAD);
         wikiAttachmentArea.addChild(uiInput);
@@ -159,7 +139,6 @@ public class UIWikiAttachmentArea extends UIForm {
       String attFileId = event.getRequestContext().getRequestParameter(OBJECTID);
       Page page = Utils.getCurrentWikiPage();
       ((PageImpl) page).removeAttachment(attFileId);
-      uiForm.refreshAttachmentsList();
       event.getRequestContext().addUIComponentToUpdateByAjax(uiForm);
     }
   }

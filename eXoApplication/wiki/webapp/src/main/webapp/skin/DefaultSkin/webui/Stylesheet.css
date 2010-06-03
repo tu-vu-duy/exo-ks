@@ -141,11 +141,12 @@
 }
 
 .UIWikiPageEditForm .UIWikiPageContentMarginRight {
-  margin-right: 235px;
+  margin-right: 250px;
+  width: 645px;
 }
 
 .UIWikiPageArea .UIWikiPageEditForm .HorizontalLayout {
-	padding: 0;
+	padding: 0px;
 	border: none;
 	background: none;
 }
@@ -213,10 +214,17 @@
 }
 
 .UIWikiPageEditForm .UIForm .HorizontalLayout textarea {
-	width: auto;
+	width: 885px;
 	height: auto;
 	border: 1px dashed #707070;
-	padding: 8px;
+	padding: 0 0 0 8px;
+}
+
+.UIWikiPageEditForm .UIForm .UIWikiPageContentMarginRight textarea {
+	border: 1px dashed #707070;
+	height: auto;
+	padding: 0 0 0 8px;
+	width: 635px;
 }
 
 .UIWikiPageEditForm .UIPageToolBar .Icon {
@@ -462,6 +470,73 @@
 .UIWikiAdvanceSearchResult .BlockResultFeed .TxtTitFeed {
 	color: #165fb3;
 	font-weight: bold;
+	padding:2px 0 2px 25px;
+	height: 16px;
+	width: 16px;
+}
+
+.UIWikiAdvanceSearchResult .BlockResultFeed .DocType {
+	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/WordFileIcon.png") no-repeat left top;
+}
+
+.UIWikiAdvanceSearchResult .BlockResultFeed .AccessType {
+	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/AccessFileIcon.png") no-repeat left top;
+}
+
+.UIWikiAdvanceSearchResult .BlockResultFeed .BinaryType {
+	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/BinaryFileIcon.png") no-repeat left top;
+}
+
+.UIWikiAdvanceSearchResult .BlockResultFeed .BlockType {
+	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/BlockFileIcon.png") no-repeat left top;
+}
+
+.UIWikiAdvanceSearchResult .BlockResultFeed .ExlType {
+	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/ExcelFileIcon.png") no-repeat left top;
+}
+
+.UIWikiAdvanceSearchResult .BlockResultFeed .FeedType {
+	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/FeedFileIcon.png") no-repeat left top;
+}
+
+.UIWikiAdvanceSearchResult .BlockResultFeed .FilmType {
+	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/FilmFileIcon.png") no-repeat left top;
+}
+
+.UIWikiAdvanceSearchResult .BlockResultFeed .FlashType {
+	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/FlashFileIcon.png") no-repeat left top;
+}
+
+.UIWikiAdvanceSearchResult .BlockResultFeed .GlobeType {
+	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/GlobeFileIcon.png") no-repeat left top;
+}
+
+.UIWikiAdvanceSearchResult .BlockResultFeed .HtmlType {
+	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/HtmlFileIcon.png") no-repeat left top;
+}
+
+.UIWikiAdvanceSearchResult .BlockResultFeed .ImgType {
+	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/ImageFileIcon.png") no-repeat left top;
+}
+
+.UIWikiAdvanceSearchResult .BlockResultFeed .MusicType {
+	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/MusicFileIcon.png") no-repeat left top;
+}
+
+.UIWikiAdvanceSearchResult .BlockResultFeed .PdfType {
+	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/PdfFileIcon.png") no-repeat left top;
+}
+
+.UIWikiAdvanceSearchResult .BlockResultFeed .PhotoshopType {
+	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/PhotoshopFileIcon.png") no-repeat left top;
+}
+
+.UIWikiAdvanceSearchResult .BlockResultFeed .PptType {
+	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/PptFileIcon.png") no-repeat left top;
+}
+
+.UIWikiAdvanceSearchResult .BlockResultFeed .TxtType {
+	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/TxtFileIcon.png") no-repeat left top;
 }
 
 .UIWikiAdvanceSearchResult .BlockResultFeed .TxtDetail {

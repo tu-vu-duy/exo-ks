@@ -1,4 +1,4 @@
-<div class="UIWikiSidePanelArea ClearFix">
+<div class="UIWikiSidePanelArea">
   <div class="BarTit">
     <a href="<%=uicomponent.event(uicomponent.CLOSE)%>" class="CloseButton"><span></span></a>
     Creole Syntax

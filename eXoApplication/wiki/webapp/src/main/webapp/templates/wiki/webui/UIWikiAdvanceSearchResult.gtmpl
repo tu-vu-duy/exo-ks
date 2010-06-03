@@ -23,7 +23,7 @@ import org.exoplatform.wiki.commons.Utils ;
 					if(WikiNodeType.WIKI_PAGE_CONTENT.equals(result.getType())){		      	
 		      	%>		      	
 		      	<div class="BlockResultFeed">
-							<a class="TxtTitFeed" onclick="$viewPage" href="$pageURI"><%=result.getTitle()%></a>
+							<a class="DocType TxtTitFeed" onclick="$viewPage" href="$pageURI"><%=result.getTitle()%></a>
 							<div class="TxtDetail"><%=result.getExcerpt()%></div>
 							<div><a class="TxtMark" onclick="$viewPage" href="$wikiURI">$type</a></div>
 						</div>
@@ -34,11 +34,11 @@ import org.exoplatform.wiki.commons.Utils ;
 		      	String downloadAction = uicomponent.event("DownloadAttach") ;
 		      	%>		      	
 		      	<div class="BlockResultFeed">
-		      		<a class="TxtTitFeed" onclick="ajaxRedirect('$linkDownload'); if(eXo.core.Browser.browserType === 'ie') {$downloadAction ; } return false;" href="javaScript:void(0);">
+		      		<a class="DocType TxtTitFeed" onclick="ajaxRedirect('$linkDownload'); if(eXo.core.Browser.browserType === 'ie') {$downloadAction ; } return false;" href="javaScript:void(0);">
 							<span><%=att.getFilename()%></span></a>
 							<div class="TxtDetail"><%=result.getExcerpt()%></div>
 							<div> <a class="TxtMark" onclick="$viewPage" href="$wikiURI">$type</a> > <a class="TxtMark" onclick="$viewPage" href="$pageURI"><%=uicomponent.getPageTitle(result.getPath())%></a></div>
-						</div>      	
+						</div>    	
 		      	<%
 		      }      
 		    }

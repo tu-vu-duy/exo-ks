@@ -23,6 +23,7 @@
       int index = 0;
       String rowClass;
       DateFormat df = DateFormat.getDateInstance(DateFormat.LONG, currentLocale);
+      String creator;
       String downloadLink;
       String deleteLink;
       for(attachment in attachments){
@@ -32,12 +33,18 @@
         }else{
           rowClass = "OddRow";
         }
+        if(attachment.getCreator() == null){
+          creator = "anonymous";
+        }else{
+          creator = attachment.getCreator();
+          creator = uicomponent.getFullName(creator);
+        }
         downloadLink = uicomponent.event(uicomponent.DOWNLOAD_ACTION, attachment.getName());
         deleteLink = uicomponent.event(uicomponent.DELETE_ACTION, attachment.getName());
     %>
         <tr class="$rowClass">
           <td class="Tit"><a title="Download Attachment" href="$downloadLink"><%= attachment.getFilename() %></a></td>
-          <td><%= attachment.getCreator() %></td>
+          <td><%= creator %></td>
           <td><%= df.format(attachment.getUpdatedDate().getTime())%></td>
           <td><img title="Remove Attachment" onclick="$deleteLink" alt="" class="RemoveFile" src="/eXoResources/skin/DefaultSkin/background/Blank.gif"/></td>
         </tr>

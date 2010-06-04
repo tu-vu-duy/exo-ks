@@ -68,20 +68,22 @@ public class UIWikiAdvanceSearchForm extends UIForm {
     this.setActions(new String[]{"Search"});
   }
   
+  public void processSearchAction() throws Exception {
+    String text = getUIStringInput(TEXT).getValue();
+    String space = getUIFormSelectBox(WIKI_SPACES).getValue();
+    WikiPageParams params = Utils.getCurrentWikiPageParams();
+    WikiService wservice = (WikiService) PortalContainer.getComponent(WikiService.class);
+    SearchData data = new SearchData(text, null, null, null);
+    PageList<SearchResult> results = wservice.search(space, params.getOwner(), data);
+    UIWikiAdvanceSearchResult uiSearchResults = getParent().findFirstComponentOfType(UIWikiAdvanceSearchResult.class);
+    uiSearchResults.setKeyword(text);
+    uiSearchResults.setResult(results);
+  }
   
   static public class SearchActionListener extends EventListener<UIWikiAdvanceSearchForm> {
     public void execute(Event<UIWikiAdvanceSearchForm> event) throws Exception {
       UIWikiAdvanceSearchForm uiSearch = event.getSource() ;
-      String text = uiSearch.getUIStringInput(TEXT).getValue() ;
-      String space = uiSearch.getUIFormSelectBox(WIKI_SPACES).getValue() ;
-      WikiPageParams  params = Utils.getCurrentWikiPageParams() ;      
-      WikiService wservice = (WikiService)PortalContainer.getComponent(WikiService.class) ;
-      SearchData data = new SearchData(text, null, null, null) ;
-      PageList<SearchResult> results = wservice.search(space, params.getOwner(), data) ;
-      UIWikiAdvanceSearchResult uiSearchResults = uiSearch.getParent().findFirstComponentOfType(UIWikiAdvanceSearchResult.class) ;
-      uiSearchResults.setKeyword(text) ;
-      uiSearchResults.setResult(results) ;   
-      
+      uiSearch.processSearchAction();
     }
   }  
 }

@@ -20,8 +20,11 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.exoplatform.container.PortalContainer;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.services.organization.OrganizationService;
+import org.exoplatform.services.organization.User;
 import org.exoplatform.upload.UploadResource;
 import org.exoplatform.web.application.ApplicationMessage;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
@@ -78,6 +81,18 @@ public class UIWikiAttachmentArea extends UIForm {
     }
     return attachments;
   }
+  
+  private String getFullName(String userId) {
+    String fullName = "";
+    try {
+      OrganizationService organizationService = (OrganizationService) PortalContainer.getComponent(OrganizationService.class);
+      User user = organizationService.getUserHandler().findUserByName(userId);
+      fullName = user.getFullName();
+    } catch (Exception e) {
+      log.warn("An error happened when get fullname for: " + userId, e);
+    }
+    return fullName;
+  }
 
   static public class UploadActionListener extends EventListener<UIWikiAttachmentArea> {
     @Override
@@ -110,6 +125,7 @@ public class UIWikiAttachmentArea extends UIForm {
         try {
           Page page = Utils.getCurrentWikiPage();
           AttachmentImpl att = ((PageImpl) page).createAttachment(attachfile.getName(), attachfile);
+          att.setCreator(event.getRequestContext().getRemoteUser());
           Utils.reparePermissions(att);
         } catch (ClassNotFoundException e) {
           uiApp.addMessage(new ApplicationMessage("UIApplication.msg.unknown-error", null, ApplicationMessage.ERROR));

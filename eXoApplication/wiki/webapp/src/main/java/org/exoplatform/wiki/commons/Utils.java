@@ -114,4 +114,13 @@ public class Utils {
     }
     return null;
   }
+  
+  public static String getExtension(String filename)throws Exception {
+    MimeTypeResolver mimeResolver = new MimeTypeResolver() ;
+    try{
+      return mimeResolver.getExtension(mimeResolver.getMimeType(filename)) ;
+    }catch(Exception e) {
+      return mimeResolver.getDefaultMimeType() ;
+    }    
+  }
 }

@@ -10,7 +10,7 @@ import org.exoplatform.wiki.commons.Utils ;
 <%
 	PageList<SearchResult> results = uicomponent.getResults() ;
 	String type = uicomponent.getCurrentWiki() ;
-	String wikiURI = uicomponent.getWikiURI() ;
+	String wikiURI = Utils.getCurrentRequestURL() ;
 	
 	if(results != null) {
 		%>
@@ -23,19 +23,19 @@ import org.exoplatform.wiki.commons.Utils ;
 					if(WikiNodeType.WIKI_PAGE_CONTENT.equals(result.getType())){		      	
 		      	%>		      	
 		      	<div class="BlockResultFeed">
-							<a class="DocType TxtTitFeed" onclick="$viewPage" href="$pageURI"><%=result.getTitle()%></a>
+							<a class="TxtTitFeed" onclick="$viewPage" href="$pageURI"><%=result.getTitle()%></a>
 							<div class="TxtDetail"><%=result.getExcerpt()%></div>
 							<div><a class="TxtMark" onclick="$viewPage" href="$wikiURI">$type</a></div>
 						</div>
 		      	<%	
 		      } else if (WikiNodeType.WIKI_ATTACHMENT_CONTENT.equals(result.getType())){
 		      	AttachmentImpl att = (AttachmentImpl)uicomponent.getObject(result.getPath(), result.getType()) ;
-		      	String linkDownload = Utils.getDownloadLink(result.getPath(), att.getFilename(), null) ;
-		      	String downloadAction = uicomponent.event("DownloadAttach") ;
-		      	%>		      	
+		      	String downloadAction = uicomponent.event("DownloadAttach", result.getPath() + "/" + att.getFilename()) ;
+		      	String extension = Utils.getExtension(att.getFilename()) ;
+		      	%>		     
+		      	$extension 	
 		      	<div class="BlockResultFeed">
-		      		<a class="DocType TxtTitFeed" onclick="ajaxRedirect('$linkDownload'); if(eXo.core.Browser.browserType === 'ie') {$downloadAction ; } return false;" href="javaScript:void(0);">
-							<span><%=att.getFilename()%></span></a>
+		      		<a class="$extension TxtTitFeed" href="$downloadAction"><span><%=att.getFilename()%></span></a>
 							<div class="TxtDetail"><%=result.getExcerpt()%></div>
 							<div> <a class="TxtMark" onclick="$viewPage" href="$wikiURI">$type</a> > <a class="TxtMark" onclick="$viewPage" href="$pageURI"><%=uicomponent.getPageTitle(result.getPath())%></a></div>
 						</div>    	

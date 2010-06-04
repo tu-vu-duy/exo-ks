@@ -539,6 +539,10 @@
 	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/TxtFileIcon.png") no-repeat left top;
 }
 
+.UIWikiAdvanceSearchResult .BlockResultFeed .xml {
+	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/TxtFileIcon.png") no-repeat left top;
+}
+
 .UIWikiAdvanceSearchResult .BlockResultFeed .TxtDetail {
 	color: #363636;
 	padding: 8px 0;

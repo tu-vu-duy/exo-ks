@@ -16,9 +16,10 @@
  */
 package org.exoplatform.wiki.webui;
 
+import java.util.List;
+
 import org.exoplatform.commons.utils.PageList;
 import org.exoplatform.container.PortalContainer;
-import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIContainer;
@@ -26,6 +27,8 @@ import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.wiki.commons.Utils;
+import org.exoplatform.wiki.mow.api.WikiNodeType;
+import org.exoplatform.wiki.mow.core.api.wiki.AttachmentImpl;
 import org.exoplatform.wiki.service.SearchResult;
 import org.exoplatform.wiki.service.WikiService;
 
@@ -55,6 +58,10 @@ public class UIWikiAdvanceSearchResult extends UIContainer {
     return results_ ;
   }
   
+  private List<SearchResult> getPage(int i) throws Exception {
+    return results_.getPage(i) ;
+  }
+  
   public void setKeyword(String keyword) { this.keyword = keyword ;}
   
   private String getKeyword () {return keyword ;}
@@ -73,14 +80,13 @@ public class UIWikiAdvanceSearchResult extends UIContainer {
     return wservice.getPageTitleOfAttachment(path) ;    
   }
   
-  private String getWikiURI() throws Exception {
-    return Util.getPortalRequestContext().getPortalURI() + "wiki" ;
-  }
-  
   static public class DownloadAttachActionListener extends EventListener<UIWikiAdvanceSearchResult> {
     public void execute(Event<UIWikiAdvanceSearchResult> event) throws Exception {
-      UIWikiAdvanceSearchResult search = event.getSource() ; 
-      event.getRequestContext().addUIComponentToUpdateByAjax(search) ;
+      String params = event.getRequestContext().getRequestParameter(OBJECTID);
+      String path = params.substring(0, params.lastIndexOf("/")) ;
+      String fileName = params.substring(params.lastIndexOf("/") + 1) ;
+      String downloadLink = Utils.getDownloadLink(path, fileName, null) ;
+      event.getRequestContext().getJavascriptManager().addJavascript("ajaxRedirect('" + downloadLink + "');");
     }
   }
   static public class ViewPageActionListener extends EventListener<UIWikiAdvanceSearchResult> {

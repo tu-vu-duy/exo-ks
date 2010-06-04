@@ -607,6 +607,14 @@
 	padding: 0;
 }
 
+.UIWikiSearchSpaceArea .NoSearchResult {
+	color: #E66A1F;
+	margin: 30px 0;
+	font-weight: bold;
+	text-align: center;
+	font-size: 14px;
+}
+
 /* wiki attachment */
 
 .UIWikiBottomArea {

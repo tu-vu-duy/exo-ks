@@ -475,72 +475,64 @@
 	width: 16px;
 }
 
-.UIWikiAdvanceSearchResult .BlockResultFeed .DocType {
+.UIWikiAdvanceSearchResult .BlockResultFeed .doc {
 	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/WordFileIcon.png") no-repeat left top;
 }
 
-.UIWikiAdvanceSearchResult .BlockResultFeed .AccessType {
+.UIWikiAdvanceSearchResult .BlockResultFeed .mdb {
 	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/AccessFileIcon.png") no-repeat left top;
 }
 
-.UIWikiAdvanceSearchResult .BlockResultFeed .BinaryType {
-	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/BinaryFileIcon.png") no-repeat left top;
+.UIWikiAdvanceSearchResult .BlockResultFeed .xml {
+	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/XmlFileIcon.png") no-repeat left top;
 }
 
-.UIWikiAdvanceSearchResult .BlockResultFeed .BlockType {
-	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/BlockFileIcon.png") no-repeat left top;
-}
-
-.UIWikiAdvanceSearchResult .BlockResultFeed .ExlType {
+.UIWikiAdvanceSearchResult .BlockResultFeed .xls {
 	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/ExcelFileIcon.png") no-repeat left top;
 }
 
-.UIWikiAdvanceSearchResult .BlockResultFeed .FeedType {
+.UIWikiAdvanceSearchResult .BlockResultFeed .rss {
 	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/FeedFileIcon.png") no-repeat left top;
 }
 
-.UIWikiAdvanceSearchResult .BlockResultFeed .FilmType {
+.UIWikiAdvanceSearchResult .BlockResultFeed .avi {
 	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/FilmFileIcon.png") no-repeat left top;
 }
 
-.UIWikiAdvanceSearchResult .BlockResultFeed .FlashType {
+.UIWikiAdvanceSearchResult .BlockResultFeed .flv {
 	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/FlashFileIcon.png") no-repeat left top;
 }
 
-.UIWikiAdvanceSearchResult .BlockResultFeed .GlobeType {
-	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/GlobeFileIcon.png") no-repeat left top;
-}
-
-.UIWikiAdvanceSearchResult .BlockResultFeed .HtmlType {
+.UIWikiAdvanceSearchResult .BlockResultFeed .html {
 	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/HtmlFileIcon.png") no-repeat left top;
 }
 
-.UIWikiAdvanceSearchResult .BlockResultFeed .ImgType {
+.UIWikiAdvanceSearchResult .BlockResultFeed .jpg {
 	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/ImageFileIcon.png") no-repeat left top;
 }
 
-.UIWikiAdvanceSearchResult .BlockResultFeed .MusicType {
+.UIWikiAdvanceSearchResult .BlockResultFeed .mp3 {
 	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/MusicFileIcon.png") no-repeat left top;
 }
 
-.UIWikiAdvanceSearchResult .BlockResultFeed .PdfType {
+.UIWikiAdvanceSearchResult .BlockResultFeed .pdf {
 	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/PdfFileIcon.png") no-repeat left top;
 }
 
-.UIWikiAdvanceSearchResult .BlockResultFeed .PhotoshopType {
+.UIWikiAdvanceSearchResult .BlockResultFeed .psd {
 	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/PhotoshopFileIcon.png") no-repeat left top;
 }
 
-.UIWikiAdvanceSearchResult .BlockResultFeed .PptType {
+.UIWikiAdvanceSearchResult .BlockResultFeed .ppt {
 	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/PptFileIcon.png") no-repeat left top;
 }
 
-.UIWikiAdvanceSearchResult .BlockResultFeed .TxtType {
+.UIWikiAdvanceSearchResult .BlockResultFeed .txt {
 	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/TxtFileIcon.png") no-repeat left top;
 }
 
-.UIWikiAdvanceSearchResult .BlockResultFeed .xml {
-	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/TxtFileIcon.png") no-repeat left top;
+.UIWikiAdvanceSearchResult .BlockResultFeed .zip {
+	background: url("/wiki/skin/DefaultSkin/webui/UIWikiSearchBox/icons/16x16/ZipFileIcon.png") no-repeat left top;
 }
 
 .UIWikiAdvanceSearchResult .BlockResultFeed .TxtDetail {

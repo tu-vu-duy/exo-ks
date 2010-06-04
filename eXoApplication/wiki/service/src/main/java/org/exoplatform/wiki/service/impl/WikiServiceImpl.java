@@ -137,7 +137,7 @@ public class WikiServiceImpl implements WikiService{
         list.add(result.next()) ;
       }
     }
-    return new ObjectPageList<ContentImpl>(list, 10);
+    return new ObjectPageList<ContentImpl>(list, 5);
   }
   
   public PageList<SearchResult> search(String wikiType, String wikiOwner, SearchData data) throws Exception {

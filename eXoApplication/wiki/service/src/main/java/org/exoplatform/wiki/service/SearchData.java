@@ -96,7 +96,6 @@ public class SearchData {
         }
       }
     }catch(Exception e) {}
-    System.out.println("statement ==>" + statement.toString());
     return statement.toString() ;
   }
   

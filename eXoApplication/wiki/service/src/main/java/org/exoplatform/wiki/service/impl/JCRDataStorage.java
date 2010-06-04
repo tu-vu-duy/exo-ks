@@ -31,7 +31,7 @@ public class JCRDataStorage implements DataStorage{
     while(iter.hasNext()) {
       try{resultList.add(getResult(iter.nextRow())) ;} catch(Exception e){}
     }
-    return new ObjectPageList<SearchResult>(resultList, 10) ;
+    return new ObjectPageList<SearchResult>(resultList, 5) ;
   }  
   
   private SearchResult getResult(Row row) throws Exception {

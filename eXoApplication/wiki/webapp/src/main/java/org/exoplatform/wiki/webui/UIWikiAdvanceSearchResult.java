@@ -16,6 +16,7 @@
  */
 package org.exoplatform.wiki.webui;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.exoplatform.commons.utils.PageList;
@@ -43,23 +44,28 @@ import org.exoplatform.wiki.service.WikiService;
   template = "app:/templates/wiki/webui/UIWikiAdvanceSearchResult.gtmpl",
   events = {
       @EventConfig(listeners = UIWikiAdvanceSearchResult.DownloadAttachActionListener.class),
-      @EventConfig(listeners = UIWikiAdvanceSearchResult.ViewPageActionListener.class)
+      @EventConfig(listeners = UIWikiAdvanceSearchResult.ViewPageActionListener.class),
+      @EventConfig(listeners = UIWikiAdvanceSearchResult.ChangePageActionListener.class),
+      @EventConfig(listeners = UIWikiAdvanceSearchResult.NextPageActionListener.class),
+      @EventConfig(listeners = UIWikiAdvanceSearchResult.PrevPageActionListener.class)
   }    
 )
 public class UIWikiAdvanceSearchResult extends UIContainer {
   private PageList<SearchResult> results_ ;
   private String keyword ;
+  private int pageIndex = 1 ;
   
   public void setResult(PageList<SearchResult> results) {
     results_ = results ;
+    pageIndex = 1 ;
   }
   
   private PageList<SearchResult> getResults() {
     return results_ ;
   }
   
-  private List<SearchResult> getPage(int i) throws Exception {
-    return results_.getPage(i) ;
+  private int getPageIndex() throws Exception {
+    return pageIndex ;
   }
   
   public void setKeyword(String keyword) { this.keyword = keyword ;}
@@ -94,6 +100,35 @@ public class UIWikiAdvanceSearchResult extends UIContainer {
     public void execute(Event<UIWikiAdvanceSearchResult> event) throws Exception {
       UIWikiPortlet wikiPortlet = event.getSource().getAncestorOfType(UIWikiPortlet.class);
       wikiPortlet.changeMode(WikiMode.VIEW);
+    }
+  }
+  static public class ChangePageActionListener extends EventListener<UIWikiAdvanceSearchResult> {
+    @Override
+    public void execute(Event<UIWikiAdvanceSearchResult> event) throws Exception {
+      UIWikiAdvanceSearchResult uiResult = event.getSource();
+      String pageNumber = event.getRequestContext().getRequestParameter(OBJECTID) ;
+      uiResult.pageIndex = Integer.parseInt(pageNumber) ;
+      
+    }
+  }
+  
+  static public class NextPageActionListener extends EventListener<UIWikiAdvanceSearchResult> {
+    @Override
+    public void execute(Event<UIWikiAdvanceSearchResult> event) throws Exception {
+      UIWikiAdvanceSearchResult uiResult = event.getSource();
+      if(uiResult.pageIndex < uiResult.results_.getAvailablePage()) {
+        uiResult.pageIndex = uiResult.pageIndex + 1 ;
+      }      
+    }
+  }
+  
+  static public class PrevPageActionListener extends EventListener<UIWikiAdvanceSearchResult> {
+    @Override
+    public void execute(Event<UIWikiAdvanceSearchResult> event) throws Exception {
+      UIWikiAdvanceSearchResult uiResult = event.getSource();
+      if(uiResult.pageIndex > 1) {
+        uiResult.pageIndex = uiResult.pageIndex - 1 ;
+      }
     }
   }
 }

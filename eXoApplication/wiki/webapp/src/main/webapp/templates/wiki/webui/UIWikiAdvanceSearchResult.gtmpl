@@ -55,7 +55,7 @@ import org.exoplatform.wiki.commons.Utils ;
 				<a class="NextPage" href="#">Next</a>
 			</div> 	
 	<%} else {
-		%><div style="align:center">There is no search result...!</div><%
+		%><div class="NoSearchResult">There is no search result...!</div><%
 	}
 	%>
 	

@@ -102,7 +102,7 @@ public class TestRenderingService extends AbstractMOWTestcase {
     
     ec.getContext().setProperty(WikiContext.WIKICONTEXT, wikiContext);
     
-    String expectedHtml = "<p><span class=\"wikicreatelink\"><a href=\"http://loclahost:8080/portal/classic/wiki/WikiHome?action=AddPage&amp;pageId=NonExistedWikiPage-001\">NonExistedWikiPage-001</a></span></p>";
+    String expectedHtml = "<p><span class=\"wikicreatelink\"><a href=\"http://loclahost:8080/portal/classic/wiki/WikiHome?action=AddPage&amp;pageTitle=NonExistedWikiPage-001\">NonExistedWikiPage-001</a></span></p>";
     assertEquals(expectedHtml, renderingService.render("[[NonExistedWikiPage-001>>NonExistedWikiPage-001]]", Syntax.XWIKI_2_0.toIdString()));
     assertEquals(expectedHtml, renderingService.render("[[NonExistedWikiPage-001>>classic.NonExistedWikiPage-001]]", Syntax.XWIKI_2_0.toIdString()));
     assertEquals(expectedHtml, renderingService.render("[[NonExistedWikiPage-001>>portal:classic.NonExistedWikiPage-001]]", Syntax.XWIKI_2_0.toIdString()));

@@ -59,6 +59,7 @@ public class UIWikiAdvanceSearchForm extends UIForm {
     return Utils.getCurrentWikiPageParams().getType();
   }
   
+  
   public UIWikiAdvanceSearchForm() throws Exception {
     addChild(new UIFormStringInput(TEXT, TEXT, null)) ;
     List<SelectItemOption<String>> spaces = new ArrayList<SelectItemOption<String>>() ;
@@ -67,6 +68,13 @@ public class UIWikiAdvanceSearchForm extends UIForm {
     addChild(selectSpaces) ;
     this.setActions(new String[]{"Search"});
   }
+  
+  public void resetWikiSpaces() throws Exception {
+    List<SelectItemOption<String>> spaces = new ArrayList<SelectItemOption<String>>() ;
+    spaces.add(new SelectItemOption<String>(getCurrentWiki(), getCurrentWiki())) ;
+    getChild(UIFormSelectBox.class).setOptions(spaces) ;
+  }
+ 
   
   public void processSearchAction() throws Exception {
     String text = getUIStringInput(TEXT).getValue();

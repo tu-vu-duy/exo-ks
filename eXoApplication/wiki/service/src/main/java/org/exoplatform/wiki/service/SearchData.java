@@ -95,6 +95,7 @@ public class SearchData {
           statement.append(" CONTAINS(text, '").append(content).append("') ") ; 
         }
       }
+      statement.append(" ORDER BY jcr:score") ;
     }catch(Exception e) {}
     return statement.toString() ;
   }

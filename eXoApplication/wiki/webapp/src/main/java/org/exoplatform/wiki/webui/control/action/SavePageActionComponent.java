@@ -16,6 +16,7 @@
  */
 package org.exoplatform.wiki.webui.control.action;
 
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.List;
 
@@ -41,6 +42,7 @@ import org.exoplatform.webui.form.UIFormTextAreaInput;
 import org.exoplatform.wiki.commons.Utils;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.resolver.PageResolver;
+import org.exoplatform.wiki.resolver.TitleResolver;
 import org.exoplatform.wiki.service.WikiPageParams;
 import org.exoplatform.wiki.service.WikiService;
 import org.exoplatform.wiki.webui.UIWikiPageContentArea;
@@ -100,12 +102,13 @@ public class SavePageActionComponent extends UIComponent {
         } else if (wikiPortlet.getWikiMode() == WikiMode.NEW) {
           WikiService wikiService = (WikiService) PortalContainer.getComponent(WikiService.class);
           WikiPageParams pageParams = pageResolver.extractWikiPageParams(requestURL);
-          Page subPage = wikiService.createPage(pageParams.getType(), pageParams.getOwner(), title, page.getPageId());
+          Page subPage = wikiService.createPage(pageParams.getType(), pageParams.getOwner(), title, page.getName());
           subPage.getContent().setText(markup);
           subPage.getContent().setSyntax(syntaxTypeSelectBox.getValue());
           
           wikiPortlet.changeMode(WikiMode.VIEW);
-          event.getSource().redirectToNewPage(pageParams, title);
+          String pageId = TitleResolver.getPageId(title, false);
+          event.getSource().redirectToNewPage(pageParams, URLEncoder.encode(pageId, "UTF-8"));
           return;
         }
         pageTitleControlForm.getUIFormInputInfo().setValue(page.getContent().getTitle());

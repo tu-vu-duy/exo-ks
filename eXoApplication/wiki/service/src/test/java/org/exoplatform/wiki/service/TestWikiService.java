@@ -19,15 +19,10 @@ package org.exoplatform.wiki.service;
 
 import java.util.List;
 
-import javax.jcr.Value;
-import javax.jcr.query.Row;
-import javax.jcr.query.RowIterator;
-
 import org.chromattic.ext.ntdef.Resource;
 import org.exoplatform.commons.utils.PageList;
 import org.exoplatform.portal.config.model.PortalConfig;
 import org.exoplatform.wiki.mow.api.Model;
-import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.mow.api.WikiType;
 import org.exoplatform.wiki.mow.core.api.AbstractMOWTestcase;
 import org.exoplatform.wiki.mow.core.api.WikiStoreImpl;
@@ -65,9 +60,8 @@ public class TestWikiService extends AbstractMOWTestcase {
     assertNotNull(wService.getPageById(PortalConfig.PORTAL_TYPE, "classic", "WikiHome")) ;    
         
     PageImpl wikipage = wiki.createWikiPage();
-    wikipage.setName("testGetPortalPageById");
+    wikipage.setName("testGetPortalPageById-001");
     wikiHomePage.addWikiPage(wikipage);
-    wikipage.setPageId("testGetPortalPageById-001") ;
     model.save() ;
     
     assertNotNull(wService.getPageById(PortalConfig.PORTAL_TYPE, "classic", "testGetPortalPageById-001")) ;    
@@ -86,9 +80,8 @@ public class TestWikiService extends AbstractMOWTestcase {
     assertNotNull(wService.getPageById(PortalConfig.GROUP_TYPE, "platform/users", "WikiHome")) ;
     
     PageImpl wikipage = wiki.createWikiPage();
-    wikipage.setName("testGetGroupPageById");
+    wikipage.setName("testGetGroupPageById-001");
     wikiHomePage.addWikiPage(wikipage);
-    wikipage.setPageId("testGetGroupPageById-001") ;
     model.save() ;
     
     assertNotNull(wService.getPageById(PortalConfig.GROUP_TYPE, "platform/users", "testGetGroupPageById-001")) ;    
@@ -107,9 +100,8 @@ public class TestWikiService extends AbstractMOWTestcase {
     assertNotNull(wService.getPageById(PortalConfig.USER_TYPE, "john", "WikiHome")) ;
     
     PageImpl wikipage = wiki.createWikiPage();
-    wikipage.setName("testGetUserPageById");
+    wikipage.setName("testGetUserPageById-001");
     wikiHomePage.addWikiPage(wikipage);
-    wikipage.setPageId("testGetUserPageById-001") ;
     model.save() ;
     
     assertNotNull(wService.getPageById(PortalConfig.USER_TYPE, "john", "testGetUserPageById-001")) ;    
@@ -217,7 +209,7 @@ public class TestWikiService extends AbstractMOWTestcase {
     
     AttachmentImpl attachment1 = kspage.createAttachment("attachment1.txt", Resource.createPlainText("foo")) ;
     attachment1.setCreator("you") ;    
-    assertEquals(attachment1.getFilename(), "attachment1.txt") ;
+    assertEquals(attachment1.getName(), "attachment1.txt") ;
     assertNotNull(attachment1.getContentResource()) ;
     attachment1.setContentResource(Resource.createPlainText("exoplatform content mamagement")) ;    
     
@@ -233,7 +225,7 @@ public class TestWikiService extends AbstractMOWTestcase {
     kspage.getContent().setText("forum faq wiki exoplatform") ;
     AttachmentImpl attachment1 = kspage.createAttachment("attachment1.txt", Resource.createPlainText("foo")) ;
     attachment1.setCreator("you") ;    
-    assertEquals(attachment1.getFilename(), "attachment1.txt") ;
+    assertEquals(attachment1.getName(), "attachment1.txt") ;
     assertNotNull(attachment1.getContentResource()) ;
     attachment1.setContentResource(Resource.createPlainText("exoplatform content mamagement")) ;
     
@@ -246,7 +238,7 @@ public class TestWikiService extends AbstractMOWTestcase {
     kspage.getContent().setText("forum faq wiki exoplatform") ;
     AttachmentImpl attachment1 = kspage.createAttachment("attachment.txt", Resource.createPlainText("this is a text attachment")) ;
     attachment1.setCreator("john") ;    
-    assertEquals(attachment1.getFilename(), "attachment.txt") ;
+    assertEquals(attachment1.getName(), "attachment.txt") ;
     assertNotNull(attachment1.getContentResource()) ;
     
     assertNotNull(wService.getAttachmentAsStream(attachment1.getPath()+"/jcr:content")) ;

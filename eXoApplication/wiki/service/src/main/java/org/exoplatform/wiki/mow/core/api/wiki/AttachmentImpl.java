@@ -43,18 +43,9 @@ public abstract class AttachmentImpl extends NTFile implements Attachment {
   
   @Path
   public abstract String getPath();
-
-  public String getContentPath() {
-    return getPath() + "/jcr:content";
-  }
   
   @WorkspaceName
   public abstract String getWorkspace();
-  
-  
-  @Property(name = WikiNodeType.Definition.FILENAME)
-  public abstract String getFilename();
-  public abstract void setFilename(String filename);
   
   @Property(name = WikiNodeType.Definition.CREATOR)
   public abstract String getCreator();

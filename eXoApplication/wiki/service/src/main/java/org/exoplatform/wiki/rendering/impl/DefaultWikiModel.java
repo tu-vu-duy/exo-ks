@@ -76,11 +76,9 @@ public class DefaultWikiModel implements WikiModel {
         sb.append(page.getWorkspace());
         sb.append(page.getPath());
         sb.append("/");
-        AttachmentImpl att = page.getAttachmentByFileName(wikiMarkupContext.getAttachmentName());
+        AttachmentImpl att = page.getAttachment(wikiMarkupContext.getAttachmentName());
         if (att != null) {
           sb.append(att.getName());
-        } else {
-          sb.append(wikiMarkupContext.getAttachmentName());
         }
       }
     } catch (Exception e) {

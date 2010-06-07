@@ -16,6 +16,7 @@
  */
 package org.exoplatform.wiki.rendering.impl;
 
+import org.chromattic.ext.ntdef.Resource;
 import org.exoplatform.wiki.mow.api.Model;
 import org.exoplatform.wiki.mow.api.WikiType;
 import org.exoplatform.wiki.mow.core.api.AbstractMOWTestcase;
@@ -62,10 +63,8 @@ public class TestRenderingService extends AbstractMOWTestcase {
     PortalWiki wiki = portalWikiContainer.addWiki("classic");
     WikiHome wikiHomePage = wiki.getWikiHome();
     
-    PageImpl wikipage = wiki.createWikiPage();
-    wikipage.setName("CreateWikiPage1");
-    wikiHomePage.addWikiPage(wikipage);
-    wikipage.setPageId("CreateWikiPage-001") ;
+    PageImpl wikipage = wikiHomePage.getWikiPage("CreateWikiPage-001");
+    wikipage.createAttachment("eXoWikiHome.png", Resource.createPlainText("logo")) ;
     
     Execution ec = renderingService.getExecutionContext();
     ec.setContext(new ExecutionContext());
@@ -120,19 +119,20 @@ public class TestRenderingService extends AbstractMOWTestcase {
     
     ec.getContext().setProperty(WikiContext.WIKICONTEXT, wikiContext);
     
-    String expectedAttachmentHtml = "<p><span class=\"wikiexternallink\"><a href=\"/portal/rest/jcr/repository/knowledge/exo:applications/eXoWiki/wikis/classic/WikiHome/CreateWikiPage/eXoWikiHome.png\">eXoWikiHome.png</a></span></p>";  
+    String expectedAttachmentHtml = "<p><span class=\"wikiexternallink\"><a href=\"/portal/rest/jcr/repository/knowledge/exo:applications/eXoWiki/wikis/classic/WikiHome/CreateWikiPage-001/eXoWikiHome.png\">eXoWikiHome.png</a></span></p>";
     assertEquals(expectedAttachmentHtml, renderingService.render("[[eXoWikiHome.png>>attach:eXoWikiHome.png]]", Syntax.XWIKI_2_0.toIdString()));
     assertEquals(expectedAttachmentHtml, renderingService.render("[[eXoWikiHome.png>>attach:CreateWikiPage-001@eXoWikiHome.png]]", Syntax.XWIKI_2_0.toIdString()));
     assertEquals(expectedAttachmentHtml, renderingService.render("[[eXoWikiHome.png>>attach:classic.CreateWikiPage-001@eXoWikiHome.png]]", Syntax.XWIKI_2_0.toIdString()));
     assertEquals(expectedAttachmentHtml, renderingService.render("[[eXoWikiHome.png>>attach:portal:classic.CreateWikiPage-001@eXoWikiHome.png]]", Syntax.XWIKI_2_0.toIdString()));
     
-    String expectedImageHtml = "<p><img src=\"/portal/rest/jcr/repository/knowledge/exo:applications/eXoWiki/wikis/classic/WikiHome/CreateWikiPage/eXoWikiHome.png\" alt=\"eXoWikiHome.png\"/></p>";
+    String expectedImageHtml = "<p><img src=\"/portal/rest/jcr/repository/knowledge/exo:applications/eXoWiki/wikis/classic/WikiHome/CreateWikiPage-001/eXoWikiHome.png\" alt=\"eXoWikiHome.png\"/></p>";
+    renderingService.render("[[image:eXoWikiHome.png]]", Syntax.XWIKI_2_0.toIdString());
     assertEquals(expectedImageHtml, renderingService.render("[[image:eXoWikiHome.png]]", Syntax.XWIKI_2_0.toIdString()));
     assertEquals(expectedImageHtml, renderingService.render("[[image:CreateWikiPage-001@eXoWikiHome.png]]", Syntax.XWIKI_2_0.toIdString()));
     assertEquals(expectedImageHtml, renderingService.render("[[image:classic.CreateWikiPage-001@eXoWikiHome.png]]", Syntax.XWIKI_2_0.toIdString()));
     assertEquals(expectedImageHtml, renderingService.render("[[image:portal:classic.CreateWikiPage-001@eXoWikiHome.png]]", Syntax.XWIKI_2_0.toIdString()));
     
-    String expectedFreeStandingImageHtml = "<p><img src=\"/portal/rest/jcr/repository/knowledge/exo:applications/eXoWiki/wikis/classic/WikiHome/CreateWikiPage/eXoWikiHome.png\" class=\"wikimodel-freestanding\" alt=\"eXoWikiHome.png\"/></p>";
+    String expectedFreeStandingImageHtml = "<p><img src=\"/portal/rest/jcr/repository/knowledge/exo:applications/eXoWiki/wikis/classic/WikiHome/CreateWikiPage-001/eXoWikiHome.png\" class=\"wikimodel-freestanding\" alt=\"eXoWikiHome.png\"/></p>";
     assertEquals(expectedFreeStandingImageHtml, renderingService.render("image:eXoWikiHome.png", Syntax.XWIKI_2_0.toIdString()));
     assertEquals(expectedFreeStandingImageHtml, renderingService.render("image:CreateWikiPage-001@eXoWikiHome.png", Syntax.XWIKI_2_0.toIdString()));
     assertEquals(expectedFreeStandingImageHtml, renderingService.render("image:classic.CreateWikiPage-001@eXoWikiHome.png", Syntax.XWIKI_2_0.toIdString()));

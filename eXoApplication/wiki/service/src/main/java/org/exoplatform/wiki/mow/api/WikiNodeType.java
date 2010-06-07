@@ -79,8 +79,6 @@ public interface WikiNodeType {
     public final static String WIKI_HOME_TITLE            = "Wiki Home";
 
     public final static String OWNER                      = "owner";
-    
-    public final static String PAGE_ID                      = "pageId";
 
     public final static String CONTENT                    = "content";
 
@@ -105,8 +103,6 @@ public interface WikiNodeType {
     public final static String UPDATED               = "jcr:lastModified";
     
     public final static String CREATOR              = "creator";
-    
-    public final static String FILENAME              = "filename";
     
     public final static String SIZE                 = "size";  
     

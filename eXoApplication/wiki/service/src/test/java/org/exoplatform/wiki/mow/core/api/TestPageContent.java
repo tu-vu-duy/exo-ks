@@ -35,9 +35,8 @@ public class TestPageContent extends AbstractMOWTestcase {
     WikiHome wikiHomePage = wiki.getWikiHome();
     
     PageImpl wikipage = wiki.createWikiPage();
-    wikipage.setName("AddContentPage");
+    wikipage.setName("AddContentPage-001");
     wikiHomePage.addWikiPage(wikipage);
-    wikipage.setPageId("AddContentPage-001") ;
     assertNull(wikipage.getContent()) ;
     
     ContentImpl content = wiki.createContent() ;
@@ -56,9 +55,8 @@ public class TestPageContent extends AbstractMOWTestcase {
     WikiHome wikiHomePage = wiki.getWikiHome();
     
     PageImpl wikipage = wiki.createWikiPage();
-    wikipage.setName("GetPageContent");
+    wikipage.setName("AddPageContent-001");
     wikiHomePage.addWikiPage(wikipage);
-    wikipage.setPageId("AddPageContent-001") ;
     assertNull(wikipage.getContent()) ;
     
     ContentImpl content = wiki.createContent() ;
@@ -79,9 +77,8 @@ public class TestPageContent extends AbstractMOWTestcase {
     WikiHome wikiHomePage = wiki.getWikiHome();
     
     PageImpl wikipage = wiki.createWikiPage();
-    wikipage.setName("UpdatePageContent");
+    wikipage.setName("UpdatePageContent-001");
     wikiHomePage.addWikiPage(wikipage);
-    wikipage.setPageId("UpdatePageContent-001") ;
     assertNull(wikipage.getContent()) ;
     
     ContentImpl content = wiki.createContent() ;
@@ -111,9 +108,8 @@ public class TestPageContent extends AbstractMOWTestcase {
     WikiHome wikiHomePage = wiki.getWikiHome();
     
     PageImpl wikipage = wiki.createWikiPage();
-    wikipage.setName("DeletePageContent");
+    wikipage.setName("DeletePageContent-001");
     wikiHomePage.addWikiPage(wikipage);
-    wikipage.setPageId("DeletePageContent-001") ;
     assertNull(wikipage.getContent()) ;
     
     ContentImpl content = wiki.createContent() ;

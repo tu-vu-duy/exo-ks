@@ -59,16 +59,14 @@ public class TestWikiPage extends AbstractMOWTestcase {
     WikiHome wikiHomePage = wiki.getWikiHome();
     
     PageImpl wikipage = wiki.createWikiPage();
-    wikipage.setName("CreateWikiPage");
+    wikipage.setName("CreateWikiPage-001");
     wikiHomePage.addWikiPage(wikipage);
-    wikipage.setPageId("CreateWikiPage-001") ;
     
     assertNotNull(wikiHomePage.getWikiPage("CreateWikiPage-001")) ;
     
     PageImpl subpage = wiki.createWikiPage();
-    subpage.setName("SubWikiPage") ;
+    subpage.setName("SubWikiPage-001") ;
     wikipage.addWikiPage(subpage) ;
-    subpage.setPageId("SubWikiPage-001") ;
         
     assertNotNull(wikipage.getWikiPage("SubWikiPage-001")) ;
     
@@ -87,18 +85,15 @@ public class TestWikiPage extends AbstractMOWTestcase {
     WikiHome wikiHomePage = wiki.getWikiHome();
     
     PageImpl wikipage = wiki.createWikiPage();    
-    wikipage.setName("UpdateWikiPage");
+    wikipage.setName("UpdateWikiPage-001");
     wikiHomePage.addWikiPage(wikipage);
-    wikipage.setPageId("UpdateWikiPage-001") ;
     wikipage.setOwner("Root") ;
     
     PageImpl addedPage = wikiHomePage.getWikiPage("UpdateWikiPage-001") ;
-    assertEquals(addedPage.getName(), "UpdateWikiPage") ;
-    assertEquals(addedPage.getPageId(), "UpdateWikiPage-001") ;
+    assertNotNull(addedPage);
     wikipage.setOwner("Demo") ;
-    wikipage.setPageId("UpdateWikiPage-001-edited") ;
     
-    PageImpl editedPage = wikiHomePage.getWikiPage("UpdateWikiPage-001-edited") ;
+    PageImpl editedPage = wikiHomePage.getWikiPage("UpdateWikiPage-001") ;
     assertNotNull(editedPage) ;
     assertEquals(editedPage.getOwner(), "Demo") ;    
   }
@@ -113,11 +108,10 @@ public class TestWikiPage extends AbstractMOWTestcase {
     PageImpl wikipage = wiki.createWikiPage();
     wikipage.setName("DeleteWikiPage");
     wikiHomePage.addWikiPage(wikipage);
-    wikipage.setPageId("delete-001") ;
-    PageImpl deletePage = wikiHomePage.getWikiPage("delete-001") ;
+    PageImpl deletePage = wikiHomePage.getWikiPage("DeleteWikiPage") ;
     assertNotNull(deletePage) ;
     
     deletePage.remove() ;
-    assertNull(wikiHomePage.getWikiPage("delete-001")) ;    
+    assertNull(wikiHomePage.getWikiPage("DeleteWikiPage")) ;    
   }  
 }

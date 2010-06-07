@@ -33,7 +33,6 @@ import org.chromattic.api.annotations.PrimaryType;
 import org.chromattic.api.annotations.Property;
 import org.chromattic.api.annotations.WorkspaceName;
 import org.chromattic.ext.ntdef.Resource;
-import org.exoplatform.commons.utils.MimeTypeResolver;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.mow.api.WikiNodeType;
 import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
@@ -68,10 +67,6 @@ public abstract class PageImpl implements Page {
   public abstract String getOwner();
   public abstract void setOwner(String owner);
   
-  @Property(name = WikiNodeType.Definition.PAGE_ID)
-  public abstract String getPageId();
-  public abstract void setPageId(String pageId);
-  
   @Create
   public abstract AttachmentImpl createAttachment();
   
@@ -80,11 +75,8 @@ public abstract class PageImpl implements Page {
       throw new NullPointerException();
     }
     AttachmentImpl file = createAttachment();
-    MimeTypeResolver mimeTypeResolver = new MimeTypeResolver() ;
-    String extension = mimeTypeResolver.getExtension(contentResource.getMimeType()) ;
-    file.setName("att" + contentResource.hashCode()+ "." + extension) ;
+    file.setName(fileName) ;
     addAttachment(file) ;
-    file.setFilename(fileName) ;
     if (contentResource != null) {
       file.setContentResource(contentResource);      
     }
@@ -99,17 +91,6 @@ public abstract class PageImpl implements Page {
     for (AttachmentImpl att : getAttachments()) {
       if (att.getName().equals(attachmentId)) {
         return att;
-      }
-    }
-    return null;
-  }
-  
-  public AttachmentImpl getAttachmentByFileName(String fileName) {
-    if (fileName != null) {
-      for (AttachmentImpl att : getAttachments()) {
-        if (fileName.equalsIgnoreCase(att.getFilename())) {
-          return att;
-        }
       }
     }
     return null;
@@ -146,7 +127,7 @@ public abstract class PageImpl implements Page {
     Iterator<PageImpl> iter = getChildPages().iterator();
     while(iter.hasNext()) {
       PageImpl page = (PageImpl)iter.next() ;
-      if (pageId.equals(page.getPageId()))  return page ;         
+      if (pageId.equals(page.getName()))  return page ;         
     }
     return null ;
   }

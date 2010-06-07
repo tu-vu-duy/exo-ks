@@ -233,9 +233,6 @@
     	<propertyDefinition name="creator" requiredType="String" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" multiple="false">
         <valueConstraints/>
       </propertyDefinition>
-      <propertyDefinition name="filename" requiredType="String" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" multiple="false">
-        <valueConstraints/>
-      </propertyDefinition>
     </propertyDefinitions>
     <childNodeDefinitions/>
   </nodeType>
@@ -247,9 +244,6 @@
       <supertype>mix:referenceable</supertype>
     </supertypes>
     <propertyDefinitions>
-    	<propertyDefinition name="pageId" requiredType="String" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" multiple="false">
-        <valueConstraints/>
-      </propertyDefinition>
       <propertyDefinition name="owner" requiredType="String" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" multiple="false">
         <valueConstraints/>
       </propertyDefinition>

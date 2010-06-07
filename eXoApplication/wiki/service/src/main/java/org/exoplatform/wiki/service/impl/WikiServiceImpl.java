@@ -70,7 +70,6 @@ public class WikiServiceImpl implements WikiService{
     String pageId = TitleResolver.getPageId(title, false);
     page.setName(pageId) ;
     parentPage.addWikiPage(page) ;
-    page.setPageId(pageId) ;
     page.setContent(content);
     page.getContent().setTitle(title);
     model.save();    
@@ -230,7 +229,7 @@ public class WikiServiceImpl implements WikiService{
         appPath = (appPath != null) ? appPath : "ApplicationData";
         path = path + "/" + appPath + "/" + WikiNodeType.Definition.WIKI_APPLICATION;
       }
-      String statement = "jcr:path LIKE '"+ path + "/%'" + " AND pageId='" + pageId + "'" ;
+      String statement = "jcr:path LIKE '"+ path + "/%/" + pageId + "' OR " + "jcr:path='"+ path + "/" + pageId + "'";
       return statement ;
     }
     return null;
@@ -289,14 +288,14 @@ public class WikiServiceImpl implements WikiService{
     if (pageId == null) {
       return list;
     }
-    Page page = getPageById(wikiType, wikiOwner, pageId);
+    PageImpl page = (PageImpl) getPageById(wikiType, wikiOwner, pageId);
     if (page == null) {
       return list;
     }
-    list.add(0, new BreadcumbData(page.getPageId(), ((PageImpl) page).getPath(), ((PageImpl)page).getContent().getTitle()));
-    Page parentPage = ((PageImpl) page).getParentPage();
+    list.add(0, new BreadcumbData(page.getName(), page.getPath(), page.getContent().getTitle()));
+    PageImpl parentPage = page.getParentPage();
     if (parentPage != null) {
-      getBreadcumb(list, wikiType, wikiOwner, parentPage.getPageId());
+      getBreadcumb(list, wikiType, wikiOwner, parentPage.getName());
     }
     
     return list;

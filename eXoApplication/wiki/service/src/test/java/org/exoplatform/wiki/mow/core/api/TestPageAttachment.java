@@ -41,32 +41,30 @@ public class TestPageAttachment extends AbstractMOWTestcase {
     
     AttachmentImpl attachment0 = wikiHomePage.createAttachment("attachment0.jpg", Resource.createPlainText("logo")) ;
     attachment0.setCreator("root") ;    
-    assertEquals(attachment0.getFilename(), "attachment0.jpg") ;
+    assertEquals(attachment0.getName(), "attachment0.jpg") ;
     assertNotNull(attachment0.getContentResource()) ;
     attachment0.setContentResource(Resource.createPlainText("logo - Updated")) ;
     
     PageImpl wikipage = wiki.createWikiPage();
-    wikipage.setName("AddPageAttachment");
+    wikipage.setName("AddPageAttachment-001") ;
     wikiHomePage.addWikiPage(wikipage);
-    wikipage.setPageId("AddPageAttachment-001") ;
     assertNull(wikipage.getContent()) ;
     
     AttachmentImpl attachment1 = wikipage.createAttachment("attachment1.jpg", Resource.createPlainText("foo")) ;
     attachment1.setCreator("you") ;    
-    assertEquals(attachment1.getFilename(), "attachment1.jpg") ;
+    assertEquals(attachment1.getName(), "attachment1.jpg") ;
     assertNotNull(attachment1.getContentResource()) ;
     attachment1.setContentResource(Resource.createPlainText("foo - Updated")) ;    
     
     AttachmentImpl attachment2 = wikipage.createAttachment("attachment2.jpg", Resource.createPlainText("faa")) ;    
     attachment2.setCreator("me") ;
-    assertEquals(attachment2.getFilename(), "attachment2.jpg") ;
+    assertEquals(attachment2.getName(), "attachment2.jpg") ;
     assertNotNull(attachment2.getContentResource()) ;
     attachment2.setContentResource(Resource.createPlainText("faa - Updated")) ;
     
     wikipage = wiki.createWikiPage();
-    wikipage.setName("AddPageAttachment02");
+    wikipage.setName("AddPageAttachment-002");
     wikiHomePage.addWikiPage(wikipage);
-    wikipage.setPageId("AddPageAttachment-002") ;
     assertNull(wikipage.getContent()) ;
   }
   
@@ -102,7 +100,7 @@ public class TestPageAttachment extends AbstractMOWTestcase {
     wikipage = (PageImpl)wService.getPageById("portal", "classic", "AddPageAttachment-002") ;
     AttachmentImpl att = wikipage.createAttachment("attachment3.jpg", Resource.createPlainText("attachment3")) ;    
     att.setCreator("me") ;
-    assertEquals(att.getFilename(), "attachment3.jpg") ;
+    assertEquals(att.getName(), "attachment3.jpg") ;
     assertNotNull(att.getContentResource()) ;
     att.setContentResource(Resource.createPlainText("attachment3 - Updated")) ;
   }

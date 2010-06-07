@@ -12,7 +12,7 @@ import org.exoplatform.wiki.commons.Utils ;
 	
 	if(results != null && results.getPage(uicomponent.getPageIndex()).size() > 0) {
 		String type = uicomponent.getCurrentWiki() ;
-		String wikiURI = Utils.getCurrentRequestURL() ;		
+		String wikiURI = uicomponent.getWikiNodeUri() ;		
 		%>		
 		<div class="UIWikiAdvanceSearchResult">
 			<div class="ResultInfo">Showing 1- of <%= results.getPage(uicomponent.getPageIndex()).size() %> of <b>"<%=uicomponent.getKeyword()%>"</b></div>

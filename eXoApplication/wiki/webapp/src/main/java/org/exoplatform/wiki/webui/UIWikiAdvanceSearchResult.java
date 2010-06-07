@@ -16,11 +16,12 @@
  */
 package org.exoplatform.wiki.webui;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.exoplatform.commons.utils.PageList;
 import org.exoplatform.container.PortalContainer;
+import org.exoplatform.portal.application.PortalRequestContext;
+import org.exoplatform.portal.config.model.PortalConfig;
+import org.exoplatform.portal.webui.portal.UIPortal;
+import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIContainer;
@@ -28,9 +29,8 @@ import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.wiki.commons.Utils;
-import org.exoplatform.wiki.mow.api.WikiNodeType;
-import org.exoplatform.wiki.mow.core.api.wiki.AttachmentImpl;
 import org.exoplatform.wiki.service.SearchResult;
+import org.exoplatform.wiki.service.WikiPageParams;
 import org.exoplatform.wiki.service.WikiService;
 
 /**
@@ -84,6 +84,21 @@ public class UIWikiAdvanceSearchResult extends UIContainer {
   private String getPageTitle(String path) throws Exception {
     WikiService wservice = (WikiService)PortalContainer.getComponent(WikiService.class) ;
     return wservice.getPageTitleOfAttachment(path) ;    
+  }
+  
+  private String getWikiNodeUri() throws Exception {
+    WikiPageParams currentPageParams = Utils.getCurrentWikiPageParams();
+    PortalRequestContext portalRequestContext = Util.getPortalRequestContext();
+    StringBuilder sb = new StringBuilder(portalRequestContext.getPortalURI());
+    UIPortal uiPortal = Util.getUIPortal();
+    String pageNodeSelected = uiPortal.getSelectedNode().getUri();
+    sb.append(pageNodeSelected);
+    if (!PortalConfig.PORTAL_TYPE.equalsIgnoreCase(currentPageParams.getType())) {
+      sb.append(currentPageParams.getType());
+      sb.append("/");
+      sb.append(currentPageParams.getOwner());
+    }
+    return sb.toString();
   }
   
   static public class DownloadAttachActionListener extends EventListener<UIWikiAdvanceSearchResult> {

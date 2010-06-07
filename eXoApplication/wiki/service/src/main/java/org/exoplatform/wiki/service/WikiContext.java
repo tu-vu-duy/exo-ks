@@ -30,12 +30,22 @@ public class WikiContext extends WikiPageParams {
 
   public static final String ADDPAGE     = "AddPage";
 
-  public static final String PAGEID      = "pageId";
-
+  public static final String PAGETITLE   = "pageTitle";
+  
+  private String             pageTitle;
+  
   private String             portalURI;
 
   private String             portletURI;
 
+  public String getPageTitle() {
+    return pageTitle;
+  }
+
+  public void setPageTitle(String pageTitle) {
+    this.pageTitle = pageTitle;
+  }
+  
   public String getPortalURI() {
     return portalURI;
   }

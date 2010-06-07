@@ -73,7 +73,7 @@ public class AddPageActionComponent extends UIComponent {
 
   public static void processAddPageAction(Map<String, Object> uiExtensionContext) {
     UIWikiPortlet wikiPortlet = (UIWikiPortlet) uiExtensionContext.get(UIWikiPortlet.class.getName());
-    String pageId = (String) uiExtensionContext.get(WikiContext.PAGEID);
+    String pageTitle = (String) uiExtensionContext.get(WikiContext.PAGETITLE);
     UIWikiPageEditForm pageEditForm = wikiPortlet.findFirstComponentOfType(UIWikiPageEditForm.class);
     UIFormStringInput titleInput = pageEditForm.getChild(UIWikiPageTitleControlArea.class).getUIStringInput();
     UIFormTextAreaInput markupInput = pageEditForm.findComponentById(UIWikiPageEditForm.FIELD_CONTENT);
@@ -84,8 +84,8 @@ public class AddPageActionComponent extends UIComponent {
     WikiService wikiService = (WikiService) PortalContainer.getComponent(WikiService.class);
     syntaxTypeSelectBox.setValue(wikiService.getDefaultWikiSyntaxId());
     
-    if(pageId != null && pageId.length() > 0){
-      titleInput.setValue(pageId);
+    if(pageTitle != null && pageTitle.length() > 0){
+      titleInput.setValue(pageTitle);
       titleInput.setEditable(false);
     }
 

@@ -293,7 +293,7 @@ public class WikiServiceImpl implements WikiService{
     if (page == null) {
       return list;
     }
-    list.add(0, new BreadcumbData(page.getPageId(), ((PageImpl) page).getPath(), page.getPageId()));
+    list.add(0, new BreadcumbData(page.getPageId(), ((PageImpl) page).getPath(), ((PageImpl)page).getContent().getTitle()));
     Page parentPage = ((PageImpl) page).getParentPage();
     if (parentPage != null) {
       getBreadcumb(list, wikiType, wikiOwner, parentPage.getPageId());

@@ -77,7 +77,7 @@ public class UIWikiPortlet extends UIPortletApplication {
       UIExtensionManager manager = getApplicationComponent(UIExtensionManager.class);
       Map<String, Object> uiExtensionContext = new HashMap<String, Object>();
       uiExtensionContext.put(UIWikiPortlet.class.getName(), this);
-      uiExtensionContext.put(WikiContext.PAGEID, pageParams.getParameter(WikiContext.PAGEID));
+      uiExtensionContext.put(WikiContext.PAGETITLE, pageParams.getParameter(WikiContext.PAGETITLE));
       if(manager.accept(UIPageToolBar.EXTENSION_TYPE, WikiContext.ADDPAGE, uiExtensionContext)){
         AddPageActionComponent.processAddPageAction(uiExtensionContext);
       }

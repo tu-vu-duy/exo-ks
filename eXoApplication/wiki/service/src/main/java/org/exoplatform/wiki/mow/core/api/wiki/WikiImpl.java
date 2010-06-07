@@ -57,9 +57,9 @@ public abstract class WikiImpl implements Wiki {
       home.setOwner(getOwner());
       ContentImpl content = createContent() ;
       home.setContent(content) ;
-      content.setTitle("WikiHome") ;
+      content.setTitle(WikiNodeType.Definition.WIKI_HOME_TITLE) ;
       content.setSyntax("xwiki/2.0") ;
-      content.setText("This is a [[**wiki home page of " + getOwner()+"**>>WikiHome"+"]]") ;
+      content.setText("This is a [[**wiki home page of " + getOwner()+"**>>" + WikiNodeType.Definition.WIKI_HOME_TITLE +"]]") ;
       home.setPageId(WikiNodeType.Definition.WIKI_HOME_NAME);
     }
     return home;

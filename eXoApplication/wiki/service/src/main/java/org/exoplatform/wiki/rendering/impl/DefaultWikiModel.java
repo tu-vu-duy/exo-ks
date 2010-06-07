@@ -106,10 +106,10 @@ public class DefaultWikiModel implements WikiModel {
       sb.append("=");
       sb.append(WikiContext.ADDPAGE);
       sb.append("&");
-      sb.append(WikiContext.PAGEID);
+      sb.append(WikiContext.PAGETITLE);
       sb.append("=");
       WikiContext wikiMarkupContext = getWikiMarkupContext(documentName);
-      sb.append(wikiMarkupContext.getPageId());
+      sb.append(wikiMarkupContext.getPageTitle());
       return sb.toString();
     }
     return "";
@@ -165,7 +165,8 @@ public class DefaultWikiModel implements WikiModel {
 
       wikiMarkupContext.setType(entityReference.extractReference(EntityType.WIKI).getName());
       wikiMarkupContext.setOwner(entityReference.extractReference(EntityType.SPACE).getName());
-      wikiMarkupContext.setPageId(entityReference.extractReference(EntityType.DOCUMENT).getName());
+      wikiMarkupContext.setPageTitle(entityReference.extractReference(EntityType.DOCUMENT).getName());
+      wikiMarkupContext.setPageId(wikiMarkupContext.getPageTitle());
       wikiMarkupContext.setPageId(TitleResolver.getPageId(wikiMarkupContext.getPageId(), false));
       if(entityReference.extractReference(EntityType.ATTACHMENT) != null){
         wikiMarkupContext.setAttachmentName(entityReference.extractReference(EntityType.ATTACHMENT).getName());

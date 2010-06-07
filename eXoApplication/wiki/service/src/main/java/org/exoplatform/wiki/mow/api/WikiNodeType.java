@@ -75,6 +75,8 @@ public interface WikiNodeType {
     public final static String WIKI_CONTAINER_REFERENCE   = "ref";
 
     public final static String WIKI_HOME_NAME             = "WikiHome";
+    
+    public final static String WIKI_HOME_TITLE            = "Wiki Home";
 
     public final static String OWNER                      = "owner";
     

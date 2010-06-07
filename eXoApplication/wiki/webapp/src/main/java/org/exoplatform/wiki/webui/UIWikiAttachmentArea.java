@@ -39,6 +39,7 @@ import org.exoplatform.wiki.commons.Utils;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.mow.core.api.wiki.AttachmentImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
+import org.exoplatform.wiki.resolver.TitleResolver;
 import org.exoplatform.wiki.service.WikiResource;
 import org.exoplatform.wiki.webui.form.UIFormUploadInput;
 
@@ -118,7 +119,7 @@ public class UIWikiAttachmentArea extends UIForm {
           imageBytes = null;
         }
         attachfile = new WikiResource(uploadResource.getMimeType(), "UTF-8", imageBytes);
-        attachfile.setName(uploadResource.getFileName());
+        attachfile.setName(TitleResolver.getPageId(uploadResource.getFileName(), false));
         attachfile.setResourceId(uploadResource.getUploadId());
       }
       if (attachfile != null) {

@@ -13,6 +13,123 @@
     <exobuild.name>portal</exobuild.name>
     <exobuild.type>product</exobuild.type>
   </properties>
+  <dependencies>
+    <!-- KS components -->
+    <dependency>
+      <groupId>org.exoplatform.ks</groupId>
+      <artifactId>exo.ks.component.common</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.exoplatform.ks</groupId>
+      <artifactId>exo.ks.component.rendering</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.exoplatform.ks</groupId>
+      <artifactId>exo.ks.component.bbcode</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.exoplatform.ks</groupId>
+      <artifactId>exo.ks.component.bbcode</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
+    <!-- KS apps -->
+    <dependency>
+      <groupId>org.exoplatform.ks</groupId>
+      <artifactId>exo.ks.eXoApplication.common</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
+    <!-- FAQ -->
+    <dependency>
+      <groupId>org.exoplatform.ks</groupId>
+      <artifactId>exo.ks.eXoApplication.faq.service</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.exoplatform.ks</groupId>
+      <artifactId>exo.ks.eXoApplication.faq.webapp</artifactId>
+      <version>${parent.version}</version>
+      <type>war</type>
+    </dependency>
+    <!-- FORUM -->
+    <dependency>
+      <groupId>org.exoplatform.ks</groupId>
+      <artifactId>exo.ks.eXoApplication.forum.service</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.exoplatform.ks</groupId>
+      <artifactId>exo.ks.eXoApplication.forum.webapp</artifactId>
+      <version>${parent.version}</version>
+      <type>war</type>
+    </dependency>
+    <!-- KS webresources and services -->
+    <dependency>
+      <groupId>org.exoplatform.ks</groupId>
+      <artifactId>exo.ks.web.ksResources</artifactId>
+      <version>${parent.version}</version>
+      <type>war</type>
+    </dependency>
+    <!-- KS extension for tomcat  -->
+    <dependency>
+      <groupId>org.exoplatform.ks</groupId>
+      <artifactId>exo.ks.extension.config</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.exoplatform.ks</groupId>
+      <artifactId>exo.ks.server.tomcat.patch</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.exoplatform.ks</groupId>
+      <artifactId>exo.ks.server.jboss.patch-ear</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.exoplatform.ks</groupId>
+      <artifactId>exo.ks.extension.webapp</artifactId>
+      <version>${parent.version}</version>
+      <type>war</type>
+    </dependency>
+    <!-- KS demo  -->
+    <dependency>
+      <groupId>org.exoplatform.ks</groupId>
+      <artifactId>exo.ks.demo.config</artifactId>
+      <version>${parent.version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.exoplatform.ks</groupId>
+      <artifactId>exo.ks.demo.cometd-war</artifactId>
+      <version>${parent.version}</version>
+      <type>war</type>
+    </dependency>
+    <dependency>
+      <groupId>org.exoplatform.ks</groupId>
+      <artifactId>exo.ks.demo.rest-ksdemo</artifactId>
+      <version>${parent.version}</version>
+      <type>war</type>
+    </dependency>
+    <dependency>
+      <groupId>org.exoplatform.ks</groupId>
+      <artifactId>exo.ks.demo.webapp</artifactId>
+      <version>${parent.version}</version>
+      <type>war</type>
+    </dependency>
+  </dependencies>
   <!-- Attach .js to the pom -->
   <build>
     <plugins>

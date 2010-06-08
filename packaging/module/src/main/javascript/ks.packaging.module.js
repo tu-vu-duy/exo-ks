@@ -64,6 +64,7 @@ function getModule(params)
     new Project("org.exoplatform.ks", "exo.ks.eXoApplication.wiki.webapp", "war", "2.0.0-SNAPSHOT").
     addDependency(new Project("org.exoplatform.ks", "exo.ks.eXoApplication.wiki.service", "jar",  "2.0.0-SNAPSHOT")).
 	addDependency(new Project("org.exoplatform.platform", "exo.platform.commons.webui.ext", "jar",  "3.0.0-Alpha04-SNAPSHOT")).
+	addDependency(new Project("org.fontbox", "fontbox", "jar",  "0.1.0")).
 	addDependency(new Project("org.xwiki.platform", "xwiki-core-configuration-api", "jar",  "2.2.4")).
 	addDependency(new Project("org.xwiki.platform", "xwiki-core-model", "jar",  "2.2.4")).
 	addDependency(new Project("org.xwiki.platform", "xwiki-core-context", "jar",  "2.2.4")).

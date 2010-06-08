@@ -30,11 +30,11 @@ import org.exoplatform.wiki.commons.Utils ;
 		      	<%	
 		      } else if (WikiNodeType.WIKI_ATTACHMENT_CONTENT.equals(result.getType())){
 		      	AttachmentImpl att = (AttachmentImpl)uicomponent.getObject(result.getPath(), result.getType()) ;
-		      	String downloadAction = uicomponent.event("DownloadAttach", result.getPath() + "/" + att.getFilename()) ;
-		      	String extension = Utils.getExtension(att.getFilename()) ;
+		      	String downloadAction = uicomponent.event("DownloadAttach", result.getPath() + "/" + att.getName()) ;
+		      	String extension = Utils.getExtension(att.getName()) ;
 		      	%>		     
 		      	<div class="BlockResultFeed">
-		      		<a class="$extension TxtTitFeed" href="$downloadAction"><span><%=att.getFilename()%></span></a>
+		      		<a class="$extension TxtTitFeed" href="$downloadAction"><span><%=att.getName()%></span></a>
 							<div class="TxtDetail"><%=result.getExcerpt()%></div>
 							<div> <a class="TxtMark" onclick="$viewPage" href="$wikiURI">$type</a> > <a class="TxtMark" onclick="$viewPage" href="$pageURI"><%=uicomponent.getPageTitle(result.getPath())%></a></div>
 						</div>    	

@@ -229,7 +229,7 @@ public class TestWikiService extends AbstractMOWTestcase {
     assertNotNull(attachment1.getContentResource()) ;
     attachment1.setContentResource(Resource.createPlainText("exoplatform content mamagement")) ;
     
-    assertEquals("GetPageTitleOfAttachment", wService.getPageTitleOfAttachment(attachment1.getPath())) ;
+    assertEquals("GetPageTitleOfAttachment", wService.getPageTitleOfAttachment(attachment1.getJCRContentPath())) ;
     
   }
   

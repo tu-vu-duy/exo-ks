@@ -172,9 +172,9 @@ public class WikiServiceImpl implements WikiService{
     try{
       String relPath  = path;
       if (relPath.startsWith("/")) relPath = relPath.substring(1) ;
-      if(relPath.indexOf("/att") > 0) {
-        relPath = relPath.substring(0, relPath.indexOf("/att")) + "/" + WikiNodeType.Definition.CONTENT;
-      }
+      String temp = relPath.substring(0,relPath.lastIndexOf("/")) ;
+      temp = temp.substring(0,temp.lastIndexOf("/")) ;
+      relPath = temp  + "/" + WikiNodeType.Definition.CONTENT;
       Model model = getModel();
       WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();      
       ContentImpl content =  wStore.getSession().findByPath(ContentImpl.class, relPath) ;

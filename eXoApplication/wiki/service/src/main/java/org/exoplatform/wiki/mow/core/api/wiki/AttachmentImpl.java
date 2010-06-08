@@ -44,6 +44,10 @@ public abstract class AttachmentImpl extends NTFile implements Attachment {
   @Path
   public abstract String getPath();
   
+  public String getJCRContentPath() {
+    return getPath() + "/jcr:content";
+  }
+  
   @WorkspaceName
   public abstract String getWorkspace();
   

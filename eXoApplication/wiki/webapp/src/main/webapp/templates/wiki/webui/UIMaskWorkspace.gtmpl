@@ -12,6 +12,7 @@
   String maskId = uicomponent.getId() ;
   def rcontext = _ctx.getRequestContext() ;
 	rcontext.getJavascriptManager().importJavascript('eXo.portal.UIMaskWorkspace');	
+	rcontext.getJavascriptManager().importJavascript('eXo.wiki.UIWikiPagePreview');	
 	
 	int width = uicomponent.getWindowWidth();
 	int height = uicomponent.getWindowHeight();
@@ -19,8 +20,10 @@
 	String id = uicomponent.getId();
 	
 	String init = "eXo.portal.UIMaskWorkspace.init('"+id+"', "+isShow+", "+width+", "+height+");";
+	String initHeight = "eXo.wiki.UIWikiPagePreview.init('"+id+"');";
 	String resize = "eXo.portal.UIMaskWorkspace.resetPosition('"+id+"');";
 	rcontext.getJavascriptManager().addCustomizedOnLoadScript(init) ;
+	rcontext.getJavascriptManager().addCustomizedOnLoadScript(initHeight) ;
 	rcontext.getJavascriptManager().addOnResizeJavascript("eXo.portal.UIMaskWorkspace.resetPosition") ;
 %>
 <div class="UIMaskWorkspace" id="$maskId" style="display: none;">

@@ -60,5 +60,12 @@
     </param>
   </javascript>
   
+  <javascript>
+    <param>
+      <js-module>eXo.wiki.UIWikiPagePreview</js-module>
+      <js-path>/javascript/eXo/wiki/UIWikiPagePreview.js</js-path>
+    </param>
+  </javascript>
+  
 </gatein-resources>
 

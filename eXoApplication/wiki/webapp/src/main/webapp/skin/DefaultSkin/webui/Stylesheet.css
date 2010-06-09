@@ -215,7 +215,7 @@
 }
 
 .UIWikiPageEditForm .UIForm .HorizontalLayout textarea {
-	width: 922px;
+	width: 885px;
 	height: auto;
 	border: 1px dashed #707070;
 	padding: 0 0 0 8px;
@@ -225,7 +225,7 @@
 	border: 1px dashed #707070;
 	height: auto;
 	padding: 0 0 0 8px;
-	width: 670px;
+	width: 630px;
 }
 
 .UIWikiPageEditForm .UIPageToolBar .Icon {

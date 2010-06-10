@@ -52,6 +52,14 @@ public class UIWikiBreadCrumb extends UIContainer {
     this.breadCumbs = breadCumbs;
   }
   
+  public String getParentURL() throws Exception {
+    if(breadCumbs.size() > 1) {
+      return createActionLink(breadCumbs.get(breadCumbs.size() - 2)) ;
+    }else {
+      return createActionLink(breadCumbs.get(0)) ;
+    }     
+  }
+  
   public String createActionLink(BreadcumbData breadCumbData) throws Exception {
     WikiPageParams currentPageParams = Utils.getCurrentWikiPageParams();
     PortalRequestContext portalRequestContext = Util.getPortalRequestContext();

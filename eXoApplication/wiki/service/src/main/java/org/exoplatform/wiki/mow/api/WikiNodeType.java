@@ -57,6 +57,10 @@ public interface WikiNodeType {
   public final static String WIKI_ANNOTATION       = "wiki:annotation";
 
   public final static String WIKI_MARKUP           = "wiki:markup";
+  
+  public final static String WIKI_TRASH           = "wiki:trash";
+  
+  public final static String WIKI_REMOVED           = "wiki:removed";
 
   public interface Definition {
     
@@ -75,6 +79,8 @@ public interface WikiNodeType {
     public final static String WIKI_CONTAINER_REFERENCE   = "ref";
 
     public final static String WIKI_HOME_NAME             = "WikiHome";
+    
+    public final static String TRASH_NAME             = "Trash";
     
     public final static String WIKI_HOME_TITLE            = "Wiki Home";
 

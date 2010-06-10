@@ -3,7 +3,11 @@
      String action = entry.getActionName();
      def actionComponent = entry.getActionComponent();
      String actionLabel = _ctx.appRes(uicomponent.getName() + ".action." + action);
+     
      String link = actionComponent.event(action);
+     if(action == "DeletePage") {
+     		link = actionComponent.url(action);
+     }
        if(uicomponent.parentIsForm()){
          if(uicomponent.getSaveAction().equals(action) && uicomponent.isNewMode()){
            link = uicomponent.getUrlToSavePage(actionComponent.getId(), action);

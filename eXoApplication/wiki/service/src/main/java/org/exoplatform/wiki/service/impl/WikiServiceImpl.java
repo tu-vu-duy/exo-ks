@@ -11,6 +11,9 @@ import org.exoplatform.commons.utils.PageList;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.portal.config.model.PortalConfig;
 import org.exoplatform.services.jcr.ext.hierarchy.NodeHierarchyCreator;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
+import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.wiki.mow.api.Model;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.mow.api.Wiki;
@@ -31,6 +34,7 @@ import org.exoplatform.wiki.resolver.TitleResolver;
 import org.exoplatform.wiki.service.BreadcumbData;
 import org.exoplatform.wiki.service.SearchData;
 import org.exoplatform.wiki.service.SearchResult;
+import org.exoplatform.wiki.service.WikiPageParams;
 import org.exoplatform.wiki.service.WikiService;
 import org.exoplatform.wiki.utils.Utils;
 import org.xwiki.rendering.syntax.Syntax;
@@ -47,6 +51,7 @@ public class WikiServiceImpl implements WikiService{
   
   private NodeHierarchyCreator nodeCreator ;
   private JCRDataStorage jcrDataStorage ;
+  private static final Log log = ExoLogger.getLogger(WikiServiceImpl.class);
   
   public WikiServiceImpl(NodeHierarchyCreator creator, JCRDataStorage jcrDataStorage) {
     nodeCreator = creator ;
@@ -59,6 +64,7 @@ public class WikiServiceImpl implements WikiService{
     WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
     
     WikiImpl wiki = (WikiImpl) getWiki(wikiType, wikiOwner, model);
+    
     PageImpl page = wiki.createWikiPage() ;
     ContentImpl content = wiki.createContent();
     
@@ -78,14 +84,22 @@ public class WikiServiceImpl implements WikiService{
   }
   
   public boolean deletePage(String wikiType, String wikiOwner, String pageId) throws Exception {
-    try{
-      PageImpl page = (PageImpl)getPageById(wikiType, wikiOwner, pageId) ;
-      page.remove() ;
-    }catch(Exception e) {
-      return false ;
-    }
-    return true ;    
+    if(WikiNodeType.Definition.WIKI_HOME_NAME.equals(pageId) || pageId == null) return false ;
+    PageImpl page = (PageImpl)getPageById(wikiType, wikiOwner, pageId)  ;
+    Model model = getModel();
+    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
+    WikiImpl wiki = (WikiImpl)getWiki(wikiType, wikiOwner, model) ;
+    return jcrDataStorage.deletePage(page.getPath(), wiki.getPath(), wStore.getSession()) ;    
   }
+  
+  /*public boolean deletePage(WikiPageParams pageParams) throws Exception {
+    PageImpl page = (PageImpl)getPageById(pageParams.getType(), pageParams.getOwner(), pageParams.getPageId())  ;
+    Model model = getModel();
+    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
+    WikiImpl wiki = (WikiImpl)getWiki(pageParams.getType(), pageParams.getOwner(), model) ;
+    System.out.println("path ==>" + wiki.getPath());
+    return jcrDataStorage.deletePage(page.getPath(), wiki.getPath(), wStore.getSession()) ;        
+  }*/
   
   public boolean movePage(String pageId, String newParentId, String wikiType, String wikiOwner) throws Exception {
     try {
@@ -229,8 +243,12 @@ public class WikiServiceImpl implements WikiService{
         appPath = (appPath != null) ? appPath : "ApplicationData";
         path = path + "/" + appPath + "/" + WikiNodeType.Definition.WIKI_APPLICATION;
       }
-      String statement = "jcr:path LIKE '"+ path + "/%/" + pageId + "' OR " + "jcr:path='"+ path + "/" + pageId + "'";
-      return statement ;
+      StringBuilder statement = new StringBuilder() ;
+      statement.append("(jcr:path LIKE '").append(path).append("/%/").append(pageId).append("' OR ")
+      .append("jcr:path='").append(path).append("/").append(pageId).append("')");
+      statement.append(" AND ")
+      .append("( jcr:mixinTypes IS NULL OR NOT(jcr:mixinTypes = '").append(WikiNodeType.WIKI_REMOVED).append("') )") ;
+      return statement.toString() ;
     }
     return null;
   }

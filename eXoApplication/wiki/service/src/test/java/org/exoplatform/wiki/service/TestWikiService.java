@@ -160,8 +160,9 @@ public class TestWikiService extends AbstractMOWTestcase {
   
   public void testDeletePage() throws Exception{    
     wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "deletePage", "WikiHome") ;    
-    assertTrue(wService.deletePage("portal", "classic", "deletePage")) ;    
-    assertFalse(wService.deletePage("portal", "classic", "deletePageWrong")) ;
+    assertTrue(wService.deletePage(PortalConfig.PORTAL_TYPE, "classic", "deletePage")) ;
+    assertNull(wService.getPageById(PortalConfig.PORTAL_TYPE, "classic", "deletePage")) ; 
+    assertFalse(wService.deletePage(PortalConfig.PORTAL_TYPE, "classic", "WikiHome")) ;
   }
 
   public void testSearchContent() throws Exception {
@@ -244,5 +245,7 @@ public class TestWikiService extends AbstractMOWTestcase {
     assertNotNull(wService.getAttachmentAsStream(attachment1.getPath()+"/jcr:content")) ;
     
   }
+  
+  
   
 }

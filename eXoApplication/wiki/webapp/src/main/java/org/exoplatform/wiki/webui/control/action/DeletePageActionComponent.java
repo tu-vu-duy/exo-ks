@@ -19,12 +19,24 @@ package org.exoplatform.wiki.webui.control.action;
 import java.util.Arrays;
 import java.util.List;
 
+import org.exoplatform.container.PortalContainer;
+import org.exoplatform.portal.application.PortalRequestContext;
+import org.exoplatform.portal.webui.util.Util;
+import org.exoplatform.web.application.ApplicationMessage;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
+import org.exoplatform.webui.core.UIApplication;
 import org.exoplatform.webui.core.UIComponent;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.ext.filter.UIExtensionFilter;
 import org.exoplatform.webui.ext.filter.UIExtensionFilters;
+import org.exoplatform.wiki.commons.Utils;
+import org.exoplatform.wiki.mow.api.WikiNodeType;
+import org.exoplatform.wiki.resolver.PageResolver;
+import org.exoplatform.wiki.service.WikiPageParams;
+import org.exoplatform.wiki.service.WikiService;
+import org.exoplatform.wiki.webui.UIWikiBreadCrumb;
+import org.exoplatform.wiki.webui.UIWikiPortlet;
 import org.exoplatform.wiki.webui.control.filter.IsViewModeFilter;
 import org.exoplatform.wiki.webui.control.listener.UIPageToolBarActionListener;
 
@@ -36,13 +48,17 @@ import org.exoplatform.wiki.webui.control.listener.UIPageToolBarActionListener;
  */
 @ComponentConfig(
   events = {
-    @EventConfig(listeners = DeletePageActionComponent.DeletePageActionListener.class)
+    @EventConfig(listeners = DeletePageActionComponent.DeletePageActionListener.class, confirm="DeletePageAction.confirm.Message")
   }
 )
 public class DeletePageActionComponent extends UIComponent {
   
+  
   private static final List<UIExtensionFilter> FILTERS = Arrays.asList(new UIExtensionFilter[] { new IsViewModeFilter() });
 
+  public DeletePageActionComponent() {
+    
+  }
   @UIExtensionFilters
   public List<UIExtensionFilter> getFilters() {
     return FILTERS;
@@ -51,8 +67,24 @@ public class DeletePageActionComponent extends UIComponent {
   public static class DeletePageActionListener extends UIPageToolBarActionListener<DeletePageActionComponent> {
     @Override
     protected void processEvent(Event<DeletePageActionComponent> event) throws Exception {
-      // TODO Auto-generated method stub
-      super.processEvent(event);
+      String requestURL = Utils.getCurrentRequestURL();
+      UIWikiPortlet wikiPortlet = event.getSource().getAncestorOfType(UIWikiPortlet.class);
+      UIApplication uiApp = event.getSource().getAncestorOfType(UIApplication.class);
+      PageResolver pageResolver = (PageResolver) PortalContainer.getComponent(PageResolver.class);
+      WikiPageParams params = pageResolver.extractWikiPageParams(requestURL) ;
+      WikiService wService = (WikiService) PortalContainer.getComponent(WikiService.class);
+      UIWikiBreadCrumb breadcumb = wikiPortlet.findFirstComponentOfType(UIWikiBreadCrumb.class) ;
+      PortalRequestContext prContext = Util.getPortalRequestContext();
+      String parentURL = breadcumb.getParentURL() ;
+      if(WikiNodeType.Definition.WIKI_HOME_NAME.equals(params.getPageId())) {
+        uiApp.addMessage(new ApplicationMessage("DeletePageAction.msg.Warning", null, ApplicationMessage.WARNING));
+        event.getRequestContext().addUIComponentToUpdateByAjax(uiApp.getUIPopupMessages()) ;
+        prContext.getResponse().sendRedirect(parentURL);
+        return ;        
+      }
+      wService.deletePage(params.getType(), params.getOwner(), params.getPageId()) ;      
+      prContext.setResponseComplete(true);      
+      prContext.getResponse().sendRedirect(parentURL);      
     }
   }
 }

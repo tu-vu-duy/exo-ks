@@ -196,6 +196,11 @@
           <requiredPrimaryType>exo:wikihome</requiredPrimaryType>
         </requiredPrimaryTypes>
       </childNodeDefinition>
+      <childNodeDefinition name="Trash" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
+        <requiredPrimaryTypes>
+          <requiredPrimaryType>wiki:trash</requiredPrimaryType>
+        </requiredPrimaryTypes>
+      </childNodeDefinition>
     </childNodeDefinitions>
   </nodeType>
   
@@ -289,6 +294,45 @@
         </requiredPrimaryTypes>
       </childNodeDefinition-->
     </childNodeDefinitions>
-  </nodeType>  
+  </nodeType> 
+  
+  <nodeType name="wiki:removed" isMixin="true" hasOrderableChildNodes="false" primaryItemName="">
+		<propertyDefinitions>
+			<propertyDefinition name="removedBy" requiredType="String" autoCreated="false" mandatory="true" onParentVersion="COPY" protected="false" multiple="false">
+				<valueConstraints/>
+			</propertyDefinition>
+			<propertyDefinition name="removedDate" requiredType="Date" autoCreated="false" mandatory="true" onParentVersion="COPY" protected="false" multiple="false">
+				<valueConstraints/>
+			</propertyDefinition>							
+		</propertyDefinitions>
+	</nodeType>
+	
+	<nodeType name="wiki:renamed" isMixin="true" hasOrderableChildNodes="false" primaryItemName="">
+		<propertyDefinitions>
+			<propertyDefinition name="newName" requiredType="String" autoCreated="false" mandatory="true" onParentVersion="COPY" protected="false" multiple="false">
+				<valueConstraints/>
+			</propertyDefinition>
+			<propertyDefinition name="renamedBy" requiredType="String" autoCreated="false" mandatory="true" onParentVersion="COPY" protected="false" multiple="false">
+				<valueConstraints/>
+			</propertyDefinition>			
+			<propertyDefinition name="renamedDate" requiredType="Date" autoCreated="false" mandatory="true" onParentVersion="COPY" protected="false" multiple="false">
+				<valueConstraints/>
+			</propertyDefinition>							
+		</propertyDefinitions>
+	</nodeType> 
+	
+	<nodeType name="wiki:trash" isMixin="false" hasOrderableChildNodes="false">
+    <supertypes>
+      <supertype>nt:base</supertype>      
+    </supertypes>
+    <childNodeDefinitions>
+      <childNodeDefinition name="*" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="true">
+        <requiredPrimaryTypes>
+          <requiredPrimaryType>wiki:page</requiredPrimaryType>
+        </requiredPrimaryTypes>
+      </childNodeDefinition>
+    </childNodeDefinitions>
+  </nodeType>
+  
 </nodeTypes>
   

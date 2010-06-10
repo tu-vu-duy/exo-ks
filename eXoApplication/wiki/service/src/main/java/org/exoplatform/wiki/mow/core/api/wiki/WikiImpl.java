@@ -21,6 +21,7 @@ import org.chromattic.api.annotations.MappedBy;
 import org.chromattic.api.annotations.Name;
 import org.chromattic.api.annotations.OneToOne;
 import org.chromattic.api.annotations.Owner;
+import org.chromattic.api.annotations.Path;
 import org.chromattic.api.annotations.Property;
 import org.exoplatform.wiki.mow.api.Wiki;
 import org.exoplatform.wiki.mow.api.WikiNodeType;
@@ -71,7 +72,10 @@ public abstract class WikiImpl implements Wiki {
   public abstract String getOwner();
   
   public abstract void setOwner(String wikiOwner);
-
+  
+  @Path
+  public abstract String getPath();
+  
   public PageImpl getPageByID(String id) {
     throw new UnsupportedOperationException();
   }

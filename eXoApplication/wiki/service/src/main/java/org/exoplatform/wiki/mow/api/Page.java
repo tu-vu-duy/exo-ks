@@ -17,6 +17,7 @@
 package org.exoplatform.wiki.mow.api;
 
 import java.util.Collection;
+import java.util.Date;
 
 import org.exoplatform.wiki.mow.api.content.Content;
 
@@ -36,6 +37,16 @@ public interface Page {
    */
   String getOwner();
 
+  /**
+   * The Author is changed when any part of the document changes (content, attachments).
+   */
+  String getAuthor();
+  
+  /**
+   * The date when any part of the document changes (content, attachments).
+   */
+  Date getUpdatedDate();
+  
   /**
    * Get the actual content of the page
    * 

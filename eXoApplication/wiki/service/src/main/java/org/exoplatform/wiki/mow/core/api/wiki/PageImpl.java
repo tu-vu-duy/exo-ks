@@ -17,6 +17,7 @@
 package org.exoplatform.wiki.mow.core.api.wiki;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 
 import org.chromattic.api.DuplicateNameException;
@@ -62,10 +63,15 @@ public abstract class PageImpl implements Page {
   public abstract ContentImpl getContent();  
   public abstract void setContent(ContentImpl content);
   
-
   @Property(name = WikiNodeType.Definition.OWNER)
   public abstract String getOwner();
   public abstract void setOwner(String owner);
+  
+  @Property(name = WikiNodeType.Definition.AUTHOR)
+  public abstract String getAuthor();
+  
+  @Property(name = WikiNodeType.Definition.UPDATED_DATE)
+  public abstract Date getUpdatedDate();
   
   @Create
   public abstract AttachmentImpl createAttachment();

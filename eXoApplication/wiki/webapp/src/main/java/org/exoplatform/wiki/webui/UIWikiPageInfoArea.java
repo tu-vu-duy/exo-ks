@@ -16,9 +16,13 @@
  */
 package org.exoplatform.wiki.webui;
 
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.core.UIContainer;
 import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
+import org.exoplatform.wiki.commons.Utils;
+import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 
 /**
  * Created by The eXo Platform SAS
@@ -32,4 +36,16 @@ import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
   )
 public class UIWikiPageInfoArea extends UIContainer {
 
+  private static final Log log = ExoLogger.getLogger("wiki:UIWikiPageInfoArea");
+
+  private PageImpl getCurrentWikiPage() {
+    PageImpl currentPage = null;
+    try {
+      currentPage = (PageImpl) Utils.getCurrentWikiPage();
+    } catch (Exception e) {
+      log.warn("An error happened when getting current wiki page", e);
+    }
+    return currentPage;
+  }
+  
 }

@@ -95,7 +95,9 @@ public class TestWikiPage extends AbstractMOWTestcase {
     
     PageImpl editedPage = wikiHomePage.getWikiPage("UpdateWikiPage-001") ;
     assertNotNull(editedPage) ;
-    assertEquals(editedPage.getOwner(), "Demo") ;    
+    assertEquals(editedPage.getOwner(), "Demo") ;  
+    assertNotNull(editedPage.getAuthor()) ;
+    assertNotNull(editedPage.getUpdatedDate()) ;
   }
   
   public void testDeleteWikiPage() {

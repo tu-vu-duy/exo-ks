@@ -85,6 +85,8 @@ public interface WikiNodeType {
     public final static String WIKI_HOME_TITLE            = "Wiki Home";
 
     public final static String OWNER                      = "owner";
+    
+    public final static String AUTHOR                     = "author";
 
     public final static String CONTENT                    = "content";
 
@@ -97,6 +99,8 @@ public interface WikiNodeType {
     public final static String TEXT                       = "text";
 
     public final static String SYNTAX                     = "syntax";
+    
+    public final static String UPDATED_DATE               = "updatedDate";
     
     public final static String CREATED              = "jcr:created";
     

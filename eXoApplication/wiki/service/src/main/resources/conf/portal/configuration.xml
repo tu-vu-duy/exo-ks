@@ -49,6 +49,10 @@
     <type>org.exoplatform.wiki.rendering.impl.RenderingServiceImpl</type>
   </component>
   
+  <component>
+    <type>org.exoplatform.services.jcr.impl.ext.action.SessionActionCatalog</type>
+  </component>
+  
   <!-- Only used for debugging and tracing -->
   <!--component>
     <key>org.exoplatform.services.log.LogConfigurationInitializer</key>
@@ -148,6 +152,34 @@
           <property name="org.chromattic.api.Option.root_node.create" value="true"/>
         </properties-param>
       --></init-params>
+    </component-plugin>
+  </external-component-plugins>
+  
+  <external-component-plugins>
+    <target-component>org.exoplatform.services.jcr.impl.ext.action.SessionActionCatalog</target-component>
+    <component-plugin>
+      <name>Last Update Action</name>
+      <set-method>addPlugin</set-method>
+      <type>org.exoplatform.services.jcr.impl.ext.action.AddActionsPlugin</type>
+      <description>add actions plugin</description>
+      <init-params>
+        <object-param>
+          <name>actions</name>
+          <object type="org.exoplatform.services.jcr.impl.ext.action.AddActionsPlugin$ActionsConfig">
+            <field  name="actions">
+              <collection type="java.util.ArrayList">
+                <value>
+                  <object type="org.exoplatform.services.jcr.impl.ext.action.ActionConfiguration">
+                    <field  name="eventTypes"><string>addNode,changeProperty</string></field>
+                    <field  name="nodeTypes"><string>wiki:page,wiki:content,wiki:attachment</string></field>
+                    <field  name="actionClassName"><string>org.exoplatform.wiki.service.jcrext.UpdateWikiPageAction</string></field>
+                  </object>
+                </value>
+              </collection>
+            </field>
+          </object>
+        </object-param>
+      </init-params>
     </component-plugin>
   </external-component-plugins>
   

@@ -34,7 +34,6 @@ import org.exoplatform.wiki.resolver.TitleResolver;
 import org.exoplatform.wiki.service.BreadcumbData;
 import org.exoplatform.wiki.service.SearchData;
 import org.exoplatform.wiki.service.SearchResult;
-import org.exoplatform.wiki.service.WikiPageParams;
 import org.exoplatform.wiki.service.WikiService;
 import org.exoplatform.wiki.utils.Utils;
 import org.xwiki.rendering.syntax.Syntax;
@@ -76,6 +75,12 @@ public class WikiServiceImpl implements WikiService{
     String pageId = TitleResolver.getPageId(title, false);
     page.setName(pageId) ;
     parentPage.addWikiPage(page) ;
+    ConversationState conversationState = ConversationState.getCurrent();
+    String creator = null;
+    if (conversationState != null && conversationState.getIdentity() != null) {
+      creator = conversationState.getIdentity().getUserId();
+    }
+    page.setOwner(creator);
     page.setContent(content);
     page.getContent().setTitle(title);
     model.save();    

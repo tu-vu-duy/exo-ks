@@ -1,4 +1,25 @@
+<%
+  import java.util.Locale;
+  import java.text.DateFormat;
+  import org.exoplatform.portal.webui.util.Util;
+  
+  Locale currentLocale = Util.getPortalRequestContext().getLocale();
+  DateFormat df = DateFormat.getDateInstance(DateFormat.LONG, currentLocale);
+  
+  currentWikiPage = uicomponent.getCurrentWikiPage();
+  String creator = currentWikiPage.getOwner();
+  creator = (creator != null) ? creator : "anonymous";
+  String author = currentWikiPage.getAuthor();
+  author = (author != null) ? author : "anonymous";
+  String updatedDate = df.format(currentWikiPage.getUpdatedDate());
+  int attachmentsTotal =  currentWikiPage.getAttachments().size();
+  
+%>
 <div class="UIWikiPageInfoArea">
-	<div class="TxtFeed">Last modified by <a class="Link" href="">admin</a> at 17:06 pm 28/02/2010 <a class="Link" href="">(view change)</a></div>
-	<div class="TxtFeed"><b>3 </b><a class="Link" href="">attachment (s)</a>  - <b>15</b> <a class="Link" href="">visitors</a></div>
+	<div class="TxtFeed">
+	  Added by <a class="Link" href=""><%= creator %></a>,
+	  Last modified by <a class="Link" href=""><%= author %></a> at <%= updatedDate %>
+	  <a class="Link" href="">(view change)</a>
+	</div>
+	<div class="TxtFeed"><b><%= attachmentsTotal %> </b><a class="Link" href="">attachment (s)</a>  - <b>15</b> <a class="Link" href="">visitors</a></div>
 </div>

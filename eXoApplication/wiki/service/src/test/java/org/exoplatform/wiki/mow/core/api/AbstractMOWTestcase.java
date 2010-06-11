@@ -20,6 +20,15 @@ import junit.framework.TestCase;
 
 import org.exoplatform.container.StandaloneContainer;
 import org.exoplatform.container.component.RequestLifeCycle;
+import org.exoplatform.services.security.ConversationState;
+import org.exoplatform.services.security.Identity;
+import org.exoplatform.wiki.mow.api.Model;
+import org.exoplatform.wiki.mow.api.WikiType;
+import org.exoplatform.wiki.mow.core.api.wiki.GroupWiki;
+import org.exoplatform.wiki.mow.core.api.wiki.PortalWiki;
+import org.exoplatform.wiki.mow.core.api.wiki.UserWiki;
+import org.exoplatform.wiki.mow.core.api.wiki.WikiContainer;
+import org.exoplatform.wiki.mow.core.api.wiki.WikiHome;
 
 /**
  * @author <a href="mailto:patrice.lamarque@exoplatform.com">Patrice
@@ -76,4 +85,37 @@ public abstract class AbstractMOWTestcase extends TestCase {
     }
   }
 
+  protected void startSessionAs(String user) {
+    Identity identity = new Identity(user);
+    ConversationState state = new ConversationState(identity);
+    ConversationState.setCurrent(state);
+  }
+  
+  protected WikiHome getWikiHomeOfWiki(WikiType wikiType, String wikiName, Model mod){
+    Model model = mod;
+    if (model == null) {
+      model = mowService.getModel();
+    }
+    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
+    WikiHome wikiHomePage = null;
+    switch(wikiType){
+      case PORTAL:
+        WikiContainer<PortalWiki> portalWikiContainer = wStore.getWikiContainer(WikiType.PORTAL);
+        PortalWiki pwiki = portalWikiContainer.addWiki(wikiName);
+        wikiHomePage = pwiki.getWikiHome();
+        break;
+      case GROUP:
+        WikiContainer<GroupWiki> groupWikiContainer = wStore.getWikiContainer(WikiType.GROUP);
+        GroupWiki gwiki = groupWikiContainer.addWiki(wikiName);
+        wikiHomePage = gwiki.getWikiHome();
+        break;
+      case USER:
+        WikiContainer<UserWiki> userWikiContainer = wStore.getWikiContainer(WikiType.USER);
+        UserWiki uwiki = userWikiContainer.addWiki(wikiName);
+        wikiHomePage = uwiki.getWikiHome();
+        break;
+    }
+    return wikiHomePage;
+  }
+  
 }

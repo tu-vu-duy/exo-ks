@@ -19,13 +19,11 @@ package org.exoplatform.wiki.rendering.impl;
 import org.chromattic.ext.ntdef.Resource;
 import org.exoplatform.wiki.mow.api.Model;
 import org.exoplatform.wiki.mow.api.WikiType;
-import org.exoplatform.wiki.mow.core.api.AbstractMOWTestcase;
 import org.exoplatform.wiki.mow.core.api.WikiStoreImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.PortalWiki;
 import org.exoplatform.wiki.mow.core.api.wiki.WikiContainer;
 import org.exoplatform.wiki.mow.core.api.wiki.WikiHome;
-import org.exoplatform.wiki.rendering.RenderingService;
 import org.exoplatform.wiki.service.WikiContext;
 import org.xwiki.context.Execution;
 import org.xwiki.context.ExecutionContext;
@@ -35,18 +33,7 @@ import org.xwiki.rendering.syntax.Syntax;
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Nov
  * 5, 2009
  */
-public class TestRenderingService extends AbstractMOWTestcase {
-
-  RenderingServiceImpl renderingService;
-
-  protected void setUp() throws Exception {
-    super.setUp();
-    renderingService = (RenderingServiceImpl) container.getComponentInstanceOfType(RenderingService.class);
-  }
-
-  protected void tearDown() throws Exception {
-    super.tearDown();
-  }
+public class TestRenderingService extends AbstractRenderingTestCase {
 
   public void testRender() throws Exception {
     assertEquals("<p>This is <strong>bold</strong></p>", renderingService.render("This is **bold**", Syntax.XWIKI_2_0.toIdString()));

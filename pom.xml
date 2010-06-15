@@ -19,8 +19,16 @@
     <org.exoplatform.platform.version>3.0.0-Alpha04-SNAPSHOT</org.exoplatform.platform.version>
     <org.exoplatform.ecm.dms.version>3.0.0-Alpha04</org.exoplatform.ecm.dms.version>
     <org.xwiki.platform.version>2.2.4</org.xwiki.platform.version>
+	<!--dependencies which Code Macro depends on-->
+	<jython-standalone.version>2.5.1-xwiki</jython-standalone.version>
+	<pygments.version>1.2.2-xwiki</pygments.version>
+	<!---->
 	<!--commons-lang version for xwiki 2.2.4-->
 	<commons-lang.version>2.4</commons-lang.version>
+	<!--dependencies which org.xwiki.platform:xwiki-core-properties depends on-->
+	<javax.validation.version>1.0.0.GA</javax.validation.version>
+	<hibernate-validator.version>4.0.0.GA</hibernate-validator.version>
+	<!---->
     <javassist.version>3.8.0.GA</javassist.version>
   </properties>
   

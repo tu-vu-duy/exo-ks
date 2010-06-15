@@ -65,6 +65,10 @@ function getModule(params)
     addDependency(new Project("org.exoplatform.ks", "exo.ks.eXoApplication.wiki.service", "jar",  "2.0.0-SNAPSHOT")).
 	addDependency(new Project("org.exoplatform.platform", "exo.platform.commons.webui.ext", "jar",  "3.0.0-Alpha04-SNAPSHOT")).
 	addDependency(new Project("org.fontbox", "fontbox", "jar",  "0.1.0")).
+	addDependency(new Project("javax.validation", "validation-api", "jar",  "1.0.0.GA")).
+	addDependency(new Project("org.hibernate", "hibernate-validator", "jar",  "4.0.0.GA")).
+	addDependency(new Project("org.python", "jython-standalone", "jar",  "2.5.1-xwiki")).
+	addDependency(new Project("pygments", "pygments", "jar",  "1.2.2-xwiki")).
 	addDependency(new Project("org.xwiki.platform", "xwiki-core-configuration-api", "jar",  "2.2.4")).
 	addDependency(new Project("org.xwiki.platform", "xwiki-core-model", "jar",  "2.2.4")).
 	addDependency(new Project("org.xwiki.platform", "xwiki-core-context", "jar",  "2.2.4")).
@@ -74,6 +78,9 @@ function getModule(params)
 	addDependency(new Project("org.xwiki.platform", "xwiki-core-rendering-api", "jar",  "2.2.4")).
 	addDependency(new Project("org.xwiki.platform", "xwiki-core-component-default", "jar",  "2.2.4")).
 	addDependency(new Project("org.xwiki.platform", "xwiki-core-rendering-syntax-wikimodel", "jar",  "2.2.4")).
+	addDependency(new Project("org.xwiki.platform", "xwiki-core-rendering-macro-box", "jar",  "2.2.4")).
+	addDependency(new Project("org.xwiki.platform", "xwiki-core-rendering-macro-message", "jar",  "2.2.4")).
+	addDependency(new Project("org.xwiki.platform", "xwiki-core-rendering-macro-code", "jar",  "2.2.4")).
 	addDependency(new Project("org.wikimodel", "org.wikimodel.wem", "jar",  "2.0.7-20100319"));
     
   module.eXoApplication.wiki.deployName = "wiki";

@@ -30,11 +30,13 @@ public class TestMacroRendering extends AbstractRenderingTestCase {
   public void testRenderInfoMacro() throws Exception {
     String expectedHtml = "<div class=\"box infomessage\">This is an info.</div>";
     assertEquals(expectedHtml, renderingService.render("{{info}}This is an info.{{/info}}", Syntax.XWIKI_2_0.toIdString()));
+    assertEquals(expectedHtml, renderingService.render("{info}This is an info.{info}", Syntax.CONFLUENCE_1_0.toIdString()));
   }
 
   public void testRenderWarningMacro() throws Exception {
     String expectedHtml = "<div class=\"box warningmessage\">This is an warning.</div>";
     assertEquals(expectedHtml, renderingService.render("{{warning}}This is an warning.{{/warning}}", Syntax.XWIKI_2_0.toIdString()));
+    assertEquals(expectedHtml, renderingService.render("{warning}This is an warning.{warning}", Syntax.CONFLUENCE_1_0.toIdString()));
   }
 
   public void testRenderErrorMacro() throws Exception {

@@ -75,6 +75,7 @@ function getModule(params)
 	addDependency(new Project("org.xwiki.platform", "xwiki-core-component-api", "jar",  "2.3.1")).
 	addDependency(new Project("org.xwiki.platform", "xwiki-core-properties", "jar",  "2.3.1")).
 	addDependency(new Project("org.xwiki.platform", "xwiki-core-xml", "jar",  "2.3.1")).
+	addDependency(new Project("org.xwiki.platform", "xwiki-core-script", "jar",  "2.3.1")).
 	addDependency(new Project("org.xwiki.platform", "xwiki-core-rendering-api", "jar",  "2.3.1")).
 	addDependency(new Project("org.xwiki.platform", "xwiki-core-component-default", "jar",  "2.3.1")).
 	addDependency(new Project("org.xwiki.platform", "xwiki-core-rendering-syntax-wikimodel", "jar",  "2.3.1")).

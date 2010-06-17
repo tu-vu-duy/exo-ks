@@ -72,7 +72,8 @@ public class EditPageActionComponent extends UIComponent {
       PageResolver pageResolver = (PageResolver) PortalContainer.getComponent(PageResolver.class);
       Page page = pageResolver.resolve(requestURL);
       titleInput.setValue(page.getContent().getTitle());
-      titleInput.setEditable(false);
+      titleInput.setEditable(true);
+      pageEditForm.setTitle(page.getContent().getTitle()) ;
       markupInput.setValue(page.getContent().getText());
       syntaxTypeSelectBox.setValue(page.getContent().getSyntax());
       

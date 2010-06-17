@@ -97,14 +97,15 @@ public class WikiServiceImpl implements WikiService{
     return jcrDataStorage.deletePage(page.getPath(), wiki.getPath(), wStore.getSession()) ;    
   }
   
-  /*public boolean deletePage(WikiPageParams pageParams) throws Exception {
-    PageImpl page = (PageImpl)getPageById(pageParams.getType(), pageParams.getOwner(), pageParams.getPageId())  ;
+  public boolean renamePage(String wikiType, String wikiOwner, String pageName, String newName, String newTitle) throws Exception {
+    if(WikiNodeType.Definition.WIKI_HOME_NAME.equals(pageName) || pageName == null || pageName == null) return false ;
+    PageImpl currentPage = (PageImpl)getPageById(wikiType, wikiOwner, pageName)  ;
     Model model = getModel();
     WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
-    WikiImpl wiki = (WikiImpl)getWiki(pageParams.getType(), pageParams.getOwner(), model) ;
-    System.out.println("path ==>" + wiki.getPath());
-    return jcrDataStorage.deletePage(page.getPath(), wiki.getPath(), wStore.getSession()) ;        
-  }*/
+    
+    return jcrDataStorage.renamePage(currentPage.getPath(), newName, newTitle, wStore.getSession()) ;    
+  }
+  
   
   public boolean movePage(String pageId, String newParentId, String wikiType, String wikiOwner) throws Exception {
     try {
@@ -171,6 +172,14 @@ public class WikiServiceImpl implements WikiService{
       return result;
     }catch(Exception e) {}
     return null ;
+  }
+  
+  public List<SearchResult> searchRenamedPage(String wikiType, String wikiOwner, String pageId) throws Exception {
+    Model model = getModel();
+    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
+    WikiHome home = getWikiHome(wikiType, wikiOwner) ;
+    SearchData data = new SearchData(home.getPath(), pageId) ;
+    return jcrDataStorage.searchRenamedPage(wStore.getSession(), data) ; 
   }
   
   public Object findByPath(String path, String objectNodeType) throws Exception  {

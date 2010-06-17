@@ -5,6 +5,12 @@ public class SearchData {
   private String title ;
   private String content ;
   private String path ;
+  private String pageId ;
+  
+  public SearchData(String path, String pageId) {
+    this.path = path ;
+    this.pageId = pageId ;
+  }
   
   public SearchData(String text, String title, String content, String path) {
     this.text = text ;
@@ -42,6 +48,14 @@ public class SearchData {
     return text;
   }
   
+  public void setPageId(String pageId) {
+    this.pageId = pageId;
+  }
+
+  public String getPageId() {
+    return pageId;
+  }
+
   public String getChromatticStatement() {
     StringBuilder statement = new StringBuilder();    
     try {
@@ -100,5 +114,23 @@ public class SearchData {
     return statement.toString() ;
   }
   
+  public String getStatementForRenamedPage() {
+    StringBuilder statement = new StringBuilder();    
+    try {
+      statement.append("SELECT * ")
+               .append("FROM wiki:renamed ")
+               .append("WHERE ") ;
+      
+      if(path != null && path.length() > 0) {
+        statement.append("jcr:path LIKE '"+ path + "/%'") ;
+      
+      }
+      if(getPageId() != null && getPageId().length() > 0) {
+        statement.append(" AND ") ;
+        statement.append(" oldPageIds = '").append(getPageId()).append("'") ;
+      }      
+    }catch(Exception e) {}
+    return statement.toString() ;
+  }
   
 }

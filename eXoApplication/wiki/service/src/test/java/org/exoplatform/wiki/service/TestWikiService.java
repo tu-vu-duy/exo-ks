@@ -164,7 +164,21 @@ public class TestWikiService extends AbstractMOWTestcase {
     assertNull(wService.getPageById(PortalConfig.PORTAL_TYPE, "classic", "deletePage")) ; 
     assertFalse(wService.deletePage(PortalConfig.PORTAL_TYPE, "classic", "WikiHome")) ;
   }
-
+  
+  public void testRenamePage() throws Exception{    
+    wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "currentPage", "WikiHome") ;
+    assertTrue(wService.renamePage(PortalConfig.PORTAL_TYPE, "classic", "currentPage", "renamedPage", "renamedPage")) ;
+    assertNotNull(wService.getPageById(PortalConfig.PORTAL_TYPE, "classic", "renamedPage")) ;  
+    
+  }
+  
+  public void testSearchRenamedPage() throws Exception{    
+    PageImpl page = (PageImpl)wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "Page", "WikiHome") ;
+    page.getContent().setText("This is a rename page test") ;
+    assertTrue(wService.renamePage(PortalConfig.PORTAL_TYPE, "classic", "Page", "Page01", "Page01")) ;
+    assertEquals(1, wService.searchRenamedPage(PortalConfig.PORTAL_TYPE, "classic", "Page").size()) ;
+  }
+  
   public void testSearchContent() throws Exception {
     
     PageImpl kspage = (PageImpl)wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "knowledge suite", "WikiHome") ;

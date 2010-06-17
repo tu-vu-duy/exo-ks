@@ -1,0 +1,37 @@
+<%
+import org.exoplatform.wiki.service.SearchResult ;
+%>
+<div class="UIWikiPageNotFound">
+
+<%
+	String home = uicomponent.url("Home") ;
+				
+%>
+	<div>Page not found</div>
+	<div>The page you were trying to reach could not be found: it may have been renamed or moved to another space, or the name you requested may be incomplete. Back to <a href="$home">Home</a></div>
+	
+	<%
+		List relativeList = uicomponent.getRelativePages() ;
+		if(relativeList != null && relativeList.size() > 0) {
+		%>
+			<div>
+			<div>In this Space</div>
+			<div>The page you were looking for may have been renamed to the following:</div>
+			<%
+				for(relative in relativeList){
+					String url = uicomponent.url("OpenPage", relative.getNodeName()) ;
+					%>
+						<div>
+							<div><a href="$url"><%=relative.getTitle()%></a></div>
+							<div><%=relative.getExcerpt()%></div>
+						<div>
+					<%
+				}
+			%>
+			</div>
+		<%
+		}
+	%>
+	
+	
+</div>

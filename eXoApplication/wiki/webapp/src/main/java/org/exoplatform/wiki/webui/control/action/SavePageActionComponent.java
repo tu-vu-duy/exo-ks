@@ -95,24 +95,35 @@ public class SavePageActionComponent extends UIComponent {
       try {
         String requestURL = Utils.getCurrentRequestURL();
         PageResolver pageResolver = (PageResolver) PortalContainer.getComponent(PageResolver.class);
+        WikiService wikiService = (WikiService) PortalContainer.getComponent(WikiService.class);
+        WikiPageParams pageParams = pageResolver.extractWikiPageParams(requestURL);
         Page page = pageResolver.resolve(requestURL);
         if (wikiPortlet.getWikiMode() == WikiMode.EDIT) {
           page.getContent().setText(markup);
           page.getContent().setSyntax(syntaxTypeSelectBox.getValue());
-        } else if (wikiPortlet.getWikiMode() == WikiMode.NEW) {
-          WikiService wikiService = (WikiService) PortalContainer.getComponent(WikiService.class);
-          WikiPageParams pageParams = pageResolver.extractWikiPageParams(requestURL);
+          pageTitleControlForm.getUIFormInputInfo().setValue(title);
+          pageContentArea.renderWikiMarkup(markup, syntaxTypeSelectBox.getValue());
+          
+          if(!pageEditForm.getTitle().equals(title)) {
+            page.getContent().setTitle(title);
+            String newPageId = TitleResolver.getPageId(title, false) ;
+            wikiService.renamePage(pageParams.getType(), pageParams.getOwner(), page.getName(), newPageId, title) ;
+            pageParams.setPageId(newPageId) ;
+            event.getSource().redirectToNewPage(pageParams, URLEncoder.encode(newPageId, "UTF-8"));            
+          }
+                    
+        } else if (wikiPortlet.getWikiMode() == WikiMode.NEW) {          
+          
           Page subPage = wikiService.createPage(pageParams.getType(), pageParams.getOwner(), title, page.getName());
           subPage.getContent().setText(markup);
           subPage.getContent().setSyntax(syntaxTypeSelectBox.getValue());
           
           wikiPortlet.changeMode(WikiMode.VIEW);
-          String pageId = TitleResolver.getPageId(title, false);
+          String pageId = TitleResolver.getPageId(title, false);          
           event.getSource().redirectToNewPage(pageParams, URLEncoder.encode(pageId, "UTF-8"));
           return;
         }
-        pageTitleControlForm.getUIFormInputInfo().setValue(page.getContent().getTitle());
-        pageContentArea.renderWikiMarkup(markup, syntaxTypeSelectBox.getValue());
+        
       } catch (Exception e) {
         log.error("An exception happens when saving the page with title:" + title, e);
         uiApp.addMessage(new ApplicationMessage("UIPageToolBar.msg.Exception", null, ApplicationMessage.ERROR));
@@ -141,6 +152,7 @@ public class SavePageActionComponent extends UIComponent {
       sb.append("/");
     }
     sb.append(newPageId);
+    System.out.println("sb.toString() ==>" + sb.toString());
     portalRequestContext.sendRedirect(sb.toString());
   }
   

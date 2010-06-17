@@ -9,6 +9,9 @@ public class SearchResult {
   private String type ;
   private String nodeName ;
   
+  
+  public SearchResult() {}
+  
   public SearchResult(String excerpt, String title, String path, String type) {
     this.excerpt = excerpt ;
     this.title = title ;

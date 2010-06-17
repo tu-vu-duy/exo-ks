@@ -25,6 +25,7 @@ import org.exoplatform.webui.core.model.SelectItemOption;
 import org.exoplatform.webui.form.UIForm;
 import org.exoplatform.webui.form.UIFormSelectBox;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
+import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 import org.exoplatform.wiki.webui.control.UIPageToolBar;
 import org.xwiki.rendering.syntax.Syntax;
 
@@ -46,6 +47,8 @@ public class UIWikiPageEditForm extends UIForm {
   public static final String PAGE_TOOLBAR  = "UIWikiPageEditForm_PageToolBar";
   public static final String HELP_PANEL    = "UIWikiSidePanelArea";
   
+  private String  title ;
+  
   public UIWikiPageEditForm() throws Exception{
     addChild(UIWikiPageTitleControlArea.class, null, TITLE_CONTROL).toInputMode();
     addChild(UIPageToolBar.class, null, PAGE_TOOLBAR).setRendered(true);
@@ -65,6 +68,9 @@ public class UIWikiPageEditForm extends UIForm {
     UIFormSelectBox syntaxTypeSelectBox = new UIFormSelectBox(FIELD_SYNTAX,FIELD_SYNTAX,syntaxTypes);
     addUIFormInput(syntaxTypeSelectBox).setRendered(true);
   }
+  
+  public void setTitle(String title){ this.title = title ;}
+  public String getTitle(){ return title ;}
   
   public boolean isSidePanelRendered(){
     return getChild(UIWikiSidePanelArea.class).isRendered();

@@ -74,6 +74,14 @@ public class UIWikiPortlet extends UIPortletApplication {
   }
 
   public void processRender(WebuiApplication app, WebuiRequestContext context) throws Exception {
+    String requestURL = Utils.getCurrentRequestURL();
+    PageResolver pageResolver = (PageResolver) PortalContainer.getComponent(PageResolver.class);
+    Page page = pageResolver.resolve(requestURL);
+    if(page == null) {
+      changeMode(WikiMode.PAGE_NOT_FOUND) ;
+      super.processRender(app, context);
+      return ;
+    }
     WikiPageParams pageParams = Utils.getCurrentWikiPageParams();
     if (WikiContext.ADDPAGE.equalsIgnoreCase(pageParams.getParameter(WikiContext.ACTION))) {
       UIExtensionManager manager = getApplicationComponent(UIExtensionManager.class);
@@ -87,12 +95,12 @@ public class UIWikiPortlet extends UIPortletApplication {
     PortalRequestContext portalRequestContext = Util.getPortalRequestContext();
     UIPortal uiPortal = Util.getUIPortal();
     String portalURI = portalRequestContext.getPortalURI();
-    String requestURL = Utils.getCurrentRequestURL();
+    
     String pageNodeSelected = uiPortal.getSelectedNode().getUri();
-    PageResolver pageResolver = (PageResolver) PortalContainer.getComponent(PageResolver.class);
+    
     try {
       // TODO: ignore request URL of resources
-      Page page = pageResolver.resolve(requestURL);
+      
       context.setAttribute("wikiPage", page);
       
       RenderingServiceImpl renderingService = (RenderingServiceImpl) PortalContainer.getComponent(RenderingService.class);
@@ -160,6 +168,9 @@ public class UIWikiPortlet extends UIPortletApplication {
           case SEARCH:
             switchViewSearchMode(true);
             break;
+          case PAGE_NOT_FOUND:
+            switchViewPageNotFoundMode(true);
+            break;  
         }
         break;
       case EDIT:
@@ -184,6 +195,13 @@ public class UIWikiPortlet extends UIPortletApplication {
             break;
         }
         break;
+      case PAGE_NOT_FOUND:
+        switch(mode){
+          case VIEW:
+            switchViewPageNotFoundMode(false);
+            break;
+        }
+        break;  
     }
   }
   
@@ -218,6 +236,13 @@ public class UIWikiPortlet extends UIPortletApplication {
     findFirstComponentOfType(UIWikiPageArea.class).setRendered(!isViewToSearch);
     findFirstComponentOfType(UIWikiBottomArea.class).setRendered(!isViewToSearch);
     findFirstComponentOfType(UIWikiSearchSpaceArea.class).setRendered(isViewToSearch);
+  }
+  
+  private void switchViewPageNotFoundMode(boolean isPageNotFound){
+    findFirstComponentOfType(UIWikiPageContentArea.class).setRendered(!isPageNotFound) ;
+    findFirstComponentOfType(UIWikiPageNotFound.class).setRendered(isPageNotFound) ;  
+    findFirstComponentOfType(UIWikiPageControlArea.class).setRendered(!isPageNotFound) ;
+    findFirstComponentOfType(UIWikiBottomArea.class).setRendered(!isPageNotFound) ;
   }
   
 }

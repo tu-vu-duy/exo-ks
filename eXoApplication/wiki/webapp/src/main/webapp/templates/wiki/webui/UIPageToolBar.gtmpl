@@ -8,13 +8,11 @@
      if(action == "DeletePage") {
      		link = actionComponent.url(action);
      }
-       if(uicomponent.parentIsForm()){
-         if(uicomponent.getSaveAction().equals(action) && uicomponent.isNewMode()){
-           link = uicomponent.getUrlToSavePage(actionComponent.getId(), action);
-         }else{
-           link = uicomponent.getParent().event(action, actionComponent.getId(), action);
-         }
-       }
+	   if(uicomponent.parentIsForm()){
+	     
+	       link = uicomponent.getUrlToSavePage(actionComponent.getId(), action);
+	     
+	   }
 %>
 		<% if(action.equals("AddPage")){
 		%>

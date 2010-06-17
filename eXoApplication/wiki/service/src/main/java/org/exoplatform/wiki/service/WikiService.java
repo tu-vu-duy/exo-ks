@@ -36,6 +36,7 @@ public interface WikiService {
 	
 	public Page createPage(String wikiType, String wikiOwner, String title, String parentId) throws Exception ;	
 	public boolean deletePage(String wikiType, String wikiOwner, String pageId) throws Exception ;
+	public boolean renamePage(String wikiType, String wikiOwner, String pageName, String newName, String newTitle) throws Exception ;
 	public boolean movePage(String pageId, String newParentId, String wikiType, String wikiOwner) throws Exception ;
 	
 	public Page getPageById(String wikiType, String wikiOwner, String pageId) throws Exception ;
@@ -44,6 +45,7 @@ public interface WikiService {
 	public PageList<ContentImpl> searchContent(String wikiType, String wikiOwner, SearchData data) throws Exception ;
 	public List<BreadcumbData> getBreadcumb(String wikiType, String wikiOwner, String pageId) throws Exception ;
 	public PageList<SearchResult> search(String wikiType, String wikiOwner, SearchData data) throws Exception ;
+	public List<SearchResult> searchRenamedPage(String wikiType, String wikiOwner, String pageId) throws Exception  ;
 	public Object findByPath(String path, String objectNodeType) throws Exception  ;
 	public String getDefaultWikiSyntaxId();
 	public String getPageTitleOfAttachment(String path) throws Exception ;

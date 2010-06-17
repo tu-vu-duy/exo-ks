@@ -31,6 +31,8 @@ public enum WikiMode {
   
   NEW,
   
-  SEARCH
+  SEARCH, 
+  
+  PAGE_NOT_FOUND
 
 }

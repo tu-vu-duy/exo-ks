@@ -11,10 +11,10 @@
   <packaging>war</packaging>
   <name>eXo KS Wiki application</name>
   <properties>
-    <gwt.style>OBF</gwt.style>
+    <gwt.style>DETAILED</gwt.style>
     <gwt.output.directory>${project.build.directory}/${project.build.finalName}/resources/js/xwiki/wysiwyg</gwt.output.directory>
     <xwe.directory>${gwt.output.directory}/xwe</xwe.directory>
-    <xwe.module>org.xwiki.gwt.wysiwyg.Wysiwyg</xwe.module>
+    <xwe.module>org.xwiki.gwt.wysiwyg.WysiwygDev</xwe.module>
   </properties>
   <dependencies>
     <dependency>
@@ -111,6 +111,13 @@
       <build>
         <finalName>wiki</finalName>
       </build>
+    </profile>
+    <profile>
+      <id>rel</id>
+      <properties>
+        <gwt.style>OBF</gwt.style>
+        <xwe.module>org.xwiki.gwt.wysiwyg.Wysiwyg</xwe.module>
+      </properties>
     </profile>
     <profile>
       <id>xwe</id>

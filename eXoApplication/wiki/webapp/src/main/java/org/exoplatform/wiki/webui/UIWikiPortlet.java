@@ -171,6 +171,9 @@ public class UIWikiPortlet extends UIPortletApplication {
           case PAGE_NOT_FOUND:
             switchViewPageNotFoundMode(true);
             break;  
+          case DELETE_CONFIRM:
+            switchViewConfirmMode(true);
+            break;  
         }
         break;
       case EDIT:
@@ -202,6 +205,14 @@ public class UIWikiPortlet extends UIPortletApplication {
             break;
         }
         break;  
+      case DELETE_CONFIRM:
+        switch(mode){
+          case VIEW:
+            switchViewConfirmMode(false);
+            break;
+        }
+        break;  
+        
     }
   }
   
@@ -245,4 +256,10 @@ public class UIWikiPortlet extends UIPortletApplication {
     findFirstComponentOfType(UIWikiBottomArea.class).setRendered(!isPageNotFound) ;
   }
   
+  private void switchViewConfirmMode(boolean isDelete){
+    findFirstComponentOfType(UIWikiPageContentArea.class).setRendered(!isDelete) ;
+    findFirstComponentOfType(UIWikiDeletePageConfirm.class).setRendered(isDelete) ;  
+    findFirstComponentOfType(UIWikiPageControlArea.class).setRendered(!isDelete) ;
+    findFirstComponentOfType(UIWikiBottomArea.class).setRendered(!isDelete) ;
+  }
 }

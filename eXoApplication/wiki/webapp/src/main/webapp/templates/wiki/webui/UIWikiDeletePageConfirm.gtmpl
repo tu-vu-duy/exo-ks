@@ -1,0 +1,62 @@
+<%
+import org.exoplatform.wiki.mow.core.api.wiki.PageImpl ;
+import org.exoplatform.wiki.commons.Utils ;
+
+%>
+
+<%
+	PageImpl page = uicomponent.getCurrentPage() ;
+%>
+<div class="UIWikiDeletePageConfirm">
+	
+	<%
+		if(page == null) {
+			%>
+				<div>This page with id '<%=uicomponent.getCurrentPageId()%>' does not exist</div>
+			<%
+		}else {
+		%>
+			<div>
+				<div>Deleting page '<%=page.getContent().getTitle()%>'</div>
+				<div>Are you sure you want to send this page to the trash?</div>
+				<div>Please note:</div>
+
+		    <div>* Removing a page moves it into the trash can. You can speak to your space administrator to have it recovered.</div>
+		    <div>* The links to this page will be broken when this page is removed.</div>
+		    <div>* This page is a child page of page <%=uicomponent.getWiki()%>:<%=page.getParentPage().getContent().getTitle()%>.</div>		
+			</div>		
+		<%
+		}
+	%>
+   
+
+	<%=Utils.getCurrentRequestURL()%>
+	<div class="UIAction">
+    <table class="ActionContainer">
+      <tr>
+        <td>
+          <div class="ActionButton LightBlueStyle" >
+            <div class="ButtonLeft">
+              <div class="ButtonRight">
+                <div class="ButtonMiddle">
+                  <a href="<%=uicomponent.url("OK")%>">OK</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </td>
+        <td>
+          <div class="ActionButton LightBlueStyle" >
+            <div class="ButtonLeft">
+              <div class="ButtonRight">
+                <div class="ButtonMiddle">
+                  <a href="<%=uicomponent.url("Cancel")%>">Cancel</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>

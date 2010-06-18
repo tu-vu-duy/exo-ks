@@ -309,6 +309,9 @@
 			</propertyDefinition>
 			<propertyDefinition name="removedDate" requiredType="Date" autoCreated="false" mandatory="true" onParentVersion="COPY" protected="false" multiple="false">
 				<valueConstraints/>
+			</propertyDefinition>
+			<propertyDefinition name="parentPath" requiredType="String" autoCreated="false" mandatory="true" onParentVersion="COPY" protected="false" multiple="false">
+				<valueConstraints/>
 			</propertyDefinition>							
 		</propertyDefinitions>
 	</nodeType>

@@ -35,5 +35,6 @@ public class UIWikiPageArea extends UIContainer {
     addChild(UIWikiPageContentArea.class, null, null).setRendered(true);
     addChild(UIWikiPageEditForm.class, null, null).setRendered(false);
     addChild(UIWikiPageNotFound.class, null, null).setRendered(false);
+    addChild(UIWikiDeletePageConfirm.class, null, null).setRendered(false);
   }
 }

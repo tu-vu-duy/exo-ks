@@ -33,6 +33,8 @@ public enum WikiMode {
   
   SEARCH, 
   
-  PAGE_NOT_FOUND
+  PAGE_NOT_FOUND,
+  
+  DELETE_CONFIRM
 
 }

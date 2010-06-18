@@ -90,6 +90,7 @@ public class JCRDataStorage implements DataStorage{
       deletePage.setProperty("removedBy", getCurrentUser()) ;
       Calendar calendar = GregorianCalendar.getInstance() ;
       deletePage.setProperty("removedDate", calendar) ;
+      deletePage.setProperty("parentPath", deletePage.getParent().getPath()) ;
       deletePage.save() ;
       Node wiki = (Node)session.getJCRSession().getItem(wikiPath) ;
       Node trashNode ;

@@ -37,6 +37,7 @@ import org.exoplatform.wiki.service.WikiPageParams;
 import org.exoplatform.wiki.service.WikiService;
 import org.exoplatform.wiki.webui.UIWikiBreadCrumb;
 import org.exoplatform.wiki.webui.UIWikiPortlet;
+import org.exoplatform.wiki.webui.WikiMode;
 import org.exoplatform.wiki.webui.control.filter.IsViewModeFilter;
 import org.exoplatform.wiki.webui.control.listener.UIPageToolBarActionListener;
 
@@ -48,7 +49,7 @@ import org.exoplatform.wiki.webui.control.listener.UIPageToolBarActionListener;
  */
 @ComponentConfig(
   events = {
-    @EventConfig(listeners = DeletePageActionComponent.DeletePageActionListener.class, confirm="DeletePageAction.confirm.Message")
+    @EventConfig(listeners = DeletePageActionComponent.DeletePageActionListener.class)
   }
 )
 public class DeletePageActionComponent extends UIComponent {
@@ -72,7 +73,7 @@ public class DeletePageActionComponent extends UIComponent {
       UIApplication uiApp = event.getSource().getAncestorOfType(UIApplication.class);
       PageResolver pageResolver = (PageResolver) PortalContainer.getComponent(PageResolver.class);
       WikiPageParams params = pageResolver.extractWikiPageParams(requestURL) ;
-      WikiService wService = (WikiService) PortalContainer.getComponent(WikiService.class);
+      
       UIWikiBreadCrumb breadcumb = wikiPortlet.findFirstComponentOfType(UIWikiBreadCrumb.class) ;
       PortalRequestContext prContext = Util.getPortalRequestContext();
       String parentURL = breadcumb.getParentURL() ;
@@ -81,10 +82,8 @@ public class DeletePageActionComponent extends UIComponent {
         event.getRequestContext().addUIComponentToUpdateByAjax(uiApp.getUIPopupMessages()) ;
         prContext.getResponse().sendRedirect(parentURL);
         return ;        
-      }
-      wService.deletePage(params.getType(), params.getOwner(), params.getPageId()) ;      
-      prContext.setResponseComplete(true);      
-      prContext.getResponse().sendRedirect(parentURL);      
+      }      
+      wikiPortlet.changeMode(WikiMode.DELETE_CONFIRM) ;
     }
   }
 }

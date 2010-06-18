@@ -163,26 +163,34 @@
 }
 
 .UIWikiPortlet .UIWikiPageControlArea .UIPageToolBar{
-	padding-bottom: 8px;
 	float: right;
+	margin-bottom: 2px;
 }
 
 .UIWikiPortlet .UIWikiPageControlArea .Icon {
 	float:right;
-	padding: 2px 6px;
-	margin: 4px 0px 0px 8px;	
+	width: 16px;
+	height: 14px;
+	padding: 6px;
+	margin: 0px;	
+}
+
+.UIWikiPortlet .UIWikiPageControlArea .Icon:hover {
+	background-color: #d0dff0;
+	-moz-border-radius:3px 3px 3px 3px;
+	text-decoration: none;
 }
 
 .UIWikiPortlet .UIWikiPageControlArea .Delete {
-	background:url("background/UIPageToolBarIcon.png") no-repeat left top;
+	background:url("background/UIPageToolBarIcon.png") no-repeat center 1px;
 }
 
 .UIWikiPortlet .UIWikiPageControlArea .Edit {
-	background:url("background/UIPageToolBarIcon.png") no-repeat left -22px;
+	background:url("background/UIPageToolBarIcon.png") no-repeat center -23px;
 }
 
 .UIWikiPortlet .UIWikiPageControlArea .Add {
-	background:url("background/UIPageToolBarIcon.png") no-repeat left -43px;
+	background:url("background/UIPageToolBarIcon.png") no-repeat center -47px;
 }
 
 .UIWikiPageEditForm .UIWikiPageTitleControlForm_PageEditForm{
@@ -191,8 +199,7 @@
 }
 
 .UIWikiPageEditForm .UIPageToolBar{
-	margin: 8px 0 0;
-	padding-bottom: 8px;
+	margin: 14px 0 0;
 	float: right;
 	width: 60%;
 }
@@ -207,7 +214,7 @@
 
 .UIWikiPageEditForm .UIWikiPageTitleControlForm_PageEditForm #TitleInput {
 	width: 295px;
-	border: 1px dashed #707070;
+	border: 1px solid #dddddd;
 	background-color: #ffffff;
 	font-size: 24px;
 	color: #636363;
@@ -217,41 +224,49 @@
 .UIWikiPageEditForm .UIForm .HorizontalLayout textarea {
 	width: 885px;
 	height: auto;
-	border: 1px dashed #707070;
+	border: 1px solid #dddddd;
 	padding: 0 0 0 8px;
 }
 
 .UIWikiPageEditForm .UIForm .UIWikiPageContentMarginRight textarea {
-	border: 1px dashed #707070;
+	border: 1px solid #dddddd;
 	height: auto;
 	padding: 0 0 0 8px;
 	width: 630px;
 }
 
 .UIWikiPageEditForm .UIPageToolBar .Icon {
-	float:right;
-	margin-left: 1px;
-	padding:6px 12px;
+	float: right;
+	height: 14px;
+	margin: 0;
+	padding: 6px;
+	width: 16px;
+}
+
+.UIWikiPageEditForm .UIPageToolBar .Icon:hover {
+	background-color: #d0dff0;
+	-moz-border-radius:3px 3px 3px 3px;
+	text-decoration: none;
 }
 
 .UIWikiPageEditForm .UIPageToolBar .Delete {
-	background:url("background/UIPageToolBarIcon.png") no-repeat left -62px;
+	background:url("background/UIPageToolBarIcon.png") no-repeat center top;
 }
 
 .UIWikiPageEditForm .UIPageToolBar .Edit {
-	background:url("background/UIPageToolBarIcon.png") no-repeat left -89px;
+	background:url("background/UIPageToolBarIcon.png") no-repeat center -96px;
 }
 
 .UIWikiPageEditForm .UIPageToolBar .FAQ {
-	background:url("background/UIPageToolBarIcon.png") no-repeat left -170px;
+	background:url("background/UIPageToolBarIcon.png") no-repeat center -168px;
 }
 
 .UIWikiPageEditForm .UIPageToolBar .View {
-	background:url("background/UIPageToolBarIcon.png") no-repeat left -116px;
+	background:url("background/UIPageToolBarIcon.png") no-repeat center -120px;
 }
 
 .UIWikiPageEditForm .UIPageToolBar .Save{
-	background:url("background/UIPageToolBarIcon.png") no-repeat left -143px;
+	background:url("background/UIPageToolBarIcon.png") no-repeat center -144px;
 }
 
 /* wiki homepage */
@@ -365,7 +380,7 @@
 	line-height: 16px;
 	width: 235px;
 	float: right;
-	border: 1px dashed #707070;
+	border: 1px solid #dddddd;
 	border-top: none;
 }
 

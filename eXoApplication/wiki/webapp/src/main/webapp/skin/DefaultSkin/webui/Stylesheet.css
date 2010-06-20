@@ -1,5 +1,6 @@
 @import url('UIWikiBreadCrumb/Stylesheet.css') ;
 @import url('UIWikiSearchBox/Stylesheet.css') ;
+@import url('UIWikiRichTextEditor/Stylesheet.css') ;
 
 
 .ClearFix:after {
@@ -250,7 +251,7 @@
 }
 
 .UIWikiPageEditForm .UIPageToolBar .Delete {
-	background:url("background/UIPageToolBarIcon.png") no-repeat center top;
+	background:url("background/UIPageToolBarIcon.png") no-repeat center -72px;
 }
 
 .UIWikiPageEditForm .UIPageToolBar .Edit {

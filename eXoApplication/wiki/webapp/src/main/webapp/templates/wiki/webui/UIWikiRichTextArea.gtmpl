@@ -1,0 +1,50 @@
+<%
+  String marginRight = "";
+  if(uicomponent.isSidePanelRendered()){
+    marginRight = "UIWikiPageContentMarginRight";
+  }
+%>
+<div class="UIWikiRichTextEditor $marginRight">
+  <%
+    String display = "display: none;";
+    if(uicomponent.isRendered()){
+      display = "display: block;";
+    }
+  %>
+  <textarea cols="80" rows="25" id="UIWikiRichTextArea_TextArea" name="UIWikiRichTextEditor" class="textarea" style="border:none; width:0px; height: 450px; $display"></textarea>
+</div>
+<script type="text/javascript">
+  // Create a new editor instance.
+  eXo.wiki.createWysiwygEditor = function(){
+    eXo.wiki.WysiwygEditor = new WysiwygEditor({
+      hookId: 'UIWikiRichTextArea_TextArea',
+      inputURL: "http://localhost:8080/portal/rest/wiki/portal/classic/WikiHome/editingcontent/",
+      syntax: 'xwiki/2.0',
+      //displayTabs: true,
+      defaultEditor: 'wysiwyg',
+      plugins: 'submit line separator text valign justify list indent history format font color symbol table link image macro import',
+      menu: 'link image table macro import',
+      toolbar: 'bold italic underline strikethrough teletype | subscript superscript | justifyleft justifycenter justifyright justifyfull | unorderedlist orderedlist | outdent indent | undo redo | format | fontname fontsize forecolor backcolor | hr removeformat symbol | import'
+      //debug: true
+    });
+  };
+  
+  if(eXo.wiki.WysiwygEditor){
+    try{
+      eXo.wiki.WysiwygEditor.release();
+    }catch(e){
+      if(window.console){
+        window.console.error(e);
+      }
+    }
+  };
+  
+  try{
+    if(WysiwygEditor){
+      eXo.wiki.createWysiwygEditor();
+    }
+  }catch(e){
+    eXo.wiki.Wysiwyg.onModuleLoad(eXo.wiki.createWysiwygEditor);
+  }
+  
+</script>

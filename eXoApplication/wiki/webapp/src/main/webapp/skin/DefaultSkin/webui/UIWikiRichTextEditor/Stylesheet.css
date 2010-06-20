@@ -1,0 +1,16 @@
+
+.gwt-RichTextArea {
+  width: 100%;
+  border: 1px solid #DDDDDD;
+  border-top: none;
+}
+
+.UIWikiRichTextEditor .xToolbar div.clearfloats {
+  background-color:transparent;
+  clear:left;
+  float:none;
+  height:1px;
+  line-height:1px;
+  font-size:1px;
+  margin:0;
+}

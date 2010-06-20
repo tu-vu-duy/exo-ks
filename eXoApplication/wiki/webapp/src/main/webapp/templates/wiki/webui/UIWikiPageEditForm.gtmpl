@@ -18,8 +18,11 @@
 %>
    <div class="UIWikiPageContentInputContainer HorizontalLayout">
 <% } %>
-     <% uiform.renderField(uiform.FIELD_CONTENT); %>
+  <% if(uiform.getUIFormTextAreaInput(uiform.FIELD_CONTENT).isRendered())
+       uiform.renderField(uiform.FIELD_CONTENT);
+  %>
    </div>
+   <% uiform.renderChild(uiform.RICHTEXT_AREA);%>
 <% if(uiform.getChildById(uiform.HELP_PANEL).isRendered()) { %>
    <div class="ClearRight"></div>
 <% } %>

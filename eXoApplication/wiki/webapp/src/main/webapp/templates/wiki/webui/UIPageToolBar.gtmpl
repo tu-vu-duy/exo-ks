@@ -9,9 +9,11 @@
      		link = actionComponent.url(action);
      }
 	   if(uicomponent.parentIsForm()){
-	     
+	     if(uicomponent.getSaveAction().equals(action)){
 	       link = uicomponent.getUrlToSavePage(actionComponent.getId(), action);
-	     
+	     }else{
+	       link = uicomponent.getParent().event(action, actionComponent.getId(), action);
+	     }
 	   }
 %>
 		<% if(action.equals("AddPage")){
@@ -37,7 +39,7 @@
 		<a href="$link" class="Save Icon">&nbsp;</a>
 		<%} else if(action.equals("RichText")){
 		%>
-		<a href="" class="Edit Icon">&nbsp;</a>
+		<a href="$link" class="Edit Icon">&nbsp;</a>
 		<%}%>
 <%}%>
 </div> 

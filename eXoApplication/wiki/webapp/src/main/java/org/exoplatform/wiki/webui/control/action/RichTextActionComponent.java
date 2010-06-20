@@ -26,6 +26,8 @@ import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.Event.Phase;
 import org.exoplatform.webui.ext.filter.UIExtensionFilter;
 import org.exoplatform.webui.ext.filter.UIExtensionFilters;
+import org.exoplatform.wiki.webui.UIWikiPageEditForm;
+import org.exoplatform.wiki.webui.UIWikiRichTextArea;
 import org.exoplatform.wiki.webui.control.filter.IsEditModeFilter;
 import org.exoplatform.wiki.webui.control.listener.UIPageToolBarActionListener;
 
@@ -52,7 +54,12 @@ public class RichTextActionComponent extends UIComponent {
   public static class RichTextActionListener extends UIPageToolBarActionListener<RichTextActionComponent> {
     @Override
     protected void processEvent(Event<RichTextActionComponent> event) throws Exception {
-      // TODO Auto-generated method stub
+      UIWikiPageEditForm wikiPageEditForm = event.getSource()
+                                                 .getAncestorOfType(UIWikiPageEditForm.class);
+      UIWikiRichTextArea wikiRichTextArea = wikiPageEditForm.getChild(UIWikiRichTextArea.class);
+      boolean isRichTextRendered = wikiRichTextArea.isRendered();
+      wikiRichTextArea.setRendered(!isRichTextRendered);
+      wikiPageEditForm.getUIFormTextAreaInput(UIWikiPageEditForm.FIELD_CONTENT).setRendered(isRichTextRendered);
       super.processEvent(event);
     }
   }

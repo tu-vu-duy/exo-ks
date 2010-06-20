@@ -25,7 +25,6 @@ import org.exoplatform.webui.core.model.SelectItemOption;
 import org.exoplatform.webui.form.UIForm;
 import org.exoplatform.webui.form.UIFormSelectBox;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
-import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 import org.exoplatform.wiki.webui.control.UIPageToolBar;
 import org.xwiki.rendering.syntax.Syntax;
 
@@ -46,6 +45,7 @@ public class UIWikiPageEditForm extends UIForm {
   public static final String TITLE_CONTROL = "UIWikiPageTitleControlForm_PageEditForm";
   public static final String PAGE_TOOLBAR  = "UIWikiPageEditForm_PageToolBar";
   public static final String HELP_PANEL    = "UIWikiSidePanelArea";
+  public static final String RICHTEXT_AREA = "UIWikiRichTextArea";
   
   private String  title ;
   
@@ -53,6 +53,7 @@ public class UIWikiPageEditForm extends UIForm {
     addChild(UIWikiPageTitleControlArea.class, null, TITLE_CONTROL).toInputMode();
     addChild(UIPageToolBar.class, null, PAGE_TOOLBAR).setRendered(true);
     addChild(UIWikiSidePanelArea.class, null, HELP_PANEL).setRendered(false);
+    addChild(UIWikiRichTextArea.class, null, RICHTEXT_AREA).setRendered(false);
     UIFormTextAreaInput markupInput = new UIFormTextAreaInput(UIWikiPageEditForm.FIELD_CONTENT,
                                                               UIWikiPageEditForm.FIELD_CONTENT,
                                                               "This is **sample content**");

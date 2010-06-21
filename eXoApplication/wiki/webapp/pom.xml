@@ -161,8 +161,6 @@
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
           <archiveClasses>true</archiveClasses>
-          <!-- We exclude the SmartClient JavaScript files . -->
-          <packagingExcludes>**/sc/**</packagingExcludes>
         </configuration>
       </plugin>
       <plugin>

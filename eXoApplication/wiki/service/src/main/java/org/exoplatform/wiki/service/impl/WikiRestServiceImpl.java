@@ -25,8 +25,14 @@ import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
+import org.exoplatform.wiki.mow.api.Page;
+import org.exoplatform.wiki.rendering.RenderingService;
 import org.exoplatform.wiki.service.WikiRestService;
+import org.exoplatform.wiki.service.WikiService;
+import org.xwiki.rendering.syntax.Syntax;
 
 /**
  * Created by The eXo Platform SAS
@@ -35,28 +41,51 @@ import org.exoplatform.wiki.service.WikiRestService;
  * Jun 20, 2010  
  */
 @Path("/wiki")
-public class WikiRestServiceImpl implements WikiRestService, ResourceContainer
-{
+public class WikiRestServiceImpl implements WikiRestService, ResourceContainer {
 
-  private final CacheControl cc;
+  private final WikiService      wikiService;
 
-  public WikiRestServiceImpl() {
+  private final RenderingService renderingService;
+
+  private static Log             log = ExoLogger.getLogger(WikiRestService.class);
+
+  private final CacheControl     cc;
+
+  public WikiRestServiceImpl(WikiService wikiService, RenderingService renderingService) {
+    this.wikiService = wikiService;
+    this.renderingService = renderingService;
     cc = new CacheControl();
     cc.setNoCache(true);
     cc.setNoStore(true);
   }
-  
+
   /**
    * {@inheritDoc}
    */
   @GET
-  @Path("/{wikiType}/{wikiOwner:.+}/{pageId}/editingcontent/")
+  @Path("/{wikiType}/{wikiOwner:.+}/{pageId}/content/")
   @Produces(MediaType.TEXT_HTML)
-  public Response getEditingPageContent(@PathParam("wikiType") String wikiType,
-                                        @PathParam("wikiOwner") String wikiOwner,
-                                        @PathParam("pageId") String pageId,
-                                        @QueryParam("markup") boolean isMarkup) {
-    return Response.ok("HELLO WORLD", MediaType.TEXT_HTML).cacheControl(cc).build();
+  public Response getWikiPageContent(@PathParam("wikiType") String wikiType,
+                                     @PathParam("wikiOwner") String wikiOwner,
+                                     @PathParam("pageId") String pageId,
+                                     @QueryParam("markup") boolean isMarkup) {
+    String pageContent = "";
+    String syntaxId = "";
+    try {
+      Page page = wikiService.getPageById(wikiType, wikiOwner, pageId);
+      if (page != null) {
+        pageContent = page.getContent().getText();
+        syntaxId = page.getContent().getSyntax();
+        syntaxId = (syntaxId != null) ? syntaxId : Syntax.XWIKI_2_0.toIdString();
+      }
+      if (!isMarkup) {
+        pageContent = renderingService.render(pageContent, syntaxId);
+      }
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
+      return Response.serverError().entity(e.getMessage()).cacheControl(cc).build();
+    }
+    return Response.ok(pageContent, MediaType.TEXT_HTML).cacheControl(cc).build();
   }
 
 }

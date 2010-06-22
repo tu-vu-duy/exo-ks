@@ -34,7 +34,8 @@
     <dependency>
       <groupId>org.exoplatform.ws</groupId>
       <artifactId>ws.packaging.module</artifactId>
-      <version>${org.exoplatform.ws.version}</version>
+      <!-- From 2.1.1-GA WS has managed to start and stop RequestLifeCycle -->
+      <version>2.1.2-GA</version>
       <type>js</type>
     </dependency>
     <dependency>

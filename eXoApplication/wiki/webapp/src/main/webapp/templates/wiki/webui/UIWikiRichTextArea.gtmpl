@@ -1,18 +1,8 @@
 <%
   String restUrlToViewCurrentPage = uicomponent.getRestUrlToViewCurrentPage();
-  String marginRight = "";
-  if(uicomponent.isSidePanelRendered()){
-    marginRight = "UIWikiPageContentMarginRight";
-  }
 %>
-<div class="UIWikiRichTextEditor $marginRight">
-  <%
-    String display = "display: none;";
-    if(uicomponent.isRendered()){
-      display = "display: block;";
-    }
-  %>
-  <textarea cols="80" rows="25" id="UIWikiRichTextArea_TextArea" name="UIWikiRichTextEditor" class="textarea" style="border:none; width:0px; height: 450px; $display"></textarea>
+<div class="UIWikiRichTextEditor">
+  <% uicomponent.renderChild(uicomponent.RICHTEXT_AREA_INPUT); %>
 </div>
 <script type="text/javascript">
   if(!document.getElementById('wysiwygCacheQsiG')){

@@ -30,8 +30,12 @@ import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.rendering.RenderingService;
+import org.exoplatform.wiki.rendering.impl.RenderingServiceImpl;
+import org.exoplatform.wiki.service.WikiContext;
 import org.exoplatform.wiki.service.WikiRestService;
 import org.exoplatform.wiki.service.WikiService;
+import org.xwiki.context.Execution;
+import org.xwiki.context.ExecutionContext;
 import org.xwiki.rendering.syntax.Syntax;
 
 /**
@@ -47,7 +51,7 @@ public class WikiRestServiceImpl implements WikiRestService, ResourceContainer {
 
   private final RenderingService renderingService;
 
-  private static Log             log = ExoLogger.getLogger(WikiRestService.class);
+  private static Log             log = ExoLogger.getLogger("wiki:WikiRestService");
 
   private final CacheControl     cc;
 
@@ -68,6 +72,7 @@ public class WikiRestServiceImpl implements WikiRestService, ResourceContainer {
   public Response getWikiPageContent(@PathParam("wikiType") String wikiType,
                                      @PathParam("wikiOwner") String wikiOwner,
                                      @PathParam("pageId") String pageId,
+                                     @QueryParam("portalURI") String portalURI,
                                      @QueryParam("markup") boolean isMarkup) {
     String pageContent = "";
     String syntaxId = "";
@@ -79,7 +84,17 @@ public class WikiRestServiceImpl implements WikiRestService, ResourceContainer {
         syntaxId = (syntaxId != null) ? syntaxId : Syntax.XWIKI_2_0.toIdString();
       }
       if (!isMarkup) {
+        Execution ec = ((RenderingServiceImpl) renderingService).getExecutionContext();
+        ec.setContext(new ExecutionContext());
+        WikiContext wikiContext = new WikiContext();
+        wikiContext.setPortalURI(portalURI);
+        wikiContext.setPortletURI("wiki");
+        wikiContext.setType(wikiType);
+        wikiContext.setOwner(wikiOwner);
+        wikiContext.setPageId(pageId);
+        ec.getContext().setProperty(WikiContext.WIKICONTEXT, wikiContext);
         pageContent = renderingService.render(pageContent, syntaxId);
+        ec.removeContext();
       }
     } catch (Exception e) {
       log.error(e.getMessage(), e);

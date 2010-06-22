@@ -29,6 +29,7 @@ import org.exoplatform.webui.ext.filter.UIExtensionFilters;
 import org.exoplatform.wiki.webui.UIWikiPageEditForm;
 import org.exoplatform.wiki.webui.UIWikiSidePanelArea;
 import org.exoplatform.wiki.webui.control.filter.IsEditModeFilter;
+import org.exoplatform.wiki.webui.control.filter.IsMarkupModeFilter;
 import org.exoplatform.wiki.webui.control.listener.UIPageToolBarActionListener;
 
 /**
@@ -44,7 +45,7 @@ import org.exoplatform.wiki.webui.control.listener.UIPageToolBarActionListener;
 )
 public class HelpActionComponent extends UIComponent {
 
-  private static final List<UIExtensionFilter> FILTERS = Arrays.asList(new UIExtensionFilter[] { new IsEditModeFilter() });
+  private static final List<UIExtensionFilter> FILTERS = Arrays.asList(new UIExtensionFilter[] { new IsEditModeFilter(), new IsMarkupModeFilter() });
 
   @UIExtensionFilters
   public List<UIExtensionFilter> getFilters() {

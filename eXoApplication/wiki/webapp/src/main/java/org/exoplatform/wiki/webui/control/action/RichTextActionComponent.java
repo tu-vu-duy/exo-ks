@@ -28,6 +28,7 @@ import org.exoplatform.webui.ext.filter.UIExtensionFilter;
 import org.exoplatform.webui.ext.filter.UIExtensionFilters;
 import org.exoplatform.wiki.webui.UIWikiPageEditForm;
 import org.exoplatform.wiki.webui.UIWikiRichTextArea;
+import org.exoplatform.wiki.webui.UIWikiSidePanelArea;
 import org.exoplatform.wiki.webui.control.filter.IsEditModeFilter;
 import org.exoplatform.wiki.webui.control.listener.UIPageToolBarActionListener;
 
@@ -58,8 +59,16 @@ public class RichTextActionComponent extends UIComponent {
                                                  .getAncestorOfType(UIWikiPageEditForm.class);
       UIWikiRichTextArea wikiRichTextArea = wikiPageEditForm.getChild(UIWikiRichTextArea.class);
       boolean isRichTextRendered = wikiRichTextArea.isRendered();
+      if(!isRichTextRendered){
+        UIWikiSidePanelArea wikiSidePanelArea = wikiPageEditForm.getChild(UIWikiSidePanelArea.class);
+        wikiSidePanelArea.setRendered(false);
+      }
       wikiRichTextArea.setRendered(!isRichTextRendered);
       wikiPageEditForm.getUIFormTextAreaInput(UIWikiPageEditForm.FIELD_CONTENT).setRendered(isRichTextRendered);
+      if(isRichTextRendered){
+        String htmlContent = wikiRichTextArea.getUIFormTextAreaInput().getValue();
+        //TODO:Convert to markup and set to UIWikiPageEditForm.FIELD_CONTENT
+      }
       super.processEvent(event);
     }
   }

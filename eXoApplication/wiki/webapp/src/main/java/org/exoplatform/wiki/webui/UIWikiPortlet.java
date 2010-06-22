@@ -97,14 +97,14 @@ public class UIWikiPortlet extends UIPortletApplication {
     String portalURI = portalRequestContext.getPortalURI();
     
     String pageNodeSelected = uiPortal.getSelectedNode().getUri();
-    
+    Execution ec = null;
     try {
       // TODO: ignore request URL of resources
       
       context.setAttribute("wikiPage", page);
       
       RenderingServiceImpl renderingService = (RenderingServiceImpl) PortalContainer.getComponent(RenderingService.class);
-      Execution ec = renderingService.getExecutionContext();
+      ec = renderingService.getExecutionContext();
       ec.setContext(new ExecutionContext());
       WikiContext wikiContext = new WikiContext();
       wikiContext.setPortalURI(portalURI);
@@ -128,25 +128,11 @@ public class UIWikiPortlet extends UIPortletApplication {
       }
     }
 
-    // if(portletReqContext.getApplicationMode() == PortletMode.VIEW) {
-    // Check and remove edit component
-    // add a component that has template is View mode HTML
-    // addChild(UIFAQContainer.class, null, null) ;
-
-    // }else if(portletReqContext.getApplicationMode() == PortletMode.EDIT) {
-
-    // remove view component
-    // Add edit component
-    // UISettingForm settingForm = addChild(UISettingForm.class, null,
-    // "FAQPortletSetting");
-    // settingForm.setRendered(true);
-
-    // NOTE: add this property to portlet.xml file under <supports> tag
-    // <portlet-mode>edit</portlet-mode>
-
-    // }
-
     super.processRender(app, context);
+    //clean the ThreadLocal variables located in the Execution component to prevent a potential memory leak
+    if (ec != null) {
+      ec.removeContext();
+    }
   }
   
   public WikiMode getWikiMode(){

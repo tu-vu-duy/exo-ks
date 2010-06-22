@@ -17,12 +17,13 @@
 package org.exoplatform.wiki.webui;
 
 import org.exoplatform.container.PortalContainer;
+import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
-import org.exoplatform.webui.core.UIComponent;
 import org.exoplatform.webui.core.UIContainer;
 import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
+import org.exoplatform.webui.form.UIFormTextAreaInput;
 import org.exoplatform.wiki.commons.Utils;
 import org.exoplatform.wiki.service.WikiPageParams;
 
@@ -40,12 +41,16 @@ public class UIWikiRichTextArea extends UIContainer {
 
   private static final Log log = ExoLogger.getLogger("wiki:UIWikiRichTextArea");
   
-  public boolean isSidePanelRendered() {
-    UIComponent uiComponent = getParent();
-    if (uiComponent != null && uiComponent instanceof UIWikiPageEditForm) {
-      return ((UIWikiPageEditForm) uiComponent).getChild(UIWikiSidePanelArea.class).isRendered();
-    }
-    return false;
+  public static final String RICHTEXT_AREA_INPUT = "UIWikiRichTextArea_TextArea";
+  
+  public UIWikiRichTextArea(){
+    UIFormTextAreaInput richTextAreaInput = new UIFormTextAreaInput(RICHTEXT_AREA_INPUT, RICHTEXT_AREA_INPUT, "");
+    addChild(richTextAreaInput);
+  }
+  
+  public UIFormTextAreaInput getUIFormTextAreaInput()
+  {
+     return findComponentById(RICHTEXT_AREA_INPUT);
   }
   
   public String getRestUrlToViewCurrentPage() {
@@ -61,10 +66,11 @@ public class UIWikiRichTextArea extends UIContainer {
       } else {
         sb.append("Untitle");
       }
-      sb.append("/content/");
-
+      sb.append("/content");
+      sb.append("?portalURI=").append(Util.getPortalRequestContext().getPortalURI());
+      
       return sb.toString();
-
+      
     } catch (Exception e) {
       log.warn(e.getMessage(), e);
       return "target:blank";

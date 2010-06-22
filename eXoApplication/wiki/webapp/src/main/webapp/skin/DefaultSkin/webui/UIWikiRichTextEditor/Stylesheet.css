@@ -14,3 +14,8 @@
   font-size:1px;
   margin:0;
 }
+
+.UIWikiRichTextEditor .textarea {
+  height:450px;
+  visibility: hidden;
+}

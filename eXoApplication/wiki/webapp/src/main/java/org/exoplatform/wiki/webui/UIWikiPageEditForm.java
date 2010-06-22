@@ -54,9 +54,7 @@ public class UIWikiPageEditForm extends UIForm {
     addChild(UIPageToolBar.class, null, PAGE_TOOLBAR).setRendered(true);
     addChild(UIWikiSidePanelArea.class, null, HELP_PANEL).setRendered(false);
     addChild(UIWikiRichTextArea.class, null, RICHTEXT_AREA).setRendered(false);
-    UIFormTextAreaInput markupInput = new UIFormTextAreaInput(UIWikiPageEditForm.FIELD_CONTENT,
-                                                              UIWikiPageEditForm.FIELD_CONTENT,
-                                                              "This is **sample content**");
+    UIFormTextAreaInput markupInput = new UIFormTextAreaInput(FIELD_CONTENT, FIELD_CONTENT, "This is **sample content**");
     addUIFormInput(markupInput).setRendered(true);
     List<SelectItemOption<String>> syntaxTypes = new ArrayList<SelectItemOption<String>>();
     syntaxTypes.add(new SelectItemOption<String>(Syntax.XWIKI_1_0.toString(),Syntax.XWIKI_1_0.toIdString()));

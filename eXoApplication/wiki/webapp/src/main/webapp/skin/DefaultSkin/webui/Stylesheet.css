@@ -725,13 +725,11 @@
 
 .UIWikiPageNotFound ul {
 	margin: 0 0 20px;
-	padding: 0 0 0 10px;
+	padding: 0 0 0 30px;
 }
 
 .UIWikiPageNotFound ul li {
-	list-style: none;
-	background: url("/wiki/skin/DefaultSkin/webui/background/ListIcon.gif") no-repeat left center;
-	padding-left: 20px;
+
 }
 
 .UIWikiPageNotFound input {

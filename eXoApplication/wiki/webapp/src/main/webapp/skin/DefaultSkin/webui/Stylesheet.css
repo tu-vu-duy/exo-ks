@@ -487,7 +487,7 @@
 .UIWikiAdvanceSearchResult .BlockResultFeed .TxtTitFeed {
 	color: #165fb3;
 	font-weight: bold;
-	padding:2px 0 2px 25px;
+	padding:2px 0 2px 20px;
 	height: 16px;
 	width: 16px;
 }
@@ -710,3 +710,82 @@
 	height: 20px;
 	width:20px;
 }
+
+
+/* Wiki - Page not found */
+.UIWikiPageNotFound {
+	padding: 10px 10px 20px;
+	color: #363636;
+}
+
+.UIWikiPageNotFound h2 {
+	font-weight: normal;
+	color: #f57a00;
+}
+
+.UIWikiPageNotFound ul {
+	margin: 0 0 20px;
+	padding: 0 0 0 10px;
+}
+
+.UIWikiPageNotFound ul li {
+	list-style: none;
+	background: url("/wiki/skin/DefaultSkin/webui/background/ListIcon.gif") no-repeat left center;
+	padding-left: 20px;
+}
+
+.UIWikiPageNotFound input {
+	border: 1px solid #ebebeb;
+	font-size: 11px;
+	padding: 3px 5px;
+	color: #868686;
+}
+
+.UIWikiPageNotFound a.SearchBtn {
+	font-size: 11px;
+	padding: 4px 13px;
+	margin-left: 10px;
+	background: url("/wiki/skin/DefaultSkin/webui/background/BtnSearch.gif") no-repeat left center;
+	color: #ffffff;
+	font-weight: bold;
+}
+
+.UIWikiPageNotFound a.SearchBtn:hover {
+	text-decoration: none;
+}
+
+.UIWikiPageNotFound .ResultInfo  {
+	border-bottom: 1px solid #C2C2C2;
+	color: #363636;
+	margin: 20px 0 0;
+	padding-bottom: 5px;
+}
+
+.UIWikiPageNotFound .BlockResultFeed  {
+	margin: 20px 0 10px;
+}
+
+.UIWikiPageNotFound .BlockResultFeed .Page {
+	background: url("/wiki/skin/DefaultSkin/webui/background/Page.gif") no-repeat left center;
+}
+
+.UIWikiPageNotFound .BlockResultFeed .TxtTitFeed {
+	color: #165FB3;
+	font-weight: bold;
+	height: 16px;
+	padding: 2px 0 2px 20px;
+	width: 16px;
+}
+
+.UIWikiPageNotFound .BlockResultFeed .TxtDetail {
+	color: #363636;
+	padding: 8px 0;
+	text-align: justify;
+}
+
+.UIWikiPageNotFound .BlockResultFeed .TxtMark {
+	color: #B7B7B7;
+	font-size: 11px;
+}
+
+

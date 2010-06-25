@@ -131,33 +131,6 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <!--
-                We need to copy the jar with the classes shared by the client and server side of the
-                WYSIWYG editor to the library directory of the generated war. We do it like
-                this because we can't exclude all transitive dependencies of the shared jar at once.
-              -->
-              <goal>copy</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.xwiki.platform</groupId>
-                  <artifactId>xwiki-web-gwt-wysiwyg-client</artifactId>
-                  <version>${org.xwiki.platform.version}</version>
-                  <classifier>shared</classifier>
-                  <outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/lib</outputDirectory>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
           <archiveClasses>true</archiveClasses>

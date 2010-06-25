@@ -43,6 +43,12 @@
     </dependency>
     <dependency>
       <groupId>org.exoplatform.kernel</groupId>
+      <artifactId>exo.kernel.component.common</artifactId>
+      <version>${org.exoplatform.kernel.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.exoplatform.kernel</groupId>
       <artifactId>exo.kernel.commons</artifactId>
       <version>${org.exoplatform.kernel.version}</version>
       <scope>provided</scope>
@@ -173,6 +179,18 @@
       <groupId>org.xwiki.platform</groupId>
       <artifactId>xwiki-core-rendering-macro-code</artifactId>
       <version>${org.xwiki.platform.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-servlet</artifactId>
+      <version>${gwt.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.platform</groupId>
+      <artifactId>xwiki-web-gwt-wysiwyg-client</artifactId>
+      <version>${org.xwiki.platform.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.python</groupId>

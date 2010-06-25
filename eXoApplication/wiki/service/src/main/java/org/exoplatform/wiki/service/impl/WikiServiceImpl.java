@@ -98,7 +98,7 @@ public class WikiServiceImpl implements WikiService{
   }
   
   public boolean renamePage(String wikiType, String wikiOwner, String pageName, String newName, String newTitle) throws Exception {
-    if(WikiNodeType.Definition.WIKI_HOME_NAME.equals(pageName) || pageName == null || pageName == null) return false ;
+    if(WikiNodeType.Definition.WIKI_HOME_NAME.equals(pageName) || pageName == null) return false ;
     PageImpl currentPage = (PageImpl)getPageById(wikiType, wikiOwner, pageName)  ;
     Model model = getModel();
     WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
@@ -126,7 +126,7 @@ public class WikiServiceImpl implements WikiService{
     String statement = getStatement(wikiType, wikiOwner, pageId);
     if(statement != null) {
       Page page = searchPage(statement, wStore.getSession()) ;
-      if(page == null && pageId.equals(WikiNodeType.Definition.WIKI_HOME_NAME)) {
+      if(WikiNodeType.Definition.WIKI_HOME_NAME.equals(pageId) || pageId == null) {
         return getWikiHome(wikiType, wikiOwner) ;        
       }      
       return page ;
@@ -187,9 +187,9 @@ public class WikiServiceImpl implements WikiService{
     if (relPath.startsWith("/")) relPath = relPath.substring(1) ;
     Model model = getModel();
     WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
-    if(objectNodeType.equals(WikiNodeType.WIKI_PAGE_CONTENT)) {
+    if(WikiNodeType.WIKI_PAGE_CONTENT.equals(objectNodeType)) {
       return wStore.getSession().findByPath(ContentImpl.class, relPath) ;
-    }else if (objectNodeType.equals(WikiNodeType.WIKI_ATTACHMENT_CONTENT)){
+    }else if (WikiNodeType.WIKI_ATTACHMENT_CONTENT.equals(objectNodeType)){
       relPath = relPath.substring(0, relPath.lastIndexOf("/")) ;
       return wStore.getSession().findByPath(AttachmentImpl.class, relPath) ;
     }    
@@ -235,21 +235,21 @@ public class WikiServiceImpl implements WikiService{
   
   private String getStatement(String wikiType, String wikiOwner, String pageId) throws Exception  {
     String path = null;
-    if(wikiType.equals(PortalConfig.PORTAL_TYPE)) {
+    if(PortalConfig.PORTAL_TYPE.equals(wikiType)) {
       path = Utils.getPortalWikisPath() ;      
-    }else if(wikiType.equals(PortalConfig.GROUP_TYPE)) {
+    }else if(PortalConfig.GROUP_TYPE.equals(wikiType)) {
       path = nodeCreator.getJcrPath(GROUPS_PATH) ;
       path = (path != null) ? path : "/Groups";
-    }else if(wikiType.equals(PortalConfig.USER_TYPE)) {
+    }else if(PortalConfig.USER_TYPE.equals(wikiType)) {
       path = nodeCreator.getJcrPath(USERS_PATH) ;
       path = (path != null) ? path : "/Users";
     }
     
     if(path != null) {
       path = path + "/" + Utils.validateWikiOwner(wikiType, wikiOwner) ;
-      if(!wikiType.equals(PortalConfig.PORTAL_TYPE)){
+      if(!PortalConfig.PORTAL_TYPE.equals(wikiType)){
         String appPath = null;
-        if(wikiType.equals(PortalConfig.GROUP_TYPE)){
+        if(PortalConfig.GROUP_TYPE.equals(wikiType)){
           appPath = nodeCreator.getJcrPath(GROUP_APPLICATION);
         } else {
           appPath = nodeCreator.getJcrPath(USER_APPLICATION);
@@ -289,13 +289,13 @@ public class WikiServiceImpl implements WikiService{
   private Wiki getWiki(String wikiType, String owner, Model model){
     WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
     WikiImpl wiki = null;
-    if(wikiType.equals(PortalConfig.PORTAL_TYPE)) {
+    if(PortalConfig.PORTAL_TYPE.equals(wikiType)) {
       WikiContainer<PortalWiki> portalWikiContainer = wStore.getWikiContainer(WikiType.PORTAL);
       wiki = portalWikiContainer.getWiki(owner);
-    }else if(wikiType.equals(PortalConfig.GROUP_TYPE)) {
+    }else if(PortalConfig.GROUP_TYPE.equals(wikiType)) {
       WikiContainer<GroupWiki> groupWikiContainer = wStore.getWikiContainer(WikiType.GROUP);
       wiki = groupWikiContainer.getWiki(owner);
-    }else if(wikiType.equals(PortalConfig.USER_TYPE)) {
+    }else if(PortalConfig.USER_TYPE.equals(wikiType)) {
       WikiContainer<UserWiki> userWikiContainer = wStore.getWikiContainer(WikiType.USER);
       wiki = userWikiContainer.getWiki(owner);
     }

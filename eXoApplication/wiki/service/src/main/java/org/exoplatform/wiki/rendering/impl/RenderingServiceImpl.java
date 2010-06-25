@@ -54,6 +54,10 @@ public class RenderingServiceImpl implements RenderingService, Startable {
     return componentManager.lookup(Execution.class);
   }
   
+  public <T> T getComponent(Class<T> clazz) {
+    return getComponent(clazz, "default");
+  }
+  
   /*
    * (non-Javadoc)
    * @see poc.wiki.rendering.Renderer#render(java.lang.String)
@@ -92,6 +96,21 @@ public class RenderingServiceImpl implements RenderingService, Startable {
 
   @Override
   public void stop() {
+  }
+  
+  private <T> T getComponent(Class<T> clazz, String hint) {
+    T component = null;
+    if (componentManager != null) {
+      try {
+        component = componentManager.lookup(clazz, hint);
+      } catch (ComponentLookupException e) {
+        throw new RuntimeException("Failed to load component [" + clazz.getName() + "] for hint [" + hint + "]", e);
+      }
+    } else {
+      throw new RuntimeException("Component manager has not been initialized before lookup for [" + clazz.getName() + "] for hint [" + hint + "]");
+    }
+
+    return component;
   }
   
   private Converter getConverter() throws Exception {

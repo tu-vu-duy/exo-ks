@@ -1,1 +1,2 @@
 org.exoplatform.wiki.rendering.impl.DefaultWikiModel
+org.exoplatform.wiki.service.wysiwyg.DefaultWikiService

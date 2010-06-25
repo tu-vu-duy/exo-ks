@@ -77,4 +77,14 @@ public class UIWikiRichTextArea extends UIContainer {
     }
   }
   
+  private WikiPageParams getCurrentWikiPageParams() {
+    WikiPageParams wikiPageParams = null;
+    try {
+      wikiPageParams = Utils.getCurrentWikiPageParams();
+    } catch (Exception e) {
+      log.warn("Can't get current wiki page params", e);
+    }
+    return wikiPageParams;
+  }
+  
 }

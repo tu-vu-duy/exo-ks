@@ -24,6 +24,7 @@ import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.wiki.rendering.RenderingService;
 import org.picocontainer.Startable;
+import org.w3c.dom.Document;
 import org.xwiki.component.embed.EmbeddableComponentManager;
 import org.xwiki.component.manager.ComponentLookupException;
 import org.xwiki.component.manager.ComponentRepositoryException;
@@ -40,6 +41,9 @@ import org.xwiki.rendering.renderer.printer.WikiPrinter;
 import org.xwiki.rendering.syntax.Syntax;
 import org.xwiki.rendering.transformation.TransformationException;
 import org.xwiki.rendering.transformation.TransformationManager;
+import org.xwiki.xml.html.HTMLCleaner;
+import org.xwiki.xml.html.HTMLCleanerConfiguration;
+import org.xwiki.xml.html.HTMLUtils;
 
 /**
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Nov
@@ -62,32 +66,32 @@ public class RenderingServiceImpl implements RenderingService, Startable {
    * (non-Javadoc)
    * @see poc.wiki.rendering.Renderer#render(java.lang.String)
    */
-  public String render(String markup, String syntaxId) throws Exception {
+  public String render(String markup, String sourceSyntax, String targetSyntax) throws Exception {
 
-    Syntax syntax = Syntax.XWIKI_2_0;
-    if (Syntax.XWIKI_1_0.toIdString().equals(syntaxId)) {
-      syntax = Syntax.XWIKI_1_0;
-    } else if (Syntax.XWIKI_2_0.toIdString().equals(syntaxId)) {
-      syntax = Syntax.XWIKI_2_0;
-    } else if (Syntax.CREOLE_1_0.toIdString().equals(syntaxId)) {
-      syntax = Syntax.CREOLE_1_0;
-    } else if (Syntax.CONFLUENCE_1_0.toIdString().equals(syntaxId)) {
-      syntax = Syntax.CONFLUENCE_1_0;
-    } else if (Syntax.MEDIAWIKI_1_0.toIdString().equals(syntaxId)) {
-      syntax = Syntax.MEDIAWIKI_1_0;
-    } else if (Syntax.JSPWIKI_1_0.toIdString().equals(syntaxId)) {
-      syntax = Syntax.JSPWIKI_1_0;
-    } else if (Syntax.TWIKI_1_0.toIdString().equals(syntaxId)) {
-      syntax = Syntax.TWIKI_1_0;
+    Syntax sSyntax = (sourceSyntax == null) ? Syntax.XWIKI_2_0 : getSyntax(sourceSyntax);
+    Syntax tSyntax = (targetSyntax == null) ? Syntax.XHTML_1_0 : getSyntax(targetSyntax);
+    
+    if(sSyntax == Syntax.XHTML_1_0){
+      markup = clean(markup);
     }
     
     // Step 1: Find the parser and generate a XDOM
-    XDOM xdom = parse(new StringReader(markup), syntax);
-    outputTree(xdom, 0);
-    WikiPrinter printer = convert(xdom, syntax, Syntax.XHTML_1_0);
+    XDOM xdom = parse(new StringReader(markup), sSyntax);
+    if (LOG.isDebugEnabled()) {
+      outputTree(xdom, 0);
+    }
+    WikiPrinter printer = convert(xdom, sSyntax, tSyntax);
     return printer.toString();
   }
 
+  private String clean(String dirtyHTML)
+  {
+    HTMLCleaner cleaner = getComponent(HTMLCleaner.class);
+    HTMLCleanerConfiguration config = cleaner.getDefaultConfiguration();
+    Document document = cleaner.clean(new StringReader(dirtyHTML), config);
+    return HTMLUtils.toString(document);
+  }
+  
   @Override
   public void start() {
     componentManager = new EmbeddableComponentManager();
@@ -177,6 +181,37 @@ public class RenderingServiceImpl implements RenderingService, Startable {
       throw new ConversionException("Failed to parse input source", e);
     }
     return xdom;
+  }
+  
+  private Syntax getSyntax(String syntaxId) {
+    Syntax syntax = Syntax.XWIKI_2_0;
+    if (Syntax.XWIKI_2_0.toIdString().equals(syntaxId)) {
+      syntax = Syntax.XWIKI_2_0;
+    } else if (Syntax.CREOLE_1_0.toIdString().equals(syntaxId)) {
+      syntax = Syntax.CREOLE_1_0;
+    } else if (Syntax.CONFLUENCE_1_0.toIdString().equals(syntaxId)) {
+      syntax = Syntax.CONFLUENCE_1_0;
+    } else if (Syntax.XHTML_1_0.toIdString().equals(syntaxId)) {
+      syntax = Syntax.XHTML_1_0;
+    } else if (Syntax.MEDIAWIKI_1_0.toIdString().equals(syntaxId)) {
+      syntax = Syntax.MEDIAWIKI_1_0;
+    } else if (Syntax.XWIKI_1_0.toIdString().equals(syntaxId)) {
+      syntax = Syntax.XWIKI_1_0;
+    } else if (Syntax.JSPWIKI_1_0.toIdString().equals(syntaxId)) {
+      syntax = Syntax.JSPWIKI_1_0;
+    } else if (Syntax.TWIKI_1_0.toIdString().equals(syntaxId)) {
+      syntax = Syntax.TWIKI_1_0;
+    } else if (Syntax.HTML_4_01.toIdString().equals(syntaxId)) {
+      syntax = Syntax.HTML_4_01;
+    } else if (Syntax.PLAIN_1_0.toIdString().equals(syntaxId)) {
+      syntax = Syntax.PLAIN_1_0;
+    } else if (Syntax.TEX_1_0.toIdString().equals(syntaxId)) {
+      syntax = Syntax.TEX_1_0;
+    } else if (Syntax.EVENT_1_0.toIdString().equals(syntaxId)) {
+      syntax = Syntax.EVENT_1_0;
+    }
+
+    return syntax;
   }
 
 }

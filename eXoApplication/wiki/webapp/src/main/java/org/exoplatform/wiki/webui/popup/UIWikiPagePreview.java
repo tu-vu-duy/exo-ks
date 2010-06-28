@@ -27,6 +27,7 @@ import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.wiki.rendering.RenderingService;
 import org.exoplatform.wiki.webui.UIWikiMaskWorkspace;
 import org.exoplatform.wiki.webui.UIWikiPortlet;
+import org.xwiki.rendering.syntax.Syntax;
 
 /**
  * Created by The eXo Platform SAS
@@ -53,7 +54,7 @@ public class UIWikiPagePreview extends UIContainer {
 
   public void renderWikiMarkup(String markup, String syntaxId) throws Exception {
     RenderingService renderingService = (RenderingService) PortalContainer.getComponent(RenderingService.class);
-    this.htmlOutput = renderingService.render(markup, syntaxId);
+    this.htmlOutput = renderingService.render(markup, syntaxId, Syntax.XHTML_1_0.toIdString());
   }
   
   static public class CloseActionListener extends EventListener<UIWikiPagePreview> {

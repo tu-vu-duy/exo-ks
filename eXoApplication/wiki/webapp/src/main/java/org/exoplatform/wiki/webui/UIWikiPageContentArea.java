@@ -21,6 +21,7 @@ import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.core.UIContainer;
 import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
 import org.exoplatform.wiki.rendering.RenderingService;
+import org.xwiki.rendering.syntax.Syntax;
 
 /**
  * Created by The eXo Platform SAS
@@ -58,7 +59,7 @@ public class UIWikiPageContentArea extends UIContainer {
   
   public void renderWikiMarkup(String markup, String syntaxId) throws Exception {
     RenderingService renderingService = (RenderingService) PortalContainer.getComponent(RenderingService.class);
-    this.htmlOutput = renderingService.render(markup, syntaxId);
+    this.htmlOutput = renderingService.render(markup, syntaxId, Syntax.XHTML_1_0.toIdString());
   }
   
   public WikiMode getWikiMode(){

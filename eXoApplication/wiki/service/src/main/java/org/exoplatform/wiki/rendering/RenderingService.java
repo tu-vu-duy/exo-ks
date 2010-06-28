@@ -22,6 +22,6 @@ package org.exoplatform.wiki.rendering;
  */
 public interface RenderingService {
 
-  public abstract String render(String markup, String syntaxId) throws Exception;
+  public abstract String render(String markup, String sourceSyntax, String targetSyntax) throws Exception;
 
 }

@@ -93,7 +93,7 @@ public class WikiRestServiceImpl implements WikiRestService, ResourceContainer {
         wikiContext.setOwner(wikiOwner);
         wikiContext.setPageId(pageId);
         ec.getContext().setProperty(WikiContext.WIKICONTEXT, wikiContext);
-        pageContent = renderingService.render(pageContent, syntaxId);
+        pageContent = renderingService.render(pageContent, syntaxId, Syntax.XHTML_1_0.toIdString());
         ec.removeContext();
       }
     } catch (Exception e) {

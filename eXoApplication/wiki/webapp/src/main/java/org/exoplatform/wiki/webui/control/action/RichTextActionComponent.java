@@ -19,6 +19,7 @@ package org.exoplatform.wiki.webui.control.action;
 import java.util.Arrays;
 import java.util.List;
 
+import org.exoplatform.container.PortalContainer;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIComponent;
@@ -26,11 +27,13 @@ import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.Event.Phase;
 import org.exoplatform.webui.ext.filter.UIExtensionFilter;
 import org.exoplatform.webui.ext.filter.UIExtensionFilters;
+import org.exoplatform.wiki.rendering.RenderingService;
 import org.exoplatform.wiki.webui.UIWikiPageEditForm;
 import org.exoplatform.wiki.webui.UIWikiRichTextArea;
 import org.exoplatform.wiki.webui.UIWikiSidePanelArea;
 import org.exoplatform.wiki.webui.control.filter.IsEditModeFilter;
 import org.exoplatform.wiki.webui.control.listener.UIPageToolBarActionListener;
+import org.xwiki.rendering.syntax.Syntax;
 
 /**
  * Created by The eXo Platform SAS
@@ -67,7 +70,10 @@ public class RichTextActionComponent extends UIComponent {
       wikiPageEditForm.getUIFormTextAreaInput(UIWikiPageEditForm.FIELD_CONTENT).setRendered(isRichTextRendered);
       if(isRichTextRendered){
         String htmlContent = wikiRichTextArea.getUIFormTextAreaInput().getValue();
-        //TODO:Convert to markup and set to UIWikiPageEditForm.FIELD_CONTENT
+        RenderingService renderingService = (RenderingService) PortalContainer.getComponent(RenderingService.class);
+        String markupSyntax = wikiPageEditForm.getUIStringInput(UIWikiPageEditForm.FIELD_SYNTAX).getValue();
+        String markupContent = renderingService.render(htmlContent, Syntax.XHTML_1_0.toIdString(), markupSyntax);
+        wikiPageEditForm.getUIStringInput(UIWikiPageEditForm.FIELD_CONTENT).setValue(markupContent);
       }
       super.processEvent(event);
     }

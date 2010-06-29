@@ -3,6 +3,18 @@
 %>
 <!-- This script must to put here to ensure xwe.onScriptLoad is alway called. -->
 <script type="text/javascript" src="/wiki/javascript/eXo/wiki/UIWikiWysiwygLoader.js"></script>
+<!-- This script must to put here to avoid impact submit plugin -->
+<script type="text/javascript" src="/wiki/javascript/prototype/prototype.js"></script>
+<script type="text/javascript" src="/wiki/resources/js/xwiki/wysiwyg/xwe/sc/initsc.js"></script>
+<script type="text/javascript" src="/wiki/resources/js/xwiki/wysiwyg/xwe/sc/modules/ISC_Core.js"></script>
+<script type="text/javascript" src="/wiki/resources/js/xwiki/wysiwyg/xwe/sc/modules/ISC_Foundation.js"></script>
+<script type="text/javascript" src="/wiki/resources/js/xwiki/wysiwyg/xwe/sc/modules/ISC_Containers.js"></script>
+<script type="text/javascript" src="/wiki/resources/js/xwiki/wysiwyg/xwe/sc/modules/ISC_Grids.js"></script>
+<script type="text/javascript" src="/wiki/resources/js/xwiki/wysiwyg/xwe/sc/modules/ISC_Forms.js"></script>
+<script type="text/javascript" src="/wiki/resources/js/xwiki/wysiwyg/xwe/sc/modules/ISC_DataBinding.js"></script>
+<script type="text/javascript" src="/wiki/javascript/xwiki/xwiki.js"></script>
+<script type="text/javascript" src="/wiki/javascript/xwiki/xwikiexplorer/xwikiexplorer.js"></script>
+<!--  -->
 <div class="UIWikiPortlet" id="$uicomponent.id">
   <div class="ParentMaskLayer">
     <div id="MaskLayerWiki" class="MaskLayerWiki"><span></span></div>

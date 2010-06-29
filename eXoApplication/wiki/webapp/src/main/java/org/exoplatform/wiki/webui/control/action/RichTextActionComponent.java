@@ -68,12 +68,17 @@ public class RichTextActionComponent extends UIComponent {
       }
       wikiRichTextArea.setRendered(!isRichTextRendered);
       wikiPageEditForm.getUIFormTextAreaInput(UIWikiPageEditForm.FIELD_CONTENT).setRendered(isRichTextRendered);
-      if(isRichTextRendered){
+      RenderingService renderingService = (RenderingService) PortalContainer.getComponent(RenderingService.class);
+      if (isRichTextRendered) {
         String htmlContent = wikiRichTextArea.getUIFormTextAreaInput().getValue();
-        RenderingService renderingService = (RenderingService) PortalContainer.getComponent(RenderingService.class);
-        String markupSyntax = wikiPageEditForm.getUIStringInput(UIWikiPageEditForm.FIELD_SYNTAX).getValue();
+        String markupSyntax = wikiPageEditForm.getUIFormSelectBox(UIWikiPageEditForm.FIELD_SYNTAX).getValue();
         String markupContent = renderingService.render(htmlContent, Syntax.XHTML_1_0.toIdString(), markupSyntax);
-        wikiPageEditForm.getUIStringInput(UIWikiPageEditForm.FIELD_CONTENT).setValue(markupContent);
+        wikiPageEditForm.getUIFormTextAreaInput(UIWikiPageEditForm.FIELD_CONTENT).setValue(markupContent);
+      } else {
+        String markupContent = wikiPageEditForm.getUIFormTextAreaInput(UIWikiPageEditForm.FIELD_CONTENT).getValue();
+        String markupSyntax = wikiPageEditForm.getUIFormSelectBox(UIWikiPageEditForm.FIELD_SYNTAX).getValue();
+        String htmlContent = renderingService.render(markupContent, markupSyntax, Syntax.XHTML_1_0.toIdString());
+        wikiRichTextArea.getUIFormTextAreaInput().setValue(htmlContent);
       }
       super.processEvent(event);
     }

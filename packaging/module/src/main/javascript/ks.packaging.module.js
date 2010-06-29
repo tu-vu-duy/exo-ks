@@ -72,6 +72,7 @@ function getModule(params)
 	addDependency(new Project("org.hibernate", "hibernate-validator", "jar",  "4.0.0.GA")).
 	addDependency(new Project("org.python", "jython-standalone", "jar",  "2.5.1-xwiki")).
 	addDependency(new Project("pygments", "pygments", "jar",  "1.3.1-xwiki")).
+	addDependency(new Project("net.sourceforge.htmlcleaner", "htmlcleaner", "jar",  "2.1")).
 	addDependency(new Project("org.xwiki.platform", "xwiki-core-configuration-api", "jar",  "2.3.1")).
 	addDependency(new Project("org.xwiki.platform", "xwiki-core-model", "jar",  "2.3.1")).
 	addDependency(new Project("org.xwiki.platform", "xwiki-core-context", "jar",  "2.3.1")).

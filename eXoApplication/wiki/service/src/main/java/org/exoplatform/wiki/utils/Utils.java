@@ -4,6 +4,7 @@ import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.portal.config.model.PortalConfig;
 import org.exoplatform.services.jcr.RepositoryService;
+import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.wiki.mow.api.WikiNodeType;
 
 public class Utils {
@@ -46,5 +47,12 @@ public class Utils {
     sb.append("/");
     return sb.toString();
   }
-
+  
+  public static String getCurrentUser() {
+    try {
+      ConversationState conversationState = ConversationState.getCurrent();
+      return conversationState.getIdentity().getUserId();
+    }catch(Exception e){}
+    return "system" ;
+  }
 }

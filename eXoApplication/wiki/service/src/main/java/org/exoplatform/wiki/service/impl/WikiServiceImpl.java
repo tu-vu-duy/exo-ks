@@ -2,6 +2,8 @@ package org.exoplatform.wiki.service.impl;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
@@ -24,8 +26,11 @@ import org.exoplatform.wiki.mow.core.api.WikiStoreImpl;
 import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.AttachmentImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.GroupWiki;
+import org.exoplatform.wiki.mow.core.api.wiki.MovedMixin;
 import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.PortalWiki;
+import org.exoplatform.wiki.mow.core.api.wiki.RemovedMixin;
+import org.exoplatform.wiki.mow.core.api.wiki.Trash;
 import org.exoplatform.wiki.mow.core.api.wiki.UserWiki;
 import org.exoplatform.wiki.mow.core.api.wiki.WikiContainer;
 import org.exoplatform.wiki.mow.core.api.wiki.WikiHome;
@@ -90,32 +95,68 @@ public class WikiServiceImpl implements WikiService{
   
   public boolean deletePage(String wikiType, String wikiOwner, String pageId) throws Exception {
     if(WikiNodeType.Definition.WIKI_HOME_NAME.equals(pageId) || pageId == null) return false ;
-    PageImpl page = (PageImpl)getPageById(wikiType, wikiOwner, pageId)  ;
-    Model model = getModel();
-    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
-    WikiImpl wiki = (WikiImpl)getWiki(wikiType, wikiOwner, model) ;
-    return jcrDataStorage.deletePage(page.getPath(), wiki.getPath(), wStore.getSession()) ;    
+    try{
+      PageImpl page = (PageImpl)getPageById(wikiType, wikiOwner, pageId)  ;
+      Model model = getModel();
+      WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
+      ChromatticSession session = wStore.getSession() ;
+      RemovedMixin mix = session.create(RemovedMixin.class) ;
+      session.setEmbedded(page, RemovedMixin.class, mix) ;
+      mix.setRemovedBy(Utils.getCurrentUser()) ;
+      Calendar calendar = GregorianCalendar.getInstance() ;
+      mix.setRemovedDate(calendar.getTime()) ;
+      mix.setParentPath(page.getParentPage().getPath()) ;    
+      WikiImpl wiki = (WikiImpl)getWiki(wikiType, wikiOwner, model) ;
+      Trash trash = wiki.getTrash() ;
+      if(trash == null) {
+        trash = wiki.createTrash() ;
+        wiki.setTrash(trash) ;
+      }
+      trash.addRemovedWikiPage(page) ;      
+      session.save() ;
+    }catch(Exception e) {
+      return false ;
+    }
+    return true ;
+    
+    //return jcrDataStorage.deletePage(page.getPath(), wiki.getPath(), wStore.getSession()) ;    
   }
   
   public boolean renamePage(String wikiType, String wikiOwner, String pageName, String newName, String newTitle) throws Exception {
     if(WikiNodeType.Definition.WIKI_HOME_NAME.equals(pageName) || pageName == null) return false ;
     PageImpl currentPage = (PageImpl)getPageById(wikiType, wikiOwner, pageName)  ;
     Model model = getModel();
-    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
-    
+    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();    
     return jcrDataStorage.renamePage(currentPage.getPath(), newName, newTitle, wStore.getSession()) ;    
-  }
+  }  
   
-  
-  public boolean movePage(String pageId, String newParentId, String wikiType, String wikiOwner) throws Exception {
+  public boolean movePage(String pageId, String newParentId, String wikiType, String wikiOwner, String destSpace) throws Exception {
     try {
+      if(!isHasCreatePagePermission(Utils.getCurrentUser(), destSpace)){ return false ;}
+      Model model = getModel();
+      WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
+      ChromatticSession session = wStore.getSession() ;
       PageImpl movePage = (PageImpl)getPageById(wikiType, wikiOwner, pageId) ;
-      PageImpl destPage = (PageImpl)getPageById(wikiType, wikiOwner, newParentId) ;
+      MovedMixin mix = session.create(MovedMixin.class) ;
+      session.setEmbedded(movePage, MovedMixin.class, mix) ;      
+      PageImpl destPage = (PageImpl)getPageById(wikiType, destSpace, newParentId) ;
       movePage.setParentPage(destPage) ;
     }catch(Exception e) {
       return false ;
     }    
     return true;
+  }
+  
+  private <E> void addMix(Object o, Class<E> mixinType) {
+    Model model = getModel();
+    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
+    ChromatticSession session = wStore.getSession() ;
+    
+  }
+  
+  private boolean isHasCreatePagePermission(String userId, String destSpace) {
+    
+    return true ;
   }
   
   public Page getPageById(String wikiType, String wikiOwner, String pageId) throws Exception {

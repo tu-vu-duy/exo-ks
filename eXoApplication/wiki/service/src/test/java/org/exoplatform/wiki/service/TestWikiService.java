@@ -19,6 +19,7 @@ package org.exoplatform.wiki.service;
 
 import java.util.List;
 
+import org.chromattic.api.ChromatticSession;
 import org.chromattic.ext.ntdef.Resource;
 import org.exoplatform.commons.utils.PageList;
 import org.exoplatform.portal.config.model.PortalConfig;
@@ -29,6 +30,7 @@ import org.exoplatform.wiki.mow.core.api.WikiStoreImpl;
 import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.AttachmentImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.GroupWiki;
+import org.exoplatform.wiki.mow.core.api.wiki.MovedMixin;
 import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.PortalWiki;
 import org.exoplatform.wiki.mow.core.api.wiki.UserWiki;
@@ -146,6 +148,8 @@ public class TestWikiService extends AbstractMOWTestcase {
   }
   
   public void testMovePage() throws Exception{    
+    
+    //moving page in same space
     wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "oldParent", "WikiHome") ;
     wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "child", "oldParent") ;
     wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "newParent", "WikiHome") ;
@@ -154,12 +158,27 @@ public class TestWikiService extends AbstractMOWTestcase {
     assertNotNull(wService.getPageById(PortalConfig.PORTAL_TYPE, "classic", "child")) ;
     assertNotNull(wService.getPageById(PortalConfig.PORTAL_TYPE, "classic", "newParent")) ;
     
-    assertTrue(wService.movePage("child", "newParent", "portal", "classic")) ;    
-    assertFalse(wService.movePage("childWrong", "newParent", "portal", "classic")) ;
+    assertTrue(wService.movePage("child", "newParent", "portal", "classic", "classic")) ;    
+    assertFalse(wService.movePage("childWrong", "newParent", "portal", "classic", "classic")) ;
+    
+    
+  }
+  
+  public void testAddMixin() throws Exception{    
+    wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "mixinPage", "WikiHome") ;
+    PageImpl page = (PageImpl)wService.getPageById("portal", "classic", "mixinPage") ;
+    Model model = mowService.getModel();
+    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
+    ChromatticSession session = wStore.getSession() ;
+    MovedMixin mix = session.create(MovedMixin.class) ;
+    session.setEmbedded(page, MovedMixin.class, mix) ;
+    assertSame(mix, page.getMovedMixin()) ;
+    assertSame(page, mix.getEntity()) ;
+    
   }
   
   public void testDeletePage() throws Exception{    
-    wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "deletePage", "WikiHome") ;    
+    PageImpl page = (PageImpl)wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "deletePage", "WikiHome") ;
     assertTrue(wService.deletePage(PortalConfig.PORTAL_TYPE, "classic", "deletePage")) ;
     assertNull(wService.getPageById(PortalConfig.PORTAL_TYPE, "classic", "deletePage")) ; 
     assertFalse(wService.deletePage(PortalConfig.PORTAL_TYPE, "classic", "WikiHome")) ;

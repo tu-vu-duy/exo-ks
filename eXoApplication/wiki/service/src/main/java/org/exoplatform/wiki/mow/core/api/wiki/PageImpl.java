@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.Iterator;
 
 import org.chromattic.api.DuplicateNameException;
+import org.chromattic.api.RelationshipType;
 import org.chromattic.api.annotations.Create;
 import org.chromattic.api.annotations.Destroy;
 import org.chromattic.api.annotations.ManyToOne;
@@ -73,6 +74,22 @@ public abstract class PageImpl implements Page {
   @Property(name = WikiNodeType.Definition.UPDATED_DATE)
   public abstract Date getUpdatedDate();
   
+  
+  @OneToOne(type = RelationshipType.EMBEDDED)
+  @Owner
+  public abstract MovedMixin getMovedMixin();
+  public abstract void setMovedMixin(MovedMixin mix);
+  
+  @OneToOne(type = RelationshipType.EMBEDDED)
+  @Owner
+  public abstract RemovedMixin getRemovedMixin();
+  public abstract void setRemovedMixin(RemovedMixin mix);
+  
+  @OneToOne(type = RelationshipType.EMBEDDED)
+  @Owner
+  public abstract RenamedMixin getRenamedMixin();
+  public abstract void setRenamedMixin(RenamedMixin mix);
+  
   @Create
   public abstract AttachmentImpl createAttachment();
   
@@ -116,9 +133,12 @@ public abstract class PageImpl implements Page {
   
   @ManyToOne
   public abstract PageImpl getParentPage();
-
   public abstract void setParentPage(PageImpl page);
 
+  @ManyToOne
+  public abstract Trash getTrash();
+  public abstract void setTrash(Trash trash);
+  
   @OneToMany
   public abstract Collection<PageImpl> getChildPages();
   

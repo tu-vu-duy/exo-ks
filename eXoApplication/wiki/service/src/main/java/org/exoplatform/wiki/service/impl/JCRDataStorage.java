@@ -26,6 +26,7 @@ import org.exoplatform.wiki.mow.api.WikiNodeType;
 import org.exoplatform.wiki.service.DataStorage;
 import org.exoplatform.wiki.service.SearchData;
 import org.exoplatform.wiki.service.SearchResult;
+import org.exoplatform.wiki.utils.Utils;
 
 import com.google.caja.parser.css.CssTree.Property;
 
@@ -83,11 +84,11 @@ public class JCRDataStorage implements DataStorage{
     return attContent.getProperty("jcr:data").getStream() ;    
   }
   
-  public boolean deletePage(String pagePath, String wikiPath, ChromatticSession session) throws Exception {
+  /*public boolean deletePage(String pagePath, String wikiPath, ChromatticSession session) throws Exception {
     try {
       Node deletePage = (Node)session.getJCRSession().getItem(pagePath) ;
       deletePage.addMixin(WikiNodeType.WIKI_REMOVED) ;
-      deletePage.setProperty("removedBy", getCurrentUser()) ;
+      deletePage.setProperty("removedBy", Utils.getCurrentUser()) ;
       Calendar calendar = GregorianCalendar.getInstance() ;
       deletePage.setProperty("removedDate", calendar) ;
       deletePage.setProperty("parentPath", deletePage.getParent().getPath()) ;
@@ -95,7 +96,7 @@ public class JCRDataStorage implements DataStorage{
       Node wiki = (Node)session.getJCRSession().getItem(wikiPath) ;
       Node trashNode ;
       try{
-        trashNode = wiki.getNode(WikiNodeType.Definition.TRASH_NAME) ;
+        trashNode = wiki.getNode(WikiNodeType.Definition.TRASH_NAME) ;        
       }catch(PathNotFoundException e) {
         trashNode = wiki.addNode(WikiNodeType.Definition.TRASH_NAME, WikiNodeType.WIKI_TRASH) ;
         wiki.save() ;
@@ -107,7 +108,7 @@ public class JCRDataStorage implements DataStorage{
       log.error("Could not delete page: " + pagePath) ;
       return false ;
     }   
-  }  
+  }  */
   
   public boolean renamePage(String pagePath, String newName, String newTitle, ChromatticSession session) throws Exception {
     try {
@@ -149,14 +150,6 @@ public class JCRDataStorage implements DataStorage{
       if (s != null && s.trim().length() > 0) list.add(s);
     }
     return list;
-  }
-  
-  private String getCurrentUser() {
-    try {
-      ConversationState conversationState = ConversationState.getCurrent();
-      return conversationState.getIdentity().getUserId();
-    }catch(Exception e){}
-    return "system" ;
   }
   
 }

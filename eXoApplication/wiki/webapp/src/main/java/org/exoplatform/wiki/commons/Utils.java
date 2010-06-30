@@ -123,4 +123,8 @@ public class Utils {
       return mimeResolver.getDefaultMimeType() ;
     }    
   }
+  
+  public static String getCurrentWiki() throws Exception {
+    return Utils.getCurrentWikiPageParams().getOwner();
+  }
 }

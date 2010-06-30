@@ -60,9 +60,7 @@ public class UIWikiDeletePageConfirm extends UIComponent {
     try{
       WikiPageParams params = Utils.getCurrentWikiPageParams() ;
       return wservice.searchRenamedPage(params.getType(), params.getOwner(), params.getPageId()) ;
-    }catch(Exception e) {
-      e.printStackTrace() ;
-    }    
+    }catch(Exception e){}
     return null ;
   }
   

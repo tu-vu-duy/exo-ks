@@ -28,9 +28,7 @@ import org.exoplatform.wiki.commons.Utils ;
 		<%
 		}
 	%>
-   
-
-	<%=Utils.getCurrentRequestURL()%>
+	
 	<div class="UIAction">
     <table class="ActionContainer">
       <tr>

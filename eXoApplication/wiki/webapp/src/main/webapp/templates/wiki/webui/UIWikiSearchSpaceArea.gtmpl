@@ -6,7 +6,7 @@
       uicomponent.renderChild(component.getClass()) ;
     }
   }
-%>
+%>	
   <div class="UIAction">
     <table class="ActionContainer">
       <tr>

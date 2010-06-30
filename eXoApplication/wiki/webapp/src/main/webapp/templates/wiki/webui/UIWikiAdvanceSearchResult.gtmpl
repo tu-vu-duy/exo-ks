@@ -11,7 +11,6 @@ import org.exoplatform.wiki.commons.Utils ;
 	PageList<SearchResult> results = uicomponent.getResults() ;	
 	
 	if(results != null && results.getPage(uicomponent.getPageIndex()).size() > 0) {
-		String type = uicomponent.getCurrentWiki() ;
 		String wikiURI = uicomponent.getWikiNodeUri() ;		
 		%>		
 		<div class="UIWikiAdvanceSearchResult">
@@ -19,13 +18,14 @@ import org.exoplatform.wiki.commons.Utils ;
 			<%
 				String viewPage = uicomponent.event("ViewPage") ;
 				for(SearchResult result in results.getPage(uicomponent.getPageIndex())) {
-					String pageURI = wikiURI + result.getNodeName() ;					
+					String pageURI = wikiURI + result.getNodeName() ;
+					String space = uicomponent.getWiki(result.getPath()) ;					
 					if(WikiNodeType.WIKI_PAGE_CONTENT.equals(result.getType())){		      	
 		      	%>		      	
 		      	<div class="BlockResultFeed">
 							<a class="TxtTitFeed" onclick="$viewPage" href="$pageURI"><%=result.getTitle()%></a>
 							<div class="TxtDetail"><%=result.getExcerpt()%></div>
-							<div><a class="TxtMark" onclick="$viewPage" href="$wikiURI">$type</a></div>
+							<div><a class="TxtMark" onclick="$viewPage" href="$wikiURI">$space</a></div>
 						</div>
 		      	<%	
 		      } else if (WikiNodeType.WIKI_ATTACHMENT_CONTENT.equals(result.getType())){
@@ -36,23 +36,12 @@ import org.exoplatform.wiki.commons.Utils ;
 		      	<div class="BlockResultFeed">
 		      		<a class="$extension TxtTitFeed" href="$downloadAction"><span><%=att.getName()%></span></a>
 							<div class="TxtDetail"><%=result.getExcerpt()%></div>
-							<div> <a class="TxtMark" onclick="$viewPage" href="$wikiURI">$type</a> > <a class="TxtMark" onclick="$viewPage" href="$pageURI"><%=uicomponent.getPageTitle(result.getPath())%></a></div>
+							<div> <a class="TxtMark" onclick="$viewPage" href="$wikiURI">$space</a> > <a class="TxtMark" onclick="$viewPage" href="$pageURI"><%=uicomponent.getPageTitle(result.getPath())%></a></div>
 						</div>    	
 		      	<%
 		      }      
 		    }
-			%>
-						
-			<!-- Page iterator -->
-			<!-- div class="UIPageIterator ClearFix">
-				<a class="PrevPage" href="">Previous</a>
-				<a class="Number Selected" href="#">1</a>
-				<a class="Number" href="">2</a>
-				<a class="Number" href="#">3</a>
-				<span class="Separator"> ... </span>
-				<a class="Number" href="#">26</a>
-				<a class="NextPage" href="#">Next</a>
-			</div--> 	
+			%>			 	
 			<%
 				String prev = uicomponent.event("PrevPage") ;
 				String next = uicomponent.event("NextPage") ;
@@ -81,5 +70,14 @@ import org.exoplatform.wiki.commons.Utils ;
 	}
 	%>
 	
-	
+	<!-- Page iterator -->
+			<!-- div class="UIPageIterator ClearFix">
+				<a class="PrevPage" href="">Previous</a>
+				<a class="Number Selected" href="#">1</a>
+				<a class="Number" href="">2</a>
+				<a class="Number" href="#">3</a>
+				<span class="Separator"> ... </span>
+				<a class="Number" href="#">26</a>
+				<a class="NextPage" href="#">Next</a>
+			</div-->
 </div>

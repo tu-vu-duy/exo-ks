@@ -55,15 +55,11 @@ public class UIWikiAdvanceSearchForm extends UIForm {
   final static String TEXT = "text".intern() ;
   final static String WIKI_SPACES = "wikiSpaces".intern() ;
   
-  private String getCurrentWiki() throws Exception {
-    return Utils.getCurrentWikiPageParams().getType();
-  }
-  
-  
   public UIWikiAdvanceSearchForm() throws Exception {
     addChild(new UIFormStringInput(TEXT, TEXT, null)) ;
     List<SelectItemOption<String>> spaces = new ArrayList<SelectItemOption<String>>() ;
-    spaces.add(new SelectItemOption<String>(getCurrentWiki(), getCurrentWiki())) ;
+    String currentWiki = Utils.getCurrentWiki() ;
+    spaces.add(new SelectItemOption<String>(currentWiki, currentWiki)) ;
     UIFormSelectBox selectSpaces = new UIFormSelectBox(WIKI_SPACES, WIKI_SPACES, spaces);
     addChild(selectSpaces) ;
     this.setActions(new String[]{"Search"});
@@ -71,10 +67,10 @@ public class UIWikiAdvanceSearchForm extends UIForm {
   
   public void resetWikiSpaces() throws Exception {
     List<SelectItemOption<String>> spaces = new ArrayList<SelectItemOption<String>>() ;
-    spaces.add(new SelectItemOption<String>(getCurrentWiki(), getCurrentWiki())) ;
+    String currentWiki = Utils.getCurrentWiki() ;
+    spaces.add(new SelectItemOption<String>(currentWiki, currentWiki)) ;
     getChild(UIFormSelectBox.class).setOptions(spaces) ;
-  }
- 
+  } 
   
   public void processSearchAction() throws Exception {
     String text = getUIStringInput(TEXT).getValue();
@@ -82,7 +78,7 @@ public class UIWikiAdvanceSearchForm extends UIForm {
     WikiPageParams params = Utils.getCurrentWikiPageParams();
     WikiService wservice = (WikiService) PortalContainer.getComponent(WikiService.class);
     SearchData data = new SearchData(text, null, null, null);
-    PageList<SearchResult> results = wservice.search(space, params.getOwner(), data);
+    PageList<SearchResult> results = wservice.search(params.getType(), space, data);
     UIWikiAdvanceSearchResult uiSearchResults = getParent().findFirstComponentOfType(UIWikiAdvanceSearchResult.class);
     uiSearchResults.setKeyword(text);
     uiSearchResults.setResult(results);

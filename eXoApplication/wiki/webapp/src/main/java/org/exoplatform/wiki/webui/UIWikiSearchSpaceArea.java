@@ -42,6 +42,9 @@ public class UIWikiSearchSpaceArea extends UIContainer {
     addChild(UIWikiAdvanceSearchResult.class, null, null).setRendered(true);
   }
   
+  private void sayHello() {
+    System.out.println(" ==> Hello");
+  }
   static public class CloseActionListener extends EventListener<UIWikiSearchSpaceArea> {
     @Override
     public void execute(Event<UIWikiSearchSpaceArea> event) throws Exception {

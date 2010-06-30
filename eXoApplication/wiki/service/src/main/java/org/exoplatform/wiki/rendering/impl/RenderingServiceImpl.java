@@ -71,7 +71,7 @@ public class RenderingServiceImpl implements RenderingService, Startable {
     Syntax sSyntax = (sourceSyntax == null) ? Syntax.XWIKI_2_0 : getSyntax(sourceSyntax);
     Syntax tSyntax = (targetSyntax == null) ? Syntax.XHTML_1_0 : getSyntax(targetSyntax);
     
-    if(sSyntax == Syntax.XHTML_1_0){
+    if (sSyntax == Syntax.XHTML_1_0 || sSyntax == Syntax.ANNOTATED_XHTML_1_0) {
       markup = clean(markup);
     }
     
@@ -193,6 +193,8 @@ public class RenderingServiceImpl implements RenderingService, Startable {
       syntax = Syntax.CONFLUENCE_1_0;
     } else if (Syntax.XHTML_1_0.toIdString().equals(syntaxId)) {
       syntax = Syntax.XHTML_1_0;
+    } else if (Syntax.ANNOTATED_XHTML_1_0.toIdString().equals(syntaxId)) {
+      syntax = Syntax.ANNOTATED_XHTML_1_0;
     } else if (Syntax.MEDIAWIKI_1_0.toIdString().equals(syntaxId)) {
       syntax = Syntax.MEDIAWIKI_1_0;
     } else if (Syntax.XWIKI_1_0.toIdString().equals(syntaxId)) {

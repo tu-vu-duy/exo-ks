@@ -1,0 +1,71 @@
+= **Overall Introduction** =
+
+== **Overview** ==
+
+Beginning as an Open Source project in the year 2002, eXo is well-known as the industry's first Java portlet container. With the aim of dominating the potential portal market through robust and easy-to-use applications, eXo Project succeeded in attracting consumers in the whole world. eXo actually opened the floodgates to various options in many markets, and customers have been choosing eXo as the best method for their success. 
+
+The eXo Platform™ software is a powerful Open Source corporate portal and content management system. Users of the platform have a customized single point of access to the company's information system and resources. 
+
+[[image:images/eXoServiceschart.png||align="center"]]
+
+The foundation for eXo Platform 3.0 is eXo Core Services, a powerful set of REST-based services for rapid website development, content management and gadget-based development and deployment. eXo Extended Services are also a part of the eXo Platform 3.0 running on top of eXo Core Services to enable easy development of rich, user-centric web applications. 
+
+eXo Knowledge is one of the eXo Extended Services and used collect, organize and publish knowledge, enhance your company's internal productivity and creativity while building a valuable knowledge center for your clients. eXo knowledge offers intuitive and user friendly applications: eXo FAQ, eXo Forum and eXo Wiki which help user easily to connect and share inside and out.
+
+== **About this document** ==
+
+The intended reader of this document is users of eXo Wiki offered in eXo Knowledge. This manual will explain all the basic and advanced features that eXo Wiki provides. It gives an in depth examples and easy explanation of using eXo Wiki to create, edit and organize your wiki pages.
+
+It is also useful for the following groups:
+
+* Users who use eXo Knowledge with eXo Wiki in their work and business.
+* Integrators who want to know more about the rich knowledge features in order to advise their customers to use eXo products.
+
+This user guide will help you:
+
+* know basic concepts used in the eXo Wiki
+* know how to create, edit your wiki pages
+
+== **References & related resources** ==
+
+=== Related Documents ===
+
+
+* GateIn Guide
+
+* eXo Forum User Guide v2.0
+
+* eXo FAQ User Guide v2.0
+
+
+=== Info & Support ===
+
+(% style="font-size: 14pt; " %)**Information**
+
+* [[eXo Home Page>>http://www.exoplatform.com/||title="Go to eXo home page"]]
+
+* [[eXo Wiki>>http://wiki.exoplatform.com/xwiki/bin/view/Main/WebHome/||title="Go to eXo Wiki"]]
+
+(% style="font-size: 14pt; " %)**Support**
+
+* [[Forums>>http://forums.exoplatform.org/||title="Go to eXo Forums"]]
+
+* FAQ
+
+(% style="font-size: 14pt; " %)**Download**
+
+* [[eXo Content>>http://www.exoplatform.com/company/public/website/platform/exo-core-services/exo-content]]
+
+* [[eXo Development tools>>http://www.exoplatform.com/company/public/website/platform/exo-core-services/exo-development-tools]]
+
+* [[Gatein Portal Framework>>http://www.exoplatform.com/company/public/website/platform/exo-core-services/exo-development-tools]]
+
+* [[eXo Collaboration>>http://www.exoplatform.com/company/public/website/platform/exo-extended-services/exo-collaboration]]
+
+* [[eXo Knowledge>>http://www.exoplatform.com/company/public/website/platform/exo-extended-services/exo-knowledge]]
+
+* [[eXo Social>>http://www.exoplatform.com/company/public/website/platform/exo-extended-services/exo-social]]
+
+(% style="font-size: 14pt; " %)**Resource Center**
+
+* [[Video demos, tutorials, webinar archives, features & benefits tables and more>>http://www.exoplatform.com/company/public/website/resource-center]]

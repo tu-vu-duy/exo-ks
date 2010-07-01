@@ -1,0 +1,14 @@
+= **Basic Concepts** =
+
+== **What is a Wiki ?** ==
+
+A wiki is a website that allows  the easy creation and editing of any number of interlinked web pages via a web browser using a simplified markup language or a WYSIWYG (What You See Is What You Get) text editor. With a wiki, any user can edit the site content, including other users' contributions via a Web browser without any technical knowledge. Wikis are typically powered by wiki software and are often used to create collaborative wiki websites, to power community websites, for personal note taking, in corporate intranets, and in knowledge management systems.
+
+== **What is eXo Wiki ?** ==
+
+eXo Wiki is an application part of the eXo Knowledge. It is an enterprise wiki application focused on content productivity for portal users. It completes stack as a tool for forging unstructured knowledge. 
+
+== **Page Hierachy in eXo Wiki** ==
+
+eXo Wiki is organized as a tree of pages and pages can have any number of sub-pages. The Hierarchy is reflected at User Interface by the Breadcrumb. When adding a page, it is always added as a sub-page of the current one. eXo Wiki is a wiki platform, it can host several wikis. So you can have wiki for :portals, groups or users. However, the page hierarchy is not reflected in the URLs as they are accessible flatly by their URL.
+

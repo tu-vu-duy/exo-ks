@@ -41,6 +41,7 @@ import org.exoplatform.webui.form.UIFormStringInput;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
 import org.exoplatform.wiki.commons.Utils;
 import org.exoplatform.wiki.mow.api.Page;
+import org.exoplatform.wiki.rendering.RenderingService;
 import org.exoplatform.wiki.resolver.PageResolver;
 import org.exoplatform.wiki.resolver.TitleResolver;
 import org.exoplatform.wiki.service.WikiPageParams;
@@ -50,9 +51,11 @@ import org.exoplatform.wiki.webui.UIWikiPageControlArea;
 import org.exoplatform.wiki.webui.UIWikiPageEditForm;
 import org.exoplatform.wiki.webui.UIWikiPageTitleControlArea;
 import org.exoplatform.wiki.webui.UIWikiPortlet;
+import org.exoplatform.wiki.webui.UIWikiRichTextArea;
 import org.exoplatform.wiki.webui.WikiMode;
 import org.exoplatform.wiki.webui.control.filter.IsEditModeFilter;
 import org.exoplatform.wiki.webui.control.listener.UIPageToolBarActionListener;
+import org.xwiki.rendering.syntax.Syntax;
 
 /**
  * Created by The eXo Platform SAS
@@ -86,11 +89,18 @@ public class SavePageActionComponent extends UIComponent {
       UIWikiPageTitleControlArea pageTitleControlForm = wikiPortlet.findComponentById(UIWikiPageControlArea.TITLE_CONTROL);
       UIWikiPageContentArea pageContentArea = wikiPortlet.findFirstComponentOfType(UIWikiPageContentArea.class);
       UIWikiPageEditForm pageEditForm = wikiPortlet.findFirstComponentOfType(UIWikiPageEditForm.class);
+      UIWikiRichTextArea wikiRichTextArea = pageEditForm.getChild(UIWikiRichTextArea.class);
       UIFormStringInput titleInput = pageEditForm.getChild(UIWikiPageTitleControlArea.class).getUIStringInput();
       UIFormTextAreaInput markupInput = pageEditForm.findComponentById(UIWikiPageEditForm.FIELD_CONTENT);
       UIFormSelectBox syntaxTypeSelectBox = pageEditForm.findComponentById(UIWikiPageEditForm.FIELD_SYNTAX);
       
       String title = titleInput.getValue();
+      if (wikiRichTextArea.isRendered()) {
+        RenderingService renderingService = (RenderingService) PortalContainer.getComponent(RenderingService.class);
+        String htmlContent = wikiRichTextArea.getUIFormTextAreaInput().getValue();
+        String markupContent = renderingService.render(htmlContent, Syntax.XHTML_1_0.toIdString(), syntaxTypeSelectBox.getValue());
+        markupInput.setValue(markupContent);
+      }
       String markup = markupInput.getValue();
       try {
         String requestURL = Utils.getCurrentRequestURL();

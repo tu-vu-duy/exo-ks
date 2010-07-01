@@ -19,6 +19,7 @@ package org.exoplatform.wiki.webui.control.action;
 import java.util.Arrays;
 import java.util.List;
 
+import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIComponent;
@@ -31,9 +32,11 @@ import org.exoplatform.webui.form.UIFormTextAreaInput;
 import org.exoplatform.wiki.webui.UIWikiMaskWorkspace;
 import org.exoplatform.wiki.webui.UIWikiPageEditForm;
 import org.exoplatform.wiki.webui.UIWikiPortlet;
+import org.exoplatform.wiki.webui.UIWikiRichTextArea;
 import org.exoplatform.wiki.webui.control.filter.IsEditModeFilter;
 import org.exoplatform.wiki.webui.control.listener.UIPageToolBarActionListener;
 import org.exoplatform.wiki.webui.popup.UIWikiPagePreview;
+import org.xwiki.rendering.syntax.Syntax;
 
 /**
  * Created by The eXo Platform SAS
@@ -61,13 +64,21 @@ public class PreviewPageActionComponent extends UIComponent {
       UIWikiPortlet wikiPortlet = event.getSource().getAncestorOfType(UIWikiPortlet.class);
       UIWikiMaskWorkspace uiMaskWS = wikiPortlet.getChild(UIWikiMaskWorkspace.class);
       UIWikiPageEditForm wikiPageEditForm = event.getSource().getAncestorOfType(UIWikiPageEditForm.class);
-      UIFormTextAreaInput markupInput = wikiPageEditForm.findComponentById(UIWikiPageEditForm.FIELD_CONTENT);
-      UIFormSelectBox syntaxTypeSelectBox = wikiPageEditForm.findComponentById(UIWikiPageEditForm.FIELD_SYNTAX);
-      String markup = markupInput.getValue();
-
-      UIWikiPagePreview wikiPagePreview = uiMaskWS.createUIComponent(UIWikiPagePreview.class, null, null);
-      wikiPagePreview.renderWikiMarkup(markup, syntaxTypeSelectBox.getValue());
       
+      UIWikiPagePreview wikiPagePreview = uiMaskWS.createUIComponent(UIWikiPagePreview.class, null, null);
+      UIWikiRichTextArea wikiRichTextArea = wikiPageEditForm.getChild(UIWikiRichTextArea.class);
+      boolean isRichTextRendered = wikiRichTextArea.isRendered();
+      if (isRichTextRendered) {
+        String htmlContent = wikiRichTextArea.getUIFormTextAreaInput().getValue();
+        Util.getPortalRequestContext().getRequest().getSession(false).setAttribute(UIWikiRichTextArea.SESSION_KEY, htmlContent);
+        wikiPagePreview.renderWikiMarkup(htmlContent, Syntax.XHTML_1_0.toIdString());
+      } else {
+        UIFormTextAreaInput markupInput = wikiPageEditForm.findComponentById(UIWikiPageEditForm.FIELD_CONTENT);
+        UIFormSelectBox syntaxTypeSelectBox = wikiPageEditForm.findComponentById(UIWikiPageEditForm.FIELD_SYNTAX);
+        String markup = markupInput.getValue();
+        wikiPagePreview.renderWikiMarkup(markup, syntaxTypeSelectBox.getValue());
+      }
+
       uiMaskWS.setUIComponent(wikiPagePreview);
       uiMaskWS.setShow(true);
       event.getRequestContext().addUIComponentToUpdateByAjax(uiMaskWS);

@@ -16,6 +16,7 @@
  */
 package org.exoplatform.wiki.service.impl;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -27,6 +28,7 @@ import javax.ws.rs.core.Response;
 
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.services.rest.impl.EnvironmentContext;
 import org.exoplatform.services.rest.resource.ResourceContainer;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.rendering.RenderingService;
@@ -73,9 +75,18 @@ public class WikiRestServiceImpl implements WikiRestService, ResourceContainer {
                                      @PathParam("wikiOwner") String wikiOwner,
                                      @PathParam("pageId") String pageId,
                                      @QueryParam("portalURI") String portalURI,
+                                     @QueryParam("sessionKey") String sessionKey,
                                      @QueryParam("markup") boolean isMarkup) {
     String pageContent = "";
     String syntaxId = "";
+    if (sessionKey != null && sessionKey.length() > 0) {
+      EnvironmentContext env = EnvironmentContext.getCurrent();
+      HttpServletRequest request = (HttpServletRequest) env.get(HttpServletRequest.class);
+      pageContent = (String) request.getSession().getAttribute(sessionKey);
+      if (pageContent != null) {
+        return Response.ok(pageContent, MediaType.TEXT_HTML).cacheControl(cc).build();
+      }
+    }
     try {
       Page page = wikiService.getPageById(wikiType, wikiOwner, pageId);
       if (page != null) {

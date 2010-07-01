@@ -11,18 +11,11 @@
   <% uicomponent.renderChild(uicomponent.RICHTEXT_AREA_INPUT); %>
 </div>
 <script type="text/javascript">
-  if(!document.getElementById('wysiwygCacheQsiG')){
-    var wysiwygCacheQsiG = document.createElement('input') ;
-    wysiwygCacheQsiG.id = 'wysiwygCacheQsiG' ;
-    wysiwygCacheQsiG.type='hidden';
-    document.getElementsByTagName('body')[0].appendChild(wysiwygCacheQsiG);
-  }
   // Create a new editor instance.
   eXo.wiki.createWysiwygEditor = function(){
     eXo.wiki.WysiwygEditor = new WysiwygEditor({
       hookId: 'UIWikiRichTextArea_TextArea',
       inputURL: '$restUrlToViewCurrentPage',
-      cacheId: 'wysiwygCacheQsiG',
       syntax: 'xwiki/2.0',
       wiki: '$wikiType',
       space: '$wikiOwner',

@@ -41,7 +41,9 @@ public class UIWikiRichTextArea extends UIContainer {
 
   private static final Log log = ExoLogger.getLogger("wiki:UIWikiRichTextArea");
   
-  public static final String RICHTEXT_AREA_INPUT = "UIWikiRichTextArea_TextArea";
+  private static final String RICHTEXT_AREA_INPUT = "UIWikiRichTextArea_TextArea";
+  
+  public static final String SESSION_KEY = "WIKI_RICH_TEXT_AREA_CONTENT";
   
   public UIWikiRichTextArea(){
     UIFormTextAreaInput richTextAreaInput = new UIFormTextAreaInput(RICHTEXT_AREA_INPUT, RICHTEXT_AREA_INPUT, "");
@@ -68,6 +70,7 @@ public class UIWikiRichTextArea extends UIContainer {
       }
       sb.append("/content");
       sb.append("?portalURI=").append(Util.getPortalRequestContext().getPortalURI());
+      sb.append("&sessionKey=").append(SESSION_KEY);
       
       return sb.toString();
       

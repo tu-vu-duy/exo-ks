@@ -53,8 +53,12 @@ public class UIWikiPagePreview extends UIContainer {
   }
 
   public void renderWikiMarkup(String markup, String syntaxId) throws Exception {
-    RenderingService renderingService = (RenderingService) PortalContainer.getComponent(RenderingService.class);
-    this.htmlOutput = renderingService.render(markup, syntaxId, Syntax.XHTML_1_0.toIdString());
+    if (Syntax.XHTML_1_0.toIdString().equals(syntaxId)) {
+      this.htmlOutput = markup;
+    } else {
+      RenderingService renderingService = (RenderingService) PortalContainer.getComponent(RenderingService.class);
+      this.htmlOutput = renderingService.render(markup, syntaxId, Syntax.XHTML_1_0.toIdString());
+    }
   }
   
   static public class CloseActionListener extends EventListener<UIWikiPagePreview> {

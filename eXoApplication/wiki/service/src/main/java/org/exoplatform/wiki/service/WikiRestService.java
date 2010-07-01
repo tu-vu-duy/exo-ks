@@ -32,9 +32,10 @@ public interface WikiRestService {
    * @param wikiOwner wiki owner
    * @param pageId page id
    * @param portalURI portal URI
+   * @param sessionKey key is used to retrieve the editor input value from the session.
    * @param isMarkup if <em>true</em> then <em>markup content</em> is returned else <em>html content</em> is returned
    * @return the instance of javax.ws.rs.core.Response
    */
-  Response getWikiPageContent(String wikiType, String wikiOwner, String pageId, String portalURI, boolean isMarkup);
+  Response getWikiPageContent(String wikiType, String wikiOwner, String pageId, String portalURI, String sessionKey, boolean isMarkup);
   
 }

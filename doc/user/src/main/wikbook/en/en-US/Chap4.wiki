@@ -1,0 +1,13 @@
+= **Next steps** =
+
+It is our hope that information stated above is valuable to you, our customers and users in the process of experiencing the eXo Wiki . To clearly support for benefits recognition from customers and users, we would like to summarize key features of eXo Address Book as follows: 
+
+Our Company is always willing to receive any feedback, ideas that can make the guide better. Serving and resolving all issues related to the eXo Address Book are our responsibilities, so please post your questions at our forum freely.
+
+This user manual has provided a thorough explanation of features and terminologies within eXo Address Book. Now that you know how to create, manage and share your contacts and address books, you may have more questions or want to get involved in the eXo community. The following links can connect you with resources to learn more and contribute to the open source development process.
+
+
+* [[Learn more about eXo Platform 3.0>>http://www.exoplatform.com/company/public/website/platform]]
+* [[Video demos, tutorial and more in the eXo Resource Center>>http://www.exoplatform.com/company/public/website/resource-center]]
+* [[Access another eXo documents in the eXo Wiki>>http://wiki.exoplatform.com/xwiki/bin/view/Main/WebHome/]]
+* [[Ask question about eXo Address Book in the Forum>>http://forums.exoplatform.org/]]

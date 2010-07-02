@@ -5,91 +5,13 @@
 [[image:images/wikiworkspace.png||align="center"]]
 
 | [[image:images/1.png||align="center"]]|The **Breadcrumb** which shows the page hierarchy 
-| [[image:images/2.png||align="center"]]|The** Search box**
+| [[image:images/2.png||align="center"]]|The **Search box**
 | [[image:images/3.png||align="center"]]|The **Page Control** area which is to help user interact with current page
 |[[image:images/4.png||align="center"]]|The wiki page content where the page is displayed or edited
 | [[image:images/5.png||align="center"]]|The Attachment area which shows all the attachment files on the current page
 | [[image:images/6.png||align="center"]]| The upload box. You can attach files to the current page 
 
-== **Create a page** ==
-
-Adding wiki content is done through adding a page, this is accessible by clicking on the [[image:images/AddNewPageIcon.png||style="margin-right: auto; margin-left: auto; display: block;"]] in the Page Control area.
-
-When **Add button** is clicked the screen is refreshed with a new empty page is initialized and the wiki switches to Edit Page. The new page is initialized with blank content and a temporary title : Untitled
-
-[[image:images/BlankPage.png||align="center"]]
-
-Saving a new page where neither the title not the content has been modified should yield a confirmation message
-
-{{note}}Adding a page always adds a child page to the current page.{{/note}}
-
-== **Edit a page** ==
-
-To edit a page, click on the Edit page button [[image:images/EditPageButton.png||align="center"]] in the **Page control** area. Your page will switch to edit mode.
-
-[[image:images/Editmode.png||align="center"]]
-
-Now you can rename the page or edit the content of the page. The toolbar in the edit mode will be changed to activate the following actions :
-
-[[image:images/editmode-button.png||align="center"]]
-
-|**1 save** |saves the current page and switches back to view mode
-|**2 preview** |displays a preview of the currently edited content
-|**3 rich text** | allows to turn the edit field into a rich text (WYSIWYG) editor
-|**4 help** |provides help on the wiki syntax
-|**5 close** |discards current changes and switch to view mode 
-
-== **WYSIWYG editor** ==
-
-The rich text toolbar action, turns the edit area into a rich text editor featuring **WYSIWYG**. When clicked the rich text action button is replaced by a wiki markup button that allows to do the reverse operation. You can switch between rich and wiki editor at anytime by clicking the [[image:images/Richtextmode.png||align="center"]] button . In source edit mode, you have to use markup languages to create effects like underlined text, colored texts, links, etc everything related to style and formatting. While **WYSIWYG** editor allows the you to view something very similar to the end result while the document is being created, you can use available tools in the editor to format your page content.
-
-
-[[image:images/RichtextEditor.png||align="center"]]
-
-
-To learn how to use **WYSIWYG** editor, you can follow these links:
-
-* Admin guide: [[http://platform.xwiki.org/xwiki/bin/view/AdminGuide/WysiwygEditor>>http://platform.xwiki.org/xwiki/bin/view/AdminGuide/WysiwygEditor]]
-* User guide: [[http://platform.xwiki.org/xwiki/bin/view/Features/WysiwygEditor>>http://platform.xwiki.org/xwiki/bin/view/AdminGuide/WysiwygEditor]]
-
-== **Preview a page** ==
-
-Preview allows the editor of a page to verify the result of rendering the markup he just entered without saving.Preview function is accessible by the Preview action in the Page Edit Screen. When clicked, the currently edited page is rendered in a modal window on top of the edit screen.
-
-== **Delete a page** ==
-
-Deleting a page is accessible from the Page toolbar with the Delete tool. 
-After clicking the [[image:images/DeleteButton.png||alt="delete" style="vertical-align: top;"]] button, a confirmation message will be displayed, the page is deleted and the parent page is displayed.
-
-{{note}}It is not allowed to delete root wiki pages. Deleting does not physically remove the page, but it moves it to a different location (trash) where it is no longer reachable by normal navigation or search.{{/note}}
-
-== **Syntax help** ==
-
-If you don't know how to use a syntax properly, you can use Syntax help function. Syntax help can be displayed by invoking the [[image:images/SyntaxHelp.png||style="vertical-align: top;"]]  icon from the toolbar. When invoked, a lateral panel slides beside the editing area that will show all the information of most common syntax. 
-The lateral panel can be dismissed by a close button in the upper right corner.You can click on the link "more" at the bottom of this panel to open new page where more details on syntax are given.
-
-== **Page info** ==
-
-The page info is displayed at the bottom of the page.
-
-
-[[image:images/Pageinfo.png||style="margin-right: auto; margin-left: auto; display: block;"]]
-
-Display Author : the full name of the original creator of the page.
-Last Edit Date : last time the page was edited, in the form X minutes ago
-The total number of attachments and a link to the attachments area (See Attachments)
-The total number of revisions and a link to the revision history (See Revisions)
-
-== **Attachments** ==
-
-A page can have any number of attachment files. Attachments can be any type of file.
-The Attachments area in the Bottom Area lists all attachments and allow to manage them :
-
-[[image:images/Attachments.png||style="margin-right: auto; margin-left: auto; display: block;"]]
-
-An upload field allows to upload a new file. Uploading a file with the same name of an existing attachment replaces the attachment.
-
-== **Page History** ==
+=== **Page History area** ===
 
 The page history gives a list of the versions of a page. For each version, it is displayed :
 
@@ -106,15 +28,121 @@ For each revision (except the last), a restore button allows to restore that rev
 Only two revisions can be selected at a time.
 {{/note}}
 
-== **Search** ==
+=== **Page info area** ===
+
+The page info is displayed at the bottom of the page.
+
+
+[[image:images/Pageinfo.png||align="center"]]
+
+
+Display Author : the full name of the original creator of the page.
+Last Edit Date : last time the page was edited, in the form X minutes ago
+The total number of attachments and a link to the attachments area (See Attachments)
+The total number of revisions and a link to the revision history (See Revisions)
+
+== **Creating a page** ==
+
+Adding wiki content is done through adding a page, this is accessible by clicking on the [[image:images/AddNewPageIcon.png||style="margin-right: auto; margin-left: auto; display: block;"]] button in the Page Control area.
+
+When **Add button** is clicked the screen is refreshed with a new empty page is initialized and the wiki switches to Edit Page. The new page is initialized with blank content and a temporary title : Untitled
+
+[[image:images/BlankPage.png||align="center"]]
+
+Saving a new page where neither the title not the content has been modified should yield a confirmation message
+
+{{note}}Adding a page always adds a child page to the current page.{{/note}}
+
+== **Editing a page** ==
+
+To edit a page, click on the Edit page button [[image:images/EditPageButton.png||align="center"]] in the **Page control** area. Your page will switch to edit mode.
+
+[[image:images/Editmode.png||align="center"]]
+
+Now you can rename the page or edit the content of the page. The toolbar in the edit mode will be changed to activate the following actions :
+
+[[image:images/editmode-button.png||align="center"]]
+
+|**1 save** |saves the current page and switches back to view mode
+|**2 preview** |displays a preview of the currently edited content
+|**3 rich text** | allows to turn the edit field into a rich text (WYSIWYG) editor
+|**4 help** |provides help on the wiki syntax
+|**5 close** |discards current changes and switch to view mode 
+
+== **Syntax help** ==
+
+If you don't know how to use a syntax , you can use the Syntax help function. Syntax help can be displayed by clicking the [[image:images/SyntaxHelp.png||style="vertical-align: top;"]]  icon from the toolbar. When clicked, a lateral panel slides beside the editing area that will show all the information of most common syntax. 
+
+[[image:images/SidePanel.png||align="center"]] 
+
+The lateral panel can be dismissed by a close button in the upper right corner.You can click on the link "More" at the bottom of this panel to open new page where more details on syntax are given.
+
+== **Using WYSIWYG editor** ==
+
+The rich text toolbar action, turns the edit area into a rich text editor featuring **WYSIWYG**. When clicked the rich text action button is replaced by a wiki markup button that allows to do the reverse operation. You can switch between rich and wiki editor at anytime by clicking the [[image:images/Richtextmode.png||align="center"]] button . In source edit mode, you have to use markup languages to create effects like underlined text, colored texts, links, etc everything related to style and formatting. While **WYSIWYG** editor allows the you to view something very similar to the end result while the document is being created, you can use available tools in the editor to format your page content.
+
+
+[[image:images/RichtextEditor.png||align="center"]]
+
+
+To learn how to use **WYSIWYG** editor, you can follow these links:
+
+* Admin guide: [[http://platform.xwiki.org/xwiki/bin/view/AdminGuide/WysiwygEditor>>http://platform.xwiki.org/xwiki/bin/view/AdminGuide/WysiwygEditor]]
+* User guide: [[http://platform.xwiki.org/xwiki/bin/view/Features/WysiwygEditor>>http://platform.xwiki.org/xwiki/bin/view/AdminGuide/WysiwygEditor]]
+
+== **Previewing a page** ==
+
+Preview allows the editor of a page to verify the result of rendering the markup he just entered without saving.Preview function is accessible by the Preview action in the Page Edit Screen. When clicked, the currently edited page is rendered in a modal window on top of the edit screen.
+
+== **Deleting a page** ==
+
+Deleting a page is accessible from the Page toolbar with the Delete tool. 
+After clicking the [[image:images/DeleteButton.png||alt="delete" style="vertical-align: top;"]] button, a confirmation message will be displayed, the page is deleted and the parent page is displayed.
+
+{{note}}
+It is not allowed to delete root wiki pages. Deleting does not physically remove the page, but it moves it to a different location (trash) where it is no longer reachable by normal navigation or search.
+{{/note}}
+
+== **Page locking** ==
+
+When you starts editing a page, a lock will be automactically set on that page. This function is to prevent editing conflicts by avoiding simultaneous edits of a same page. A lock is held by a user for a limited duration.
+
+A page will be unlock when :
+
+* the lock is older than the maximum time 
+* the editing user saves the page
+* the editing user cancels editing
+
+A lock's duration will be reset while :
+
+* preview is shown
+* editing user is typing text
+
+{{note}}
+If a you attempts to edit a locked page, you will receive an alert message that says the page you are trying to edit is being locked.
+{{/note}}
+
+== **Adding Attachments** ==
+
+A page can have any number of attachment files. Attachments can be any type of file.
+The Attachments area in the Bottom Area lists all attachments and allow to manage them :
+
+[[image:images/Attachments.png||align="center"]]
+
+An upload field allows to upload a new file. Uploading a file with the same name of an existing attachment replaces the attachment.
+
+
+== **Searching** ==
 
 The Search Screen is invoked when you hits the "Enter" key from the SearchBox field. 
 
-Search is fulltext on page content, page title and attachments files. A search query is always scoped to a single wiki.
+Search is fulltext on page content, page title and attachments files. A search query is always scoped to a single wiki. 
+
+[[image:images/Search.png||align="center"]]
 
 The Search Screen contains a search criteria form and the results matching the SearchBox or query field.
 
 {{note}}
-If the user has not entered anything in the SearchBox, nothing happens.
+If the user has not entered anything in the Search box, nothing happens. 
 {{/note}}
 

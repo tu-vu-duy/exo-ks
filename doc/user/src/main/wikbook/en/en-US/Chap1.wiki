@@ -14,7 +14,7 @@ eXo Knowledge is one of the eXo Extended Services and used collect, organize and
 
 == **About this document** ==
 
-The intended reader of this document is users of eXo Wiki offered in eXo Knowledge. This manual will explain all the basic and advanced features that eXo Wiki provides. It gives an in depth examples and easy explanation of using eXo Wiki to create, edit and organize your wiki pages.
+The intended reader of this document is users of eXo Wiki application offered in eXo Knowledge. This manual will explain all the basic and advanced features that eXo Wiki provides. It gives an in depth examples and easy explanation of using eXo Wiki to create, edit and organize your wiki pages.
 
 It is also useful for the following groups:
 

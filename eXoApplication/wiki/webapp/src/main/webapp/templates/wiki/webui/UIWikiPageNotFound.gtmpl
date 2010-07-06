@@ -33,7 +33,7 @@ import org.exoplatform.wiki.service.SearchResult ;
 				<li>The page does not exist.</li>
 				<li>The page exists, but you do not have permission to view it.</li>
 			</ul>
-			<p><a href="$home">home page</a></p>
+			<p><a href="$home" class="BackHome">Home page</a></p>
 			<%	
 		}
 	%>

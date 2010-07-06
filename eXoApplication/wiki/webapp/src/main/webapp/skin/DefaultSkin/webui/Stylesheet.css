@@ -726,10 +726,19 @@
 .UIWikiPageNotFound ul {
 	margin: 0 0 20px;
 	padding: 0 0 0 30px;
+	line-height: 16px;
 }
 
 .UIWikiPageNotFound ul li {
+	background: url("/wiki/skin/DefaultSkin/webui/background/ListIcon.gif") no-repeat left center;
+	list-style-type: none;
+	padding-left: 20px;
+	color: #165fb3;
+}
 
+.UIWikiPageNotFound p a.BackHome {
+	font-weight: bold;
+	text-decoration: underline;
 }
 
 .UIWikiPageNotFound input {
@@ -786,4 +795,56 @@
 	font-size: 11px;
 }
 
+/* Wiki delete page confirm */
+.UIWikiDeletePageConfirm {
+	color: #363636;
+	padding: 10px 10px 20px;
+}
 
+
+.UIWikiDeletePageConfirm h2 {
+	color: #F57A00;
+	font-weight: normal;
+}
+
+
+.UIWikiDeletePageConfirm ul {
+	margin: 0 0 20px;
+	padding: 0 0 0 30px;
+	line-height: 16px;
+}
+
+
+.UIWikiDeletePageConfirm ul li {
+	background: url("/wiki/skin/DefaultSkin/webui/background/ListIcon.gif") no-repeat left center;
+	list-style-type: none;
+	padding-left: 20px;
+	color: #165fb3;
+}
+
+
+.UIWikiDeletePageConfirm .UIAction .LightBlueStyle .ButtonLeft {
+	background: none;
+	padding: 0;
+}
+
+.UIWikiDeletePageConfirm .UIAction .LightBlueStyle .ButtonRight {
+	background: none;
+	padding: 0;
+}
+
+.UIWikiDeletePageConfirm .UIAction .LightBlueStyle .ButtonMiddle {
+	background: url("/wiki/skin/DefaultSkin/webui/background/BtnSearch.gif") no-repeat center center;
+	width: 65px;
+	height: 21px;
+}
+
+.UIWikiDeletePageConfirm .UIAction a {
+	color: #ffffff;
+	font-weight: bold;
+}
+
+.UIWikiPortlet .UIWikiDeletePageConfirm td {
+	border: none;
+	padding: 5px 0;
+}

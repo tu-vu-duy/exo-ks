@@ -47,23 +47,25 @@ public class ConfluenceSyntaxMacroRenderer {
       buffer.append(renderMacroParameters(parameters));
     }
 
+    buffer.append("}");
     // Print content and end macro
-    if (content == null) {
-      buffer.append("}");
-    } else {
-      buffer.append("}");
-      if (content.length() > 0) {
-        if (!isInline) {
-          buffer.append("\n");
-        }
-        buffer.append(content);
-        if (!isInline) {
-          buffer.append("\n");
-        }
+    if (content != null && content.length() > 0) {
+      if (!isInline && !content.startsWith("\n")) {
+        buffer.append("\n");
       }
-      buffer.append("{").append(id).append("}");
+      buffer.append(content);
+      if (!isInline && !content.endsWith("\n")) {
+        buffer.append("\n");
+      }
+      //TODO: Confluence parser has bug in some case, ex:
+      //  ||What you need to type||What you will get||
+      //  |{color:red}look ma, red text!{color}|{color:red}look ma, red text!{color}|
+      //content is : look ma, red text!{color}
+      if (!content.endsWith("{" + id + "}")) {
+        buffer.append("{").append(id).append("}");
+      }
     }
-
+    
     return buffer.toString();
   }
 

@@ -16,6 +16,8 @@
  */
 package org.exoplatform.wiki.mow.core.api;
 
+import org.chromattic.api.ChromatticSession;
+import org.exoplatform.wiki.chromattic.ext.ntdef.VersionableMixin;
 import org.exoplatform.wiki.mow.api.Model;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.mow.api.WikiType;
@@ -94,6 +96,10 @@ public class TestWikiPage extends AbstractMOWTestcase {
     wikipage.setOwner("Demo") ;
     
     PageImpl editedPage = wikiHomePage.getWikiPage("UpdateWikiPage-001") ;
+    ChromatticSession session = wStore.getSession();
+    VersionableMixin mix = session.create(VersionableMixin.class) ;
+    session.setEmbedded(editedPage, VersionableMixin.class, mix) ;
+    assertNotNull(session.getEmbedded(editedPage, VersionableMixin.class).getVersionHistory().getRootVersion().getCreated());
     assertNotNull(editedPage) ;
     assertEquals(editedPage.getOwner(), "Demo") ;  
     assertNotNull(editedPage.getAuthor()) ;

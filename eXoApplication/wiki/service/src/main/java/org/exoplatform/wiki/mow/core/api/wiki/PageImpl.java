@@ -35,6 +35,7 @@ import org.chromattic.api.annotations.PrimaryType;
 import org.chromattic.api.annotations.Property;
 import org.chromattic.api.annotations.WorkspaceName;
 import org.chromattic.ext.ntdef.Resource;
+import org.exoplatform.wiki.chromattic.ext.ntdef.VersionableMixin;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.mow.api.WikiNodeType;
 import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
@@ -89,6 +90,11 @@ public abstract class PageImpl implements Page {
   @Owner
   public abstract RenamedMixin getRenamedMixin();
   public abstract void setRenamedMixin(RenamedMixin mix);
+  
+  @OneToOne(type = RelationshipType.EMBEDDED)
+  @Owner
+  public abstract VersionableMixin getVersionableMixin();
+  public abstract void setVersionableMixin(VersionableMixin mix);
   
   @Create
   public abstract AttachmentImpl createAttachment();

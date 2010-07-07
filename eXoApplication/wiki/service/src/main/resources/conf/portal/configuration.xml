@@ -164,7 +164,12 @@
           <value>org.exoplatform.wiki.mow.core.api.content.MarkupImpl</value>
           <value>org.exoplatform.wiki.mow.core.api.content.WikiLink</value>
           <value>org.chromattic.ext.ntdef.NTFile</value>
-          <value>org.chromattic.ext.ntdef.NTResource</value>          
+          <value>org.chromattic.ext.ntdef.NTResource</value>
+          <value>org.exoplatform.wiki.chromattic.ext.ntdef.NTVersionHistory</value>
+          <value>org.exoplatform.wiki.chromattic.ext.ntdef.NTVersion</value>
+          <value>org.exoplatform.wiki.chromattic.ext.ntdef.NTVersionLabels</value>
+          <value>org.exoplatform.wiki.chromattic.ext.ntdef.NTFrozenNode</value>
+          <value>org.exoplatform.wiki.chromattic.ext.ntdef.VersionableMixin</value>
           <value>org.exoplatform.wiki.mow.core.api.content.AnnotationImpl</value>
         </values-param>
         <!--<properties-param>

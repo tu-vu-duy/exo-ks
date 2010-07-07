@@ -729,13 +729,6 @@
 	line-height: 16px;
 }
 
-.UIWikiPageNotFound ul li {
-	background: url("/wiki/skin/DefaultSkin/webui/background/ListIcon.gif") no-repeat left center;
-	list-style-type: none;
-	padding-left: 20px;
-	color: #165fb3;
-}
-
 .UIWikiPageNotFound p a.BackHome {
 	font-weight: bold;
 	text-decoration: underline;
@@ -813,15 +806,6 @@
 	padding: 0 0 0 30px;
 	line-height: 16px;
 }
-
-
-.UIWikiDeletePageConfirm ul li {
-	background: url("/wiki/skin/DefaultSkin/webui/background/ListIcon.gif") no-repeat left center;
-	list-style-type: none;
-	padding-left: 20px;
-	color: #165fb3;
-}
-
 
 .UIWikiDeletePageConfirm .UIAction .LightBlueStyle .ButtonLeft {
 	background: none;

@@ -55,17 +55,13 @@ public abstract class WikiImpl implements Wiki {
   @Create
   public abstract PageImpl createWikiPage();
   
-  @Create
-  public abstract ContentImpl createContent();
-  
   public WikiHome getWikiHome() {
     WikiHome home = getHome();
     if (home == null) {
       home = createWikiHome();
       setHome(home);
       home.setOwner(getOwner());
-      ContentImpl content = createContent() ;
-      home.setContent(content) ;
+      ContentImpl content = home.getContent() ;
       content.setTitle(WikiNodeType.Definition.WIKI_HOME_TITLE) ;
       content.setSyntax("xwiki/2.0") ;
       content.setText("This is a [[**wiki home page of " + getOwner()+"**>>" + WikiNodeType.Definition.WIKI_HOME_TITLE +"]]") ;

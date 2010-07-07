@@ -16,111 +16,37 @@
  */
 package org.exoplatform.wiki.mow.core.api;
 
-import org.exoplatform.wiki.mow.api.Model;
 import org.exoplatform.wiki.mow.api.WikiType;
 import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
-import org.exoplatform.wiki.mow.core.api.wiki.PortalWiki;
-import org.exoplatform.wiki.mow.core.api.wiki.WikiContainer;
-import org.exoplatform.wiki.mow.core.api.wiki.WikiHome;
 
 
 public class TestPageContent extends AbstractMOWTestcase {
-  
-  public void testAddPageContent() {
-    Model model = mowService.getModel();
-    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
-    WikiContainer<PortalWiki> portalWikiContainer = wStore.getWikiContainer(WikiType.PORTAL);
-    PortalWiki wiki = portalWikiContainer.addWiki("classic");
-    WikiHome wikiHomePage = wiki.getWikiHome();
-    
-    PageImpl wikipage = wiki.createWikiPage();
-    wikipage.setName("AddContentPage-001");
-    wikiHomePage.addWikiPage(wikipage);
-    assertNull(wikipage.getContent()) ;
-    
-    ContentImpl content = wiki.createContent() ;
-    wikipage.setContent(content) ;
-    content.setSyntax("xwiki_2.0") ;
-    content.setText("This is a content of page") ;
-    assertNotNull(wikipage.getContent()) ;    
-    
-  }
-  
+
   public void testGetPageContent() {
-    Model model = mowService.getModel();
-    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
-    WikiContainer<PortalWiki> portalWikiContainer = wStore.getWikiContainer(WikiType.PORTAL);
-    PortalWiki wiki = portalWikiContainer.addWiki("classic");
-    WikiHome wikiHomePage = wiki.getWikiHome();
-    
-    PageImpl wikipage = wiki.createWikiPage();
-    wikipage.setName("AddPageContent-001");
-    wikiHomePage.addWikiPage(wikipage);
-    assertNull(wikipage.getContent()) ;
-    
-    ContentImpl content = wiki.createContent() ;
-    wikipage.setContent(content) ;
-    content.setSyntax("xwiki_2.0") ;
-    content.setText("This is a content of page") ;
-    ContentImpl addedContent = wikipage.getContent() ; 
-    assertNotNull(addedContent) ;
-    assertEquals(addedContent.getSyntax(), "xwiki_2.0") ;
-    assertEquals(addedContent.getText(), "This is a content of page") ;    
+    PageImpl wikipage = createWikiPage(WikiType.PORTAL, "classic", "AddPageContent-001");
+    ContentImpl content = wikipage.getContent();
+    assertNotNull(content);
+    content.setSyntax("xwiki_2.0");
+    content.setText("This is a content of page");
+    assertEquals(content.getSyntax(), "xwiki_2.0");
+    assertEquals(content.getText(), "This is a content of page");
   }
 
   public void testUpdatePageContent() {
-    Model model = mowService.getModel();
-    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
-    WikiContainer<PortalWiki> portalWikiContainer = wStore.getWikiContainer(WikiType.PORTAL);
-    PortalWiki wiki = portalWikiContainer.addWiki("classic");
-    WikiHome wikiHomePage = wiki.getWikiHome();
-    
-    PageImpl wikipage = wiki.createWikiPage();
-    wikipage.setName("UpdatePageContent-001");
-    wikiHomePage.addWikiPage(wikipage);
-    assertNull(wikipage.getContent()) ;
-    
-    ContentImpl content = wiki.createContent() ;
-    wikipage.setContent(content) ;
-    content.setSyntax("xwiki_2.0") ;
-    content.setText("This is a content of page") ;
-    ContentImpl addedContent = wikipage.getContent() ; 
-    assertNotNull(addedContent) ;
-    assertEquals(addedContent.getSyntax(), "xwiki_2.0") ;
-    assertEquals(addedContent.getText(), "This is a content of page") ;
-    
-    addedContent.setText("This is a content of page - edited") ;
-    addedContent.setSyntax("xwiki_2.1") ;
-    
-    ContentImpl updatedContent = wikipage.getContent() ;
-    assertNotNull(updatedContent) ;
-    assertEquals(updatedContent.getSyntax(), "xwiki_2.1") ;
-    assertEquals(updatedContent.getText(), "This is a content of page - edited") ;
-    
+    PageImpl wikipage = createWikiPage(WikiType.PORTAL, "classic", "UpdatePageContent-001");
+    ContentImpl content = wikipage.getContent();
+    assertNotNull(content);
+    content.setSyntax("xwiki_2.0");
+    content.setText("This is a content of page");
+    assertEquals(content.getSyntax(), "xwiki_2.0");
+    assertEquals(content.getText(), "This is a content of page");
+    content.setText("This is a content of page - edited");
+    content.setSyntax("xwiki_2.1");
+
+    ContentImpl updatedContent = wikipage.getContent();
+    assertEquals(updatedContent.getSyntax(), "xwiki_2.1");
+    assertEquals(updatedContent.getText(), "This is a content of page - edited");
   }
-  
-  public void testDeletePageContent() {
-    Model model = mowService.getModel();
-    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
-    WikiContainer<PortalWiki> portalWikiContainer = wStore.getWikiContainer(WikiType.PORTAL);
-    PortalWiki wiki = portalWikiContainer.addWiki("classic");
-    WikiHome wikiHomePage = wiki.getWikiHome();
-    
-    PageImpl wikipage = wiki.createWikiPage();
-    wikipage.setName("DeletePageContent-001");
-    wikiHomePage.addWikiPage(wikipage);
-    assertNull(wikipage.getContent()) ;
-    
-    ContentImpl content = wiki.createContent() ;
-    wikipage.setContent(content) ;
-    content.setSyntax("xwiki_2.0") ;
-    content.setText("This is a content of page") ;
-    ContentImpl addedContent = wikipage.getContent() ; 
-    assertNotNull(addedContent) ;
-    
-    ContentImpl deleteContent = wikipage.getContent() ;
-    deleteContent.remove() ;
-    assertNull(wikipage.getContent()) ;
-  }
+
 }

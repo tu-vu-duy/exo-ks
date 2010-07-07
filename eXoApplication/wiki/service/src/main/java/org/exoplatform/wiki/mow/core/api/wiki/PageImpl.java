@@ -20,6 +20,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 
+import javax.jcr.Node;
+import javax.jcr.version.Version;
+
+import org.chromattic.api.ChromatticSession;
 import org.chromattic.api.DuplicateNameException;
 import org.chromattic.api.RelationshipType;
 import org.chromattic.api.annotations.Create;
@@ -35,6 +39,7 @@ import org.chromattic.api.annotations.PrimaryType;
 import org.chromattic.api.annotations.Property;
 import org.chromattic.api.annotations.WorkspaceName;
 import org.chromattic.ext.ntdef.Resource;
+import org.exoplatform.wiki.chromattic.ext.ntdef.NTVersion;
 import org.exoplatform.wiki.chromattic.ext.ntdef.VersionableMixin;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.mow.api.WikiNodeType;
@@ -49,6 +54,16 @@ import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
 @PrimaryType(name = WikiNodeType.WIKI_PAGE)
 public abstract class PageImpl implements Page {
 
+  private ChromatticSession session;
+
+  private Node getJCRPageNode() throws Exception {
+    return (Node) session.getJCRSession().getItem(getPath());
+  }
+
+  public void setSession(ChromatticSession chromatticSession) {
+    session = chromatticSession;
+  }
+  
   @Name
   public abstract String getName();
   public abstract void setName(String name);
@@ -62,8 +77,18 @@ public abstract class PageImpl implements Page {
   @OneToOne
   @Owner
   @MappedBy(WikiNodeType.Definition.CONTENT)
-  public abstract ContentImpl getContent();  
-  public abstract void setContent(ContentImpl content);
+  protected abstract ContentImpl getContentByChromattic();  
+  protected abstract void setContentByChromattic(ContentImpl content);
+  @Create
+  protected abstract ContentImpl createContent();
+  public ContentImpl getContent() {
+    ContentImpl content = getContentByChromattic();
+    if (content == null) {
+      content = createContent();
+      setContentByChromattic(content);
+    }
+    return content;
+  }
   
   @Property(name = WikiNodeType.Definition.OWNER)
   public abstract String getOwner();
@@ -94,7 +119,38 @@ public abstract class PageImpl implements Page {
   @OneToOne(type = RelationshipType.EMBEDDED)
   @Owner
   public abstract VersionableMixin getVersionableMixin();
-  public abstract void setVersionableMixin(VersionableMixin mix);
+  protected abstract void setVersionableMixin(VersionableMixin mix);
+  @Create
+  protected abstract VersionableMixin createVersionableMixin();
+  
+  public void makeVersionable() {
+    VersionableMixin versionableMixin = getVersionableMixin();
+    if (versionableMixin == null) {
+      versionableMixin = createVersionableMixin();
+      setVersionableMixin(versionableMixin);
+    }
+  }
+  
+  //TODO: replace by @Checkin when Chromattic support
+  public NTVersion checkin() throws Exception {
+    session.save();
+    Node pageNode = getJCRPageNode();
+    Version newVersion = pageNode.checkin();
+    NTVersion ntVersion = session.findByNode(NTVersion.class, newVersion);
+    return ntVersion;
+  }
+
+  //TODO: replace by @Checkout when Chromattic support
+  public void checkout() throws Exception {
+    Node pageNode = getJCRPageNode();
+    pageNode.checkout();
+  }
+
+  //TODO: replace by @Restore when Chromattic support
+  public void restore(NTVersion version, boolean removeExisting) throws Exception {
+    Node pageNode = getJCRPageNode();
+    pageNode.restore(version.getName(), removeExisting);
+  }
   
   @Create
   public abstract AttachmentImpl createAttachment();

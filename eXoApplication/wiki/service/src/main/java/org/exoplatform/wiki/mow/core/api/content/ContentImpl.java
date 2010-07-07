@@ -16,7 +16,6 @@
  */
 package org.exoplatform.wiki.mow.core.api.content;
 
-import org.chromattic.api.annotations.Destroy;
 import org.chromattic.api.annotations.MappedBy;
 import org.chromattic.api.annotations.OneToOne;
 import org.chromattic.api.annotations.Path;
@@ -53,8 +52,5 @@ public abstract class ContentImpl extends AbstractContainerContent implements Co
   @OneToOne
   @MappedBy(WikiNodeType.WIKI_PAGE)
   public abstract PageImpl getParent();
-  
-  @Destroy
-  public abstract void remove() ;
 
 }

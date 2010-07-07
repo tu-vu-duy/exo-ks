@@ -70,7 +70,6 @@ public class WikiServiceImpl implements WikiService{
     WikiImpl wiki = (WikiImpl) getWiki(wikiType, wikiOwner, model);
     
     PageImpl page = wiki.createWikiPage() ;
-    ContentImpl content = wiki.createContent();
     
     PageImpl parentPage = null ;
     String statement = getStatement(wikiType, wikiOwner, parentId) ;
@@ -86,7 +85,6 @@ public class WikiServiceImpl implements WikiService{
       creator = conversationState.getIdentity().getUserId();
     }
     page.setOwner(creator);
-    page.setContent(content);
     page.getContent().setTitle(title);
     model.save();    
 

@@ -23,12 +23,15 @@ import org.exoplatform.container.component.RequestLifeCycle;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.Identity;
 import org.exoplatform.wiki.mow.api.Model;
+import org.exoplatform.wiki.mow.api.Wiki;
 import org.exoplatform.wiki.mow.api.WikiType;
 import org.exoplatform.wiki.mow.core.api.wiki.GroupWiki;
+import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.PortalWiki;
 import org.exoplatform.wiki.mow.core.api.wiki.UserWiki;
 import org.exoplatform.wiki.mow.core.api.wiki.WikiContainer;
 import org.exoplatform.wiki.mow.core.api.wiki.WikiHome;
+import org.exoplatform.wiki.mow.core.api.wiki.WikiImpl;
 
 /**
  * @author <a href="mailto:patrice.lamarque@exoplatform.com">Patrice
@@ -91,31 +94,45 @@ public abstract class AbstractMOWTestcase extends TestCase {
     ConversationState.setCurrent(state);
   }
   
-  protected WikiHome getWikiHomeOfWiki(WikiType wikiType, String wikiName, Model mod){
-    Model model = mod;
-    if (model == null) {
-      model = mowService.getModel();
+  protected Wiki getWiki(WikiType wikiType, String wikiName, Model model) {
+    Model mod = model;
+    if (mod == null) {
+      mod = mowService.getModel();
     }
-    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
-    WikiHome wikiHomePage = null;
-    switch(wikiType){
+    WikiStoreImpl wStore = (WikiStoreImpl) mod.getWikiStore();
+    WikiImpl wiki = null;
+    switch (wikiType) {
       case PORTAL:
         WikiContainer<PortalWiki> portalWikiContainer = wStore.getWikiContainer(WikiType.PORTAL);
-        PortalWiki pwiki = portalWikiContainer.addWiki(wikiName);
-        wikiHomePage = pwiki.getWikiHome();
+        wiki = portalWikiContainer.getWiki(wikiName);
         break;
       case GROUP:
         WikiContainer<GroupWiki> groupWikiContainer = wStore.getWikiContainer(WikiType.GROUP);
-        GroupWiki gwiki = groupWikiContainer.addWiki(wikiName);
-        wikiHomePage = gwiki.getWikiHome();
+        wiki = groupWikiContainer.getWiki(wikiName);
         break;
       case USER:
         WikiContainer<UserWiki> userWikiContainer = wStore.getWikiContainer(WikiType.USER);
-        UserWiki uwiki = userWikiContainer.addWiki(wikiName);
-        wikiHomePage = uwiki.getWikiHome();
+        wiki = userWikiContainer.getWiki(wikiName);
         break;
     }
+    mod.save();
+    return wiki;
+  }
+  
+  protected WikiHome getWikiHomeOfWiki(WikiType wikiType, String wikiName, Model model) {
+    WikiHome wikiHomePage = (WikiHome) getWiki(wikiType, wikiName, model).getWikiHome();
     return wikiHomePage;
+  }
+  
+  protected PageImpl createWikiPage(WikiType wikiType, String wikiName, String pageName) {
+    Model model = mowService.getModel();
+    WikiImpl wiki = (WikiImpl) getWiki(wikiType, wikiName, model);
+    WikiHome wikiHomePage = (WikiHome) wiki.getWikiHome();
+    PageImpl wikipage = wiki.createWikiPage();
+    wikipage.setName(pageName);
+    wikiHomePage.addWikiPage(wikipage);
+    wikipage.setSession(((WikiStoreImpl)model.getWikiStore()).getSession());
+    return wikipage;
   }
   
 }

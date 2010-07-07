@@ -19,6 +19,7 @@ package org.exoplatform.wiki.chromattic.ext.ntdef;
 import java.util.Date;
 
 import org.chromattic.api.annotations.MappedBy;
+import org.chromattic.api.annotations.Name;
 import org.chromattic.api.annotations.OneToOne;
 import org.chromattic.api.annotations.Owner;
 import org.chromattic.api.annotations.PrimaryType;
@@ -33,6 +34,9 @@ import org.chromattic.api.annotations.Property;
 @PrimaryType(name = "nt:version")
 public abstract class NTVersion {
 
+  @Name
+  public abstract String getName();
+  
   @Property(name = "jcr:created")
   public abstract Date getCreated();
 

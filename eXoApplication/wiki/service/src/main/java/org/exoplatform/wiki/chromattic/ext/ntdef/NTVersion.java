@@ -50,7 +50,7 @@ public abstract class NTVersion {
 
   @OneToOne
   @Owner
-  @MappedBy("nt:frozenNode")
+  @MappedBy("jcr:frozenNode")
   public abstract NTFrozenNode getNTFrozenNode();
 
   public abstract void setNTFrozenNode(NTFrozenNode frozenNode);

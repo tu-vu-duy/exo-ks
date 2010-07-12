@@ -16,8 +16,13 @@
  */
 package org.exoplatform.wiki.mow.core.api;
 
+import java.util.Iterator;
+
+import org.exoplatform.wiki.chromattic.ext.ntdef.NTFrozenNode;
 import org.exoplatform.wiki.chromattic.ext.ntdef.NTVersion;
+import org.exoplatform.wiki.mow.api.WikiNodeType;
 import org.exoplatform.wiki.mow.api.WikiType;
+import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 
 /**
@@ -50,6 +55,26 @@ public class TestVersioning extends AbstractMOWTestcase {
     assertNotSame(ver1, ver2);
     wikipage.checkout();
     wikipage.restore(ver1, false);
+    assertEquals("testCreateVersionHistoryTree-ver1.0", wikipage.getContent().getText());
+    wikipage.checkout();
+    wikipage.getContent().setText("testCreateVersionHistoryTree-ver3.0");
+    NTVersion ver3 = wikipage.checkin();
+    wikipage.checkout();
+    Iterator<NTVersion> iter = wikipage.getVersionableMixin().getVersionHistory().iterator();
+    NTVersion version = iter.next();
+    assertEquals("jcr:rootVersion", version.getName());
+    version = iter.next();
+    NTFrozenNode frozenNode = version.getNTFrozenNode();
+    assertEquals("testCreateVersionHistoryTree-ver1.0",
+                 ((ContentImpl) (frozenNode.getChildren().get(WikiNodeType.Definition.CONTENT))).getText());
+    version = iter.next();
+    frozenNode = version.getNTFrozenNode();
+    assertEquals("testCreateVersionHistoryTree-ver2.0",
+                 ((ContentImpl) (frozenNode.getChildren().get(WikiNodeType.Definition.CONTENT))).getText());
+    version = iter.next();
+    frozenNode = version.getNTFrozenNode();
+    assertEquals("testCreateVersionHistoryTree-ver3.0",
+                 ((ContentImpl) (frozenNode.getChildren().get(WikiNodeType.Definition.CONTENT))).getText());
   }
 
 }

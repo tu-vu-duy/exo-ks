@@ -28,89 +28,6 @@
     <key>org.exoplatform.commons.chromattic.ChromatticManager</key>
     <type>org.exoplatform.commons.chromattic.ChromatticManager</type>
   </component>
-   
-  <component>
-    <key>org.exoplatform.services.log.LogConfigurationInitializer</key>
-    <type>org.exoplatform.services.log.LogConfigurationInitializer</type>
-    <init-params>
-      <value-param>
-        <name>logger</name>
-        <value>org.exoplatform.services.log.impl.BufferedLog4JLogger</value>
-      </value-param>
-      <value-param>
-        <name>configurator</name>
-        <value>org.exoplatform.services.log.impl.Log4JConfigurator</value>
-      </value-param>
-      <properties-param>
-        <name>properties</name>
-        <description>Log4J properties</description>
-        <property name="log4j.rootLogger" value="INFO, stdout, file"/>
-
-        <property name="log4j.appender.stdout" value="org.apache.log4j.ConsoleAppender"/>
-        <property name="log4j.appender.stdout.threshold" value="DEBUG"/>
-
-        <property name="log4j.appender.stdout.layout" value="org.apache.log4j.PatternLayout"/>
-        <property name="log4j.appender.stdout.layout.ConversionPattern"
-          value="%d{dd.MM.yyyy HH:mm:ss} *%-5p* [%t] %c{1}: %m (%F, line %L) %n"/>
-
-        <property name="log4j.appender.file" value="org.apache.log4j.FileAppender"/>
-        <property name="log4j.appender.file.File" value="target/jcr.log"/>
-
-        <property name="log4j.appender.file.layout" value="org.apache.log4j.PatternLayout"/>
-        <property name="log4j.appender.file.layout.ConversionPattern"
-          value="%d{dd.MM.yyyy HH:mm:ss} *%-5p* [%t] %c{1}: %m (%F, line %L) %n"/>
-
-        <property name="log4j.category.jcr.FileCleaner" value="DEBUG"/>
-        <!--property name="log4j.category.org.chromattic.core.api.ChromatticSessionImpl" value="TRACE"/>
-        <property name="log4j.category.jcr.NodeImpl" value="DEBUG"/>
-        <property name="log4j.category.jcr.SessionDataManager" value="DEBUG"/-->
-        
-
-        <!-- property name="log4j.category.jcr.JDBCStorageConnection" value="DEBUG"/>
-        <property name="log4j.category.jcr.NodeImpl" value="DEBUG"/ -->
-
-        <!-- property name="log4j.category.jcr.WorkspaceStorageCacheImpl" value="DEBUG"/ -->
-        <!-- property name="log4j.category.database.DBSchemaCreator" value="DEBUG"/ -->
-        <!-- property name="log4j.category.jcr.WorkspaceDataReplicator" value="DEBUG"/ -->
-
-        <!-- property name="log4j.category.jcr.WorkspaceStorageCacheImpl" value="DEBUG"/ -->
-        <!-- property name="log4j.category.jcr.WorkspacePersistentDataManager" value="DEBUG"/ -->
-        <!-- property name="log4j.category.jcr.SessionDataManager" value="DEBUG"/ -->
-      </properties-param>
-
-      <!-- value-param>
-      <name>logger</name>
-      <value>org.exoplatform.services.log.impl.BufferedSimpleLog</value>
-      </value-param>
-      <value-param>
-      <name>configurator</name>
-      <value>org.exoplatform.services.log.impl.SimpleLogConfigurator</value>
-      </value-param>
-      <properties-param>
-      <name>properties</name>
-      <description>SimpleLog properties</description>
-      <property name="org.apache.commons.logging.simplelog.defaultlog" value="debug"/>
-      <property name="org.apache.commons.logging.simplelog.showdatetime" value="true"/>
-      </properties-param -->
-
-      <!-- value-param>
-      <name>logger</name>
-      <value>org.exoplatform.services.log.impl.BufferedJdk14Logger</value>
-      </value-param>
-      <value-param>
-      <name>configurator</name>
-      <value>org.exoplatform.services.log.impl.Jdk14Configurator</value>
-      </value-param>
-      <properties-param>
-      <name>properties</name>
-      <description>jdk1.4 Logger properties</description>
-      <property name="handlers" value="java.util.logging.ConsoleHandler"/>
-      <property name=".level" value="FINE"/>
-      <property name="java.util.logging.ConsoleHandler.level" value="FINE"/>
-      </properties-param -->
-
-    </init-params>
-  </component>
 
   <component>
     <key>org.exoplatform.services.organization.OrganizationService</key>
@@ -161,47 +78,6 @@
           <value>org/exoplatform/services/organization/impl/UserProfileData.hbm.xml</value>
         </values-param>
       </init-params>
-    </component-plugin>
-  </external-component-plugins>
-  
-  <external-component-plugins>
-    <target-component>org.exoplatform.commons.chromattic.ChromatticManager</target-component>
-    <component-plugin>
-      <name>chromattic</name>
-      <set-method>addLifeCycle</set-method>
-      <type>org.exoplatform.commons.chromattic.ChromatticLifeCycle</type>
-      <init-params>
-        <value-param>
-          <name>domain-name</name>
-          <value>wiki</value>
-        </value-param>
-        <value-param>
-          <name>workspace-name</name>
-          <value>knowledge</value>
-        </value-param>
-        <values-param>
-          <name>entities</name>
-          <value>org.exoplatform.wiki.mow.core.api.WikiStoreImpl</value>
-          <value>org.exoplatform.wiki.mow.core.api.wiki.PortalWiki</value>
-          <value>org.exoplatform.wiki.mow.core.api.wiki.PortalWikiContainer</value>
-          <value>org.exoplatform.wiki.mow.core.api.wiki.GroupWiki</value>
-          <value>org.exoplatform.wiki.mow.core.api.wiki.GroupWikiContainer</value>
-          <value>org.exoplatform.wiki.mow.core.api.wiki.UserWiki</value>
-          <value>org.exoplatform.wiki.mow.core.api.wiki.UserWikiContainer</value>
-          <value>org.exoplatform.wiki.mow.core.api.content.ContentImpl</value>
-          <value>org.exoplatform.wiki.mow.core.api.content.ParagraphImpl</value>
-          <value>org.exoplatform.wiki.mow.core.api.content.MarkupImpl</value>
-          <value>org.exoplatform.wiki.mow.core.api.content.WikiLink</value>
-          <value>org.chromattic.ext.ntdef.NTFile</value>
-          <value>org.chromattic.ext.ntdef.NTResource</value>          
-          <value>org.exoplatform.wiki.mow.core.api.content.AnnotationImpl</value>
-        </values-param>
-        <!--<properties-param>
-          <name>options</name>
-          <property name="org.chromattic.api.Option.root_node.path" value="/production"/>
-          <property name="org.chromattic.api.Option.root_node.create" value="true"/>
-        </properties-param>
-      --></init-params>
     </component-plugin>
   </external-component-plugins>
 

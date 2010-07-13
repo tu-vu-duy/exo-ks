@@ -19,7 +19,7 @@ import org.exoplatform.wiki.commons.Utils ;
 				<ul>
 					<li>Removing a page moves it into the trash can. You can speak to your space administrator to have it recovered</li>
 					<li>The links to this page will be broken when this page is removed</li>
-					<li>This page is a child page of page<%=uicomponent.getWiki()%>: <%=page.getParentPage().getContent().getTitle()%>.</li>
+					<li>This page is a child page of page <b><%=uicomponent.getWiki()%>: <%=page.getParentPage().getContent().getTitle()%>.</b></li>
 				</ul>
 			</div>		
 		<%

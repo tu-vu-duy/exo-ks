@@ -95,10 +95,23 @@ public abstract class PageImpl implements Page {
   public abstract void setOwner(String owner);
   
   @Property(name = WikiNodeType.Definition.AUTHOR)
-  public abstract String getAuthor();
+  protected abstract String[] getAuthorByChromattic();
+  
+  public String getAuthor() {
+    String[] author = getAuthorByChromattic();
+    if (author == null || author.length == 0) {
+      return null;
+    } else {
+      return author[0];
+    }
+  }
   
   @Property(name = WikiNodeType.Definition.UPDATED_DATE)
-  public abstract Date getUpdatedDate();
+  protected abstract Date[] getUpdatedDateByChromattic();
+  
+  public Date getUpdatedDate() {
+    return getUpdatedDateByChromattic()[0];
+  }
   
   
   @OneToOne(type = RelationshipType.EMBEDDED)
@@ -147,9 +160,9 @@ public abstract class PageImpl implements Page {
   }
 
   //TODO: replace by @Restore when Chromattic support
-  public void restore(NTVersion version, boolean removeExisting) throws Exception {
+  public void restore(String versionName, boolean removeExisting) throws Exception {
     Node pageNode = getJCRPageNode();
-    pageNode.restore(version.getName(), removeExisting);
+    pageNode.restore(versionName, removeExisting);
   }
   
   @Create

@@ -20,10 +20,13 @@ import java.util.GregorianCalendar;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
+import javax.jcr.Value;
 
 import org.apache.commons.chain.Context;
 import org.exoplatform.services.command.action.Action;
+import org.exoplatform.services.jcr.impl.core.value.DateValue;
 import org.exoplatform.services.security.ConversationState;
+import org.exoplatform.wiki.mow.api.WikiNodeType;
 
 /**
  * Created by The eXo Platform SAS
@@ -36,19 +39,22 @@ public class UpdateWikiPageAction implements Action {
   public boolean execute(Context context) throws Exception {
     Object item = context.get("currentItem");
     Node wikiPageNode = (item instanceof Property) ? ((Property) item).getParent() : (Node) item;
-    if (wikiPageNode.isNodeType("wiki:content") || wikiPageNode.isNodeType("wiki:attachment")) {
+    if (wikiPageNode.isNodeType(WikiNodeType.WIKI_PAGE_CONTENT) || wikiPageNode.isNodeType(WikiNodeType.WIKI_ATTACHMENT)) {
       wikiPageNode = wikiPageNode.getParent();
     }
-    if (!wikiPageNode.isNodeType("wiki:page")) {
+    if (!wikiPageNode.isNodeType(WikiNodeType.WIKI_PAGE)) {
       throw new Exception("Incoming node is not wiki:page nodetype but " + wikiPageNode.getPrimaryNodeType().getName());
     }
     ConversationState conversationState = ConversationState.getCurrent();
-    String userName = null;
+    Value[] updatedDate = new DateValue[1];
+    String[] userName = new String[1];
+    userName[0] = null;
     if (conversationState != null && conversationState.getIdentity() != null) {
-      userName = conversationState.getIdentity().getUserId();
+      userName[0] = conversationState.getIdentity().getUserId();
     }
-    wikiPageNode.setProperty("updatedDate", new GregorianCalendar());
-    wikiPageNode.setProperty("author", userName);
+    updatedDate[0] = new DateValue(new GregorianCalendar());
+    wikiPageNode.setProperty(WikiNodeType.Definition.UPDATED_DATE, updatedDate);
+    wikiPageNode.setProperty(WikiNodeType.Definition.AUTHOR, userName);
     return false;
   }
 }

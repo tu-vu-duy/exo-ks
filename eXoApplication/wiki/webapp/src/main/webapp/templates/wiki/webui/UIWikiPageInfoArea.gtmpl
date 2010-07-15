@@ -19,7 +19,7 @@
 	<div class="TxtFeed">
 	  Added by <a class="Link" href=""><%= creator %></a>,
 	  Last modified by <a class="Link" href=""><%= author %></a> at <%= updatedDate %>
-	  <a class="Link" href="">(view change)</a>
+	  <a class="Link" href="<%=uicomponent.event("ShowHistory");%>">(view change)</a>
 	</div>
 	<div class="TxtFeed"><b><%= attachmentsTotal %> </b><a class="Link" href="">attachment (s)</a>  - <b>15</b> <a class="Link" href="">visitors</a></div>
 </div>

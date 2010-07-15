@@ -131,6 +131,7 @@ public abstract class AbstractMOWTestcase extends TestCase {
     PageImpl wikipage = wiki.createWikiPage();
     wikipage.setName(pageName);
     wikiHomePage.addWikiPage(wikipage);
+    wikipage.makeVersionable();
     wikipage.setSession(((WikiStoreImpl)model.getWikiStore()).getSession());
     return wikipage;
   }

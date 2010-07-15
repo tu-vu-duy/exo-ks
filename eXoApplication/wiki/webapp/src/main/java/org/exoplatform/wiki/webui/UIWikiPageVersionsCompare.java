@@ -14,33 +14,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see<http://www.gnu.org/licenses/>.
  */
-package org.exoplatform.wiki.chromattic.ext.ntdef;
+package org.exoplatform.wiki.webui;
 
-import java.util.Map;
-
-import org.chromattic.api.annotations.OneToMany;
-import org.chromattic.api.annotations.PrimaryType;
-import org.chromattic.api.annotations.Properties;
-import org.chromattic.api.annotations.Property;
+import org.exoplatform.webui.config.annotation.ComponentConfig;
+import org.exoplatform.webui.core.UIContainer;
+import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
 
 /**
  * Created by The eXo Platform SAS
  * Author : viet nguyen
  *          viet.nguyen@exoplatform.com
- * Jul 6, 2010  
+ * Jul 13, 2010  
  */
-@PrimaryType(name = "nt:frozenNode")
-public abstract class NTFrozenNode {
+@ComponentConfig(
+  lifecycle = UIApplicationLifecycle.class,
+  template = "app:/templates/wiki/webui/UIWikiPageVersionsCompare.gtmpl"
+)
+public class UIWikiPageVersionsCompare extends UIContainer {
 
-  @Property(name = "jcr:frozenUuid")
-  public abstract String getFrozenUuid();
-
-  public abstract void setFrozenUuid(String frozenUuid);
-
-  @OneToMany
-  public abstract Map<String, Object> getChildren();
-
-  @Properties
-  public abstract Map<String, Object> getProperties();
-  
 }

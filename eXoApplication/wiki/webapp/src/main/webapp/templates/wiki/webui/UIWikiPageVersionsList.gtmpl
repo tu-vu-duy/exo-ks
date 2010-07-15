@@ -1,0 +1,79 @@
+<%
+  import java.util.List;
+  import java.util.ArrayList;
+  import java.util.Locale;
+  import java.text.DateFormat;
+  import org.exoplatform.portal.webui.util.Util;
+  import org.exoplatform.wiki.mow.api.WikiNodeType;
+  import org.exoplatform.wiki.chromattic.ext.ntdef.NTVersion;
+  import org.exoplatform.wiki.chromattic.ext.ntdef.NTFrozenNode;
+  
+  Locale currentLocale = Util.getPortalRequestContext().getLocale();
+  List<NTVersion> versionsList = uicomponent.getVersionsList();
+  if(versionsList == null){
+    versionsList = new ArrayList<NTVersion>();
+  }
+%>
+<div class="UIWikiPageVersionsList UIWikiAttachmentArea">
+  <% uiform.begin(); %>
+    <div class="CompareBtn">
+      <div onmousedown="javascript:void(0);">
+        <a href="javascript:void(0);">Compare selected</a>
+      </div>
+    </div>
+    <div class="ClearLeft"><span></span></div>
+    <table cellspacing="1" cellpadding="0" border="0" class="UIFormGrid">
+      <thead>
+        <tr>
+          <th style="width: 5%">Select</th>
+          <th style="width: 15%">Revision</th>
+          <th style="width: 20%">Date</th>
+          <th style="width: 15%">Author</th>
+          <th style="width: 35%">Summary</th>
+          <th style="width: 10%">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%
+          int index = 0;
+          String rowClass;
+          boolean isCurrentVersion = true;
+          DateFormat df = DateFormat.getDateInstance(DateFormat.LONG, currentLocale);
+          for(version in versionsList){
+            index++;
+            if(index%2 == 1){
+              rowClass = "EvenRow";
+            }else{
+              rowClass = "OddRow";
+            }
+            if(index != 1){
+              isCurrentVersion = false;
+            }
+            NTFrozenNode frozenNode = version.getNTFrozenNode();
+            String versionLabel = version.getName();
+            if(isCurrentVersion){
+              versionLabel = "CURRENT (v. " + versionLabel + ")";
+            } else {
+              versionLabel = "v. " + versionLabel;
+            }
+            //String updatedDate = df.format(frozenNode.getProperties().get(WikiNodeType.Definition.UPDATED_DATE));
+            String updatedDate = frozenNode.getProperties().get(WikiNodeType.Definition.UPDATED_DATE);
+            String author = frozenNode.getProperties().get(WikiNodeType.Definition.AUTHOR);
+            author = (author != null) ? author : "anonymous";
+            String restore = (isCurrentVersion) ? "" : "Restore";
+            String viewLink = uicomponent.event(uicomponent.VIEW_REVISION, version.getName());
+            String restoreLink = uicomponent.event(uicomponent.RESTORE_ACTION, version.getName());
+        %>
+        <tr class="$rowClass">
+          <td><input type="checkbox" class="checkbox" value="false"/></td>
+          <td class="Tit"><a title="View the revision" href="$viewLink"><%= versionLabel %></a></td>
+          <td><%= updatedDate %></td>
+          <td><%= author %></td>
+          <td></td>
+          <td class="Tit"><a title="Restore the revision" href="$restoreLink"><%= restore %></a></td>
+        </tr>
+        <%}%>
+      </tbody>
+    </table>
+  <% uiform.end();%>
+</div>

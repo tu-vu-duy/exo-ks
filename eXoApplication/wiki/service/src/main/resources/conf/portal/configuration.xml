@@ -70,10 +70,10 @@
       <properties-param>
         <name>properties</name>
         <description>Log4J properties</description>
-        <property name="log4j.rootLogger" value="INFO, stdout, file"/>
+        <property name="log4j.rootLogger" value="DEBUG, stdout, file"/>
 
         <property name="log4j.appender.stdout" value="org.apache.log4j.ConsoleAppender"/>
-        <property name="log4j.appender.stdout.threshold" value="TRACE"/>
+        <property name="log4j.appender.stdout.threshold" value="INFO"/>
 
         <property name="log4j.appender.stdout.layout" value="org.apache.log4j.PatternLayout"/>
         <property name="log4j.appender.stdout.layout.ConversionPattern"

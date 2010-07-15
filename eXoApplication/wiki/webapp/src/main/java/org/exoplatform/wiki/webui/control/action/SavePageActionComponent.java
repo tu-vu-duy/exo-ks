@@ -41,6 +41,7 @@ import org.exoplatform.webui.form.UIFormStringInput;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
 import org.exoplatform.wiki.commons.Utils;
 import org.exoplatform.wiki.mow.api.Page;
+import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 import org.exoplatform.wiki.rendering.RenderingService;
 import org.exoplatform.wiki.resolver.PageResolver;
 import org.exoplatform.wiki.resolver.TitleResolver;
@@ -118,10 +119,15 @@ public class SavePageActionComponent extends UIComponent {
           
           if(!pageEditForm.getTitle().equals(title)) {
             page.getContent().setTitle(title);
+            ((PageImpl) page).checkin();
+            ((PageImpl) page).checkout();
             String newPageId = TitleResolver.getPageId(title, false) ;
             wikiService.renamePage(pageParams.getType(), pageParams.getOwner(), page.getName(), newPageId, title) ;
             pageParams.setPageId(newPageId) ;
             event.getSource().redirectToNewPage(pageParams, URLEncoder.encode(newPageId, "UTF-8"));            
+          } else {
+            ((PageImpl) page).checkin();
+            ((PageImpl) page).checkout();
           }
                     
         } else if (wikiPortlet.getWikiMode() == WikiMode.NEW) {          
@@ -129,6 +135,8 @@ public class SavePageActionComponent extends UIComponent {
           Page subPage = wikiService.createPage(pageParams.getType(), pageParams.getOwner(), title, page.getName());
           subPage.getContent().setText(markup);
           subPage.getContent().setSyntax(syntaxTypeSelectBox.getValue());
+          ((PageImpl)subPage).checkin();
+          ((PageImpl)subPage).checkout();
           
           wikiPortlet.changeMode(WikiMode.VIEW);
           String pageId = TitleResolver.getPageId(title, false);          

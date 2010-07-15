@@ -60,5 +60,9 @@ public abstract class NTVersionHistory implements Iterable<NTVersion> {
   public Iterator<NTVersion> iterator() {
     return getChildren().values().iterator();
   }
+  
+  public NTVersion getVersion(String versionName) {
+    return getChildren().get(versionName);
+  }
 
 }

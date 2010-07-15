@@ -60,6 +60,7 @@ public abstract class WikiImpl implements Wiki {
     if (home == null) {
       home = createWikiHome();
       setHome(home);
+      home.makeVersionable();
       home.setOwner(getOwner());
       ContentImpl content = home.getContent() ;
       content.setTitle(WikiNodeType.Definition.WIKI_HOME_TITLE) ;

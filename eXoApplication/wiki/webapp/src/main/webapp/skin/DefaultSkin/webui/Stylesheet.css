@@ -832,3 +832,25 @@
 	border: none;
 	padding: 5px 0;
 }
+
+/*Page History Area*/
+
+.UIWikiHistorySpaceArea .WikiBackLink {
+  height: 21px;
+  padding: 3px 0px 3px 12px;
+  cursor: pointer;
+}
+
+.UIWikiPageVersionsList .CompareBtn {
+	background: #165FB3;
+	float: left;
+	height: 21px;
+	padding: 3px 12px 0px 12px;
+	cursor: pointer;
+}
+
+.UIWikiPageVersionsList .CompareBtn a {
+	color: #ffffff;
+	font-size: 12px;
+	font-weight: bold;
+}

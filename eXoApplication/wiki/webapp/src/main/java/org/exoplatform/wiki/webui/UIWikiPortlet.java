@@ -67,6 +67,7 @@ public class UIWikiPortlet extends UIPortletApplication {
       addChild(UIWikiPageArea.class, null, null).setRendered(true);
       addChild(UIWikiBottomArea.class, null, null).setRendered(true);
       addChild(UIWikiSearchSpaceArea.class, null, null).setRendered(false);
+      addChild(UIWikiHistorySpaceArea.class, null, null).setRendered(false);
       addChild(UIWikiMaskWorkspace.class, null, "UIWikiMaskWorkspace");
     } catch (Exception e) {
       log.error("An exception happens when init WikiPortlet", e);
@@ -154,6 +155,9 @@ public class UIWikiPortlet extends UIPortletApplication {
           case SEARCH:
             switchViewSearchMode(true);
             break;
+          case HISTORY:
+            switchViewHistoryMode(true);
+            break;
           case PAGE_NOT_FOUND:
             switchViewPageNotFoundMode(true);
             break;  
@@ -181,6 +185,13 @@ public class UIWikiPortlet extends UIPortletApplication {
         switch(mode){
           case VIEW:
             switchViewSearchMode(false);
+            break;
+        }
+        break;
+      case HISTORY:
+        switch(mode){
+          case VIEW:
+            switchViewHistoryMode(false);
             break;
         }
         break;
@@ -233,6 +244,13 @@ public class UIWikiPortlet extends UIPortletApplication {
     findFirstComponentOfType(UIWikiPageArea.class).setRendered(!isViewToSearch);
     findFirstComponentOfType(UIWikiBottomArea.class).setRendered(!isViewToSearch);
     findFirstComponentOfType(UIWikiSearchSpaceArea.class).setRendered(isViewToSearch);
+  }
+  
+  private void switchViewHistoryMode(boolean isViewToHistory){
+    findFirstComponentOfType(UIWikiPageControlArea.class).setRendered(!isViewToHistory);
+    findFirstComponentOfType(UIWikiPageArea.class).setRendered(!isViewToHistory);
+    findFirstComponentOfType(UIWikiBottomArea.class).setRendered(!isViewToHistory);
+    findFirstComponentOfType(UIWikiHistorySpaceArea.class).setRendered(isViewToHistory);
   }
   
   private void switchViewPageNotFoundMode(boolean isPageNotFound){

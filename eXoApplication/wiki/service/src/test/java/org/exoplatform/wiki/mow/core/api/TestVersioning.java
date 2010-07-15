@@ -32,18 +32,16 @@ import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
  * Jul 7, 2010  
  */
 public class TestVersioning extends AbstractMOWTestcase {
-  
+
   public void testGetVersionHistory() throws Exception {
     PageImpl wikipage = createWikiPage(WikiType.PORTAL, "versioning", "testGetVersionHistory-001");
-    assertNull(wikipage.getVersionableMixin());
-    wikipage.makeVersionable();
+    assertNotNull(wikipage.getVersionableMixin());
     assertNotNull(wikipage.getVersionableMixin().getVersionHistory().getRootVersion().getCreated());
     assertTrue(wikipage.getVersionableMixin().isCheckedOut());
   }
 
   public void testCreateVersionHistoryTree() throws Exception {
     PageImpl wikipage = createWikiPage(WikiType.PORTAL, "versioning", "testCreateVersionHistoryTree-001");
-    wikipage.makeVersionable();
     wikipage.getContent().setTitle("testCreateVersionHistoryTree");
     wikipage.getContent().setText("testCreateVersionHistoryTree-ver1.0");
     NTVersion ver1 = wikipage.checkin();
@@ -54,7 +52,7 @@ public class TestVersioning extends AbstractMOWTestcase {
     assertNotNull(ver2);
     assertNotSame(ver1, ver2);
     wikipage.checkout();
-    wikipage.restore(ver1, false);
+    wikipage.restore(ver1.getName(), false);
     assertEquals("testCreateVersionHistoryTree-ver1.0", wikipage.getContent().getText());
     wikipage.checkout();
     wikipage.getContent().setText("testCreateVersionHistoryTree-ver3.0");
@@ -67,14 +65,20 @@ public class TestVersioning extends AbstractMOWTestcase {
     NTFrozenNode frozenNode = version.getNTFrozenNode();
     assertEquals("testCreateVersionHistoryTree-ver1.0",
                  ((ContentImpl) (frozenNode.getChildren().get(WikiNodeType.Definition.CONTENT))).getText());
+    assertNotNull(frozenNode.getProperties().get(WikiNodeType.Definition.UPDATED_DATE));
+    assertNotNull(frozenNode.getProperties().get(WikiNodeType.Definition.AUTHOR));
     version = iter.next();
     frozenNode = version.getNTFrozenNode();
     assertEquals("testCreateVersionHistoryTree-ver2.0",
                  ((ContentImpl) (frozenNode.getChildren().get(WikiNodeType.Definition.CONTENT))).getText());
+    assertNotNull(frozenNode.getProperties().get(WikiNodeType.Definition.UPDATED_DATE));
+    assertNotNull(frozenNode.getProperties().get(WikiNodeType.Definition.AUTHOR));
     version = iter.next();
     frozenNode = version.getNTFrozenNode();
     assertEquals("testCreateVersionHistoryTree-ver3.0",
                  ((ContentImpl) (frozenNode.getChildren().get(WikiNodeType.Definition.CONTENT))).getText());
+    assertNotNull(frozenNode.getProperties().get(WikiNodeType.Definition.UPDATED_DATE));
+    assertNotNull(frozenNode.getProperties().get(WikiNodeType.Definition.AUTHOR));
   }
 
 }

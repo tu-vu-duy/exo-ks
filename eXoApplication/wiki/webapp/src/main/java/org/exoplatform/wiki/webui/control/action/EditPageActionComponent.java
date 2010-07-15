@@ -19,7 +19,6 @@ package org.exoplatform.wiki.webui.control.action;
 import java.util.Arrays;
 import java.util.List;
 
-import org.exoplatform.container.PortalContainer;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIComponent;
@@ -31,7 +30,6 @@ import org.exoplatform.webui.form.UIFormStringInput;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
 import org.exoplatform.wiki.commons.Utils;
 import org.exoplatform.wiki.mow.api.Page;
-import org.exoplatform.wiki.resolver.PageResolver;
 import org.exoplatform.wiki.webui.UIWikiPageEditForm;
 import org.exoplatform.wiki.webui.UIWikiPageTitleControlArea;
 import org.exoplatform.wiki.webui.UIWikiPortlet;
@@ -68,9 +66,7 @@ public class EditPageActionComponent extends UIComponent {
       UIFormTextAreaInput markupInput = pageEditForm.findComponentById(UIWikiPageEditForm.FIELD_CONTENT);
       UIFormSelectBox syntaxTypeSelectBox = pageEditForm.findComponentById(UIWikiPageEditForm.FIELD_SYNTAX);
       
-      String requestURL = Utils.getCurrentRequestURL();
-      PageResolver pageResolver = (PageResolver) PortalContainer.getComponent(PageResolver.class);
-      Page page = pageResolver.resolve(requestURL);
+      Page page = Utils.getCurrentWikiPage();
       titleInput.setValue(page.getContent().getTitle());
       titleInput.setEditable(true);
       pageEditForm.setTitle(page.getContent().getTitle()) ;

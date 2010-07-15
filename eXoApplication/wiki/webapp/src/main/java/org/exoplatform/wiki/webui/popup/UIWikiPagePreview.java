@@ -17,6 +17,8 @@
 package org.exoplatform.wiki.webui.popup;
 
 import org.exoplatform.container.PortalContainer;
+import org.exoplatform.portal.application.PortalRequestContext;
+import org.exoplatform.portal.webui.portal.UIPortal;
 import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
@@ -24,9 +26,15 @@ import org.exoplatform.webui.core.UIContainer;
 import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
+import org.exoplatform.wiki.commons.Utils;
 import org.exoplatform.wiki.rendering.RenderingService;
+import org.exoplatform.wiki.rendering.impl.RenderingServiceImpl;
+import org.exoplatform.wiki.service.WikiContext;
+import org.exoplatform.wiki.service.WikiPageParams;
 import org.exoplatform.wiki.webui.UIWikiMaskWorkspace;
 import org.exoplatform.wiki.webui.UIWikiPortlet;
+import org.xwiki.context.Execution;
+import org.xwiki.context.ExecutionContext;
 import org.xwiki.rendering.syntax.Syntax;
 
 /**
@@ -57,6 +65,24 @@ public class UIWikiPagePreview extends UIContainer {
       this.htmlOutput = markup;
     } else {
       RenderingService renderingService = (RenderingService) PortalContainer.getComponent(RenderingService.class);
+      Execution ec = ((RenderingServiceImpl) renderingService).getExecutionContext();
+      if (ec.getContext() == null) {
+        //
+        PortalRequestContext portalRequestContext = Util.getPortalRequestContext();
+        UIPortal uiPortal = Util.getUIPortal();
+        String portalURI = portalRequestContext.getPortalURI();
+        String pageNodeSelected = uiPortal.getSelectedNode().getUri();
+        //
+        ec.setContext(new ExecutionContext());
+        WikiContext wikiContext = new WikiContext();
+        wikiContext.setPortalURI(portalURI);
+        wikiContext.setPortletURI(pageNodeSelected);
+        WikiPageParams params = Utils.getCurrentWikiPageParams();
+        wikiContext.setType(params.getType());
+        wikiContext.setOwner(params.getOwner());
+        wikiContext.setPageId(params.getPageId());
+        ec.getContext().setProperty(WikiContext.WIKICONTEXT, wikiContext);
+      }
       this.htmlOutput = renderingService.render(markup, syntaxId, Syntax.XHTML_1_0.toIdString());
     }
   }

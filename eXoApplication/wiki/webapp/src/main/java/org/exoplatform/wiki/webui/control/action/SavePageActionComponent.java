@@ -114,8 +114,6 @@ public class SavePageActionComponent extends UIComponent {
           page.getContent().setSyntax(syntaxTypeSelectBox.getValue());
           pageTitleControlForm.getUIFormInputInfo().setValue(title);
           pageContentArea.renderWikiMarkup(markup, syntaxTypeSelectBox.getValue());
-          //the following code line is necessary, otherwise url which is generated from ajax post will be displayed in url bar of browser
-          event.getSource().redirectToNewPage(pageParams, URLEncoder.encode(pageParams.getPageId(), "UTF-8"));
           
           if(!pageEditForm.getTitle().equals(title)) {
             page.getContent().setTitle(title);
@@ -128,6 +126,8 @@ public class SavePageActionComponent extends UIComponent {
           } else {
             ((PageImpl) page).checkin();
             ((PageImpl) page).checkout();
+            //the following code line is necessary, otherwise url which is generated from ajax post will be displayed in url bar of browser
+            event.getSource().redirectToNewPage(pageParams, URLEncoder.encode(pageParams.getPageId(), "UTF-8"));
           }
                     
         } else if (wikiPortlet.getWikiMode() == WikiMode.NEW) {          

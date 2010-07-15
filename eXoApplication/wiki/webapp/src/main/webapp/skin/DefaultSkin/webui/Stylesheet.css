@@ -126,6 +126,47 @@
 	padding: 5px 10px;
 	border: 1px solid #d3d3d3;
 }
+/*===========================*/
+
+.UIWikiPortlet .wikicreatelink a {
+  color: red;
+}
+
+.errormessage, .warningmessage, .infomessage, .plainmessage {
+  background:#F5F5F5 none no-repeat scroll 6px 8px;
+  border:1px solid #DDDDDD;
+  color:#555555;
+  margin:4px 0;
+  padding:8px 28px;
+  text-align:justify;
+}
+
+.UIWikiPortlet .infomessage {
+  background-image: url("background/information.gif");
+  color:#336699;
+}
+
+.UIWikiPortlet .warningmessage {
+  background-image: url("background/error.gif");
+  color:#D5A13D;
+}
+
+.UIWikiPortlet .errormessage {
+  background-image: url("background/exclamation.gif");
+  color:#E14726;
+}
+
+.UIWikiPortlet .code {
+  background-color:#F1F7FF;
+  border:1px dotted #555555;
+  margin:1em 0;
+  overflow:auto;
+  padding:0 1px;
+}
+
+.UIWikiPortlet .code pre {
+  font-family:courier,courier new,monospace;
+}
 
 /*===========================*/
 .UIWikiPortlet {
@@ -223,7 +264,7 @@
 }
 
 .UIWikiPageEditForm .UIForm .HorizontalLayout textarea {
-	width: 885px;
+	width: 925px;
 	height: auto;
 	border: 1px solid #dddddd;
 	padding: 0 0 0 8px;
@@ -233,7 +274,7 @@
 	border: 1px solid #dddddd;
 	height: auto;
 	padding: 0 0 0 8px;
-	width: 630px;
+	width: 670px;
 }
 
 .UIWikiPageEditForm .UIPageToolBar .Icon {

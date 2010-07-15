@@ -181,7 +181,11 @@ public class DefaultWikiService implements WikiService {
     List<WikiPage> pages = new ArrayList<WikiPage>();
     for (SearchResult result : results.getAll()) {
       WikiPage page = new WikiPage();
-      page.setName(result.getNodeName());
+      String nodeName = result.getNodeName();
+      if(nodeName != null && nodeName.length() > 0 && nodeName.startsWith("/")) {
+        nodeName = nodeName.substring(1);
+      }
+      page.setName(nodeName);
       page.setTitle(result.getTitle());
       page.setURL("http://localhost:8080/ksdemo/classic/wiki/WikiHome");
       pages.add(page);

@@ -67,7 +67,7 @@ function getModule(params)
 	addDependency(new Project("com.google.gwt", "gwt-servlet", "jar",  "2.0.0")).
 	addDependency(new Project("com.google.gwt", "gwt-user", "jar",  "2.0.0")).
 	addDependency(new Project("org.xwiki.platform", "xwiki-web-gwt-wysiwyg-client", "jar",  "2.3.1")).
-	addDependency(new Project("org.fontbox", "fontbox", "jar",  "0.1.0")).
+	addDependency(new Project("org.apache.pdfbox", "fontbox", "jar",  "1.1.0")).
 	addDependency(new Project("javax.validation", "validation-api", "jar",  "1.0.0.GA")).
 	addDependency(new Project("org.hibernate", "hibernate-validator", "jar",  "4.0.0.GA")).
 	addDependency(new Project("org.python", "jython-standalone", "jar",  "2.5.1-xwiki")).

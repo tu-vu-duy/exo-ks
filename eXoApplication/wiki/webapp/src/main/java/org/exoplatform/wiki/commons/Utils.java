@@ -37,9 +37,13 @@ import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.mow.core.api.MOWService;
 import org.exoplatform.wiki.mow.core.api.WikiStoreImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.AttachmentImpl;
+import org.exoplatform.wiki.rendering.RenderingService;
 import org.exoplatform.wiki.resolver.PageResolver;
 import org.exoplatform.wiki.service.WikiPageParams;
 import org.exoplatform.wiki.service.WikiService;
+import org.exoplatform.wiki.webui.UIWikiPageEditForm;
+import org.exoplatform.wiki.webui.UIWikiRichTextArea;
+import org.xwiki.rendering.syntax.Syntax;
 
 /**
  * Created by The eXo Platform SAS
@@ -126,5 +130,17 @@ public class Utils {
   
   public static String getCurrentWiki() throws Exception {
     return Utils.getCurrentWikiPageParams().getOwner();
+  }
+  
+  public static void feedDataForWYSIWYGEditor(UIWikiPageEditForm pageEditForm, String xhtmlContent) throws Exception {
+    if (xhtmlContent == null) {
+      RenderingService renderingService = (RenderingService) PortalContainer.getComponent(RenderingService.class);
+      String markupContent = pageEditForm.getUIFormTextAreaInput(UIWikiPageEditForm.FIELD_CONTENT).getValue();
+      String markupSyntax = pageEditForm.getUIFormSelectBox(UIWikiPageEditForm.FIELD_SYNTAX).getValue();
+      String htmlContent = renderingService.render(markupContent, markupSyntax, Syntax.ANNOTATED_XHTML_1_0.toIdString());
+      Util.getPortalRequestContext().getRequest().getSession(false).setAttribute(UIWikiRichTextArea.SESSION_KEY, htmlContent);
+    } else {
+      Util.getPortalRequestContext().getRequest().getSession(false).setAttribute(UIWikiRichTextArea.SESSION_KEY, xhtmlContent);
+    }
   }
 }

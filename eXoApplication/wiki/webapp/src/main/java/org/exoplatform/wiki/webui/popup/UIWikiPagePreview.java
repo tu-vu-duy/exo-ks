@@ -83,7 +83,10 @@ public class UIWikiPagePreview extends UIContainer {
         wikiContext.setPageId(params.getPageId());
         ec.getContext().setProperty(WikiContext.WIKICONTEXT, wikiContext);
       }
+      
       this.htmlOutput = renderingService.render(markup, syntaxId, Syntax.XHTML_1_0.toIdString());
+      
+      ec.removeContext();
     }
   }
   

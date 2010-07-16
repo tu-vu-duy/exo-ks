@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.exoplatform.container.PortalContainer;
-import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIComponent;
@@ -30,6 +29,7 @@ import org.exoplatform.webui.ext.filter.UIExtensionFilter;
 import org.exoplatform.webui.ext.filter.UIExtensionFilters;
 import org.exoplatform.webui.form.UIFormSelectBox;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
+import org.exoplatform.wiki.commons.Utils;
 import org.exoplatform.wiki.rendering.RenderingService;
 import org.exoplatform.wiki.webui.UIWikiMaskWorkspace;
 import org.exoplatform.wiki.webui.UIWikiPageEditForm;
@@ -72,7 +72,7 @@ public class PreviewPageActionComponent extends UIComponent {
       boolean isRichTextRendered = wikiRichTextArea.isRendered();
       if (isRichTextRendered) {
         String htmlContent = wikiRichTextArea.getUIFormTextAreaInput().getValue();
-        Util.getPortalRequestContext().getRequest().getSession(false).setAttribute(UIWikiRichTextArea.SESSION_KEY, htmlContent);
+        Utils.feedDataForWYSIWYGEditor(wikiPageEditForm, htmlContent);
         String markupSyntax = wikiPageEditForm.getUIFormSelectBox(UIWikiPageEditForm.FIELD_SYNTAX).getValue();
         RenderingService renderingService = (RenderingService) PortalContainer.getComponent(RenderingService.class);
         String markupContent = renderingService.render(htmlContent, Syntax.XHTML_1_0.toIdString(), markupSyntax);

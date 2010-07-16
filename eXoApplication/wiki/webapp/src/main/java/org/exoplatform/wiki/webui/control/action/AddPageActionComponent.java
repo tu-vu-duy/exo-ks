@@ -31,11 +31,13 @@ import org.exoplatform.webui.ext.filter.UIExtensionFilters;
 import org.exoplatform.webui.form.UIFormSelectBox;
 import org.exoplatform.webui.form.UIFormStringInput;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
+import org.exoplatform.wiki.commons.Utils;
 import org.exoplatform.wiki.service.WikiContext;
 import org.exoplatform.wiki.service.WikiService;
 import org.exoplatform.wiki.webui.UIWikiPageEditForm;
 import org.exoplatform.wiki.webui.UIWikiPageTitleControlArea;
 import org.exoplatform.wiki.webui.UIWikiPortlet;
+import org.exoplatform.wiki.webui.UIWikiRichTextArea;
 import org.exoplatform.wiki.webui.WikiMode;
 import org.exoplatform.wiki.webui.control.filter.IsViewModeFilter;
 import org.exoplatform.wiki.webui.control.listener.UIPageToolBarActionListener;
@@ -71,7 +73,7 @@ public class AddPageActionComponent extends UIComponent {
     }
   }
 
-  public static void processAddPageAction(Map<String, Object> uiExtensionContext) {
+  public static void processAddPageAction(Map<String, Object> uiExtensionContext) throws Exception {
     UIWikiPortlet wikiPortlet = (UIWikiPortlet) uiExtensionContext.get(UIWikiPortlet.class.getName());
     String pageTitle = (String) uiExtensionContext.get(WikiContext.PAGETITLE);
     UIWikiPageEditForm pageEditForm = wikiPortlet.findFirstComponentOfType(UIWikiPageEditForm.class);
@@ -89,6 +91,11 @@ public class AddPageActionComponent extends UIComponent {
       titleInput.setEditable(false);
     }
 
+    UIWikiRichTextArea wikiRichTextArea = pageEditForm.getChild(UIWikiRichTextArea.class);
+    if (wikiRichTextArea.isRendered()) {
+      Utils.feedDataForWYSIWYGEditor(pageEditForm, null);
+    }
+    
     wikiPortlet.changeMode(WikiMode.NEW);
   }
   

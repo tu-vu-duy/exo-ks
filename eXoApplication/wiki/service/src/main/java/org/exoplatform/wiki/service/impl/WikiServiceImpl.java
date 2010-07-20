@@ -39,6 +39,7 @@ import org.exoplatform.wiki.resolver.TitleResolver;
 import org.exoplatform.wiki.service.BreadcumbData;
 import org.exoplatform.wiki.service.SearchData;
 import org.exoplatform.wiki.service.SearchResult;
+import org.exoplatform.wiki.service.Space;
 import org.exoplatform.wiki.service.WikiService;
 import org.exoplatform.wiki.utils.Utils;
 import org.xwiki.rendering.syntax.Syntax;
@@ -66,7 +67,7 @@ public class WikiServiceImpl implements WikiService{
     
     Model model = getModel();
     WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
-    
+   
     WikiImpl wiki = (WikiImpl) getWiki(wikiType, wikiOwner, model);
     
     PageImpl page = wiki.createWikiPage() ;
@@ -89,7 +90,6 @@ public class WikiServiceImpl implements WikiService{
     page.makeVersionable();
     page.setSession(wStore.getSession());
     model.save();    
-
     return page ;
   }
   
@@ -130,13 +130,13 @@ public class WikiServiceImpl implements WikiService{
     return jcrDataStorage.renamePage(currentPage.getPath(), newName, newTitle, wStore.getSession()) ;    
   }  
   
-  public boolean movePage(String pageId, String newParentId, String wikiType, String wikiOwner, String destSpace) throws Exception {
+  public boolean movePage(String pageId, String newParentId, String wikiType, String srcSpace, String destSpace) throws Exception {
     try {
       if(!isHasCreatePagePermission(Utils.getCurrentUser(), destSpace)){ return false ;}
       Model model = getModel();
       WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
       ChromatticSession session = wStore.getSession() ;
-      PageImpl movePage = (PageImpl)getPageById(wikiType, wikiOwner, pageId) ;
+      PageImpl movePage = (PageImpl)getPageById(wikiType, srcSpace, pageId) ;
       MovedMixin mix = session.create(MovedMixin.class) ;
       session.setEmbedded(movePage, MovedMixin.class, mix) ;      
       PageImpl destPage = (PageImpl)getPageById(wikiType, destSpace, newParentId) ;
@@ -146,12 +146,13 @@ public class WikiServiceImpl implements WikiService{
     }    
     return true;
   }
+ 
+  public List<Space> getSpaces(String wikiType) throws Exception {
+    return jcrDataStorage.getSpaces(wikiType, null) ;
+  }
   
-  private <E> void addMix(Object o, Class<E> mixinType) {
-    Model model = getModel();
-    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
-    ChromatticSession session = wStore.getSession() ;
-    
+  public List<Space> getAllSpaces() throws Exception {
+    return jcrDataStorage.getAllSpaces(null) ;
   }
   
   private boolean isHasCreatePagePermission(String userId, String destSpace) {
@@ -166,7 +167,8 @@ public class WikiServiceImpl implements WikiService{
     
     String statement = getStatement(wikiType, wikiOwner, pageId);
     if(statement != null) {
-      Page page = searchPage(statement, wStore.getSession()) ;
+      PageImpl page = searchPage(statement, wStore.getSession()) ;
+      //page.setChromatticSession(wStore.getSession()) ;
       if(WikiNodeType.Definition.WIKI_HOME_NAME.equals(pageId) || pageId == null) {
         return getWikiHome(wikiType, wikiOwner) ;        
       }

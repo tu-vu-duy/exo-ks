@@ -56,6 +56,8 @@ public class TestWikiService extends AbstractMOWTestcase {
     WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
     WikiContainer<PortalWiki> portalWikiContainer = wStore.getWikiContainer(WikiType.PORTAL);
     PortalWiki wiki = portalWikiContainer.addWiki("classic");
+    PortalWiki wikiACME = portalWikiContainer.addWiki("acme");
+    wikiACME.getWikiHome() ;
     WikiHome wikiHomePage = wiki.getWikiHome();
     model.save() ;
     
@@ -161,7 +163,10 @@ public class TestWikiService extends AbstractMOWTestcase {
     assertTrue(wService.movePage("child", "newParent", "portal", "classic", "classic")) ;    
     assertFalse(wService.movePage("childWrong", "newParent", "portal", "classic", "classic")) ;
     
+    wService.createPage(PortalConfig.PORTAL_TYPE, "acme", "acmePage", "WikiHome") ;
+    wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "classicPage", "WikiHome") ;
     
+    assertTrue(wService.movePage("classicPage", "acmePage", "portal", "classic", "acme")) ;
   }
   
   public void testAddMixin() throws Exception{    
@@ -279,6 +284,27 @@ public class TestWikiService extends AbstractMOWTestcase {
     
   }
   
+ /* public void testRevisionMixin() throws Exception {
+    PageImpl page = (PageImpl)wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "RevisionPage", "WikiHome") ;
+    page.getContent().setText("forum faq wiki exoplatform") ;
+    AttachmentImpl attachment1 = page.createAttachment("attachment.txt", Resource.createPlainText("this is a text attachment")) ;
+    
+    
+    Model model = mowService.getModel();
+    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
+    ChromatticSession session = wStore.getSession() ;
+    RevisionMixin revision = session.create(RevisionMixin.class) ;
+    session.setEmbedded(page, RevisionMixin.class, revision) ;
+    
+    page.setRevisionMixin(revision) ;
+    assertTrue(page.getRevisionMixin().getIsCheckedOut()) ;
+    attachment1.setCreator("john") ;
+    page.getContent().setText("forum faq wiki exoplatform edited") ;
+    page.getRevisionMixin().checkIn() ;
+    assertFalse(page.getRevisionMixin().getIsCheckedOut()) ;
+    //System.out.println("page.getRevisionMixin().getIsCheckedOut() ==>" + );
+        
+  }*/
   
   
 }

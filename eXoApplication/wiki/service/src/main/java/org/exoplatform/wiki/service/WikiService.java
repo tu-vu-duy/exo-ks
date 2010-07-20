@@ -37,7 +37,9 @@ public interface WikiService {
 	public Page createPage(String wikiType, String wikiOwner, String title, String parentId) throws Exception ;	
 	public boolean deletePage(String wikiType, String wikiOwner, String pageId) throws Exception ;
 	public boolean renamePage(String wikiType, String wikiOwner, String pageName, String newName, String newTitle) throws Exception ;
-	public boolean movePage(String pageId, String newParentId, String wikiType, String wikiOwner, String destSpace) throws Exception ;
+	public boolean movePage(String pageId, String newParentId, String wikiType, String srcSpace, String destSpace) throws Exception ;
+	public List<Space> getSpaces(String wikiType) throws Exception ;
+	public List<Space> getAllSpaces() throws Exception ;
 	
 	public Page getPageById(String wikiType, String wikiOwner, String pageId) throws Exception ;
 	public Page getPageByUUID(String uuid) throws Exception ;	

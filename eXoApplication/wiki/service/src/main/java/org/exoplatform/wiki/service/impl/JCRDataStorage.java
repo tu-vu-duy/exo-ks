@@ -26,6 +26,7 @@ import org.exoplatform.wiki.mow.api.WikiNodeType;
 import org.exoplatform.wiki.service.DataStorage;
 import org.exoplatform.wiki.service.SearchData;
 import org.exoplatform.wiki.service.SearchResult;
+import org.exoplatform.wiki.service.Space;
 import org.exoplatform.wiki.utils.Utils;
 
 import com.google.caja.parser.css.CssTree.Property;
@@ -139,6 +140,15 @@ public class JCRDataStorage implements DataStorage{
       e.printStackTrace() ;
     }    
     return false ;
+  }
+  
+  public List<Space> getSpaces(String wikiType, ChromatticSession session) throws Exception {
+    
+    return null ;
+  }
+  
+  public List<Space> getAllSpaces(ChromatticSession session) throws Exception {
+    return null ;
   }
   
   private List<String> valuesToList(Value[] values) throws Exception {

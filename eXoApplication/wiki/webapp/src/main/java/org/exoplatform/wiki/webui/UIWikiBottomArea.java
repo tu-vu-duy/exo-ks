@@ -31,8 +31,8 @@ import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
   template = "app:/templates/wiki/webui/UIWikiBottomArea.gtmpl"
 )
 public class UIWikiBottomArea extends UIContainer {
-  public UIWikiBottomArea() throws Exception{
+  public UIWikiBottomArea() throws Exception {
     addChild(UIWikiPageInfoArea.class, null, null).setRendered(true);
-    addChild(UIWikiAttachmentArea.class, null, null).setRendered(true);
+    addChild(UIWikiAttachmentArea.class, null, null).setRendered(false);
   }
 }

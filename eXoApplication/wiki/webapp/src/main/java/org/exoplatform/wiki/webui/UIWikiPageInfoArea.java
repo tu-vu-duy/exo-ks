@@ -44,12 +44,15 @@ import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
   lifecycle = UIApplicationLifecycle.class,
   template = "app:/templates/wiki/webui/UIWikiPageInfoArea.gtmpl",
   events = {
-    @EventConfig(listeners = UIWikiPageInfoArea.ShowHistoryActionListener.class)
+    @EventConfig(listeners = UIWikiPageInfoArea.ShowHistoryActionListener.class),
+    @EventConfig(listeners = UIWikiPageInfoArea.ToggleAttachmentsActionListener.class)
   }
 )
 public class UIWikiPageInfoArea extends UIContainer {
 
   private static final Log log = ExoLogger.getLogger("wiki:UIWikiPageInfoArea");
+
+  public static String TOGGLE_ATTACHMENTS_ACTION = "ToggleAttachments";
 
   private PageImpl getCurrentWikiPage() {
     PageImpl currentPage = null;
@@ -60,7 +63,20 @@ public class UIWikiPageInfoArea extends UIContainer {
     }
     return currentPage;
   }
-  
+
+  public static class ToggleAttachmentsActionListener extends EventListener<UIWikiPageInfoArea> {
+    @Override
+    public void execute(Event<UIWikiPageInfoArea> event) throws Exception {
+      UIWikiPortlet wikiPortlet = event.getSource().getAncestorOfType(UIWikiPortlet.class);
+      UIWikiAttachmentArea attachform = wikiPortlet.findFirstComponentOfType(UIWikiAttachmentArea.class);
+      if (attachform.isRendered()) {
+        attachform.setRendered(false);
+      } else {
+        attachform.setRendered(true);
+      }
+    }
+  }
+
   public static class ShowHistoryActionListener extends EventListener<UIWikiPageInfoArea> {
     @Override
     public void execute(Event<UIWikiPageInfoArea> event) throws Exception {
@@ -68,7 +84,7 @@ public class UIWikiPageInfoArea extends UIContainer {
       PageImpl wikipage = (PageImpl) Utils.getCurrentWikiPage();
       Iterator<NTVersion> iter = wikipage.getVersionableMixin().getVersionHistory().iterator();
       List<NTVersion> versionsList = new ArrayList<NTVersion>();
-      //TODO: sort descendant by updated date
+      // TODO: sort descendant by updated date
       while (iter.hasNext()) {
         NTVersion version = iter.next();
         if (!("jcr:rootVersion".equals(version.getName()))) {
@@ -81,7 +97,7 @@ public class UIWikiPageInfoArea extends UIContainer {
       pageVersionsList.setVersionsList(versionsList);
       wikiPortlet.changeMode(WikiMode.HISTORY);
     }
-    
+
     private class VersionNameComparatorDesc implements Comparator<NTVersion> {
       public int compare(NTVersion version1, NTVersion version2) {
         if (version1.getName().length() == version2.getName().length()) {
@@ -91,7 +107,7 @@ public class UIWikiPageInfoArea extends UIContainer {
         }
       }
     }
-    
+
   }
-  
+
 }

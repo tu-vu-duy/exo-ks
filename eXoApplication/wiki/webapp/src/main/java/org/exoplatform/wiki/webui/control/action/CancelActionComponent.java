@@ -32,7 +32,6 @@ import org.exoplatform.webui.ext.filter.UIExtensionFilters;
 import org.exoplatform.wiki.commons.Utils;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.resolver.PageResolver;
-import org.exoplatform.wiki.webui.UIWikiPageContentArea;
 import org.exoplatform.wiki.webui.UIWikiPageControlArea;
 import org.exoplatform.wiki.webui.UIWikiPageTitleControlArea;
 import org.exoplatform.wiki.webui.UIWikiPortlet;
@@ -66,13 +65,11 @@ public class CancelActionComponent extends UIComponent {
     protected void processEvent(Event<CancelActionComponent> event) throws Exception {
       UIWikiPortlet wikiPortlet = event.getSource().getAncestorOfType(UIWikiPortlet.class);
       UIWikiPageTitleControlArea pageTitleControlForm = wikiPortlet.findComponentById(UIWikiPageControlArea.TITLE_CONTROL);
-      UIWikiPageContentArea pageContentArea = wikiPortlet.findFirstComponentOfType(UIWikiPageContentArea.class);
       try {
         String requestURL = Utils.getCurrentRequestURL();
         PageResolver pageResolver = (PageResolver) PortalContainer.getComponent(PageResolver.class);
         Page page = pageResolver.resolve(requestURL);
         pageTitleControlForm.getUIFormInputInfo().setValue(page.getContent().getTitle());
-        pageContentArea.renderWikiMarkup(page.getContent().getText(), page.getContent().getSyntax());
       } catch (Exception e) {
         log.warn("An exception happens when cancel edit page", e);
       }

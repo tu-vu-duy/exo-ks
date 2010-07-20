@@ -20,9 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.exoplatform.container.PortalContainer;
-import org.exoplatform.portal.application.PortalRequestContext;
-import org.exoplatform.portal.webui.portal.UIPortal;
-import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.web.application.RequestContext;
 import org.exoplatform.webui.application.WebuiApplication;
 import org.exoplatform.webui.application.WebuiRequestContext;
@@ -35,16 +32,12 @@ import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
 import org.exoplatform.webui.ext.UIExtensionManager;
 import org.exoplatform.wiki.commons.Utils;
 import org.exoplatform.wiki.mow.api.Page;
-import org.exoplatform.wiki.rendering.RenderingService;
-import org.exoplatform.wiki.rendering.impl.RenderingServiceImpl;
 import org.exoplatform.wiki.resolver.PageResolver;
 import org.exoplatform.wiki.service.WikiContext;
 import org.exoplatform.wiki.service.WikiPageParams;
 import org.exoplatform.wiki.service.WikiService;
 import org.exoplatform.wiki.webui.control.UIPageToolBar;
 import org.exoplatform.wiki.webui.control.action.AddPageActionComponent;
-import org.xwiki.context.Execution;
-import org.xwiki.context.ExecutionContext;
 
 /**
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Nov
@@ -93,31 +86,14 @@ public class UIWikiPortlet extends UIPortletApplication {
         AddPageActionComponent.processAddPageAction(uiExtensionContext);
       }
     }
-    PortalRequestContext portalRequestContext = Util.getPortalRequestContext();
-    UIPortal uiPortal = Util.getUIPortal();
-    String portalURI = portalRequestContext.getPortalURI();
     
-    String pageNodeSelected = uiPortal.getSelectedNode().getUri();
-    Execution ec = null;
     try {
       // TODO: ignore request URL of resources
-      
       context.setAttribute("wikiPage", page);
-      
-      RenderingServiceImpl renderingService = (RenderingServiceImpl) PortalContainer.getComponent(RenderingService.class);
-      ec = renderingService.getExecutionContext();
-      ec.setContext(new ExecutionContext());
-      WikiContext wikiContext = new WikiContext();
-      wikiContext.setPortalURI(portalURI);
-      wikiContext.setPortletURI(pageNodeSelected);
       WikiPageParams params = pageResolver.extractWikiPageParams(requestURL);
-      wikiContext.setType(params.getType());
-      wikiContext.setOwner(params.getOwner());
-      wikiContext.setPageId(params.getPageId());
-      ec.getContext().setProperty(WikiContext.WIKICONTEXT, wikiContext);
       
       ((UIWikiPageTitleControlArea)findComponentById(UIWikiPageControlArea.TITLE_CONTROL)).getUIFormInputInfo().setValue(page.getContent().getTitle());
-      findFirstComponentOfType(UIWikiPageContentArea.class).renderWikiMarkup(page.getContent().getText(), page.getContent().getSyntax());
+      findFirstComponentOfType(UIWikiPageContentArea.class).renderVersion(null);
       UIWikiBreadCrumb wikiBreadCrumb = findFirstComponentOfType(UIWikiBreadCrumb.class);
       WikiService wikiService = (WikiService) PortalContainer.getComponent(WikiService.class);
       wikiBreadCrumb.setBreadCumbs(wikiService.getBreadcumb(params.getType(), params.getOwner(), page.getName()));
@@ -130,10 +106,7 @@ public class UIWikiPortlet extends UIPortletApplication {
     }
 
     super.processRender(app, context);
-    //clean the ThreadLocal variables located in the Execution component to prevent a potential memory leak
-    if (ec != null) {
-      ec.removeContext();
-    }
+    
   }
   
   public WikiMode getWikiMode(){

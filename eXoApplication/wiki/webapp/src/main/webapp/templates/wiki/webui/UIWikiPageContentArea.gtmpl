@@ -1,8 +1,44 @@
+<%
+  import org.exoplatform.wiki.webui.PageMode;
+  
+  PageMode pageMode = uicomponent.getPageMode();
+%>
 <div class="UIWikiPageContentArea">
   <!--
 	<p><b class="Tit">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</b><br/>Nunc ac velit tortor. Cras nibh metus, sollicitudin et molestie viverra, tristique vel nunc. Aliquam commodo, nunc rutrum tempus ultrices, urna augue interdum nisi, malesuada faucibus risus velit eget risus. Sed ipsum orci, lobortis id volutpat condimentum, adipiscing ut leo. Curabitur vel sem lacus. Nam consequat ligula et tellus egestas nec viverra leo feugiat. Curabitur tincidunt elementum tortor, a aliquam purus euismod et. Quisque placerat facilisis aliquet. Nulla convallis fringilla velit vel adipiscing. Duis laoreet eleifend nunc, sit amet pretium augue lobortis in. Fusce lobortis, diam in tincidunt consequat, erat lorem ornare magna, ac sagittis odio purus vel enim.</p>
 	<p><b class="Tit">Aliquam erat volutpat.</b><br/>Quisque egestas rutrum ultricies. Phasellus porta ante et arcu auctor at mattis nisi porttitor. Maecenas et semper quam. Aliquam tellus urna, tincidunt ac posuere at, varius eu neque. Vestibulum semper lacinia consectetur. Integer eu dapibus nibh. Nam hendrerit leo vitae felis pellentesque in mattis sapien dignissim. In pharetra laoreet lectus, vel luctus quam imperdiet id. Nullam interdum convallis ligula non fringilla. Maecenas ante odio, luctus vitae gravida sed, ullamcorper ut odio. Donec non enim vitae massa tincidunt placerat. Pellentesque nec dui ipsum. Proin et sollicitudin sapien. Nunc sed consequat orci.</p>
 	<p>Donec vestibulum dui eu erat iaculis porta. Duis ut nunc quis ligula aliquet accumsan. Nam id ultrices enim. Aliquam euismod vestibulum neque, et imperdiet ligula laoreet ac. Nunc vitae augue odio. Donec gravida mi a felis tempus et posuere nibh porta. Mauris nec eros lorem. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aliquam eget quam nisl, eget elementum diam.</p>
 	-->
+  <%
+    if(pageMode == PageMode.HISTORY) {
+      String viewCurrentVersionLink = uicomponent.event(uicomponent.VIEW_CURRENT_VERSION);
+      String restoreLink = uicomponent.event(uicomponent.RESTORE_ACTION);
+      String viewHistoryLink = uicomponent.event(uicomponent.VIEW_HISTORY);
+      String previousVersionsLink = uicomponent.isHasPreviousVersion() ? uicomponent.event(uicomponent.PREVIOUS_VERSION) : null;
+      String nextVersionsLink = uicomponent.isHasNextVersion() ? uicomponent.event(uicomponent.NEXT_VERSION) : null;
+      String currentVersion = "Version " + uicomponent.versionName;
+  %>
+  <div class="VersionInfo">
+    <span class="VersionInfoDescription">You are viewing an old version of this page. View the <a href="$viewCurrentVersionLink">current version</a>.</span>
+    <span class="PageHistoryView">
+      <a href="">Compare with Current</a>  |  
+      <a href="$restoreLink">Restore this Version</a>  |  
+      <a href="$viewHistoryLink">View Page History</a>
+    </span>
+    <div class="NavigationSpacing">
+    <%
+      if(previousVersionsLink != null){
+    %>
+      <a class="VersionNavigation" href="$previousVersionsLink"><< Previous</a>
+    <% } %>
+      <span class="CurrentVersion"><%= currentVersion %></span>
+    <%
+      if(nextVersionsLink != null){
+    %>
+      <a class="VersionNavigation" href="$nextVersionsLink">Next>></a>
+    <% } %>
+    </div>
+  </div>
+  <% } %>
 ${uicomponent.htmlOutput}
 </div>

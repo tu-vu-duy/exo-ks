@@ -81,33 +81,36 @@ public class UIWikiPageInfoArea extends UIContainer {
     @Override
     public void execute(Event<UIWikiPageInfoArea> event) throws Exception {
       UIWikiPortlet wikiPortlet = event.getSource().getAncestorOfType(UIWikiPortlet.class);
-      PageImpl wikipage = (PageImpl) Utils.getCurrentWikiPage();
-      Iterator<NTVersion> iter = wikipage.getVersionableMixin().getVersionHistory().iterator();
-      List<NTVersion> versionsList = new ArrayList<NTVersion>();
-      // TODO: sort descendant by updated date
-      while (iter.hasNext()) {
-        NTVersion version = iter.next();
-        if (!("jcr:rootVersion".equals(version.getName()))) {
-          versionsList.add(version);
-        }
-      }
-      Collections.sort(versionsList, new VersionNameComparatorDesc());
-      UIWikiHistorySpaceArea historySpaceArea = wikiPortlet.getChild(UIWikiHistorySpaceArea.class);
-      UIWikiPageVersionsList pageVersionsList = historySpaceArea.getChild(UIWikiPageVersionsList.class);
-      pageVersionsList.setVersionsList(versionsList);
-      wikiPortlet.changeMode(WikiMode.HISTORY);
+      processShowHistoryAction(wikiPortlet);
     }
-
-    private class VersionNameComparatorDesc implements Comparator<NTVersion> {
-      public int compare(NTVersion version1, NTVersion version2) {
-        if (version1.getName().length() == version2.getName().length()) {
-          return version2.getName().compareTo(version1.getName());
-        } else {
-          return version2.getName().length() > version1.getName().length() ? 1 : -1;
-        }
+  }
+  
+  public static void processShowHistoryAction(UIWikiPortlet wikiPortlet) throws Exception {
+    PageImpl wikipage = (PageImpl) Utils.getCurrentWikiPage();
+    Iterator<NTVersion> iter = wikipage.getVersionableMixin().getVersionHistory().iterator();
+    List<NTVersion> versionsList = new ArrayList<NTVersion>();
+    // TODO: sort descendant by updated date
+    while (iter.hasNext()) {
+      NTVersion version = iter.next();
+      if (!("jcr:rootVersion".equals(version.getName()))) {
+        versionsList.add(version);
       }
     }
+    Collections.sort(versionsList, new VersionNameComparatorDesc());
+    UIWikiHistorySpaceArea historySpaceArea = wikiPortlet.getChild(UIWikiHistorySpaceArea.class);
+    UIWikiPageVersionsList pageVersionsList = historySpaceArea.getChild(UIWikiPageVersionsList.class);
+    pageVersionsList.setVersionsList(versionsList);
+    wikiPortlet.changeMode(WikiMode.HISTORY);
+  }
 
+  private static class VersionNameComparatorDesc implements Comparator<NTVersion> {
+    public int compare(NTVersion version1, NTVersion version2) {
+      if (version1.getName().length() == version2.getName().length()) {
+        return version2.getName().compareTo(version1.getName());
+      } else {
+        return version2.getName().length() > version1.getName().length() ? 1 : -1;
+      }
+    }
   }
 
 }

@@ -325,6 +325,56 @@
 	padding-left: 35px;
 }
 
+.UIWikiPageContentArea .VersionInfo {
+  border-style: solid;
+  border-width: 1px;
+  margin-bottom: 10px;
+  padding: 15px;
+  background-color: #FFFFDD;
+  border-color: #F7DF92;
+  -moz-border-radius-bottomleft: 5px;
+  -moz-border-radius-bottomright: 5px;
+  -moz-border-radius-topleft: 5px;
+  -moz-border-radius-topright: 5px;
+}
+
+.UIWikiPageContentArea span.VersionInfoDescription {
+  font-weight: bold;
+  font-size: 9pt;
+}
+
+.UIWikiPageContentArea span.PageHistoryView {
+  display: block;
+  padding-bottom: 5px;
+  padding-top: 5px;
+}
+
+.UIWikiPageContentArea span.PageHistoryView a {
+  color: #666666;
+  font-size: 9pt;
+}
+
+.UIWikiPageContentArea .NavigationSpacing {
+  font-size: 8pt;
+  font-weight: bold;
+  padding-top: 2px;
+}
+
+.UIWikiPageContentArea .NavigationSpacing a.VersionNavigation{
+  border: 1px solid #EEEEEE;
+  display: inline-block;
+  min-width: 75px;
+  padding: 0.2em 0.4em;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  top: 1px;
+}
+
+.UIWikiPageContentArea .NavigationSpacing a.CurrentVersion{
+  margin:15px;
+}
+
 /* wiki mask workspace */
 #UIWikiMaskWorkspace {
 	width: 964px;

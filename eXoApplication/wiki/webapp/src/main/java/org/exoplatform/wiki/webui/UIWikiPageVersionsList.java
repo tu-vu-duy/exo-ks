@@ -24,11 +24,8 @@ import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.form.UIForm;
-import org.exoplatform.wiki.chromattic.ext.ntdef.NTFrozenNode;
 import org.exoplatform.wiki.chromattic.ext.ntdef.NTVersion;
 import org.exoplatform.wiki.commons.Utils;
-import org.exoplatform.wiki.mow.api.WikiNodeType;
-import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 
 /**
@@ -69,6 +66,8 @@ public class UIWikiPageVersionsList extends UIForm {
       PageImpl wikipage = (PageImpl) Utils.getCurrentWikiPage();
       wikipage.restore(versionName, false);
       wikipage.checkout();
+      wikipage.checkin();
+      wikipage.checkout();
       wikiPortlet.changeMode(WikiMode.VIEW);
     }
   }
@@ -79,13 +78,7 @@ public class UIWikiPageVersionsList extends UIForm {
       UIWikiPortlet wikiPortlet = event.getSource().getAncestorOfType(UIWikiPortlet.class);
       UIWikiPageContentArea pageContentArea = wikiPortlet.findFirstComponentOfType(UIWikiPageContentArea.class);
       String versionName = event.getRequestContext().getRequestParameter(OBJECTID);
-      PageImpl wikipage = (PageImpl) Utils.getCurrentWikiPage();
-      NTVersion version = wikipage.getVersionableMixin().getVersionHistory().getVersion(versionName);
-      NTFrozenNode frozenNode = version.getNTFrozenNode();
-      ContentImpl content = (ContentImpl) (frozenNode.getChildren().get(WikiNodeType.Definition.CONTENT));
-      String pageContent = content.getText();
-      String pageSyntax = content.getSyntax();
-      pageContentArea.renderWikiMarkup(pageContent, pageSyntax);
+      pageContentArea.renderVersion(versionName);
       wikiPortlet.changeMode(WikiMode.VIEW);
     }
   }

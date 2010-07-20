@@ -25,8 +25,8 @@ package org.exoplatform.wiki.webui;
  */
 public enum PageMode {
   
-  NEW ,
+  CURRENT ,
   
-  EXISTED
+  HISTORY
 
 }

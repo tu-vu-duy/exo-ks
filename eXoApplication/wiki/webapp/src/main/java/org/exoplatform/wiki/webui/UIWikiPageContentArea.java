@@ -17,10 +17,27 @@
 package org.exoplatform.wiki.webui;
 
 import org.exoplatform.container.PortalContainer;
+import org.exoplatform.portal.application.PortalRequestContext;
+import org.exoplatform.portal.webui.portal.UIPortal;
+import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
+import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIContainer;
 import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
+import org.exoplatform.webui.event.Event;
+import org.exoplatform.webui.event.EventListener;
+import org.exoplatform.wiki.chromattic.ext.ntdef.NTFrozenNode;
+import org.exoplatform.wiki.chromattic.ext.ntdef.NTVersion;
+import org.exoplatform.wiki.commons.Utils;
+import org.exoplatform.wiki.mow.api.WikiNodeType;
+import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
+import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 import org.exoplatform.wiki.rendering.RenderingService;
+import org.exoplatform.wiki.rendering.impl.RenderingServiceImpl;
+import org.exoplatform.wiki.service.WikiContext;
+import org.exoplatform.wiki.service.WikiPageParams;
+import org.xwiki.context.Execution;
+import org.xwiki.context.ExecutionContext;
 import org.xwiki.rendering.syntax.Syntax;
 
 /**
@@ -31,12 +48,26 @@ import org.xwiki.rendering.syntax.Syntax;
  */
 @ComponentConfig(
   lifecycle = UIApplicationLifecycle.class,
-  template = "app:/templates/wiki/webui/UIWikiPageContentArea.gtmpl"
+  template = "app:/templates/wiki/webui/UIWikiPageContentArea.gtmpl",
+  events = {
+    @EventConfig(listeners = UIWikiPageContentArea.ViewCurrentVersionActionListener.class),
+    @EventConfig(listeners = UIWikiPageContentArea.RestoreActionListener.class),
+    @EventConfig(listeners = UIWikiPageContentArea.ViewHistoryActionListener.class),
+    @EventConfig(listeners = UIWikiPageContentArea.NextVersionActionListener.class),
+    @EventConfig(listeners = UIWikiPageContentArea.PreviousVersionActionListener.class)
+  }
 )
 public class UIWikiPageContentArea extends UIContainer {
 
   private String htmlOutput;
-  private PageMode pageMode = PageMode.NEW;
+  private PageMode pageMode = PageMode.CURRENT;
+  private String versionName;
+  
+  public static final String VIEW_CURRENT_VERSION = "ViewCurrentVersion";
+  public static final String RESTORE_ACTION = "Restore";
+  public static final String VIEW_HISTORY = "ViewHistory";
+  public static final String NEXT_VERSION = "NextVersion";
+  public static final String PREVIOUS_VERSION = "PreviousVersion";
   
   public UIWikiPageContentArea(){
   }
@@ -57,13 +88,113 @@ public class UIWikiPageContentArea extends UIContainer {
     this.htmlOutput = output;
   }
   
-  public void renderWikiMarkup(String markup, String syntaxId) throws Exception {
+  public void renderVersion(String versionName) throws Exception {
+    if (versionName != null && versionName.length() > 0) {
+      this.versionName = versionName;
+      pageMode = PageMode.HISTORY;
+      return;
+    }
+    
     RenderingService renderingService = (RenderingService) PortalContainer.getComponent(RenderingService.class);
-    this.htmlOutput = renderingService.render(markup, syntaxId, Syntax.XHTML_1_0.toIdString());
+    PageImpl wikipage = (PageImpl) Utils.getCurrentWikiPage();
+    
+    //Setup wiki context
+    Execution ec = ((RenderingServiceImpl) renderingService).getExecutionContext();
+    if (ec.getContext() == null) {
+      //
+      PortalRequestContext portalRequestContext = Util.getPortalRequestContext();
+      UIPortal uiPortal = Util.getUIPortal();
+      String portalURI = portalRequestContext.getPortalURI();
+      String pageNodeSelected = uiPortal.getSelectedNode().getUri();
+      //
+      ec.setContext(new ExecutionContext());
+      WikiContext wikiContext = new WikiContext();
+      wikiContext.setPortalURI(portalURI);
+      wikiContext.setPortletURI(pageNodeSelected);
+      WikiPageParams params = Utils.getCurrentWikiPageParams();
+      wikiContext.setType(params.getType());
+      wikiContext.setOwner(params.getOwner());
+      wikiContext.setPageId(params.getPageId());
+      ec.getContext().setProperty(WikiContext.WIKICONTEXT, wikiContext);
+    }
+    
+    // Render current content
+    if (pageMode == PageMode.CURRENT) {
+      this.htmlOutput = renderingService.render(wikipage.getContent().getText(),
+                                                wikipage.getContent().getSyntax(),
+                                                Syntax.XHTML_1_0.toIdString());
+    }
+    // Render history content
+    if (pageMode == PageMode.HISTORY && this.versionName != null) {
+      NTVersion version = wikipage.getVersionableMixin().getVersionHistory().getVersion(this.versionName);
+      NTFrozenNode frozenNode = version.getNTFrozenNode();
+      ContentImpl content = (ContentImpl) (frozenNode.getChildren().get(WikiNodeType.Definition.CONTENT));
+      String pageContent = content.getText();
+      String pageSyntax = content.getSyntax();
+      this.htmlOutput = renderingService.render(pageContent, pageSyntax, Syntax.XHTML_1_0.toIdString());
+    }
+    //Remove wiki context
+    ec.removeContext();
+    
   }
   
-  public WikiMode getWikiMode(){
-    return getAncestorOfType(UIWikiPortlet.class).getWikiMode();
+  private boolean isHasPreviousVersion() {
+    int version = Integer.valueOf(versionName);
+    return (version > 1) ? true : false;
+  }
+  
+  private boolean isHasNextVersion() throws Exception {
+    PageImpl wikipage = (PageImpl) Utils.getCurrentWikiPage();
+    int versionTotals = wikipage.getVersionableMixin().getVersionHistory().getChildren().size() - 1;
+    int version = Integer.valueOf(versionName);
+    return (version < versionTotals) ? true : false;
+  }
+  
+  static public class ViewCurrentVersionActionListener extends EventListener<UIWikiPageContentArea> {
+    @Override
+    public void execute(Event<UIWikiPageContentArea> event) throws Exception {
+      UIWikiPageContentArea wikiPageContentArea = event.getSource();
+      wikiPageContentArea.setPageMode(PageMode.CURRENT);
+    }
+  }
+  
+  static public class RestoreActionListener extends EventListener<UIWikiPageContentArea> {
+    @Override
+    public void execute(Event<UIWikiPageContentArea> event) throws Exception {
+      UIWikiPageContentArea wikiPageContentArea = event.getSource();
+      PageImpl wikipage = (PageImpl) Utils.getCurrentWikiPage();
+      wikipage.restore(wikiPageContentArea.versionName, false);
+      wikipage.checkout();
+      wikipage.checkin();
+      wikipage.checkout();
+      wikiPageContentArea.setPageMode(PageMode.CURRENT);
+    }
+  }
+  
+  static public class ViewHistoryActionListener extends EventListener<UIWikiPageContentArea> {
+    @Override
+    public void execute(Event<UIWikiPageContentArea> event) throws Exception {
+      UIWikiPortlet wikiPortlet = event.getSource().getAncestorOfType(UIWikiPortlet.class);
+      UIWikiPageInfoArea.processShowHistoryAction(wikiPortlet);
+    }
+  }
+  
+  static public class NextVersionActionListener extends EventListener<UIWikiPageContentArea> {
+    @Override
+    public void execute(Event<UIWikiPageContentArea> event) throws Exception {
+      UIWikiPageContentArea wikiPageContentArea = event.getSource();
+      int version = Integer.valueOf(wikiPageContentArea.versionName);
+      wikiPageContentArea.versionName = String.valueOf(++version);
+    }
+  }
+  
+  static public class PreviousVersionActionListener extends EventListener<UIWikiPageContentArea> {
+    @Override
+    public void execute(Event<UIWikiPageContentArea> event) throws Exception {
+      UIWikiPageContentArea wikiPageContentArea = event.getSource();
+      int version = Integer.valueOf(wikiPageContentArea.versionName);
+      wikiPageContentArea.versionName = String.valueOf(--version);
+    }
   }
   
 }

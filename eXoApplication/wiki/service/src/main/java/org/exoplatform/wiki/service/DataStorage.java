@@ -12,4 +12,6 @@ public interface DataStorage {
   //public boolean deletePage(String path, String wikiPath, ChromatticSession session) throws Exception ;
   public boolean renamePage(String pagePath, String newName, String newTitle, ChromatticSession session) throws Exception ;
   public List<SearchResult> searchRenamedPage(ChromatticSession session, SearchData data) throws Exception ;
+  /*public List<Space> getSpaces(String wikiType, ChromatticSession session) throws Exception ;
+  public List<Space> getAllSpaces(ChromatticSession session) throws Exception ;*/
 }

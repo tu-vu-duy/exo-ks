@@ -39,7 +39,6 @@ import org.exoplatform.wiki.resolver.TitleResolver;
 import org.exoplatform.wiki.service.BreadcumbData;
 import org.exoplatform.wiki.service.SearchData;
 import org.exoplatform.wiki.service.SearchResult;
-import org.exoplatform.wiki.service.Space;
 import org.exoplatform.wiki.service.WikiService;
 import org.exoplatform.wiki.utils.Utils;
 import org.xwiki.rendering.syntax.Syntax;
@@ -147,13 +146,13 @@ public class WikiServiceImpl implements WikiService{
     return true;
   }
  
-  public List<Space> getSpaces(String wikiType) throws Exception {
+  /*public List<Space> getSpaces(String wikiType) throws Exception {
     return jcrDataStorage.getSpaces(wikiType, null) ;
   }
   
   public List<Space> getAllSpaces() throws Exception {
     return jcrDataStorage.getAllSpaces(null) ;
-  }
+  }*/
   
   private boolean isHasCreatePagePermission(String userId, String destSpace) {
     

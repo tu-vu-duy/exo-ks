@@ -2,13 +2,10 @@ package org.exoplatform.wiki.service.impl;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.Value;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
@@ -21,15 +18,10 @@ import org.exoplatform.commons.utils.ObjectPageList;
 import org.exoplatform.commons.utils.PageList;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
-import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.wiki.mow.api.WikiNodeType;
 import org.exoplatform.wiki.service.DataStorage;
 import org.exoplatform.wiki.service.SearchData;
 import org.exoplatform.wiki.service.SearchResult;
-import org.exoplatform.wiki.service.Space;
-import org.exoplatform.wiki.utils.Utils;
-
-import com.google.caja.parser.css.CssTree.Property;
 
 public class JCRDataStorage implements DataStorage{
   private static final Log log = ExoLogger.getLogger(JCRDataStorage.class);
@@ -142,14 +134,14 @@ public class JCRDataStorage implements DataStorage{
     return false ;
   }
   
-  public List<Space> getSpaces(String wikiType, ChromatticSession session) throws Exception {
+  /*public List<Space> getSpaces(String wikiType, ChromatticSession session) throws Exception {
     
     return null ;
   }
   
   public List<Space> getAllSpaces(ChromatticSession session) throws Exception {
     return null ;
-  }
+  }*/
   
   private List<String> valuesToList(Value[] values) throws Exception {
     List<String> list = new ArrayList<String>();

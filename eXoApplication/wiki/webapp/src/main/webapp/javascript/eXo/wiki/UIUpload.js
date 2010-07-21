@@ -111,7 +111,7 @@ UIUpload.prototype.stylingUploadEntry = function(uploadId){
   var clone = stylingFileUpload.cloneNode(true);
   file.parentNode.appendChild(clone);
   file.relatedElement = clone.getElementsByTagName('input')[0];
-  file.onchange = file.onmouseout = function () {
+  file.onmouseout = function () {
     this.relatedElement.value = this.value;
   }
 }

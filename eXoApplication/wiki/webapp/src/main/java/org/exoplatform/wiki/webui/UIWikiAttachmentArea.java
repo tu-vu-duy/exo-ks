@@ -68,6 +68,7 @@ public class UIWikiAttachmentArea extends UIForm {
   
   public UIWikiAttachmentArea() throws Exception {
     UIFormUploadInput uiInput = new UIFormUploadInput(FIELD_UPLOAD, FIELD_UPLOAD);
+    uiInput.setAutoUpload(true);
     addUIFormInput(uiInput);
   }
   
@@ -134,6 +135,7 @@ public class UIWikiAttachmentArea extends UIForm {
         }
         wikiAttachmentArea.removeChildById(FIELD_UPLOAD);
         UIFormUploadInput uiInput = new UIFormUploadInput(FIELD_UPLOAD, FIELD_UPLOAD);
+        uiInput.setAutoUpload(true);
         wikiAttachmentArea.addChild(uiInput);
       }
       

@@ -795,14 +795,6 @@
 	margin-left: 47px;
 }
 
-.UploadButton {
-	background: url("/wiki/skin/DefaultSkin/webui/background/UploadBtn.gif") no-repeat left center;
-	cursor: pointer;
-	height: 20px;
-	width:20px;
-}
-
-
 /* Wiki - Page not found */
 .UIWikiPageNotFound {
 	padding: 10px 10px 20px;

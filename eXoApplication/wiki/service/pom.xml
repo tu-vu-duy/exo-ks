@@ -192,6 +192,7 @@
       <version>${org.xwiki.platform.version}</version>
       <scope>provided</scope>
     </dependency>
+    <!-- Macros -->
     <dependency>
       <groupId>org.python</groupId>
       <artifactId>jython-standalone</artifactId>
@@ -201,6 +202,11 @@
       <groupId>pygments</groupId>
       <artifactId>pygments</artifactId>
       <version>${pygments.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.contrib</groupId>
+      <artifactId>xwiki-macro-column</artifactId>
+      <version>${column-macro.version}</version>
     </dependency>
     
     <dependency>

@@ -42,41 +42,4 @@
     <module>packaging</module>
   </modules>
 
-  <!-- Repositories -->
-  <repositories>
-    <repository>
-      <id>xwiki-externals</id>
-      <name>Xwiki externals repository</name>
-      <url>http://maven.xwiki.org/externals</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>xwiki-releases</id>
-      <name>Xwiki releases repository</name>
-      <url>http://maven.xwiki.org/releases</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>xwiki-snapshots</id>
-      <name>Xwiki snapshots repository</name>
-      <url>http://maven.xwiki.org/snapshots</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-
 </project>

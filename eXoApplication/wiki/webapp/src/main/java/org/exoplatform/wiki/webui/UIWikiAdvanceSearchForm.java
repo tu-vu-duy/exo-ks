@@ -31,6 +31,8 @@ import org.exoplatform.webui.form.UIForm;
 import org.exoplatform.webui.form.UIFormSelectBox;
 import org.exoplatform.webui.form.UIFormStringInput;
 import org.exoplatform.wiki.commons.Utils;
+import org.exoplatform.wiki.mow.api.Wiki;
+import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 import org.exoplatform.wiki.service.SearchData;
 import org.exoplatform.wiki.service.SearchResult;
 import org.exoplatform.wiki.service.WikiPageParams;
@@ -59,25 +61,32 @@ public class UIWikiAdvanceSearchForm extends UIForm {
     addChild(new UIFormStringInput(TEXT, TEXT, null)) ;
     List<SelectItemOption<String>> spaces = new ArrayList<SelectItemOption<String>>() ;
     String currentWiki = Utils.getCurrentWiki() ;
-    spaces.add(new SelectItemOption<String>(currentWiki, currentWiki)) ;
+    Wiki[] wikis = Utils.getAllWikiSpace() ;
+    for(Wiki wk : wikis){
+      spaces.add(new SelectItemOption<String>(wk.getOwner(), ((PageImpl)wk.getWikiHome()).getPath())) ;      
+    }    
     UIFormSelectBox selectSpaces = new UIFormSelectBox(WIKI_SPACES, WIKI_SPACES, spaces);
+    selectSpaces.setDefaultValue(currentWiki) ;
     addChild(selectSpaces) ;
     this.setActions(new String[]{"Search"});
   }
   
   public void resetWikiSpaces() throws Exception {
     List<SelectItemOption<String>> spaces = new ArrayList<SelectItemOption<String>>() ;
-    String currentWiki = Utils.getCurrentWiki() ;
-    spaces.add(new SelectItemOption<String>(currentWiki, currentWiki)) ;
+    Wiki[] wikis = Utils.getAllWikiSpace() ;
+    for(Wiki wk : wikis){
+      spaces.add(new SelectItemOption<String>(wk.getOwner(), ((PageImpl)wk.getWikiHome()).getPath())) ;      
+    }
     getChild(UIFormSelectBox.class).setOptions(spaces) ;
   } 
   
   public void processSearchAction() throws Exception {
     String text = getUIStringInput(TEXT).getValue();
-    String space = getUIFormSelectBox(WIKI_SPACES).getValue();
+    String space = getUIFormSelectBox(WIKI_SPACES).getLabel();
+    String path = getUIFormSelectBox(WIKI_SPACES).getValue();
     WikiPageParams params = Utils.getCurrentWikiPageParams();
     WikiService wservice = (WikiService) PortalContainer.getComponent(WikiService.class);
-    SearchData data = new SearchData(text, null, null, null);
+    SearchData data = new SearchData(text, null, null, path);
     PageList<SearchResult> results = wservice.search(params.getType(), space, data);
     UIWikiAdvanceSearchResult uiSearchResults = getParent().findFirstComponentOfType(UIWikiAdvanceSearchResult.class);
     uiSearchResults.setKeyword(text);

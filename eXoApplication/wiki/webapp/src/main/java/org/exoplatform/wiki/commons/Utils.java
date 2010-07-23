@@ -34,6 +34,7 @@ import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.jcr.access.PermissionType;
 import org.exoplatform.services.jcr.core.ExtendedNode;
 import org.exoplatform.wiki.mow.api.Page;
+import org.exoplatform.wiki.mow.api.Wiki;
 import org.exoplatform.wiki.mow.core.api.MOWService;
 import org.exoplatform.wiki.mow.core.api.WikiStoreImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.AttachmentImpl;
@@ -130,6 +131,13 @@ public class Utils {
   
   public static String getCurrentWiki() throws Exception {
     return Utils.getCurrentWikiPageParams().getOwner();
+  }
+  
+  public static Wiki[] getAllWikiSpace() {
+    System.out.println("\n\n ==== Hello");
+    MOWService mowService = (MOWService) PortalContainer.getComponent(MOWService.class);
+    WikiStoreImpl store = (WikiStoreImpl) mowService.getModel().getWikiStore();
+    return store.getWikis().toArray(new Wiki[]{}) ;
   }
   
   public static void feedDataForWYSIWYGEditor(UIWikiPageEditForm pageEditForm, String xhtmlContent) throws Exception {

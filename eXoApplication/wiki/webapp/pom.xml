@@ -156,6 +156,8 @@
             <configuration>
               <sourceDirectory>${xwe.directory}/stylesheets</sourceDirectory>
               <outputDirectory>${xwe.directory}/stylesheets</outputDirectory>
+              <!-- A hack to not include js and css files in /javascript and /skin  -->
+              <warSourceDirectory>${basedir}/src/main/webapp/templates</warSourceDirectory>
               <aggregations>
                 <aggregation>
                   <removeIncluded>true</removeIncluded>

@@ -3,3 +3,5 @@ org.exoplatform.wiki.service.wysiwyg.DefaultWikiService
 org.exoplatform.wiki.rendering.render.confluence.ConfluenceSyntaxRenderer
 org.exoplatform.wiki.rendering.render.confluence.ConfluenceSyntaxBlockRenderer
 org.exoplatform.wiki.rendering.render.confluence.ConfluenceSyntaxRendererFactory
+org.exoplatform.wiki.rendering.macro.message.NoteMessageMacro
+org.exoplatform.wiki.rendering.macro.message.TipMessageMacro

@@ -132,7 +132,7 @@
   color: red;
 }
 
-.errormessage, .warningmessage, .infomessage, .plainmessage {
+.notemessage, .tipmessage, .errormessage, .warningmessage, .infomessage, .plainmessage {
   background:#F5F5F5 none no-repeat scroll 6px 8px;
   border:1px solid #DDDDDD;
   color:#555555;
@@ -141,18 +141,28 @@
   text-align:justify;
 }
 
+.UIWikiPortlet .notemessage {
+  background-image: url("background/exclamation.gif");
+  color:#336699;
+}
+
+.UIWikiPortlet .tipmessage {
+  background-image: url("background/check.gif");
+  color:#336699;
+}
+
 .UIWikiPortlet .infomessage {
   background-image: url("background/information.gif");
   color:#336699;
 }
 
 .UIWikiPortlet .warningmessage {
-  background-image: url("background/error.gif");
+  background-image: url("background/exclamation.gif");
   color:#D5A13D;
 }
 
 .UIWikiPortlet .errormessage {
-  background-image: url("background/exclamation.gif");
+  background-image: url("background/error.gif");
   color:#E14726;
 }
 

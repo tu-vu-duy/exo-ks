@@ -165,6 +165,7 @@
       <artifactId>xwiki-core-rendering-syntax-wikimodel</artifactId>
       <version>${org.xwiki.platform.version}</version>
     </dependency>
+    <!-- Macros -->
     <dependency>
       <groupId>org.xwiki.platform</groupId>
       <artifactId>xwiki-core-rendering-macro-box</artifactId>
@@ -181,6 +182,11 @@
       <version>${org.xwiki.platform.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.xwiki.contrib</groupId>
+      <artifactId>xwiki-macro-column</artifactId>
+      <version>${column-macro.version}</version>
+    </dependency>
+    <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-servlet</artifactId>
       <version>${gwt.version}</version>
@@ -192,7 +198,7 @@
       <version>${org.xwiki.platform.version}</version>
       <scope>provided</scope>
     </dependency>
-    <!-- Macros -->
+    <!-- Code macro depends on -->
     <dependency>
       <groupId>org.python</groupId>
       <artifactId>jython-standalone</artifactId>
@@ -202,11 +208,6 @@
       <groupId>pygments</groupId>
       <artifactId>pygments</artifactId>
       <version>${pygments.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.xwiki.contrib</groupId>
-      <artifactId>xwiki-macro-column</artifactId>
-      <version>${column-macro.version}</version>
     </dependency>
     
     <dependency>

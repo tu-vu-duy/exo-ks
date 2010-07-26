@@ -57,7 +57,8 @@ public class HelpActionComponent extends UIComponent {
     protected void processEvent(Event<HelpActionComponent> event) throws Exception {
       UIWikiPageEditForm wikiPageEditForm = event.getSource().getAncestorOfType(UIWikiPageEditForm.class);
       UIWikiSidePanelArea wikiSidePanelArea = wikiPageEditForm.getChild(UIWikiSidePanelArea.class);
-      wikiSidePanelArea.setRendered(true);
+      boolean isRendered = wikiSidePanelArea.isRendered();
+      wikiSidePanelArea.setRendered(!isRendered);
       super.processEvent(event);
     }
   }

@@ -26,17 +26,19 @@ package org.exoplatform.wiki.webui;
 public enum WikiMode {
   
   VIEW,
-  
+
   EDIT,
-  
+
   NEW,
-  
-  SEARCH, 
-  
+
+  SEARCH,
+
   HISTORY,
-  
+
   PAGE_NOT_FOUND,
-  
-  DELETE_CONFIRM
+
+  DELETE_CONFIRM,
+
+  HELP
 
 }

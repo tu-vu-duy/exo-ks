@@ -17,6 +17,7 @@
 package org.exoplatform.wiki.service;
 
 
+import java.util.Collection;
 import java.util.List;
 
 import org.chromattic.api.ChromatticSession;
@@ -36,11 +37,11 @@ import org.exoplatform.wiki.mow.core.api.wiki.PortalWiki;
 import org.exoplatform.wiki.mow.core.api.wiki.UserWiki;
 import org.exoplatform.wiki.mow.core.api.wiki.WikiContainer;
 import org.exoplatform.wiki.mow.core.api.wiki.WikiHome;
+import org.xwiki.rendering.syntax.Syntax;
 
 
 public class TestWikiService extends AbstractMOWTestcase {
-  private WikiService wService ;
-  
+  private WikiService wService ; 
   public void setUp() throws Exception{
     super.setUp() ;
     wService = (WikiService)container.getComponentInstanceOfType(WikiService.class) ;    
@@ -305,6 +306,16 @@ public class TestWikiService extends AbstractMOWTestcase {
     //System.out.println("page.getRevisionMixin().getIsCheckedOut() ==>" + );
         
   }*/
+  public void testCreateHelpPage() throws Exception {
+    Model model = mowService.getModel();
+    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
+    Collection<PageImpl> syntaxPages = wStore.getHelpPage().getChildPages();   
+    assertTrue(syntaxPages.size() > 0);
+  }
   
+  public void testGetSyntaxPage() throws Exception {    
+    PageImpl syntaxPage=wService.getHelpSyntaxPage(Syntax.XWIKI_2_0.toIdString());
+    assertNotNull(syntaxPage);    
+  }  
   
 }

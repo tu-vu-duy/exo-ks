@@ -38,12 +38,15 @@ import org.exoplatform.wiki.mow.api.Wiki;
 import org.exoplatform.wiki.mow.core.api.MOWService;
 import org.exoplatform.wiki.mow.core.api.WikiStoreImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.AttachmentImpl;
+import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 import org.exoplatform.wiki.rendering.RenderingService;
 import org.exoplatform.wiki.resolver.PageResolver;
+import org.exoplatform.wiki.service.WikiContext;
 import org.exoplatform.wiki.service.WikiPageParams;
 import org.exoplatform.wiki.service.WikiService;
 import org.exoplatform.wiki.webui.UIWikiPageEditForm;
 import org.exoplatform.wiki.webui.UIWikiRichTextArea;
+import org.hibernate.hql.ast.HqlParser;
 import org.xwiki.rendering.syntax.Syntax;
 
 /**
@@ -94,6 +97,11 @@ public class Utils {
 
   public static Page getCurrentWikiPage() throws Exception {
     String requestURL = Utils.getCurrentRequestURL();
+    if (isRenderFullHelpPage()!=null)
+    {
+      Page helpPage= isRenderFullHelpPage();
+      return helpPage;
+    }
     PageResolver pageResolver = (PageResolver) PortalContainer.getComponent(PageResolver.class);
     Page page = pageResolver.resolve(requestURL);
     return page;
@@ -150,5 +158,21 @@ public class Utils {
     } else {
       Util.getPortalRequestContext().getRequest().getSession(false).setAttribute(UIWikiRichTextArea.SESSION_KEY, xhtmlContent);
     }
+  }
+
+  public static Page isRenderFullHelpPage() throws Exception {
+    WikiPageParams pageParams = Utils.getCurrentWikiPageParams();
+    String helpaction = pageParams.getParameter(WikiContext.ACTION);
+    String syntaxId = pageParams.getParameter("page");
+    if (helpaction!=null&&syntaxId != null&&helpaction.equals("help")  ) {
+      WikiService wservice = (WikiService) PortalContainer.getComponent(WikiService.class);
+      PageImpl syntaxPage = wservice.getHelpSyntaxPage(syntaxId.replace("SLASH", "/").replace("DOT", "."));
+      if (syntaxPage!=null)
+      {
+      PageImpl fullHelpPage= syntaxPage.getChildPages().iterator().next();
+      return fullHelpPage;
+      }      
+    }
+    return null;
   }
 }

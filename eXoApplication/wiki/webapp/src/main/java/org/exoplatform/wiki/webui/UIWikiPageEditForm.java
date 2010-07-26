@@ -20,12 +20,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.exoplatform.webui.config.annotation.ComponentConfig;
+import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.core.model.SelectItemOption;
+import org.exoplatform.webui.event.Event;
+import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.form.UIForm;
 import org.exoplatform.webui.form.UIFormSelectBox;
+import org.exoplatform.webui.form.UIFormStringInput;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
+import org.exoplatform.wiki.commons.Utils;
+import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.webui.control.UIPageToolBar;
+import org.exoplatform.wiki.webui.control.action.EditPageActionComponent;
+import org.exoplatform.wiki.webui.control.listener.UIPageToolBarActionListener;
 import org.xwiki.rendering.syntax.Syntax;
 
 /**
@@ -36,7 +44,11 @@ import org.xwiki.rendering.syntax.Syntax;
  */
 @ComponentConfig(
   lifecycle = UIFormLifecycle.class,
-  template = "app:/templates/wiki/webui/UIWikiPageEditForm.gtmpl"
+  template = "app:/templates/wiki/webui/UIWikiPageEditForm.gtmpl",
+  events = {
+      @EventConfig(listeners = UIWikiPageEditForm.SelectSyntaxActionListener.class)     
+  }
+  
 )
 public class UIWikiPageEditForm extends UIForm {
 
@@ -65,14 +77,22 @@ public class UIWikiPageEditForm extends UIForm {
     syntaxTypes.add(new SelectItemOption<String>(Syntax.JSPWIKI_1_0.toString(),Syntax.JSPWIKI_1_0.toIdString()));
     syntaxTypes.add(new SelectItemOption<String>(Syntax.TWIKI_1_0.toString(),Syntax.TWIKI_1_0.toIdString()));
     UIFormSelectBox syntaxTypeSelectBox = new UIFormSelectBox(FIELD_SYNTAX,FIELD_SYNTAX,syntaxTypes);
+    syntaxTypeSelectBox.setOnChange("SelectSyntax");
     addUIFormInput(syntaxTypeSelectBox).setRendered(true);
-  }
-  
+  }  
   public void setTitle(String title){ this.title = title ;}
   public String getTitle(){ return title ;}
   
   public boolean isSidePanelRendered(){
     return getChild(UIWikiSidePanelArea.class).isRendered();
   }
-  
+  public static class SelectSyntaxActionListener extends EventListener<UIWikiPageEditForm> {
+    @Override
+    public void execute(Event<UIWikiPageEditForm> event) throws Exception {
+      UIWikiPageEditForm pageEditForm = event.getSource();
+      UIWikiSidePanelArea sidePanelForm = pageEditForm.getChild(UIWikiSidePanelArea.class);
+      UIFormSelectBox syntaxTypeSelectBox = pageEditForm.getChild(UIFormSelectBox.class);
+      sidePanelForm.renderHelpContent(syntaxTypeSelectBox.getValue());
+    }
+  }
 }

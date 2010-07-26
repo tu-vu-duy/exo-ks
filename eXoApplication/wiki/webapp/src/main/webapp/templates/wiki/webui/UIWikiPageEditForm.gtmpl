@@ -1,5 +1,6 @@
 <div class="UIWikiPageEditForm">
 <% uiform.begin();
+   
    uiform.renderChild(uiform.TITLE_CONTROL);
    uiform.renderChild(uiform.PAGE_TOOLBAR);
 %>

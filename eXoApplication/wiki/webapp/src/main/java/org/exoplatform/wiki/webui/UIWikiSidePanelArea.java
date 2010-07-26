@@ -16,12 +16,18 @@
  */
 package org.exoplatform.wiki.webui;
 
+import org.exoplatform.container.PortalContainer;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIContainer;
 import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
+import org.exoplatform.wiki.commons.Utils;
+import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
+import org.exoplatform.wiki.rendering.RenderingService;
+import org.exoplatform.wiki.service.WikiService;
+import org.xwiki.rendering.syntax.Syntax;
 
 /**
  * Created by The eXo Platform SAS
@@ -38,7 +44,51 @@ import org.exoplatform.webui.event.EventListener;
 )
 public class UIWikiSidePanelArea extends UIContainer {
 
-  public static final String CLOSE = "Close"; 
+  public static final String CLOSE = "Close";
+  
+  private String syntaxName;
+  
+  private String syntaxFullPageUrl;
+
+  private String htmlOutput;
+
+  public String getHtmlOutput() {
+    return htmlOutput;
+  }
+  
+  public void setHtmlOutput(String output) {
+    this.htmlOutput = output;
+  }
+  
+  public String getsyntaxName() {
+    return syntaxName;
+  }  
+  public void setsyntaxName(String syntaxName) {
+    this.syntaxName = syntaxName;
+  }
+  
+  public String getsyntaxFullPageUrl() {
+    return syntaxFullPageUrl;
+  }  
+    
+  public void renderHelpContent(String syntaxId) throws Exception {
+    RenderingService renderingService = (RenderingService) PortalContainer.getComponent(RenderingService.class);
+    WikiService wikiService = (WikiService) PortalContainer.getComponent(WikiService.class);
+    PageImpl syntaxHelpPage= wikiService.getHelpSyntaxPage(syntaxId);
+    if (syntaxHelpPage!=null)
+    {
+    String markup=syntaxHelpPage.getContent().getText();   
+    this.htmlOutput = renderingService.render(markup, syntaxId, Syntax.XHTML_1_0.toIdString());  
+    this.syntaxName = syntaxId.replace("/", "").toUpperCase();
+    this.syntaxFullPageUrl = Utils.getCurrentRequestURL()+"?action=help&page="+ syntaxId.replace("/", "SLASH").replace(".", "DOT");
+    }
+    else
+    {
+      this.htmlOutput = "<h2>None help content</h2>";
+      this.syntaxName = syntaxId.replace("/", "").toUpperCase();
+    }
+  }
+  
   
   static public class CloseActionListener extends EventListener<UIWikiSidePanelArea> {
     @Override

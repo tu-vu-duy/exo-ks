@@ -22,6 +22,7 @@ import java.util.List;
 import org.exoplatform.commons.utils.PageList;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
+import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 
 /**
  * Created by The eXo Platform SARL.
@@ -52,8 +53,8 @@ public interface WikiService {
 	public String getDefaultWikiSyntaxId();
 	public String getPageTitleOfAttachment(String path) throws Exception ;
 	public InputStream getAttachmentAsStream(String path) throws Exception ;
+	public PageImpl getHelpSyntaxPage(String syntaxId) throws Exception;
 
 }
-
 
 

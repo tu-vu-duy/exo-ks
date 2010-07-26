@@ -38,6 +38,7 @@ import org.exoplatform.wiki.webui.UIWikiPageEditForm;
 import org.exoplatform.wiki.webui.UIWikiPageTitleControlArea;
 import org.exoplatform.wiki.webui.UIWikiPortlet;
 import org.exoplatform.wiki.webui.UIWikiRichTextArea;
+import org.exoplatform.wiki.webui.UIWikiSidePanelArea;
 import org.exoplatform.wiki.webui.WikiMode;
 import org.exoplatform.wiki.webui.control.filter.IsViewModeFilter;
 import org.exoplatform.wiki.webui.control.listener.UIPageToolBarActionListener;
@@ -77,7 +78,8 @@ public class AddPageActionComponent extends UIComponent {
     UIWikiPortlet wikiPortlet = (UIWikiPortlet) uiExtensionContext.get(UIWikiPortlet.class.getName());
     String pageTitle = (String) uiExtensionContext.get(WikiContext.PAGETITLE);
     UIWikiPageEditForm pageEditForm = wikiPortlet.findFirstComponentOfType(UIWikiPageEditForm.class);
-    UIFormStringInput titleInput = pageEditForm.getChild(UIWikiPageTitleControlArea.class).getUIStringInput();
+    UIFormStringInput titleInput = pageEditForm.getChild(UIWikiPageTitleControlArea.class)
+                                               .getUIStringInput();
     UIFormTextAreaInput markupInput = pageEditForm.findComponentById(UIWikiPageEditForm.FIELD_CONTENT);
     UIFormSelectBox syntaxTypeSelectBox = pageEditForm.findComponentById(UIWikiPageEditForm.FIELD_SYNTAX);
     titleInput.setValue("Untitle");
@@ -85,8 +87,9 @@ public class AddPageActionComponent extends UIComponent {
     markupInput.setValue("This is **sample content**");
     WikiService wikiService = (WikiService) PortalContainer.getComponent(WikiService.class);
     syntaxTypeSelectBox.setValue(wikiService.getDefaultWikiSyntaxId());
-    
-    if(pageTitle != null && pageTitle.length() > 0){
+    UIWikiSidePanelArea sidePanelForm = pageEditForm.findFirstComponentOfType(UIWikiSidePanelArea.class);
+    sidePanelForm.renderHelpContent(syntaxTypeSelectBox.getValue());
+    if (pageTitle != null && pageTitle.length() > 0) {
       titleInput.setValue(pageTitle);
       titleInput.setEditable(false);
     }
@@ -95,7 +98,7 @@ public class AddPageActionComponent extends UIComponent {
     if (wikiRichTextArea.isRendered()) {
       Utils.feedDataForWYSIWYGEditor(pageEditForm, null);
     }
-    
+
     wikiPortlet.changeMode(WikiMode.NEW);
   }
   

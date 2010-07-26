@@ -64,6 +64,7 @@ public class ModelImpl implements Model {
           Node wikis = eXoWiki.addNode("wikis");
           save();
           store = session.findByNode(WikiStoreImpl.class, wikiMetadata);
+
         } catch (RepositoryException e) {
           throw new UndeclaredRepositoryException(e);
         }

@@ -19,6 +19,9 @@ package org.exoplatform.wiki.webui;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.jsp.JspWriter;
+
+import org.dom4j.io.HTMLWriter;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.web.application.RequestContext;
 import org.exoplatform.webui.application.WebuiApplication;
@@ -32,12 +35,15 @@ import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
 import org.exoplatform.webui.ext.UIExtensionManager;
 import org.exoplatform.wiki.commons.Utils;
 import org.exoplatform.wiki.mow.api.Page;
+import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
+import org.exoplatform.wiki.rendering.RenderingService;
 import org.exoplatform.wiki.resolver.PageResolver;
 import org.exoplatform.wiki.service.WikiContext;
 import org.exoplatform.wiki.service.WikiPageParams;
 import org.exoplatform.wiki.service.WikiService;
 import org.exoplatform.wiki.webui.control.UIPageToolBar;
 import org.exoplatform.wiki.webui.control.action.AddPageActionComponent;
+import org.xwiki.rendering.syntax.Syntax;
 
 /**
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Nov
@@ -47,15 +53,14 @@ import org.exoplatform.wiki.webui.control.action.AddPageActionComponent;
 @ComponentConfig(lifecycle = UIApplicationLifecycle.class, template = "app:/templates/wiki/webui/UIWikiPortlet.gtmpl")
 public class UIWikiPortlet extends UIPortletApplication {
   
-  private WikiMode mode = WikiMode.VIEW;
+  private WikiMode mode = WikiMode.VIEW;  
   
   public UIWikiPortlet() throws Exception {
     super();
     try {
       UIPopupContainer uiPopupContainer = addChild(UIPopupContainer.class, null, null) ;
       uiPopupContainer.setId("UIWikiPopupContainer") ;
-      uiPopupContainer.getChild(UIPopupWindow.class).setId("UIWikiPopupWindow") ;
-      
+      uiPopupContainer.getChild(UIPopupWindow.class).setId("UIWikiPopupWindow") ;      
       addChild(UIWikiUpperArea.class, null, null).setRendered(true);
       addChild(UIWikiPageArea.class, null, null).setRendered(true);
       addChild(UIWikiBottomArea.class, null, null).setRendered(true);
@@ -71,10 +76,15 @@ public class UIWikiPortlet extends UIPortletApplication {
     String requestURL = Utils.getCurrentRequestURL();
     PageResolver pageResolver = (PageResolver) PortalContainer.getComponent(PageResolver.class);
     Page page = pageResolver.resolve(requestURL);
-    if(page == null) {
-      changeMode(WikiMode.PAGE_NOT_FOUND) ;
+    if (page == null) {
+      changeMode(WikiMode.PAGE_NOT_FOUND);
       super.processRender(app, context);
-      return ;
+      return;
+    }
+    if (Utils.isRenderFullHelpPage()!=null)
+    {
+      changeMode(WikiMode.HELP);     
+      page = Utils.isRenderFullHelpPage();      
     }
     WikiPageParams pageParams = Utils.getCurrentWikiPageParams();
     if (WikiContext.ADDPAGE.equalsIgnoreCase(pageParams.getParameter(WikiContext.ACTION))) {
@@ -82,21 +92,25 @@ public class UIWikiPortlet extends UIPortletApplication {
       Map<String, Object> uiExtensionContext = new HashMap<String, Object>();
       uiExtensionContext.put(UIWikiPortlet.class.getName(), this);
       uiExtensionContext.put(WikiContext.PAGETITLE, pageParams.getParameter(WikiContext.PAGETITLE));
-      if(manager.accept(UIPageToolBar.EXTENSION_TYPE, WikiContext.ADDPAGE, uiExtensionContext)){
+      if (manager.accept(UIPageToolBar.EXTENSION_TYPE, WikiContext.ADDPAGE, uiExtensionContext)) {
         AddPageActionComponent.processAddPageAction(uiExtensionContext);
       }
     }
-    
+
     try {
       // TODO: ignore request URL of resources
       context.setAttribute("wikiPage", page);
       WikiPageParams params = pageResolver.extractWikiPageParams(requestURL);
-      
-      ((UIWikiPageTitleControlArea)findComponentById(UIWikiPageControlArea.TITLE_CONTROL)).getUIFormInputInfo().setValue(page.getContent().getTitle());
+
+      ((UIWikiPageTitleControlArea) findComponentById(UIWikiPageControlArea.TITLE_CONTROL)).getUIFormInputInfo()
+                                                                                           .setValue(page.getContent()
+                                                                                                         .getTitle());
       findFirstComponentOfType(UIWikiPageContentArea.class).renderVersion(null);
       UIWikiBreadCrumb wikiBreadCrumb = findFirstComponentOfType(UIWikiBreadCrumb.class);
       WikiService wikiService = (WikiService) PortalContainer.getComponent(WikiService.class);
-      wikiBreadCrumb.setBreadCumbs(wikiService.getBreadcumb(params.getType(), params.getOwner(), page.getName()));
+      wikiBreadCrumb.setBreadCumbs(wikiService.getBreadcumb(params.getType(),
+                                                            params.getOwner(),
+                                                            page.getName()));
     } catch (Exception e) {
       context.setAttribute("wikiPage", null);
       findFirstComponentOfType(UIWikiPageContentArea.class).setHtmlOutput(null);
@@ -144,7 +158,9 @@ public class UIWikiPortlet extends UIPortletApplication {
           case VIEW:
             switchViewEditMode(false);
             break;
-          
+          case HELP:
+            switchEditHelpMode(true);
+            break;          
         }
         break;
       case NEW:
@@ -242,4 +258,19 @@ public class UIWikiPortlet extends UIPortletApplication {
     findFirstComponentOfType(UIWikiPageControlArea.class).setRendered(!isDelete) ;
     findFirstComponentOfType(UIWikiBottomArea.class).setRendered(!isDelete) ;
   }
+  
+  private void switchEditHelpMode(boolean isEditToHelp){    
+    findFirstComponentOfType(UIWikiApplicationControlArea.class).setRendered(!isEditToHelp);
+    findFirstComponentOfType(UIWikiPageControlArea.class).setRendered(isEditToHelp);
+    findFirstComponentOfType(UIPageToolBar.class).setRendered(!isEditToHelp);
+    findFirstComponentOfType(UIWikiPageContentArea.class).setRendered(isEditToHelp);
+    findFirstComponentOfType(UIWikiAttachmentArea.class).setRendered(!isEditToHelp);
+    findFirstComponentOfType(UIWikiPageInfoArea.class).setRendered(!isEditToHelp);
+    UIWikiPageEditForm wikiPageEditForm = findFirstComponentOfType(UIWikiPageEditForm.class).setRendered(!isEditToHelp);
+    if(!isEditToHelp){
+      wikiPageEditForm.getChild(UIWikiSidePanelArea.class).setRendered(isEditToHelp);
+    }
+  }
+  
+  
 }

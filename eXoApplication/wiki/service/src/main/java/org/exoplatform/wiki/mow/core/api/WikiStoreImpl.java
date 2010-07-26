@@ -30,6 +30,7 @@ import org.exoplatform.wiki.mow.api.WikiNodeType;
 import org.exoplatform.wiki.mow.api.WikiStore;
 import org.exoplatform.wiki.mow.api.WikiType;
 import org.exoplatform.wiki.mow.core.api.wiki.GroupWikiContainer;
+import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.PortalWikiContainer;
 import org.exoplatform.wiki.mow.core.api.wiki.UserWikiContainer;
 import org.exoplatform.wiki.mow.core.api.wiki.WikiContainer;
@@ -140,4 +141,14 @@ public abstract class WikiStoreImpl implements WikiStore {
     return userWikiContainer;
   }
 
+  @OneToOne
+  @Owner
+  @MappedBy(WikiNodeType.Definition.HELP_PAGE)
+  public abstract PageImpl getHelpPage();
+
+  public abstract void setHelpPage(PageImpl page);
+
+  @Create
+  public abstract PageImpl createHelpPage();
+  
 }

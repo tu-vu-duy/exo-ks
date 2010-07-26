@@ -1,10 +1,13 @@
 <div class="UIWikiSidePanelArea">
   <div class="BarTit">
     <a href="<%=uicomponent.event(uicomponent.CLOSE)%>" class="CloseButton"><span></span></a>
-    Creole Syntax
+     <%=uicomponent.getsyntaxName()%>
     <div class="ClearRight"></div>
   </div>
-  <div class="Content"><b>Lorem ipsum dolor sit amet, consectetur adipiscing elit. </b><br/><br/>
-  Nunc ac velit tortor. Cras nibh metus, sollicitudin et molestie viverra, tristique vel nunc. Aliquam commodo, nunc rutrum tempus ultrices, urna augue interdum nisi, malesuada faucibus risus velit eget risus. Sed ipsum orci, lobortis id volutpat condimentum. Pellentesque nec dui ipsum. Proin et sollicitudin sapien. Nunc sed consequat orci<br/><br/><a href="">More</a>
+  <div class="Content">
+  <%=uicomponent.getHtmlOutput()%>
+  <br/>
+  <a href="javascript:window.open('<%=uicomponent.getsyntaxFullPageUrl()%>','fullSyntax','menubar=no,width=980,height=600,toolbar=no,location=no')">
+  Full help syntax</a>
 	</div>
 </div>

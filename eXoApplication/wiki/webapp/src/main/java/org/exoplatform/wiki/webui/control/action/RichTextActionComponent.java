@@ -75,6 +75,8 @@ public class RichTextActionComponent extends UIComponent {
         String markupSyntax = wikiPageEditForm.getUIFormSelectBox(UIWikiPageEditForm.FIELD_SYNTAX).getValue();
         String markupContent = renderingService.render(htmlContent, Syntax.XHTML_1_0.toIdString(), markupSyntax);
         wikiPageEditForm.getUIFormTextAreaInput(UIWikiPageEditForm.FIELD_CONTENT).setValue(markupContent);
+        UIWikiSidePanelArea wikiSidePanelArea = wikiPageEditForm.getChild(UIWikiSidePanelArea.class);
+        wikiSidePanelArea.setRendered(true);        
       } else {
         Utils.feedDataForWYSIWYGEditor(wikiPageEditForm, null);
       }

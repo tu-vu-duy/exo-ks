@@ -215,9 +215,12 @@ public class UIWikiPortlet extends UIPortletApplication {
     findFirstComponentOfType(UIWikiAttachmentArea.class).setRendered(isViewToEdit);
     findFirstComponentOfType(UIWikiPageInfoArea.class).setRendered(!isViewToEdit);
     UIWikiPageEditForm wikiPageEditForm = findFirstComponentOfType(UIWikiPageEditForm.class).setRendered(isViewToEdit);
-    if(!isViewToEdit){
-      wikiPageEditForm.getChild(UIWikiSidePanelArea.class).setRendered(isViewToEdit);
-    }
+    
+    UIWikiRichTextArea wikiRichTextArea = wikiPageEditForm.getChild(UIWikiRichTextArea.class);
+    boolean isRichTextRendered = wikiRichTextArea.isRendered();
+    if(!isRichTextRendered){
+    wikiPageEditForm.getChild(UIWikiSidePanelArea.class).setRendered(isViewToEdit);
+    }    
   }
   
   private void switchViewNewMode(boolean isViewToNew){
@@ -225,9 +228,12 @@ public class UIWikiPortlet extends UIPortletApplication {
     findFirstComponentOfType(UIWikiPageContentArea.class).setRendered(!isViewToNew);
     findFirstComponentOfType(UIWikiAttachmentArea.class).setRendered(isViewToNew);
     UIWikiPageEditForm wikiPageEditForm = findFirstComponentOfType(UIWikiPageEditForm.class).setRendered(isViewToNew);
-    findFirstComponentOfType(UIWikiBottomArea.class).setRendered(!isViewToNew);
-    if(!isViewToNew){
-      wikiPageEditForm.getChild(UIWikiSidePanelArea.class).setRendered(isViewToNew);
+    findFirstComponentOfType(UIWikiBottomArea.class).setRendered(!isViewToNew);   
+    
+    UIWikiRichTextArea wikiRichTextArea = wikiPageEditForm.getChild(UIWikiRichTextArea.class);
+    boolean isRichTextRendered = wikiRichTextArea.isRendered();
+    if(!isRichTextRendered){
+    wikiPageEditForm.getChild(UIWikiSidePanelArea.class).setRendered(isViewToNew);
     }
   }
   

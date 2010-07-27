@@ -166,6 +166,38 @@
   color:#E14726;
 }
 
+.UIWikiPortlet .panel {
+  -moz-border-radius-bottomleft: 5px;
+  -moz-border-radius-bottomright: 5px;
+  -moz-border-radius-topleft: 5px;
+  -moz-border-radius-topright: 5px;
+  background-color: #F0F0F0;
+  border: 1px solid #BBBBBB;
+  color: black;
+  margin: 0 0 10px;
+  overflow: hidden;
+  padding: 0;
+}
+
+.UIWikiPortlet .panel .panelHeader {
+  -moz-border-radius-topleft: 5px;
+  -moz-border-radius-topright: 5px;
+  border-bottom-color: #F0F0F0;
+  color: #333333;
+  font-weight: bold;
+  line-height: 1em;
+  margin-bottom: 0;
+  padding: 10px 10px 5px;
+  text-align: left;
+}
+
+.UIWikiPortlet .panel .panelContent {
+  color:#333333;
+  margin:10px 0;
+  padding:0 10px;
+  text-align:left;
+}
+
 .UIWikiPortlet .code {
   background-color:#F1F7FF;
   border:1px dotted #555555;

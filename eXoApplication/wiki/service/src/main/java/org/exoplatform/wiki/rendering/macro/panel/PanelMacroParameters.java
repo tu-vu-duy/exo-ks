@@ -14,27 +14,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see<http://www.gnu.org/licenses/>.
  */
-package org.exoplatform.wiki.rendering.macro.message;
+package org.exoplatform.wiki.rendering.macro.panel;
 
-import org.xwiki.component.annotation.Component;
-import org.xwiki.rendering.internal.macro.message.AbstractMessageMacro;
+import org.apache.commons.lang.StringUtils;
+import org.xwiki.properties.annotation.PropertyDescription;
 
 /**
  * Created by The eXo Platform SAS
  * Author : viet nguyen
  *          viet.nguyen@exoplatform.com
- * Jul 23, 2010  
+ * Jul 26, 2010  
  */
-@Component("note")
-public class NoteMessageMacro extends AbstractMessageMacro {
+public class PanelMacroParameters {
 
   /**
-   * Create and initialize the descriptor of the macro.
+   * @see #getTitle()
    */
-  public NoteMessageMacro()
-  {
-      super("Note Message", "Displays a note message.");
-      setDefaultCategory(DEFAULT_CATEGORY_FORMATTING);
+  private String title = StringUtils.EMPTY;
+
+  /**
+   * @return the title to be displayed in the panel header. Note that it can
+   *         contain content in the current syntax and that text which will be
+   *         parsed and rendered as any syntax content
+   */
+  public String getTitle() {
+    return title;
+  }
+
+  /**
+   * @param title refer to {@link #getTitle()}
+   */
+  @PropertyDescription("The title which is to be displayed in the panel header")
+  public void setTitle(String title) {
+    this.title = title;
   }
   
 }

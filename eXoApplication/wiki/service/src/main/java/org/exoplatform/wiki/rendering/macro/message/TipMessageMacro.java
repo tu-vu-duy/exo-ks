@@ -33,7 +33,7 @@ public class TipMessageMacro extends AbstractMessageMacro {
    */
   public TipMessageMacro()
   {
-      super("Tip Message", "Displays an tip message.");
+      super("Tip Message", "Displays a tip message.");
       setDefaultCategory(DEFAULT_CATEGORY_FORMATTING);
   }
   

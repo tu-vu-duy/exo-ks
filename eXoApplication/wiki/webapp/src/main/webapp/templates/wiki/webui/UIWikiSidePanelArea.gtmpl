@@ -7,7 +7,7 @@
   <div class="Content">
   <%=uicomponent.getHtmlOutput()%>
   <br/>
-  <a href="javascript:window.open('<%=uicomponent.getSyntaxFullPageUrl()%>','fullSyntax','menubar=no,width=980,height=600,toolbar=no,location=no')">
+  <a href="<%=uicomponent.getSyntaxFullPageUrl()%>" onclick="window.open('<%=uicomponent.getSyntaxFullPageUrl()%>','notation_help','width=780, height=580, resizable, scrollbars'); return false;"">
   Full help syntax</a>
 	</div>
 </div>

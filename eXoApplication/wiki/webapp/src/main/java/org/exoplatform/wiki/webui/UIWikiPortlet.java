@@ -74,6 +74,10 @@ public class UIWikiPortlet extends UIPortletApplication {
       changeMode(WikiMode.PAGE_NOT_FOUND);
       super.processRender(app, context);
       return;
+    }else {
+      if(mode.equals(WikiMode.PAGE_NOT_FOUND)) {
+        changeMode(WikiMode.VIEW) ;
+      }
     }
     if (Utils.isRenderFullHelpPage()!=null)
     {
@@ -106,6 +110,7 @@ public class UIWikiPortlet extends UIPortletApplication {
                                                             params.getOwner(),
                                                             page.getName()));
     } catch (Exception e) {
+      e.printStackTrace() ;
       context.setAttribute("wikiPage", null);
       findFirstComponentOfType(UIWikiPageContentArea.class).setHtmlOutput(null);
       if (log.isWarnEnabled()) {

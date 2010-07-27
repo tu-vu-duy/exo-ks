@@ -116,7 +116,7 @@ public interface WikiNodeType {
     
     public final static String SIZE                 = "size";  
 
-    public final static String HELP_PAGE            = "helppage";
+    public final static String HELP_PAGES            = "helppages";
 
   }
 }

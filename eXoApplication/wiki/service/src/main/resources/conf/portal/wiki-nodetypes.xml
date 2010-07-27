@@ -227,7 +227,7 @@
           <requiredPrimaryType>wiki:groupwikis</requiredPrimaryType>
         </requiredPrimaryTypes>
       </childNodeDefinition>
-      <childNodeDefinition name="helppage" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
+      <childNodeDefinition name="helppages" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
         <requiredPrimaryTypes>
           <requiredPrimaryType>wiki:page</requiredPrimaryType>
         </requiredPrimaryTypes>

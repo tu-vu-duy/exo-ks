@@ -384,7 +384,7 @@ public class WikiServiceImpl implements WikiService {
 
   private Wiki getWiki(String wikiType, String owner, Model model) {
     WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
-    createHelpPage();
+    createHelpPages();
     WikiImpl wiki = null;
     if (PortalConfig.PORTAL_TYPE.equals(wikiType)) {
       WikiContainer<PortalWiki> portalWikiContainer = wStore.getWikiContainer(WikiType.PORTAL);
@@ -436,7 +436,7 @@ public class WikiServiceImpl implements WikiService {
     return list;
   }
 
-  private void createHelpPage() {
+  private void createHelpPages() {
 
     ModelImpl model = (ModelImpl) getModel();
     WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
@@ -453,9 +453,8 @@ public class WikiServiceImpl implements WikiService {
           PageImpl syntaxPage = addSyntaxPage(wStore, helpPage, syntaxName, shortFile, " Short help Page");
           addSyntaxPage(wStore, syntaxPage, syntaxName, fullFile, " Full help Page");
         } catch (Exception e) {
-          // TODO Auto-generated catch block
-          if (log.isDebugEnabled())
-            log.debug("Can not create Help page", e);
+          // TODO Auto-generated catch block       
+            log.error("Can not create Help page", e);
         }
       }
 

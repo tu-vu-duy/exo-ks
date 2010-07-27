@@ -1,13 +1,13 @@
 <div class="UIWikiSidePanelArea">
   <div class="BarTit">
     <a href="<%=uicomponent.event(uicomponent.CLOSE)%>" class="CloseButton"><span></span></a>
-     <%=uicomponent.getsyntaxName()%>
+     <%=uicomponent.getSyntaxName()%>
     <div class="ClearRight"></div>
   </div>
   <div class="Content">
   <%=uicomponent.getHtmlOutput()%>
   <br/>
-  <a href="javascript:window.open('<%=uicomponent.getsyntaxFullPageUrl()%>','fullSyntax','menubar=no,width=980,height=600,toolbar=no,location=no')">
+  <a href="javascript:window.open('<%=uicomponent.getSyntaxFullPageUrl()%>','fullSyntax','menubar=no,width=980,height=600,toolbar=no,location=no')">
   Full help syntax</a>
 	</div>
 </div>

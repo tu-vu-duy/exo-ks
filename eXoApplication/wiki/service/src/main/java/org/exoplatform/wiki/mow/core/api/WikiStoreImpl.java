@@ -143,7 +143,7 @@ public abstract class WikiStoreImpl implements WikiStore {
 
   @OneToOne
   @Owner
-  @MappedBy(WikiNodeType.Definition.HELP_PAGE)
+  @MappedBy(WikiNodeType.Definition.HELP_PAGES)
   public abstract PageImpl getHelpPage();
 
   public abstract void setHelpPage(PageImpl page);

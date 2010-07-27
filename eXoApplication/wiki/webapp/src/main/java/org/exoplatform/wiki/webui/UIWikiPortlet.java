@@ -19,9 +19,6 @@ package org.exoplatform.wiki.webui;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.jsp.JspWriter;
-
-import org.dom4j.io.HTMLWriter;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.web.application.RequestContext;
 import org.exoplatform.webui.application.WebuiApplication;
@@ -35,15 +32,12 @@ import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
 import org.exoplatform.webui.ext.UIExtensionManager;
 import org.exoplatform.wiki.commons.Utils;
 import org.exoplatform.wiki.mow.api.Page;
-import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
-import org.exoplatform.wiki.rendering.RenderingService;
 import org.exoplatform.wiki.resolver.PageResolver;
 import org.exoplatform.wiki.service.WikiContext;
 import org.exoplatform.wiki.service.WikiPageParams;
 import org.exoplatform.wiki.service.WikiService;
 import org.exoplatform.wiki.webui.control.UIPageToolBar;
 import org.exoplatform.wiki.webui.control.action.AddPageActionComponent;
-import org.xwiki.rendering.syntax.Syntax;
 
 /**
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Nov

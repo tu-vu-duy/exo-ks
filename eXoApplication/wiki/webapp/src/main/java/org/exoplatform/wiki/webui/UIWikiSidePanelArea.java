@@ -60,14 +60,14 @@ public class UIWikiSidePanelArea extends UIContainer {
     this.htmlOutput = output;
   }
   
-  public String getsyntaxName() {
+  public String getSyntaxName() {
     return syntaxName;
   }  
-  public void setsyntaxName(String syntaxName) {
+  public void setSyntaxName(String syntaxName) {
     this.syntaxName = syntaxName;
   }
   
-  public String getsyntaxFullPageUrl() {
+  public String getSyntaxFullPageUrl() {
     return syntaxFullPageUrl;
   }  
     

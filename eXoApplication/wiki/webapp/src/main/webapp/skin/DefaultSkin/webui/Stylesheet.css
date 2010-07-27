@@ -355,7 +355,8 @@
 
 /* wiki homepage */
 .UIWikiPageArea {
-	padding: 0 15px;
+  padding: 0 15px;
+  min-height: 300px;
 }
 
 .UIWikiPageContentArea {
@@ -547,6 +548,18 @@
 
 .UIWikiSidePanelArea .Content {
 	padding: 12px 8px;
+}
+
+.UIWikiSidePanelArea .Content p {
+  margin-bottom: 0px;
+}
+
+.UIWikiSidePanelArea .Content h3, .UIWikiSidePanelArea .Content pre {
+  margin: 0px;
+}
+
+.UIWikiSidePanelArea .Content hr, .UIWikiSidePanelArea .Content blockquote {
+  margin: 0px 0px 5px 0px;
 }
 
 /* Advance search */

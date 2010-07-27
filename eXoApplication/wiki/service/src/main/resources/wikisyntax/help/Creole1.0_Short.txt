@@ -3,8 +3,6 @@
 Text formatting
 {{{**bold**}}} **bold**
 {{{//italic//}}} //italic//
-{{{--strike--}}} --strike--
-{{{__underline__}}} __underline__
 
 Headings
 {{{= level 1 =}}}Large heading

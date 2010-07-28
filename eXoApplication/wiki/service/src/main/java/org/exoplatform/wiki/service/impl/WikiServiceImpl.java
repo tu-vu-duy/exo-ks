@@ -82,20 +82,17 @@ public class WikiServiceImpl implements WikiService {
   }
 
   public Page createPage(String wikiType, String wikiOwner, String title, String parentId) throws Exception {
+    String pageId = TitleResolver.getPageId(title, false);
+    if(isExisting(wikiType, wikiOwner, pageId)) throw new Exception();
     Model model = getModel();
     WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
-
     WikiImpl wiki = (WikiImpl) getWiki(wikiType, wikiOwner, model);
-
     PageImpl page = wiki.createWikiPage();
-
     PageImpl parentPage = null;
     String statement = getStatement(wikiType, wikiOwner, parentId);
     parentPage = searchPage(statement, wStore.getSession());
     if (parentPage == null)
-      throw new Exception();
-
-    String pageId = TitleResolver.getPageId(title, false);
+      throw new Exception();    
     page.setName(pageId);
     parentPage.addWikiPage(page);
     ConversationState conversationState = ConversationState.getCurrent();
@@ -110,7 +107,21 @@ public class WikiServiceImpl implements WikiService {
     model.save();
     return page;
   }
-
+  
+  public boolean isExisting(String wikiType, String wikiOwner, String pageId) throws Exception {
+    Model model = getModel();
+    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
+    String statement = getStatement(wikiType, wikiOwner, pageId);
+    if (statement != null) {
+      Iterator<PageImpl> result = wStore.getSession().createQueryBuilder(PageImpl.class)
+      .where(statement)
+      .get()
+      .objects();
+      return result.hasNext() ;
+    }
+    return false;
+  }
+  
   public boolean deletePage(String wikiType, String wikiOwner, String pageId) throws Exception {
     if (WikiNodeType.Definition.WIKI_HOME_NAME.equals(pageId) || pageId == null)
       return false;
@@ -502,4 +513,5 @@ public class WikiServiceImpl implements WikiService {
     bufferReader.close();
     return syntaxPage;
   }
+
 }

@@ -54,6 +54,7 @@ public interface WikiService {
 	public String getPageTitleOfAttachment(String path) throws Exception ;
 	public InputStream getAttachmentAsStream(String path) throws Exception ;
 	public PageImpl getHelpSyntaxPage(String syntaxId) throws Exception;
+	public boolean isExisting(String wikiType, String wikiOwner, String pageId) throws Exception ;
 
 }
 

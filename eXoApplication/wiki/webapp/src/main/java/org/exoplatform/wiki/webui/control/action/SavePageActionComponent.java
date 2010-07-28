@@ -128,13 +128,17 @@ public class SavePageActionComponent extends UIComponent {
           }
                     
         } else if (wikiPortlet.getWikiMode() == WikiMode.NEW) {          
-          
+          if(wikiService.isExisting(pageParams.getType(), pageParams.getOwner(), TitleResolver.getPageId(title, false))){
+            log.error("The title '" + title + "' is already existing!");
+            uiApp.addMessage(new ApplicationMessage("SavePageAction.msg.warning-page-title-already-exist", null, ApplicationMessage.WARNING));
+            event.getRequestContext().addUIComponentToUpdateByAjax(uiApp.getUIPopupMessages());
+            return;
+          }
           Page subPage = wikiService.createPage(pageParams.getType(), pageParams.getOwner(), title, page.getName());
           subPage.getContent().setText(markup);
           subPage.getContent().setSyntax(syntaxTypeSelectBox.getValue());
           ((PageImpl)subPage).checkin();
-          ((PageImpl)subPage).checkout();
-          
+          ((PageImpl)subPage).checkout();          
           wikiPortlet.changeMode(WikiMode.VIEW);
           String pageId = TitleResolver.getPageId(title, false);          
           event.getSource().redirectToNewPage(pageParams, URLEncoder.encode(pageId, "UTF-8"));

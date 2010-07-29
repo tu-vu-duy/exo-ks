@@ -13,20 +13,57 @@
 
 === **Page History area** ===
 
-The page history gives a list of the versions of a page. For each version, it is displayed :
+The Page History gives all versions of a page. To display the Page History, hover your mouse over the bottom of the page, and select the **view change** button. 
 
-* revision number
-* author of the change,
-* date and time of the change
-* change summary (if any)
+[[image:images/ViewPageHistory.png||align="center"]]
 
-You can select check-box of of each revision to select two revisions and a compare selected button gives access to the Versions Compare screen. The revision number links to the View Revision screen for that version.
+The Page History is displayed as below: 
 
-For each revision (except the last), a restore button allows to restore that revision as the current one.
+[[image:images/PageHistory.png||align="center"]]
+
+Each version includes the following information: 
+* Revision number
+* Author of the change
+* Date and time of the change
+* Summary (if any)
+
+The Page History includes the following functions:
+
+| [[image:images/1.png||align="left"]]|Compare revisions 
+| [[image:images/2.png||align="left"]]|Restore version
+| [[image:images/3.png||align="left"]]|View version
+
+==== **Compare revisions** ====
+
+To compare two revisions, select two check boxes corresponding to each relevant revision.
+
+[[image:images/SelectRevisionsCompare.png||align="center"]]
+
+Click the **Compare selected** button. The **Compare Versions** view will be displayed for comparing.
 
 {{note}}
-Only two revisions can be selected at a time.
+Only two revisions can be selected at one time.
 {{/note}}
+
+==== **Restore revisions** ====
+
+There is a **Restore** button corresponding to each version, except the last one. 
+To restore a version, click the **Restore** button in the **Action** column. The newly selected revision will turn into the current homepage. 
+
+==== **View versions** ====
+
+To view a version, just click one version number in the **Revision** column to navigate to the View Revision area for that version.
+
+{{note}}
+After clicking one version to view, you can also do the above actions, including viewing, comparing, restoring, viewing the Page History right in the View Revision area:
+ 
+[[image:images/ViewVersionArea.png||align="center"]]
+
+* You can view your selected version just by clicking the **current version** button. 
+* You can view previous or next versions just by clicking **Previous** or **Next**, respectively.
+* You can compare with the last version, or restore the selected version, or view the Page History just by selecting one of corresponding buttons. 
+{{/note}}
+
 
 === **Page info area** ===
 

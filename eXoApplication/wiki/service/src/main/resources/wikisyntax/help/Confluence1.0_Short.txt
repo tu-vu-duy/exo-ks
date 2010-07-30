@@ -1,29 +1,31 @@
-=== Help Tips ===
+h3. Help Tips
 ----
-; Text formatting
-: *bold* **bold**
-: _italic_ //italic//
-: -strike- --strike--
-: +under+ __under__
 
-; Headings
-: h1. Large heading
-: h3. Medium heading
-: h5. Small heading
+Text formatting
+{noformat}*bold*{noformat} *bold*
+{noformat}_italic_ {noformat} _italic_
+{noformat}-strike-{noformat}  -strike-
+{noformat}+under+{noformat} under
 
-; Lists
-: * Bulleted point
-: # Numbered point
+Headings
+{noformat}h1.{noformat} Large heading
+{noformat}h3.{noformat} Medium heading
+{noformat}h5.{noformat} Small heading
 
-; Tables
+Lists
+* Bulleted point
+# Numbered point
 
-{{{||head1 ||head2||
-| colA1 | colA2 |
-| colB1 | colB2 |}}}
+Tables
+{noformat}
+||head1 ||head2
+| colA1 | colA2 
+| colB1 | colB2 
+{noformat}
 
-; Links
-: [title#anchor] Link a page
-: [dev:title] In 'dev' space
-: [http:~/~/host.com] Remote link
-: [phrase@shortcut] Shortcut
-: [alias|link] Custom link title
+Links
+{noformat}[title#anchor]{noformat} Link a page
+{noformat}[dev:title]{noformat} In 'dev' space
+{noformat}[http://host.com]{noformat} Remote link
+{noformat}[phrase@shortcut]{noformat} Shortcut
+{noformat}[alias|link]{noformat} Custom link title

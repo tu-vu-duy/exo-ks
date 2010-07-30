@@ -43,6 +43,11 @@
         <value>jar:/wikisyntax/help/xWiki2.0_Short.txt</value>
         <value>jar:/wikisyntax/help/xWiki2.0_Full.txt</value>
       </values-param>
+       <values-param>
+        <name>confluence/1.0</name>
+        <value>jar:/wikisyntax/help/Confluence1.0_Short.txt</value>
+        <value>jar:/wikisyntax/help/Confluence1.0_Full.txt</value>
+      </values-param>
     </init-params>
   </component>
   

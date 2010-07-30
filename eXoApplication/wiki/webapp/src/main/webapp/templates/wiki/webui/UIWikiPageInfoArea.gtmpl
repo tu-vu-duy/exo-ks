@@ -2,6 +2,7 @@
   import java.util.Locale;
   import java.text.DateFormat;
   import org.exoplatform.portal.webui.util.Util;
+  import org.exoplatform.wiki.webui.UIWikiPortlet;
   
   Locale currentLocale = Util.getPortalRequestContext().getLocale();
   DateFormat df = DateFormat.getDateInstance(DateFormat.LONG, currentLocale);
@@ -14,6 +15,8 @@
   String updatedDate = df.format(currentWikiPage.getUpdatedDate());
   int attachmentsTotal =  currentWikiPage.getAttachments().size();
   
+  String historyAnchor = "#" + uicomponent.SHOW_HISTORY;
+  String historyActionId = UIWikiPortlet.WIKI_PORTLET_ACTION_PREFIX + uicomponent.SHOW_HISTORY;
   String togglelink= uicomponent.event(uicomponent.TOGGLE_ATTACHMENTS_ACTION);
   
 %>
@@ -21,7 +24,8 @@
 	<div class="TxtFeed">
 	  Added by <a class="Link" href=""><%= creator %></a>,
 	  Last modified by <a class="Link" href=""><%= author %></a> at <%= updatedDate %>
-	  <a class="Link" href="<%=uicomponent.event("ShowHistory");%>">(view change)</a>
+	  <a class="Link" href="$historyAnchor">(view change)</a>
+	  <a onclick="<%=uicomponent.event(uicomponent.SHOW_HISTORY);%>" id="$historyActionId" style="display:none;">&nbsp;</a>
 	</div>
 	<div class="TxtFeed"><b><%= attachmentsTotal %> </b><a class="Link" href="$togglelink">attachment (s)</a>  - <b>15</b> <a class="Link" href="">visitors</a></div>
 </div>

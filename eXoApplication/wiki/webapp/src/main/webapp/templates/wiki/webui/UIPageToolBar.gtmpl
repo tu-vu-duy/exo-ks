@@ -1,3 +1,7 @@
+<%
+  import org.exoplatform.wiki.webui.UIWikiPortlet;
+%>
+
 <div class="UIPageToolBar ClearFix" >	
 <%
 String cancelLink = "";
@@ -6,6 +10,8 @@ String currentMode= uicomponent.getCurrentMode();
 String pageTitleInputId= uicomponent.getPageTitleInputId();
 for(entry in uicomponent.getActions()) {
      String action = entry.getActionName();
+     String anchor = "#" + action;
+     String actionId = UIWikiPortlet.WIKI_PORTLET_ACTION_PREFIX + action;
      def actionComponent = entry.getActionComponent();
      String actionLabel = _ctx.appRes(uicomponent.getName() + ".action." + action);
      
@@ -23,17 +29,17 @@ for(entry in uicomponent.getActions()) {
 %>
 		<% if(action.equals("AddPage")){
 		%>
-		<a href="$link" class="Add Icon">&nbsp;</a>
+		<a href="$anchor" class="Add Icon">&nbsp;</a>
 		<%} else if(action.equals("EditPage")){
 		%>
-		<a href="$link" class="Edit Icon">&nbsp;</a>
+		<a href="$anchor" class="Edit Icon">&nbsp;</a>
 		<%} else if(action.equals("DeletePage")){
 		%>
 		<a href="$link" class="Delete Icon">&nbsp;</a>
 		<%} else if(action.equals("Cancel")){
 		 cancelLink=link;
 		%>
-		<a href="$link" class="Delete Icon">&nbsp;</a>
+		<a href="#" class="Delete Icon">&nbsp;</a>
 		<%} else if(action.equals("Help")){
 		%>
 		<a href="$link" class="FAQ Icon">&nbsp;</a>
@@ -43,12 +49,13 @@ for(entry in uicomponent.getActions()) {
 		<%} else if(action.equals("SavePage")){
 			saveLink=link;
 		%>
-		<a href="$link" onclick="return eXo.wiki.UISavePageValidator.validateSave('$pageTitleInputId','$currentMode');"
+		<a href="#" onclick="return eXo.wiki.UISavePageValidator.validateSave('$pageTitleInputId','$currentMode');"
 		class="Save Icon">&nbsp;</a>
 		<%} else if(action.equals("RichText")){
 		%>
 		<a href="$link" class="Edit Icon">&nbsp;</a>
 		<%}%>
+		<a onclick="$link" id="$actionId" style="display:none;">&nbsp;</a>
 <%}%>
 	<div id="ConfirmMask" align="center">
 		<div class="ConfirmBox" >

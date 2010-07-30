@@ -12,7 +12,7 @@
 %>
   <div class="WikiBackLink">
     <div onclick="$link">
-      <a href="javascript:void(0);"><< Return to Current Version</a>
+      <a href="#"><< Return to Current Version</a>
     </div>
   </div>
 </div>

@@ -24,11 +24,14 @@ import org.exoplatform.web.application.RequestContext;
 import org.exoplatform.webui.application.WebuiApplication;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
+import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIPopupContainer;
 import org.exoplatform.webui.core.UIPopupMessages;
 import org.exoplatform.webui.core.UIPopupWindow;
 import org.exoplatform.webui.core.UIPortletApplication;
 import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
+import org.exoplatform.webui.event.Event;
+import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.ext.UIExtensionManager;
 import org.exoplatform.wiki.commons.Utils;
 import org.exoplatform.wiki.mow.api.Page;
@@ -44,10 +47,20 @@ import org.exoplatform.wiki.webui.control.action.AddPageActionComponent;
  * 5, 2009
  */
 
-@ComponentConfig(lifecycle = UIApplicationLifecycle.class, template = "app:/templates/wiki/webui/UIWikiPortlet.gtmpl")
+@ComponentConfig(
+  lifecycle = UIApplicationLifecycle.class,
+  template = "app:/templates/wiki/webui/UIWikiPortlet.gtmpl",
+  events = {
+    @EventConfig(listeners = UIWikiPortlet.ViewPageActionListener.class)
+  }
+)
 public class UIWikiPortlet extends UIPortletApplication {
   
-  private WikiMode mode = WikiMode.VIEW;  
+  private WikiMode mode = WikiMode.VIEW;
+  
+  public static String VIEW_PAGE_ACTION = "ViewPage";
+  
+  public static String WIKI_PORTLET_ACTION_PREFIX = "UIWikiPortlet_";
   
   public UIWikiPortlet() throws Exception {
     super();
@@ -277,5 +290,10 @@ public class UIWikiPortlet extends UIPortletApplication {
     }
   }
   
-  
+  public static class ViewPageActionListener extends EventListener<UIWikiPortlet> {
+    @Override
+    public void execute(Event<UIWikiPortlet> event) throws Exception {
+      event.getSource().changeMode(WikiMode.VIEW);
+    }
+  }
 }

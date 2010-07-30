@@ -1,5 +1,10 @@
 <%
   import org.exoplatform.wiki.mow.api.Page;
+  
+  def rcontext = _ctx.getRequestContext() ;
+  rcontext.getJavascriptManager().addJavascript("eXo.wiki.UIWikiAjaxRequest.init('" + uicomponent.WIKI_PORTLET_ACTION_PREFIX + "', '" + uicomponent.VIEW_PAGE_ACTION + "');");
+  String viewLink = uicomponent.event(uicomponent.VIEW_PAGE_ACTION);
+  String actionId = uicomponent.WIKI_PORTLET_ACTION_PREFIX + uicomponent.VIEW_PAGE_ACTION;
 %>
 <!-- This script must to put here to ensure xwe.onScriptLoad is alway called. -->
 <script type="text/javascript" src="/wiki/javascript/eXo/wiki/UIWikiWysiwygLoader.js"></script>
@@ -29,4 +34,5 @@
     }
   %>
   <%uicomponent.renderPopupMessages();%>
+  <a onclick="$viewLink" id="$actionId" style="display:none;">&nbsp;</a>
 </div>

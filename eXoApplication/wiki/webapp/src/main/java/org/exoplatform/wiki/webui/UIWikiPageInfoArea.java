@@ -53,6 +53,8 @@ public class UIWikiPageInfoArea extends UIContainer {
   private static final Log log = ExoLogger.getLogger("wiki:UIWikiPageInfoArea");
 
   public static String TOGGLE_ATTACHMENTS_ACTION = "ToggleAttachments";
+  
+  public static String SHOW_HISTORY = "ShowHistory";
 
   private PageImpl getCurrentWikiPage() {
     PageImpl currentPage = null;

@@ -142,15 +142,16 @@ public class WikiServiceImpl implements WikiService {
         trash = wiki.createTrash();
         wiki.setTrash(trash);
       }
-      trash.addRemovedWikiPage(page);
+      if(trash.isHasPage(page.getName())) {
+        jcrDataStorage.renamePageInTrash(trash.getPath() + "/" + page.getName(), wStore.getSession()) ;        
+      }      
+      trash.addRemovedWikiPage(page);      
       session.save();
     } catch (Exception e) {
+      log.error("Can't delete page '" + pageId + "' ", e) ;
       return false;
     }
-    return true;
-
-    // return jcrDataStorage.deletePage(page.getPath(), wiki.getPath(),
-    // wStore.getSession()) ;
+    return true;    
   }
 
   public boolean renamePage(String wikiType,

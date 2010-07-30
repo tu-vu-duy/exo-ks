@@ -129,19 +129,17 @@ public class JCRDataStorage implements DataStorage{
       newPage.save() ;
       return true ;
     }catch(Exception e) {
-      e.printStackTrace() ;
+      log.error("Can't rename page '" + pagePath + "' to '" + newName + "' ", e) ;
     }    
     return false ;
   }
   
-  /*public List<Space> getSpaces(String wikiType, ChromatticSession session) throws Exception {
-    
-    return null ;
+  public void renamePageInTrash(String path, ChromatticSession session) throws Exception{
+    Node oldRemoved = (Node)session.getJCRSession().getItem(path) ;
+    String removedDate = oldRemoved.getProperty("removedDate").getString().replaceAll(" ", "-").replaceAll(":", "-");
+    String newName = oldRemoved.getParent().getPath() + "/" + oldRemoved.getName() + "_" + removedDate ;
+    session.getJCRSession().getWorkspace().move(path, newName) ;    
   }
-  
-  public List<Space> getAllSpaces(ChromatticSession session) throws Exception {
-    return null ;
-  }*/
   
   private List<String> valuesToList(Value[] values) throws Exception {
     List<String> list = new ArrayList<String>();

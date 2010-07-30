@@ -20,6 +20,7 @@ import java.util.Collection;
 
 import org.chromattic.api.DuplicateNameException;
 import org.chromattic.api.annotations.OneToMany;
+import org.chromattic.api.annotations.Path;
 import org.chromattic.api.annotations.PrimaryType;
 import org.exoplatform.wiki.mow.api.WikiNodeType;
 
@@ -32,6 +33,9 @@ import org.exoplatform.wiki.mow.api.WikiNodeType;
 @PrimaryType(name = WikiNodeType.WIKI_TRASH)
 public abstract class Trash {
 
+  @Path
+  public abstract String getPath();
+  
   @OneToMany
   public abstract Collection<PageImpl> getChildPages();
   
@@ -39,6 +43,13 @@ public abstract class Trash {
     getChildPages().add(wikiPage);
   }
   
+  public boolean isHasPage(String name) {
+    Collection<PageImpl> removedPages = getChildPages() ;
+    for(PageImpl page : removedPages) {
+      if(page.getName().equals(name)) return true ;
+    }
+    return false ;
+  }
     
   
 }

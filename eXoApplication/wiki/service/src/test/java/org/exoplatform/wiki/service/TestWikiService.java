@@ -17,7 +17,9 @@
 package org.exoplatform.wiki.service;
 
 
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.chromattic.api.ChromatticSession;
@@ -52,7 +54,6 @@ public class TestWikiService extends AbstractMOWTestcase {
   }
   
   public void testGetPortalPageById() throws Exception{
-    
     Model model = mowService.getModel();
     WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
     WikiContainer<PortalWiki> portalWikiContainer = wStore.getWikiContainer(WikiType.PORTAL);
@@ -184,8 +185,13 @@ public class TestWikiService extends AbstractMOWTestcase {
   }
   
   public void testDeletePage() throws Exception{    
-    PageImpl page = (PageImpl)wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "deletePage", "WikiHome") ;
+    wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "deletePage", "WikiHome") ;
     assertTrue(wService.deletePage(PortalConfig.PORTAL_TYPE, "classic", "deletePage")) ;
+    wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "deletePage", "WikiHome") ;
+    assertTrue(wService.deletePage(PortalConfig.PORTAL_TYPE, "classic", "deletePage")) ;    
+    wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "deletePage", "WikiHome") ;
+    assertTrue(wService.deletePage(PortalConfig.PORTAL_TYPE, "classic", "deletePage")) ;
+    
     assertNull(wService.getPageById(PortalConfig.PORTAL_TYPE, "classic", "deletePage")) ; 
     assertFalse(wService.deletePage(PortalConfig.PORTAL_TYPE, "classic", "WikiHome")) ;
   }

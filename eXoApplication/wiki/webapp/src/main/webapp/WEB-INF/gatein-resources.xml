@@ -67,5 +67,12 @@
     </param>
   </javascript>
   
+  <javascript>
+    <param>
+      <js-module>eXo.wiki.UISavePageValidator</js-module>
+      <js-path>/javascript/eXo/wiki/UISavePageValidator.js</js-path>
+    </param>
+  </javascript>
+   
 </gatein-resources>
 

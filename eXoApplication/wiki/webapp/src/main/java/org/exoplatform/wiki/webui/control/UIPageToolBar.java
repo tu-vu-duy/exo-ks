@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.application.portlet.PortletRequestContext;
@@ -32,6 +31,7 @@ import org.exoplatform.webui.ext.UIExtension;
 import org.exoplatform.webui.ext.UIExtensionManager;
 import org.exoplatform.webui.form.UIForm;
 import org.exoplatform.wiki.webui.UIWikiPageContentArea;
+import org.exoplatform.wiki.webui.UIWikiPageTitleControlArea;
 import org.exoplatform.wiki.webui.UIWikiPortlet;
 import org.exoplatform.wiki.webui.WikiMode;
 import org.exoplatform.wiki.webui.control.action.SavePageActionComponent;
@@ -88,6 +88,15 @@ public class UIPageToolBar extends UIContainer {
 
   public boolean isNewMode() {
     return (getAncestorOfType(UIWikiPortlet.class).getWikiMode() == WikiMode.NEW);
+  }
+
+  public String getPageTitleInputId() {
+    return UIWikiPageTitleControlArea.FIELD_TITLEINPUT;
+  }
+
+  public String getCurrentMode()
+  {
+    return getAncestorOfType(UIWikiPortlet.class).getWikiMode().toString();    
   }
 
   public String getUrlToSavePage(String componentId, String beanId) throws Exception {

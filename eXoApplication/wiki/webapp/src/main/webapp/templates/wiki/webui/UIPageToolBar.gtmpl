@@ -1,5 +1,10 @@
-<div class="UIPageToolBar ClearFix" >
-<% for(entry in uicomponent.getActions()) {
+<div class="UIPageToolBar ClearFix" >	
+<%
+String cancelLink = "";
+String saveLink = "";
+String currentMode= uicomponent.getCurrentMode();
+String pageTitleInputId= uicomponent.getPageTitleInputId();
+for(entry in uicomponent.getActions()) {
      String action = entry.getActionName();
      def actionComponent = entry.getActionComponent();
      String actionLabel = _ctx.appRes(uicomponent.getName() + ".action." + action);
@@ -26,6 +31,7 @@
 		%>
 		<a href="$link" class="Delete Icon">&nbsp;</a>
 		<%} else if(action.equals("Cancel")){
+		 cancelLink=link;
 		%>
 		<a href="$link" class="Delete Icon">&nbsp;</a>
 		<%} else if(action.equals("Help")){
@@ -35,11 +41,27 @@
 		%>
 		<a href="$link" class="View Icon">&nbsp;</a>
 		<%} else if(action.equals("SavePage")){
+			saveLink=link;
 		%>
-		<a href="$link" class="Save Icon">&nbsp;</a>
+		<a href="$link" onclick="return eXo.wiki.UISavePageValidator.validateSave('$pageTitleInputId','$currentMode');"
+		class="Save Icon">&nbsp;</a>
 		<%} else if(action.equals("RichText")){
 		%>
 		<a href="$link" class="Edit Icon">&nbsp;</a>
 		<%}%>
 <%}%>
+	<div id="ConfirmMask" align="center">
+		<div class="ConfirmBox" >
+			<div class="Title" >
+				<b>Confirmation</b>
+				<a href="" onclick="eXo.wiki.UISavePageValidator.closeConfirm();return false;" class="CloseButton"><span></span></a>
+			</div>
+			<div>
+				<div id="ConfirmMessage"></div>   	
+				<input type="button" value="Confirm" onclick="$saveLink">
+				<input type="button" value="Discard" onclick="$cancelLink">
+  				<input type="button" value="Cancel" onclick="eXo.wiki.UISavePageValidator.closeConfirm()">
+			</div>
+		</div>
+	</div>
 </div> 

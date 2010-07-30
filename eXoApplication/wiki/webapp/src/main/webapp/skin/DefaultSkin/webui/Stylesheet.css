@@ -363,24 +363,26 @@
 	z-index: 25;		
 }
 
-.UIPageToolBar #ConfirmMask .ConfirmBox{
+.UIPageToolBar .ConfirmBox{
 	width:350px;
 	height:110px;
 	background:white;
-	color:black;
+	color:black;	
+	border: solid 1px black;	
 	margin-top:250px;
-	border: solid 2px black;	
-	align:center;	
+	margin-left:300px;
+	position:absolute;	
 }
-.UIPageToolBar #ConfirmMask .Title{
+.UIPageToolBar .ConfirmTitle{
 	background-color: #D7D7D7;
 	height: 25px;
 	text-align:left;
 	font-size:20px;	
 	padding:0px 7px 0;	
+	cursor: pointer;
 }
 
-.UIPageToolBar #ConfirmMessage {
+.UIPageToolBar .ConfirmMessage {
 	padding:10px;
 	font-size:15px
 }

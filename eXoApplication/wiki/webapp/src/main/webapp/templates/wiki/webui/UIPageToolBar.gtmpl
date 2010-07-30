@@ -1,10 +1,10 @@
 <%
   import org.exoplatform.wiki.webui.UIWikiPortlet;
 %>
-
-<div class="UIPageToolBar ClearFix" >	
+<div class="UIPageToolBar ClearFix" >
 <%
-String cancelLink = "";
+def rcontext = _ctx.getRequestContext() ;
+rcontext.getJavascriptManager().addJavascript("eXo.wiki.UISavePageConfirmation.initDragDrop();");
 String saveLink = "";
 String currentMode= uicomponent.getCurrentMode();
 String pageTitleInputId= uicomponent.getPageTitleInputId();
@@ -36,8 +36,7 @@ for(entry in uicomponent.getActions()) {
 		<%} else if(action.equals("DeletePage")){
 		%>
 		<a href="$link" class="Delete Icon">&nbsp;</a>
-		<%} else if(action.equals("Cancel")){
-		 cancelLink=link;
+		<%} else if(action.equals("Cancel")){		
 		%>
 		<a href="#" class="Delete Icon">&nbsp;</a>
 		<%} else if(action.equals("Help")){
@@ -49,7 +48,7 @@ for(entry in uicomponent.getActions()) {
 		<%} else if(action.equals("SavePage")){
 			saveLink=link;
 		%>
-		<a href="#" onclick="return eXo.wiki.UISavePageValidator.validateSave('$pageTitleInputId','$currentMode');"
+		<a href="$link" onclick="return eXo.wiki.UISavePageConfirmation.validateSave('$pageTitleInputId','$currentMode');"
 		class="Save Icon">&nbsp;</a>
 		<%} else if(action.equals("RichText")){
 		%>
@@ -58,16 +57,16 @@ for(entry in uicomponent.getActions()) {
 		<a onclick="$link" id="$actionId" style="display:none;">&nbsp;</a>
 <%}%>
 	<div id="ConfirmMask" align="center">
-		<div class="ConfirmBox" >
-			<div class="Title" >
+		<div class="ConfirmBox">
+			<div class="ConfirmTitle" >
 				<b>Confirmation</b>
-				<a href="" onclick="eXo.wiki.UISavePageValidator.closeConfirm();return false;" class="CloseButton"><span></span></a>
+				<a href="" onclick="eXo.wiki.UISavePageConfirmation.closeConfirm();return false;" class="CloseButton"><span></span></a>
 			</div>
 			<div>
-				<div id="ConfirmMessage"></div>   	
+				<div class="ConfirmMessage"></div>   	
 				<input type="button" value="Confirm" onclick="$saveLink">
-				<input type="button" value="Discard" onclick="$cancelLink">
-  				<input type="button" value="Cancel" onclick="eXo.wiki.UISavePageValidator.closeConfirm()">
+				<input type="button" value="Discard" onclick="javascript:window.location='#';">
+  				<input type="button" value="Cancel" onclick="eXo.wiki.UISavePageConfirmation.closeConfirm()">
 			</div>
 		</div>
 	</div>

@@ -66,7 +66,7 @@ public class UIWikiRichTextArea extends UIContainer {
       if (wikiPortlet.getWikiMode() == WikiMode.EDIT) {
         sb.append(pageParams.getPageId());
       } else {
-        sb.append("Untitle");
+        sb.append(UIWikiPageEditForm.UNTITLED);
       }
       sb.append("/content");
       sb.append("?portalURI=").append(Util.getPortalRequestContext().getPortalURI());

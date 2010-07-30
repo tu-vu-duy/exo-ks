@@ -108,6 +108,7 @@ public class DefaultWikiModel implements WikiModel {
       sb.append("=");
       WikiContext wikiMarkupContext = getWikiMarkupContext(documentName);
       sb.append(wikiMarkupContext.getPageTitle());
+      sb.append("#").append(WikiContext.ADDPAGE).append("L");
       return sb.toString();
     }
     return "";

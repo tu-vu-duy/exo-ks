@@ -17,43 +17,41 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-function UISavePageConfirmation() {	
+function UISavePageConfirmation() {
 };
 
-/*ie bug  you cannot have more than one button tag*/
+/* ie bug you cannot have more than one button tag */
 /**
  * Submits a form with the given action and the given parameters
  */
 
-UISavePageConfirmation.prototype.validateSave = function(pageTitleinputId,currentMode) {
-	var ConfirmMask= document.getElementById("ConfirmMask");
-	var pageTitleInput= document.getElementById(pageTitleinputId);
-	if ((currentMode=="NEW")&&(pageTitleInput.value=="Untitle")){
-		ConfirmMask.style.display="block";
-		var ConfirmMessage= eXo.core.DOMUtil.findFirstDescendantByClass(ConfirmMask,"div", "ConfirmMessage");
-		ConfirmMessage.innerHTML="You are about to save an Untitled page.";
-		return false;
-	}
-	else if (currentMode=="EDIT"){
-		ConfirmMask.style.display="block";	
-		var ConfirmMessage= eXo.core.DOMUtil.findFirstDescendantByClass(ConfirmMask,"div", "ConfirmMessage");
-		ConfirmMessage.innerHTML="Your changes will be saved to history.<br/>Are you sure you want to apply this changes?";		
-		return false;
-	}
-	return true;
-} ;
+UISavePageConfirmation.prototype.validateSave = function(pageTitleinputId, currentMode) {
+  var confirmMask = document.getElementById("ConfirmMask");
+  var pageTitleInput = document.getElementById(pageTitleinputId);
+  var confirmMessage = eXo.core.DOMUtil.findFirstDescendantByClass(confirmMask, "div", "ConfirmMessage");
+  if ((currentMode == "NEW") && (pageTitleInput.value == "Untitled")) {
+    confirmMask.style.display = "block";
+    confirmMessage.innerHTML = "You are about to save an Untitled page.";
+    return false;
+  } else if (currentMode == "EDIT") {
+    confirmMask.style.display = "block";
+    confirmMessage.innerHTML = "Your changes will be saved to history.<br/>Are you sure you want to apply this changes?";
+    return false;
+  }
+  return true;
+};
 
-UISavePageConfirmation.prototype.closeConfirm =function(){
-		var ConfirmMask= document.getElementById("ConfirmMask");
-		ConfirmMask.style.display="none";
-		return false;
-	}
-UISavePageConfirmation.prototype.initDragDrop = function(){		
-	var ConfirmBox= document.getElementById("ConfirmBox");
-	var ConfirmBox = eXo.core.DOMUtil.findFirstDescendantByClass(ConfirmMask,"div", "ConfirmBox");
-	var ConfirmTitle = eXo.core.DOMUtil.findFirstDescendantByClass(ConfirmMask,"div", "ConfirmTitle");
-	ConfirmTitle.onmousedown = function(e){
-		eXo.core.DragDrop.init(null,ConfirmTitle,ConfirmBox,e);			
-	}	
+UISavePageConfirmation.prototype.closeConfirm = function() {
+  var confirmMask = document.getElementById("ConfirmMask");
+  confirmMask.style.display = "none";
+  return false;
+}
+UISavePageConfirmation.prototype.initDragDrop = function() {
+  var confirmMask = document.getElementById("ConfirmMask");
+  var confirmBox = eXo.core.DOMUtil.findFirstDescendantByClass(confirmMask, "div", "ConfirmBox");
+  var confirmTitle = eXo.core.DOMUtil.findFirstDescendantByClass(confirmMask, "div", "ConfirmTitle");
+  confirmTitle.onmousedown = function(e) {
+    eXo.core.DragDrop.init(null, confirmTitle, confirmBox, e);
+  }
 }
 eXo.wiki.UISavePageConfirmation = new UISavePageConfirmation();

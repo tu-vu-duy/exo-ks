@@ -52,6 +52,7 @@ import org.xwiki.rendering.syntax.Syntax;
 )
 public class UIWikiPageEditForm extends UIForm {
 
+  public static final String UNTITLED      = "Untitled";
   public static final String FIELD_CONTENT = "Markup";
   public static final String FIELD_SYNTAX  = "SyntaxType";
   public static final String TITLE_CONTROL = "UIWikiPageTitleControlForm_PageEditForm";

@@ -1,11 +1,14 @@
 <%
   import org.exoplatform.wiki.webui.UIWikiPortlet;
+  import org.exoplatform.wiki.commons.Utils;
+  
 %>
 <div class="UIPageToolBar ClearFix" >
 <%
 def rcontext = _ctx.getRequestContext() ;
 rcontext.getJavascriptManager().addJavascript("eXo.wiki.UISavePageConfirmation.initDragDrop();");
 String saveLink = "";
+String cancelLink = "";
 String currentMode= uicomponent.getCurrentMode();
 String pageTitleInputId= uicomponent.getPageTitleInputId();
 for(entry in uicomponent.getActions()) {
@@ -36,9 +39,10 @@ for(entry in uicomponent.getActions()) {
 		<%} else if(action.equals("DeletePage")){
 		%>
 		<a href="$link" class="Delete Icon">&nbsp;</a>
-		<%} else if(action.equals("Cancel")){		
+		<%} else if(action.equals("Cancel")){
+		    cancelLink = uicomponent.isNewMode() ? Utils.getCurrentRequestURL() : "#";
 		%>
-		<a href="#" class="Delete Icon">&nbsp;</a>
+		<a href="$cancelLink" class="Delete Icon">&nbsp;</a>
 		<%} else if(action.equals("Help")){
 		%>
 		<a href="$link" class="FAQ Icon">&nbsp;</a>

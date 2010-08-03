@@ -142,7 +142,6 @@ public class Utils {
   }
   
   public static Wiki[] getAllWikiSpace() {
-    System.out.println("\n\n ==== Hello");
     MOWService mowService = (MOWService) PortalContainer.getComponent(MOWService.class);
     WikiStoreImpl store = (WikiStoreImpl) mowService.getModel().getWikiStore();
     return store.getWikis().toArray(new Wiki[]{}) ;
@@ -169,7 +168,7 @@ public class Utils {
       PageImpl syntaxPage = wservice.getHelpSyntaxPage(syntaxId.replace("SLASH", "/").replace("DOT", "."));
       if (syntaxPage!=null)
       {
-      PageImpl fullHelpPage= syntaxPage.getChildPages().iterator().next();
+      PageImpl fullHelpPage= syntaxPage.getChildPages().values().iterator().next();
       return fullHelpPage;
       }      
     }

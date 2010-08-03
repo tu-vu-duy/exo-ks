@@ -15,7 +15,7 @@
   <name>eXo Knowledge Suite - Wiki</name>
   
   <properties>
-    <org.chromattic.version>1.0.0</org.chromattic.version>
+    <org.chromattic.version>1.0.3</org.chromattic.version>
     <org.exoplatform.platform.version>3.0.0-Alpha04-SNAPSHOT</org.exoplatform.platform.version>
     <org.xwiki.platform.version>2.3.1</org.xwiki.platform.version>
     <org.wikimodel.version>2.0.7-20100520</org.wikimodel.version>

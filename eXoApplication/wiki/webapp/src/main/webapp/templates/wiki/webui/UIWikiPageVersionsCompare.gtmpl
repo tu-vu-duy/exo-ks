@@ -1,0 +1,52 @@
+<div class="UIWikiPageVersionsCompare">
+<%
+  String link = uicomponent.event(uicomponent.RETURN_VERSIONS_LIST);
+%>
+  <div class="WikiBackLink">
+    <div class="BackLink" onclick="$link">
+      <a href="javascript:void(0);"><< Return to Versions List</a>
+    </div>
+    <div style="ClearLeft"><span></span></div>
+  </div>
+
+  <div class="ChangesInfo">
+    <div class="ChangesInfoBox">
+      <div class="ChangesInfoContent">
+        <span class="Description">
+          <a href=""><b>Version 2</b></a> by 
+          <a href="" class="UserLink" title="">Nguyen Tien  Viet</a>
+          <br/> on Jul 12, 2010 03:03.
+        </span>
+      </div>
+      <div class="ChangesInfoTitle">
+        <span class="Description">
+          <a href=""><< Changes from <strong>1</strong> to <strong>2</strong> </a>
+        </span>
+      </div>
+    </div>
+    <div class="ChangesInfoMiddleBox">
+      compared with
+    </div>
+    <div class="ChangesInfoBox">
+      <div class="ChangesInfoContent">
+        <span class="Description">
+          <a href=""><b>Current</b></a> by 
+          <a href="" class="UserLink" title="">Nguyen Tien  Viet</a>
+          <br/> on Jul 12, 2010 03:06.
+        </span>
+      </div>
+      <div class="ChangesInfoTitle">
+        <span class="Description">
+          <a href=""><< Changes from <strong>1</strong> to <strong>2</strong> </a>
+        </span>
+      </div>
+    </div>
+    <div class="ClearLeft"><span></span></div>
+  </div>
+  <div class="ContentChanges">
+    <div class="ContentChangesTitle">
+      Content changes
+    </div>
+    <%= uicomponent.differencesAsHTML %>
+  </div>
+</div>

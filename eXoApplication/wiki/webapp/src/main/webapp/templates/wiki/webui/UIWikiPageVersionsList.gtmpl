@@ -17,7 +17,7 @@
 <div class="UIWikiPageVersionsList UIWikiAttachmentArea">
   <% uiform.begin(); %>
     <div class="CompareBtn">
-      <div onmousedown="javascript:void(0);">
+      <div onclick="<%= uicomponent.event(uicomponent.COMPARE_ACTION); %>">
         <a href="javascript:void(0);">Compare selected</a>
       </div>
     </div>
@@ -51,6 +51,7 @@
             }
             NTFrozenNode frozenNode = version.getNTFrozenNode();
             String versionLabel = version.getName();
+            checkboxField = uicomponent.getChildById(versionLabel) ;
             if(isCurrentVersion){
               versionLabel = "CURRENT (v. " + versionLabel + ")";
             } else {
@@ -65,7 +66,11 @@
             String restoreLink = uicomponent.event(uicomponent.RESTORE_ACTION, version.getName());
         %>
         <tr class="$rowClass">
-          <td><input type="checkbox" class="checkbox" value="false"/></td>
+          <td>
+            <%
+              uicomponent.renderField(checkboxField);
+            %>
+          </td>
           <td class="Tit"><a title="View the revision" href="$viewLink"><%= versionLabel %></a></td>
           <td><%= updatedDate %></td>
           <td><%= author %></td>

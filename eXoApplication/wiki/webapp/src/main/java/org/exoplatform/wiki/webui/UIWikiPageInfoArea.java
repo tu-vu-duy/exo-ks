@@ -18,7 +18,6 @@ package org.exoplatform.wiki.webui;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -32,6 +31,7 @@ import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.wiki.chromattic.ext.ntdef.NTVersion;
 import org.exoplatform.wiki.commons.Utils;
+import org.exoplatform.wiki.commons.VersionNameComparatorDesc;
 import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 
 /**
@@ -103,16 +103,6 @@ public class UIWikiPageInfoArea extends UIContainer {
     UIWikiPageVersionsList pageVersionsList = historySpaceArea.getChild(UIWikiPageVersionsList.class);
     pageVersionsList.setVersionsList(versionsList);
     wikiPortlet.changeMode(WikiMode.HISTORY);
-  }
-
-  private static class VersionNameComparatorDesc implements Comparator<NTVersion> {
-    public int compare(NTVersion version1, NTVersion version2) {
-      if (version1.getName().length() == version2.getName().length()) {
-        return version2.getName().compareTo(version1.getName());
-      } else {
-        return version2.getName().length() > version1.getName().length() ? 1 : -1;
-      }
-    }
   }
 
 }

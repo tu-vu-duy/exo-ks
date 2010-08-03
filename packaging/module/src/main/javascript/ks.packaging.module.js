@@ -87,7 +87,10 @@ function getModule(params)
 	addDependency(new Project("org.xwiki.platform", "xwiki-core-rendering-macro-message", "jar",  "2.3.1")).
 	addDependency(new Project("org.xwiki.platform", "xwiki-core-rendering-macro-code", "jar",  "2.3.1")).
 	addDependency(new Project("org.xwiki.contrib", "xwiki-macro-column", "jar",  "1.1-SNAPSHOT")).
-	addDependency(new Project("org.wikimodel", "org.wikimodel.wem", "jar",  "2.0.7-20100629-1"));
+	addDependency(new Project("org.wikimodel", "org.wikimodel.wem", "jar",  "2.0.7-20100629-1")).
+	addDependency(new Project("org.suigeneris", "jrcs.diff", "jar",  "0.4.2")).
+	addDependency(new Project("org.suigeneris", "jrcs.rcs", "jar",  "0.4.2")).
+	addDependency(new Project("ecs", "ecs", "jar",  "1.4.2"));
     
   module.eXoApplication.wiki.deployName = "wiki";
 

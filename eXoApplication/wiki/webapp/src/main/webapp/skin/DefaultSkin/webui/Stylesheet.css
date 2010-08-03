@@ -1018,7 +1018,10 @@
 .UIWikiHistorySpaceArea .WikiBackLink {
   height: 21px;
   padding: 3px 0px 3px 12px;
-  cursor: pointer;
+}
+
+.UIWikiHistorySpaceArea .WikiBackLink .BackLink {
+  float:left;
 }
 
 .UIWikiPageVersionsList .CompareBtn {
@@ -1033,4 +1036,60 @@
 	color: #ffffff;
 	font-size: 12px;
 	font-weight: bold;
+}
+
+.UIWikiPageVersionsCompare .ChangesInfo {
+  margin: 5px;
+  padding:10px;
+  background-color: #D7D7D7;
+}
+
+.UIWikiPageVersionsCompare .ChangesInfo .ChangesInfoBox {
+  float: left;
+  width: 45%;
+  text-align: center;
+}
+
+.UIWikiPageVersionsCompare .ChangesInfo .ChangesInfoMiddleBox {
+  float: left;
+  width: 10%;
+  text-align: center;
+  font-size: 12px;
+  font-weight: bold;
+  vertical-align: middle;
+}
+
+.UIWikiPageVersionsCompare .ContentChanges {
+  margin: 5px;
+}
+
+.UIWikiPageVersionsCompare .ContentChanges .ContentChangesTitle {
+  background-color: #D7D7D7;
+  border-bottom: 1px solid #FFFFFF;
+  color: #636363;
+  font-size: 1.1em;
+  font-weight: bold;
+  line-height: 20px;
+  padding: 3px 5px;
+  text-align: center;
+}
+
+.UIWikiPageVersionsCompare .diff  {
+  margin-bottom: -5px;
+  overflow: auto;
+  padding: 3px 4px;
+  white-space: normal;
+}
+
+.UIWikiPageVersionsCompare .diffmodifiedline  {
+  margin: 0.8em 0;
+}
+
+.UIWikiPageVersionsCompare .diffaddword  {
+  color: #287F00;
+}
+
+.UIWikiPageVersionsCompare .diffremoveword  {
+  color: #CA9A9B;
+  text-decoration: line-through;
 }

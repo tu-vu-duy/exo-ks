@@ -11,8 +11,9 @@
   String link = uicomponent.event(uicomponent.RETURN_VIEW_MODE);
 %>
   <div class="WikiBackLink">
-    <div onclick="$link">
+    <div class="BackLink" onclick="$link">
       <a href="#"><< Return to Current Version</a>
     </div>
+    <div style="ClearLeft"><span></span></div>
   </div>
 </div>

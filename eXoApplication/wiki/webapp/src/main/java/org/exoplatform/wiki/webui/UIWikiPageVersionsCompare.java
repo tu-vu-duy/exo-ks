@@ -17,8 +17,11 @@
 package org.exoplatform.wiki.webui;
 
 import org.exoplatform.webui.config.annotation.ComponentConfig;
+import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIContainer;
 import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
+import org.exoplatform.webui.event.Event;
+import org.exoplatform.webui.event.EventListener;
 
 /**
  * Created by The eXo Platform SAS
@@ -28,8 +31,33 @@ import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
  */
 @ComponentConfig(
   lifecycle = UIApplicationLifecycle.class,
-  template = "app:/templates/wiki/webui/UIWikiPageVersionsCompare.gtmpl"
+  template = "app:/templates/wiki/webui/UIWikiPageVersionsCompare.gtmpl",
+  events = {
+    @EventConfig(listeners = UIWikiPageVersionsCompare.ReturnVersionsListActionListener.class)
+  }
 )
 public class UIWikiPageVersionsCompare extends UIContainer {
 
+  private String differencesAsHTML;
+  
+  public static final String RETURN_VERSIONS_LIST = "ReturnVersionsList";
+
+  public String getDifferencesAsHTML() {
+    return differencesAsHTML;
+  }
+
+  public void setDifferencesAsHTML(String differencesAsHTML) {
+    this.differencesAsHTML = differencesAsHTML;
+  }
+  
+  static public class ReturnVersionsListActionListener extends EventListener<UIWikiPageVersionsCompare> {
+    @Override
+    public void execute(Event<UIWikiPageVersionsCompare> event) throws Exception {
+      UIWikiPageVersionsCompare pageVersionsCompare = event.getSource();
+      pageVersionsCompare.setRendered(false);
+      UIWikiPageVersionsList pageVersionsList = ((UIWikiHistorySpaceArea) pageVersionsCompare.getParent()).getChild(UIWikiPageVersionsList.class);
+      pageVersionsList.setRendered(true);
+    }
+  }
+  
 }

@@ -46,7 +46,6 @@ import org.exoplatform.wiki.service.WikiPageParams;
 import org.exoplatform.wiki.service.WikiService;
 import org.exoplatform.wiki.webui.UIWikiPageEditForm;
 import org.exoplatform.wiki.webui.UIWikiRichTextArea;
-import org.hibernate.hql.ast.HqlParser;
 import org.xwiki.rendering.syntax.Syntax;
 
 /**

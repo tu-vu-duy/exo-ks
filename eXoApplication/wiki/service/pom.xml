@@ -198,6 +198,22 @@
       <version>${org.xwiki.platform.version}</version>
       <scope>provided</scope>
     </dependency>
+    <!-- Diff engine - http://www.suigeneris.org/kb/display/jrcs/JRCS+Home -->
+    <dependency>
+      <groupId>org.suigeneris</groupId>
+      <artifactId>jrcs.diff</artifactId>
+      <version>0.4.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.suigeneris</groupId>
+      <artifactId>jrcs.rcs</artifactId>
+      <version>0.4.2</version>
+    </dependency>
+    <dependency>
+      <groupId>ecs</groupId>
+      <artifactId>ecs</artifactId>
+      <version>1.4.2</version>
+    </dependency>
     <!-- Code macro depends on -->
     <dependency>
       <groupId>org.python</groupId>

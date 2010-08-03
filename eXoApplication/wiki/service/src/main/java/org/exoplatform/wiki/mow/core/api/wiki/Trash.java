@@ -17,11 +17,14 @@
 package org.exoplatform.wiki.mow.core.api.wiki;
 
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.chromattic.api.DuplicateNameException;
 import org.chromattic.api.annotations.OneToMany;
 import org.chromattic.api.annotations.Path;
 import org.chromattic.api.annotations.PrimaryType;
+import org.chromattic.ext.ntdef.NTHierarchyNode;
 import org.exoplatform.wiki.mow.api.WikiNodeType;
 
 /**
@@ -36,20 +39,51 @@ public abstract class Trash {
   @Path
   public abstract String getPath();
   
-  @OneToMany
+  /*@OneToMany
   public abstract Collection<PageImpl> getChildPages();
   
   public void addRemovedWikiPage(PageImpl wikiPage) throws DuplicateNameException {
     getChildPages().add(wikiPage);
+  }*/
+  
+  @OneToMany
+  public abstract Map<String, PageImpl> getChildren();
+
+  public Collection<PageImpl> getChildPages() {
+    return getChildren().values();
   }
   
   public boolean isHasPage(String name) {
-    Collection<PageImpl> removedPages = getChildPages() ;
-    for(PageImpl page : removedPages) {
-      if(page.getName().equals(name)) return true ;
-    }
-    return false ;
+    return getChildren().containsKey(name) ;
   }
-    
+   
+  public void addRemovedWikiPage(PageImpl page) {
+    if (page == null) {
+      throw new NullPointerException();
+    }
+    addChild(page.getName(), page);
+  }
+
+  public void addChild(String pageName, PageImpl page) {
+    if (pageName == null) {
+      throw new NullPointerException();
+    }
+    if (page == null) {
+      throw new NullPointerException();
+    }
+    Map<String, PageImpl> children = getChildren();
+    if (children.containsKey(pageName)) {
+      throw new IllegalStateException();
+    }
+    children.put(pageName, page);
+  }
+  
+  public PageImpl getPage(String pageName) {
+    if (pageName == null) {
+      throw new NullPointerException();
+    }
+    Map<String, PageImpl> children = getChildren();
+    return children.get(pageName);
+  }
   
 }

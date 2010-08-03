@@ -103,7 +103,7 @@ public class JCRDataStorage implements DataStorage{
     }   
   }  */
   
-  public boolean renamePage(String pagePath, String newName, String newTitle, ChromatticSession session) throws Exception {
+  /*public boolean renamePage(String pagePath, String newName, String newTitle, ChromatticSession session) throws Exception {
     try {
       Node currentPage = (Node)session.getJCRSession().getItem(pagePath) ;
       List<String> ids;
@@ -139,7 +139,7 @@ public class JCRDataStorage implements DataStorage{
     String removedDate = oldRemoved.getProperty("removedDate").getString().replaceAll(" ", "-").replaceAll(":", "-");
     String newName = oldRemoved.getParent().getPath() + "/" + oldRemoved.getName() + "_" + removedDate ;
     session.getJCRSession().getWorkspace().move(path, newName) ;    
-  }
+  }*/
   
   private List<String> valuesToList(Value[] values) throws Exception {
     List<String> list = new ArrayList<String>();

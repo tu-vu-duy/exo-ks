@@ -187,10 +187,10 @@ public class TestWikiService extends AbstractMOWTestcase {
   public void testDeletePage() throws Exception{    
     wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "deletePage", "WikiHome") ;
     assertTrue(wService.deletePage(PortalConfig.PORTAL_TYPE, "classic", "deletePage")) ;
-    wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "deletePage", "WikiHome") ;
-    assertTrue(wService.deletePage(PortalConfig.PORTAL_TYPE, "classic", "deletePage")) ;    
+    //wait(10) ;
     wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "deletePage", "WikiHome") ;
     assertTrue(wService.deletePage(PortalConfig.PORTAL_TYPE, "classic", "deletePage")) ;
+    
     
     assertNull(wService.getPageById(PortalConfig.PORTAL_TYPE, "classic", "deletePage")) ; 
     assertFalse(wService.deletePage(PortalConfig.PORTAL_TYPE, "classic", "WikiHome")) ;
@@ -315,7 +315,7 @@ public class TestWikiService extends AbstractMOWTestcase {
   public void testCreateHelpPage() throws Exception {
     Model model = mowService.getModel();
     WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
-    Collection<PageImpl> syntaxPages = wStore.getHelpPage().getChildPages();   
+    Collection<PageImpl> syntaxPages = wStore.getHelpPage().getChildPages().values();   
     assertTrue(syntaxPages.size() > 0);
   }
   

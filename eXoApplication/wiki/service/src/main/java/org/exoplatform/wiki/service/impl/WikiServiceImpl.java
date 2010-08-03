@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
@@ -36,6 +37,7 @@ import org.exoplatform.wiki.mow.core.api.wiki.MovedMixin;
 import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.PortalWiki;
 import org.exoplatform.wiki.mow.core.api.wiki.RemovedMixin;
+import org.exoplatform.wiki.mow.core.api.wiki.RenamedMixin;
 import org.exoplatform.wiki.mow.core.api.wiki.Trash;
 import org.exoplatform.wiki.mow.core.api.wiki.UserWiki;
 import org.exoplatform.wiki.mow.core.api.wiki.WikiContainer;
@@ -134,6 +136,7 @@ public class WikiServiceImpl implements WikiService {
       session.setEmbedded(page, RemovedMixin.class, mix);
       mix.setRemovedBy(Utils.getCurrentUser());
       Calendar calendar = GregorianCalendar.getInstance();
+      calendar.setTimeInMillis(new Date().getTime()) ;
       mix.setRemovedDate(calendar.getTime());
       mix.setParentPath(page.getParentPage().getPath());
       WikiImpl wiki = (WikiImpl) getWiki(wikiType, wikiOwner, model);
@@ -143,7 +146,10 @@ public class WikiServiceImpl implements WikiService {
         wiki.setTrash(trash);
       }
       if(trash.isHasPage(page.getName())) {
-        jcrDataStorage.renamePageInTrash(trash.getPath() + "/" + page.getName(), wStore.getSession()) ;        
+        PageImpl oldDeleted = trash.getPage(page.getName()) ;
+        String removedDate = oldDeleted.getRemovedMixin().getRemovedDate().toGMTString() ;
+        String newName = page.getName()+ "_" + removedDate.replaceAll(" ", "-").replaceAll(":", "-");
+        trash.addChild(newName, oldDeleted) ;        
       }      
       trash.addRemovedWikiPage(page);      
       session.save();
@@ -162,9 +168,26 @@ public class WikiServiceImpl implements WikiService {
     if (WikiNodeType.Definition.WIKI_HOME_NAME.equals(pageName) || pageName == null)
       return false;
     PageImpl currentPage = (PageImpl) getPageById(wikiType, wikiOwner, pageName);
-    Model model = getModel();
-    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
-    return jcrDataStorage.renamePage(currentPage.getPath(), newName, newTitle, wStore.getSession());
+    currentPage.getContent().setTitle(newTitle) ;
+    PageImpl parentPage = (PageImpl) getPageById(wikiType, wikiOwner, currentPage.getParentPage().getName());
+    parentPage.addPage(newName, currentPage) ;
+    if(currentPage.getRenamedMixin() != null) {
+      RenamedMixin mix = currentPage.getRenamedMixin() ;
+      List<String> ids = new ArrayList<String>() ;
+      for(String id : mix.getOldPageIds()) {
+        ids.add(id) ;
+      }
+      ids.add(pageName) ;
+      mix.setOldPageIds(ids.toArray(new String[]{}));
+    }else {
+      RenamedMixin mix = parentPage.getChromatticSession().create(RenamedMixin.class);
+      currentPage.setRenamedMixin(mix) ;
+      List<String> ids = new ArrayList<String>() ;
+      ids.add(pageName) ;
+      mix.setOldPageIds(ids.toArray(new String[]{}));
+    }
+    parentPage.getChromatticSession().save() ;
+    return true ;    
   }
 
   public boolean movePage(String pageId,
@@ -477,7 +500,7 @@ public class WikiServiceImpl implements WikiService {
   public PageImpl getHelpSyntaxPage(String syntaxId) {
     Model model = getModel();
     WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
-    Iterator<PageImpl> syntaxPageIterator = wStore.getHelpPage().getChildPages().iterator();
+    Iterator<PageImpl> syntaxPageIterator = wStore.getHelpPage().getChildPages().values().iterator();
     while (syntaxPageIterator.hasNext()) {
       PageImpl syntaxPage = syntaxPageIterator.next();
       if (syntaxPage.getContent().getSyntax().equals(syntaxId)) {

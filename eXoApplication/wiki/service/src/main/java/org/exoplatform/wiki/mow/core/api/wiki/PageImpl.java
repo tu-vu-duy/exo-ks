@@ -19,11 +19,14 @@ package org.exoplatform.wiki.mow.core.api.wiki;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Map;
+
 
 import javax.jcr.Node;
 import javax.jcr.version.Version;
 
 import org.chromattic.api.ChromatticSession;
+
 import org.chromattic.api.DuplicateNameException;
 import org.chromattic.api.RelationshipType;
 import org.chromattic.api.annotations.Create;
@@ -53,9 +56,15 @@ import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
  */
 @PrimaryType(name = WikiNodeType.WIKI_PAGE)
 public abstract class PageImpl implements Page {
-
-  private ChromatticSession session;
-
+  
+  private ChromatticSession session ;
+  public ChromatticSession getChromatticSession(){
+    return session ;
+  }
+  public void setChromatticSession(ChromatticSession s){
+    this.session = s ;
+  }
+  
   private Node getJCRPageNode() throws Exception {
     return (Node) session.getJCRSession().getItem(getPath());
   }
@@ -117,12 +126,12 @@ public abstract class PageImpl implements Page {
   @OneToOne(type = RelationshipType.EMBEDDED)
   @Owner
   public abstract MovedMixin getMovedMixin();
-  public abstract void setMovedMixin(MovedMixin mix);
+  public abstract void setMovedMixin(MovedMixin move);
   
   @OneToOne(type = RelationshipType.EMBEDDED)
   @Owner
   public abstract RemovedMixin getRemovedMixin();
-  public abstract void setRemovedMixin(RemovedMixin mix);
+  public abstract void setRemovedMixin(RemovedMixin remove);
   
   @OneToOne(type = RelationshipType.EMBEDDED)
   @Owner
@@ -215,17 +224,38 @@ public abstract class PageImpl implements Page {
   public abstract void setTrash(Trash trash);
   
   @OneToMany
-  public abstract Collection<PageImpl> getChildPages();
+  public abstract Map<String, PageImpl> getChildPages();
   
-  public void addWikiPage(PageImpl wikiPage) throws DuplicateNameException {
+  /*public void addWikiPage(PageImpl wikiPage) throws DuplicateNameException {
     getChildPages().add(wikiPage);
+  }*/
+  public void addPage(String pageName, PageImpl page) {
+    if (pageName == null) {
+      throw new NullPointerException();
+    }
+    if (page == null) {
+      throw new NullPointerException();
+    }
+    Map<String, PageImpl> children = getChildPages();
+    if (children.containsKey(pageName)) {
+      throw new IllegalStateException();
+    }
+    children.put(pageName, page);
   }
+  
+  public void addWikiPage(PageImpl page) {
+    if (page == null) {
+      throw new NullPointerException();
+    }
+    addPage(page.getName(), page);
+  }
+  
   
   public PageImpl getWikiPage(String pageId){
     if(WikiNodeType.Definition.WIKI_HOME_NAME.equalsIgnoreCase(pageId)){
       return this;
     }
-    Iterator<PageImpl> iter = getChildPages().iterator();
+    Iterator<PageImpl> iter = getChildPages().values().iterator();
     while(iter.hasNext()) {
       PageImpl page = (PageImpl)iter.next() ;
       if (pageId.equals(page.getName()))  return page ;         

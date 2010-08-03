@@ -9,8 +9,8 @@ import org.exoplatform.commons.utils.PageList;
 public interface DataStorage {
   public PageList<SearchResult> search(ChromatticSession session, SearchData data) throws Exception ;
   public InputStream getAttachmentAsStream(String path, ChromatticSession session) throws Exception ;
-  public boolean renamePage(String pagePath, String newName, String newTitle, ChromatticSession session) throws Exception ;
+  //public boolean renamePage(String pagePath, String newName, String newTitle, ChromatticSession session) throws Exception ;
   public List<SearchResult> searchRenamedPage(ChromatticSession session, SearchData data) throws Exception ;
-  public void renamePageInTrash(String path, ChromatticSession session) throws Exception ;
+  //public void renamePageInTrash(String path, ChromatticSession session) throws Exception ;
   
 }

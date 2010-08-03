@@ -18,6 +18,7 @@ package org.exoplatform.wiki.mow.core.api;
 
 import org.exoplatform.wiki.mow.api.Model;
 import org.exoplatform.wiki.mow.api.Page;
+import org.exoplatform.wiki.mow.api.Wiki;
 import org.exoplatform.wiki.mow.api.WikiStore;
 import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
 import org.exoplatform.wiki.mow.api.WikiType;
@@ -94,7 +95,7 @@ public class TestWikiStore extends AbstractMOWTestcase {
     Page wikiHomePage = wiki.getWikiHome();
     assertNotNull(wikiHomePage);
   }
-
+  
   public void testAddAndGetPortalClassicWikiPage() {
     Model model = mowService.getModel();
     WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();

@@ -18,6 +18,7 @@ package org.exoplatform.wiki.webui;
 
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
+import org.exoplatform.webui.core.UIComponent;
 import org.exoplatform.webui.core.UIContainer;
 import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
 import org.exoplatform.webui.event.Event;
@@ -45,6 +46,14 @@ public class UIWikiHistorySpaceArea extends UIContainer {
     addChild(UIWikiPageVersionsCompare.class, null, null).setRendered(false);
   }
 
+  public static void viewRevision(Event<?> event) throws Exception {
+    UIWikiPortlet wikiPortlet = ((UIComponent) event.getSource()).getAncestorOfType(UIWikiPortlet.class);
+    UIWikiPageContentArea pageContentArea = wikiPortlet.findFirstComponentOfType(UIWikiPageContentArea.class);
+    String versionName = event.getRequestContext().getRequestParameter(OBJECTID);
+    pageContentArea.renderVersion(versionName);
+    wikiPortlet.changeMode(WikiMode.VIEW);
+  }
+  
   static public class ReturnViewModeActionListener extends EventListener<UIWikiHistorySpaceArea> {
     @Override
     public void execute(Event<UIWikiHistorySpaceArea> event) throws Exception {

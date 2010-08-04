@@ -81,6 +81,22 @@ public class UIWikiPageVersionsList extends UIForm {
     }
   }
 
+  public void renderVersionsDifference(List<NTVersion> versions) throws Exception {
+    Collections.sort(versions, new VersionNameComparatorDesc());
+    NTVersion toVersion = versions.get(0);
+    String toVersionContent = ((ContentImpl) toVersion.getNTFrozenNode().getChildren().get(WikiNodeType.Definition.CONTENT)).getText();
+    NTVersion fromVersion = versions.get(1);
+    String fromVersionContent = ((ContentImpl) fromVersion.getNTFrozenNode().getChildren().get(WikiNodeType.Definition.CONTENT)).getText();
+    DiffService diffService = this.getApplicationComponent(DiffService.class);
+    UIWikiPageVersionsCompare uiPageVersionsCompare = ((UIWikiHistorySpaceArea) this.getParent()).getChild(UIWikiPageVersionsCompare.class);
+    uiPageVersionsCompare.setRendered(true);
+    uiPageVersionsCompare.setFromVersion(fromVersion);
+    uiPageVersionsCompare.setToVersion(toVersion);
+    uiPageVersionsCompare.setCurrentVersionIndex(String.valueOf(this.versionsList.size()));
+    uiPageVersionsCompare.setDifferencesAsHTML(diffService.getDifferencesAsHTML(fromVersionContent, toVersionContent, true));
+    this.setRendered(false);
+  }
+  
   static public class RestoreActionListener extends EventListener<UIWikiPageVersionsList> {
     @Override
     public void execute(Event<UIWikiPageVersionsList> event) throws Exception {
@@ -98,11 +114,7 @@ public class UIWikiPageVersionsList extends UIForm {
   static public class ViewRevisionActionListener extends EventListener<UIWikiPageVersionsList> {
     @Override
     public void execute(Event<UIWikiPageVersionsList> event) throws Exception {
-      UIWikiPortlet wikiPortlet = event.getSource().getAncestorOfType(UIWikiPortlet.class);
-      UIWikiPageContentArea pageContentArea = wikiPortlet.findFirstComponentOfType(UIWikiPageContentArea.class);
-      String versionName = event.getRequestContext().getRequestParameter(OBJECTID);
-      pageContentArea.renderVersion(versionName);
-      wikiPortlet.changeMode(WikiMode.VIEW);
+      UIWikiHistorySpaceArea.viewRevision(event);
     }
   }
   
@@ -119,22 +131,14 @@ public class UIWikiPageVersionsList extends UIForm {
           uiForm.checkedVersions.remove(uiCheckBox.getId());
         }
       }
+      
       if (uiForm.checkedVersions.size() != 2) {
         uiApp.addMessage(new ApplicationMessage("UIWikiPageVersionsList.checkGroup-required", null, ApplicationMessage.ERROR));
         event.getRequestContext().addUIComponentToUpdateByAjax(uiApp.getUIPopupMessages());
         return;
       } else {
         List<NTVersion> checkedVersions = new ArrayList<NTVersion>(uiForm.checkedVersions.values());
-        Collections.sort(checkedVersions, new VersionNameComparatorDesc());
-        NTVersion toVersion = checkedVersions.get(0);
-        String toVersionContent = ((ContentImpl) toVersion.getNTFrozenNode().getChildren().get(WikiNodeType.Definition.CONTENT)).getText();
-        NTVersion fromVersion = checkedVersions.get(1);
-        String fromVersionContent = ((ContentImpl) fromVersion.getNTFrozenNode().getChildren().get(WikiNodeType.Definition.CONTENT)).getText();
-        DiffService diffService = uiForm.getApplicationComponent(DiffService.class);
-        UIWikiPageVersionsCompare uiPageVersionsCompare = ((UIWikiHistorySpaceArea) uiForm.getParent()).getChild(UIWikiPageVersionsCompare.class);
-        uiPageVersionsCompare.setRendered(true);
-        uiPageVersionsCompare.setDifferencesAsHTML(diffService.getDifferencesAsHTML(fromVersionContent, toVersionContent, true));
-        uiForm.setRendered(false);
+        uiForm.renderVersionsDifference(checkedVersions);
       }
     }
   }

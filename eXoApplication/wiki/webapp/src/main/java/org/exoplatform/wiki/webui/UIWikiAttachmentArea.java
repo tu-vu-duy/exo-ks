@@ -75,7 +75,7 @@ public class UIWikiAttachmentArea extends UIForm {
   private Collection<AttachmentImpl> getAttachmentsList() {
     Collection<AttachmentImpl> attachments = null;
     try {
-      Page page = Utils.getCurrentWikiPage();
+      Page page = getCurrentWikiPage();
       attachments = ((PageImpl) page).getAttachments();
     } catch (Exception e) {
       attachments = new ArrayList<AttachmentImpl>();
@@ -96,6 +96,15 @@ public class UIWikiAttachmentArea extends UIForm {
     return fullName;
   }
 
+  private Page getCurrentWikiPage() throws Exception {
+    UIWikiPortlet wikiPortlet = this.getAncestorOfType(UIWikiPortlet.class);
+    if (wikiPortlet.getWikiMode() == WikiMode.NEW) {
+      return Utils.getCurrentNewDraftWikiPage();
+    } else {
+      return Utils.getCurrentWikiPage();
+    }
+  }
+  
   static public class UploadActionListener extends EventListener<UIWikiAttachmentArea> {
     @Override
     public void execute(Event<UIWikiAttachmentArea> event) throws Exception {
@@ -125,7 +134,7 @@ public class UIWikiAttachmentArea extends UIForm {
       }
       if (attachfile != null) {
         try {
-          Page page = Utils.getCurrentWikiPage();
+          Page page = wikiAttachmentArea.getCurrentWikiPage();
           AttachmentImpl att = ((PageImpl) page).createAttachment(attachfile.getName(), attachfile);
           att.setCreator(event.getRequestContext().getRemoteUser());
           Utils.reparePermissions(att);
@@ -145,7 +154,7 @@ public class UIWikiAttachmentArea extends UIForm {
   static public class DownloadAttachmentActionListener extends EventListener<UIWikiAttachmentArea> {
     public void execute(Event<UIWikiAttachmentArea> event) throws Exception {
       String attId = event.getRequestContext().getRequestParameter(OBJECTID);
-      Page page = Utils.getCurrentWikiPage();
+      Page page = event.getSource().getCurrentWikiPage();
       AttachmentImpl attach = ((PageImpl) page).getAttachment(attId);
       event.getRequestContext().getJavascriptManager().addJavascript("ajaxRedirect('" + attach.getDownloadURL() + "');");
     }
@@ -155,7 +164,7 @@ public class UIWikiAttachmentArea extends UIForm {
     public void execute(Event<UIWikiAttachmentArea> event) throws Exception {
       UIWikiAttachmentArea uiForm = event.getSource();
       String attFileId = event.getRequestContext().getRequestParameter(OBJECTID);
-      Page page = Utils.getCurrentWikiPage();
+      Page page = uiForm.getCurrentWikiPage();
       ((PageImpl) page).removeAttachment(attFileId);
       event.getRequestContext().addUIComponentToUpdateByAjax(uiForm);
     }

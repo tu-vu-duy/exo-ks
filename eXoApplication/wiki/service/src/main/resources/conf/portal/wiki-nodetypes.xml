@@ -232,6 +232,11 @@
           <requiredPrimaryType>wiki:page</requiredPrimaryType>
         </requiredPrimaryTypes>
       </childNodeDefinition>
+      <childNodeDefinition name="draftNewPages" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
+        <requiredPrimaryTypes>
+          <requiredPrimaryType>wiki:page</requiredPrimaryType>
+        </requiredPrimaryTypes>
+      </childNodeDefinition>
     </childNodeDefinitions>
   </nodeType>
 	

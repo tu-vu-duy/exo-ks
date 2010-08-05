@@ -17,9 +17,6 @@
 package org.exoplatform.wiki.service;
 
 
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.chromattic.api.ChromatticSession;
@@ -291,37 +288,9 @@ public class TestWikiService extends AbstractMOWTestcase {
     
   }
   
- /* public void testRevisionMixin() throws Exception {
-    PageImpl page = (PageImpl)wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "RevisionPage", "WikiHome") ;
-    page.getContent().setText("forum faq wiki exoplatform") ;
-    AttachmentImpl attachment1 = page.createAttachment("attachment.txt", Resource.createPlainText("this is a text attachment")) ;
-    
-    
-    Model model = mowService.getModel();
-    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
-    ChromatticSession session = wStore.getSession() ;
-    RevisionMixin revision = session.create(RevisionMixin.class) ;
-    session.setEmbedded(page, RevisionMixin.class, revision) ;
-    
-    page.setRevisionMixin(revision) ;
-    assertTrue(page.getRevisionMixin().getIsCheckedOut()) ;
-    attachment1.setCreator("john") ;
-    page.getContent().setText("forum faq wiki exoplatform edited") ;
-    page.getRevisionMixin().checkIn() ;
-    assertFalse(page.getRevisionMixin().getIsCheckedOut()) ;
-    //System.out.println("page.getRevisionMixin().getIsCheckedOut() ==>" + );
-        
-  }*/
-  public void testCreateHelpPage() throws Exception {
-    Model model = mowService.getModel();
-    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
-    Collection<PageImpl> syntaxPages = wStore.getHelpPage().getChildPages().values();   
-    assertTrue(syntaxPages.size() > 0);
+  public void testGetSyntaxPage() throws Exception {
+    PageImpl syntaxPage = wService.getHelpSyntaxPage(Syntax.XWIKI_2_0.toIdString());
+    assertNotNull(syntaxPage);
   }
-  
-  public void testGetSyntaxPage() throws Exception {    
-    PageImpl syntaxPage=wService.getHelpSyntaxPage(Syntax.XWIKI_2_0.toIdString());
-    assertNotNull(syntaxPage);    
-  }  
   
 }

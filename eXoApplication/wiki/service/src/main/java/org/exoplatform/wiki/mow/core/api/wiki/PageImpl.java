@@ -21,12 +21,10 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
-
 import javax.jcr.Node;
 import javax.jcr.version.Version;
 
 import org.chromattic.api.ChromatticSession;
-
 import org.chromattic.api.DuplicateNameException;
 import org.chromattic.api.RelationshipType;
 import org.chromattic.api.annotations.Create;
@@ -58,19 +56,17 @@ import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
 public abstract class PageImpl implements Page {
   
   private ChromatticSession session ;
-  public ChromatticSession getChromatticSession(){
-    return session ;
+  
+  public ChromatticSession getChromatticSession() {
+    return session;
   }
-  public void setChromatticSession(ChromatticSession s){
-    this.session = s ;
+
+  public void setChromatticSession(ChromatticSession chromatticSession) {
+    session = chromatticSession;
   }
   
   private Node getJCRPageNode() throws Exception {
     return (Node) session.getJCRSession().getItem(getPath());
-  }
-
-  public void setSession(ChromatticSession chromatticSession) {
-    session = chromatticSession;
   }
   
   @Name

@@ -19,7 +19,7 @@ package org.exoplatform.wiki.webui.control.action;
 import java.util.Arrays;
 import java.util.List;
 
-import org.exoplatform.container.PortalContainer;
+import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
@@ -31,7 +31,7 @@ import org.exoplatform.webui.ext.filter.UIExtensionFilter;
 import org.exoplatform.webui.ext.filter.UIExtensionFilters;
 import org.exoplatform.wiki.commons.Utils;
 import org.exoplatform.wiki.mow.api.Page;
-import org.exoplatform.wiki.resolver.PageResolver;
+import org.exoplatform.wiki.service.WikiService;
 import org.exoplatform.wiki.webui.UIWikiPageControlArea;
 import org.exoplatform.wiki.webui.UIWikiPageTitleControlArea;
 import org.exoplatform.wiki.webui.UIWikiPortlet;
@@ -66,12 +66,15 @@ public class CancelActionComponent extends UIComponent {
       UIWikiPortlet wikiPortlet = event.getSource().getAncestorOfType(UIWikiPortlet.class);
       UIWikiPageTitleControlArea pageTitleControlForm = wikiPortlet.findComponentById(UIWikiPageControlArea.TITLE_CONTROL);
       try {
-        String requestURL = Utils.getCurrentRequestURL();
-        PageResolver pageResolver = (PageResolver) PortalContainer.getComponent(PageResolver.class);
-        Page page = pageResolver.resolve(requestURL);
+        Page page = Utils.getCurrentWikiPage();
         pageTitleControlForm.getUIFormInputInfo().setValue(page.getContent().getTitle());
       } catch (Exception e) {
         log.warn("An exception happens when cancel edit page", e);
+      }
+      if (wikiPortlet.getWikiMode() == WikiMode.NEW) {
+        WikiService wikiService = event.getSource().getApplicationComponent(WikiService.class);
+        String sessionId = Util.getPortalRequestContext().getRequest().getSession(false).getId();
+        wikiService.deleteDraftNewPage(sessionId);
       }
       wikiPortlet.changeMode(WikiMode.VIEW);
       super.processEvent(event);

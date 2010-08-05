@@ -36,13 +36,16 @@ import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 public interface WikiService {
 	
 	public Page createPage(String wikiType, String wikiOwner, String title, String parentId) throws Exception ;	
+	public void createDraftNewPage(String draftNewPageId) throws Exception ;
 	public boolean deletePage(String wikiType, String wikiOwner, String pageId) throws Exception ;
+	public void deleteDraftNewPage(String draftNewPageId) throws Exception ;
 	public boolean renamePage(String wikiType, String wikiOwner, String pageName, String newName, String newTitle) throws Exception ;
 	public boolean movePage(String pageId, String newParentId, String wikiType, String srcSpace, String destSpace) throws Exception ;
 	/*public List<Space> getSpaces(String wikiType) throws Exception ;
 	public List<Space> getAllSpaces() throws Exception ;*/
 	
 	public Page getPageById(String wikiType, String wikiOwner, String pageId) throws Exception ;
+	public Page getExsitedOrNewDraftPageById(String wikiType, String wikiOwner, String pageId) throws Exception ;
 	public Page getPageByUUID(String uuid) throws Exception ;	
 	
 	public PageList<ContentImpl> searchContent(String wikiType, String wikiOwner, SearchData data) throws Exception ;

@@ -33,6 +33,7 @@ import org.exoplatform.wiki.service.WikiContext;
 import org.exoplatform.wiki.service.WikiPageParams;
 import org.exoplatform.wiki.webui.UIWikiMaskWorkspace;
 import org.exoplatform.wiki.webui.UIWikiPortlet;
+import org.exoplatform.wiki.webui.WikiMode;
 import org.xwiki.context.Execution;
 import org.xwiki.context.ExecutionContext;
 import org.xwiki.rendering.syntax.Syntax;
@@ -72,6 +73,7 @@ public class UIWikiPagePreview extends UIContainer {
         UIPortal uiPortal = Util.getUIPortal();
         String portalURI = portalRequestContext.getPortalURI();
         String pageNodeSelected = uiPortal.getSelectedNode().getUri();
+        UIWikiPortlet wikiPortlet = this.getAncestorOfType(UIWikiPortlet.class);
         //
         ec.setContext(new ExecutionContext());
         WikiContext wikiContext = new WikiContext();
@@ -80,7 +82,12 @@ public class UIWikiPagePreview extends UIContainer {
         WikiPageParams params = Utils.getCurrentWikiPageParams();
         wikiContext.setType(params.getType());
         wikiContext.setOwner(params.getOwner());
-        wikiContext.setPageId(params.getPageId());
+        if (wikiPortlet.getWikiMode() == WikiMode.NEW) {
+          String sessionId = Util.getPortalRequestContext().getRequest().getSession(false).getId();
+          wikiContext.setPageId(sessionId);
+        } else {
+          wikiContext.setPageId(params.getPageId());
+        }
         ec.getContext().setProperty(WikiContext.WIKICONTEXT, wikiContext);
       }
       

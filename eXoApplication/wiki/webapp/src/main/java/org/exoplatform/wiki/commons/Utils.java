@@ -96,14 +96,19 @@ public class Utils {
 
   public static Page getCurrentWikiPage() throws Exception {
     String requestURL = Utils.getCurrentRequestURL();
-    if (isRenderFullHelpPage()!=null)
-    {
-      Page helpPage= isRenderFullHelpPage();
+    Page helpPage = isRenderFullHelpPage();
+    if (helpPage != null) {
       return helpPage;
     }
     PageResolver pageResolver = (PageResolver) PortalContainer.getComponent(PageResolver.class);
     Page page = pageResolver.resolve(requestURL);
     return page;
+  }
+  
+  public static Page getCurrentNewDraftWikiPage() throws Exception {
+    WikiService wikiService = (WikiService) PortalContainer.getComponent(WikiService.class);
+    String sessionId = Util.getPortalRequestContext().getRequest().getSession(false).getId();
+    return wikiService.getExsitedOrNewDraftPageById(null, null, sessionId);
   }
   
   public static String getDownloadLink(String path, String filename, DownloadService dservice){

@@ -24,6 +24,7 @@ import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.wiki.service.WikiService;
 
 /**
  * Created by The eXo Platform SAS
@@ -37,17 +38,21 @@ public class SessionDestroyedListener extends Listener<PortalContainer, HttpSess
 
   @Override
   public void onEvent(Event<PortalContainer, HttpSessionEvent> event) throws Exception {
+    String sessionId = event.getData().getSession().getId();
     if (LOG.isTraceEnabled()) {
-      LOG.trace("Removing the key: " + event.getData().getSession().getId());
+      LOG.trace("Removing the key: " + sessionId);
     }
     try {
       SessionManager sessionManager = (SessionManager) RootContainer.getComponent(SessionManager.class);
-      sessionManager.removeSessionContainer(event.getData().getSession().getId());
+      sessionManager.removeSessionContainer(sessionId);
     } catch (Exception e) {
-      LOG.warn("Can't remove the key: " + event.getData().getSession().getId(), e);
+      LOG.warn("Can't remove the key: " + sessionId, e);
     }
     if (LOG.isTraceEnabled()) {
-      LOG.trace("Removed the key: " + event.getData().getSession().getId());
+      LOG.trace("Removed the key: " + sessionId);
     }
+
+    WikiService wikiService = (WikiService) PortalContainer.getComponent(WikiService.class);
+    wikiService.deleteDraftNewPage(sessionId);
   }
 }

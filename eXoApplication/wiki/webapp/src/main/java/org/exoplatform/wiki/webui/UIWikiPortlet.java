@@ -92,10 +92,10 @@ public class UIWikiPortlet extends UIPortletApplication {
         changeMode(WikiMode.VIEW) ;
       }
     }
-    if (Utils.isRenderFullHelpPage()!=null)
-    {
-      changeMode(WikiMode.HELP);     
-      page = Utils.isRenderFullHelpPage();      
+    Page helpPage = Utils.isRenderFullHelpPage();
+    if (helpPage != null) {
+      changeMode(WikiMode.HELP);
+      page = helpPage;
     }
     WikiPageParams pageParams = Utils.getCurrentWikiPageParams();
     if (WikiContext.ADDPAGE.equalsIgnoreCase(pageParams.getParameter(WikiContext.ACTION))) {
@@ -146,10 +146,8 @@ public class UIWikiPortlet extends UIPortletApplication {
       case VIEW:
         switch(mode){
           case EDIT:
-            switchViewEditMode(true);
-            break;
           case NEW:
-            switchViewNewMode(true);
+            switchViewEditMode(true);
             break;
           case SEARCH:
             switchViewSearchMode(true);
@@ -178,7 +176,7 @@ public class UIWikiPortlet extends UIPortletApplication {
       case NEW:
         switch(mode){
           case VIEW:
-            switchViewNewMode(false);
+            switchViewEditMode(false);
             break;
         }
         break;
@@ -233,20 +231,6 @@ public class UIWikiPortlet extends UIPortletApplication {
     if(!isRichTextRendered){
     wikiPageEditForm.getChild(UIWikiSidePanelArea.class).setRendered(isViewToEdit);
     }    
-  }
-  
-  private void switchViewNewMode(boolean isViewToNew){
-    findFirstComponentOfType(UIWikiPageControlArea.class).setRendered(!isViewToNew);
-    findFirstComponentOfType(UIWikiPageContentArea.class).setRendered(!isViewToNew);
-    findFirstComponentOfType(UIWikiAttachmentArea.class).setRendered(isViewToNew);
-    UIWikiPageEditForm wikiPageEditForm = findFirstComponentOfType(UIWikiPageEditForm.class).setRendered(isViewToNew);
-    findFirstComponentOfType(UIWikiBottomArea.class).setRendered(!isViewToNew);   
-    
-    UIWikiRichTextArea wikiRichTextArea = wikiPageEditForm.getChild(UIWikiRichTextArea.class);
-    boolean isRichTextRendered = wikiRichTextArea.isRendered();
-    if(!isRichTextRendered){
-    wikiPageEditForm.getChild(UIWikiSidePanelArea.class).setRendered(isViewToNew);
-    }
   }
   
   private void switchViewSearchMode(boolean isViewToSearch){

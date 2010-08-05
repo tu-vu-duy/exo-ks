@@ -28,7 +28,6 @@ import org.exoplatform.wiki.mow.api.Wiki;
 import org.exoplatform.wiki.mow.api.WikiNodeType;
 import org.exoplatform.wiki.mow.api.WikiType;
 import org.exoplatform.wiki.mow.core.api.MOWService;
-import org.exoplatform.wiki.mow.core.api.ModelImpl;
 import org.exoplatform.wiki.mow.core.api.WikiStoreImpl;
 import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.AttachmentImpl;
@@ -105,9 +104,21 @@ public class WikiServiceImpl implements WikiService {
     page.setOwner(creator);
     page.getContent().setTitle(title);
     page.makeVersionable();
-    page.setSession(wStore.getSession());
+    page.setChromatticSession(wStore.getSession());
     model.save();
     return page;
+  }
+  
+  public void createDraftNewPage(String draftNewPageId) throws Exception {
+    Model model = getModel();
+    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
+    PageImpl draftNewPagesContainer = wStore.getDraftNewPagesContainer();
+    PageImpl oldDraftPage = draftNewPagesContainer.getChildPages().get(draftNewPageId);
+    if (oldDraftPage != null) {
+      oldDraftPage.remove();
+    }
+    PageImpl draftNewPage = wStore.createPage();
+    draftNewPagesContainer.getChildPages().put(draftNewPageId, draftNewPage);
   }
   
   public boolean isExisting(String wikiType, String wikiOwner, String pageId) throws Exception {
@@ -158,6 +169,13 @@ public class WikiServiceImpl implements WikiService {
       return false;
     }
     return true;    
+  }
+  
+  public void deleteDraftNewPage(String newDraftPageId) throws Exception {
+    Model model = getModel();
+    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
+    PageImpl draftNewPagesContainer = wStore.getDraftNewPagesContainer();
+    draftNewPagesContainer.getChildPages().remove(newDraftPageId);
   }
 
   public boolean renamePage(String wikiType,
@@ -242,6 +260,17 @@ public class WikiServiceImpl implements WikiService {
     return null;
   }
 
+  public Page getExsitedOrNewDraftPageById(String wikiType, String wikiOwner, String pageId) throws Exception {
+    Page existedPage = getPageById(wikiType, wikiOwner, pageId);
+    if (existedPage != null) {
+      return existedPage;
+    }
+    Model model = getModel();
+    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
+    PageImpl draftNewPagesContainer = wStore.getDraftNewPagesContainer();
+    return draftNewPagesContainer.getChildPages().get(pageId);
+  }
+  
   public Page getPageByUUID(String uuid) throws Exception {
     // TODO Auto-generated method stub
     return null;
@@ -339,6 +368,22 @@ public class WikiServiceImpl implements WikiService {
     return getBreadcumb(null, wikiType, wikiOwner, pageId);
   }
 
+  public PageImpl getHelpSyntaxPage(String syntaxId) {
+    Model model = getModel();
+    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
+    if (wStore.getHelpPagesContainer().getChildPages().size() == 0) {
+      createHelpPages(wStore);
+    }
+    Iterator<PageImpl> syntaxPageIterator = wStore.getHelpPagesContainer().getChildPages().values().iterator();
+    while (syntaxPageIterator.hasNext()) {
+      PageImpl syntaxPage = syntaxPageIterator.next();
+      if (syntaxPage.getContent().getSyntax().equals(syntaxId)) {
+        return syntaxPage;
+      }
+    }
+    return null;
+  }
+  
   public String getDefaultWikiSyntaxId() {
     return Syntax.XWIKI_2_0.toIdString();
   }
@@ -412,14 +457,13 @@ public class WikiServiceImpl implements WikiService {
       wikiPage = session.findByPath(PageImpl.class, path);
     }
     if (wikiPage != null) {
-      wikiPage.setSession(session);
+      wikiPage.setChromatticSession(session);
     }
     return wikiPage;
   }
 
   private Wiki getWiki(String wikiType, String owner, Model model) {
     WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
-    createHelpPages();
     WikiImpl wiki = null;
     if (PortalConfig.PORTAL_TYPE.equals(wikiType)) {
       WikiContainer<PortalWiki> portalWikiContainer = wStore.getWikiContainer(WikiType.PORTAL);
@@ -440,7 +484,7 @@ public class WikiServiceImpl implements WikiService {
     WikiImpl wiki = (WikiImpl) getWiki(wikiType, owner, model);
     if (wiki != null) {
       WikiHome wikiHome = wiki.getWikiHome();
-      wikiHome.setSession(((WikiStoreImpl) model.getWikiStore()).getSession());
+      wikiHome.setChromatticSession(((WikiStoreImpl) model.getWikiStore()).getSession());
       return wikiHome;
     } else {
       return null;
@@ -471,43 +515,22 @@ public class WikiServiceImpl implements WikiService {
     return list;
   }
 
-  private void createHelpPages() {
-
-    ModelImpl model = (ModelImpl) getModel();
-    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
-    if (wStore.getHelpPage() == null) {
-      PageImpl helpPage = wStore.createHelpPage();
-      wStore.setHelpPage(helpPage);
-      while (syntaxHelpParams.hasNext()) {
-        try {
-          ValuesParam syntaxhelpParam = syntaxHelpParams.next();
-          String syntaxName = syntaxhelpParam.getName();
-          ArrayList<String> syntaxValues = syntaxhelpParam.getValues();
-          String shortFile = syntaxValues.get(0);
-          String fullFile = syntaxValues.get(1);
-          PageImpl syntaxPage = addSyntaxPage(wStore, helpPage, syntaxName, shortFile, " Short help Page");
-          addSyntaxPage(wStore, syntaxPage, syntaxName, fullFile, " Full help Page");
-        } catch (Exception e) {
-          // TODO Auto-generated catch block       
-            log.error("Can not create Help page", e);
-        }
-      }
-
-    }
-
-  }
-
-  public PageImpl getHelpSyntaxPage(String syntaxId) {
-    Model model = getModel();
-    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
-    Iterator<PageImpl> syntaxPageIterator = wStore.getHelpPage().getChildPages().values().iterator();
-    while (syntaxPageIterator.hasNext()) {
-      PageImpl syntaxPage = syntaxPageIterator.next();
-      if (syntaxPage.getContent().getSyntax().equals(syntaxId)) {
-        return syntaxPage;
+  private void createHelpPages(WikiStoreImpl wStore) {
+    PageImpl helpPage = wStore.getHelpPagesContainer();
+    while (syntaxHelpParams.hasNext()) {
+      try {
+        ValuesParam syntaxhelpParam = syntaxHelpParams.next();
+        String syntaxName = syntaxhelpParam.getName();
+        ArrayList<String> syntaxValues = syntaxhelpParam.getValues();
+        String shortFile = syntaxValues.get(0);
+        String fullFile = syntaxValues.get(1);
+        PageImpl syntaxPage = addSyntaxPage(wStore, helpPage, syntaxName, shortFile, " Short help Page");
+        addSyntaxPage(wStore, syntaxPage, syntaxName, fullFile, " Full help Page");
+      } catch (Exception e) {
+        // TODO Auto-generated catch block
+        log.error("Can not create Help page", e);
       }
     }
-    return null;
   }
 
   private PageImpl addSyntaxPage(WikiStoreImpl wStore,
@@ -525,7 +548,7 @@ public class WikiServiceImpl implements WikiService {
       stringContent.append(tempLine + "\n");
     }
 
-    PageImpl syntaxPage = wStore.createHelpPage();
+    PageImpl syntaxPage = wStore.createPage();
     String realName = name.replace("/", "");
     syntaxPage.setName(realName + type);
     syntaxPage.setParentPage(parentPage);

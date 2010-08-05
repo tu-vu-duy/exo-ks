@@ -87,6 +87,11 @@ public class UIWikiRichTextArea extends UIContainer {
     } catch (Exception e) {
       log.warn("Can't get current wiki page params", e);
     }
+    UIWikiPortlet wikiPortlet = this.getAncestorOfType(UIWikiPortlet.class);
+    if (wikiPortlet.getWikiMode() == WikiMode.NEW) {
+      String sessionId = Util.getPortalRequestContext().getRequest().getSession(false).getId();
+      wikiPageParams.setPageId(sessionId);
+    }
     return wikiPageParams;
   }
   

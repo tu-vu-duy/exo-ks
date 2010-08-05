@@ -71,7 +71,7 @@ public class DefaultWikiModel implements WikiModel {
     PageImpl page = null;
     try {
       WikiService wikiService = (WikiService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(WikiService.class);
-      page = (PageImpl) wikiService.getPageById(wikiMarkupContext.getType(),wikiMarkupContext.getOwner(),wikiMarkupContext.getPageId());
+      page = (PageImpl) wikiService.getExsitedOrNewDraftPageById(wikiMarkupContext.getType(),wikiMarkupContext.getOwner(),wikiMarkupContext.getPageId());
       if (page != null) {
         sb.append(page.getWorkspace());
         sb.append(page.getPath());

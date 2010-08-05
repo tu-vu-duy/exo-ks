@@ -27,13 +27,8 @@ import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.form.UIForm;
 import org.exoplatform.webui.form.UIFormSelectBox;
-import org.exoplatform.webui.form.UIFormStringInput;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
-import org.exoplatform.wiki.commons.Utils;
-import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.webui.control.UIPageToolBar;
-import org.exoplatform.wiki.webui.control.action.EditPageActionComponent;
-import org.exoplatform.wiki.webui.control.listener.UIPageToolBarActionListener;
 import org.xwiki.rendering.syntax.Syntax;
 
 /**

@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.exoplatform.container.PortalContainer;
+import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIComponent;
@@ -85,7 +85,9 @@ public class AddPageActionComponent extends UIComponent {
     titleInput.setValue(UIWikiPageEditForm.UNTITLED);
     titleInput.setEditable(true);
     markupInput.setValue("This is **sample content**");
-    WikiService wikiService = (WikiService) PortalContainer.getComponent(WikiService.class);
+    WikiService wikiService = wikiPortlet.getApplicationComponent(WikiService.class);
+    String sessionId = Util.getPortalRequestContext().getRequest().getSession(false).getId();
+    wikiService.createDraftNewPage(sessionId);
     syntaxTypeSelectBox.setValue(wikiService.getDefaultWikiSyntaxId());
     UIWikiSidePanelArea sidePanelForm = pageEditForm.findFirstComponentOfType(UIWikiSidePanelArea.class);
     sidePanelForm.renderHelpContent(syntaxTypeSelectBox.getValue());

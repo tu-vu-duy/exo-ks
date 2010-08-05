@@ -84,6 +84,27 @@ public abstract class WikiStoreImpl implements WikiStore {
     }
   }
 
+  @Create
+  public abstract PageImpl createPage();
+  
+  public PageImpl getHelpPagesContainer() {
+    PageImpl page = getHelpPageByChromattic();
+    if (page == null) {
+      page = createPage();
+      setHelpPageByChromattic(page);
+    }
+    return page;
+  }
+  
+  public PageImpl getDraftNewPagesContainer() {
+    PageImpl page = getDraftNewPagesContainerByChromattic();
+    if (page == null) {
+      page = createPage();
+      setDraftNewPagesContainerByChromattic(page);
+    }
+    return page;
+  }
+  
   @OneToOne
   @Owner
   @MappedBy(WikiNodeType.Definition.PORTAL_WIKI_CONTAINER_NAME)
@@ -113,6 +134,20 @@ public abstract class WikiStoreImpl implements WikiStore {
 
   @Create
   protected abstract UserWikiContainer createUserWikiContainer();
+  
+  @OneToOne
+  @Owner
+  @MappedBy(WikiNodeType.Definition.HELP_PAGES)
+  protected abstract PageImpl getHelpPageByChromattic();
+  
+  protected abstract void setHelpPageByChromattic(PageImpl page);
+  
+  @OneToOne
+  @Owner
+  @MappedBy(WikiNodeType.Definition.DRAFT_NEW_PAGES)
+  protected abstract PageImpl getDraftNewPagesContainerByChromattic();
+
+  protected abstract void setDraftNewPagesContainerByChromattic(PageImpl page);
 
   private PortalWikiContainer getPortalWikiContainer() {
     PortalWikiContainer portalWikiContainer = getPortalWikiContainerByChromattic();
@@ -140,15 +175,5 @@ public abstract class WikiStoreImpl implements WikiStore {
     }
     return userWikiContainer;
   }
-
-  @OneToOne
-  @Owner
-  @MappedBy(WikiNodeType.Definition.HELP_PAGES)
-  public abstract PageImpl getHelpPage();
-
-  public abstract void setHelpPage(PageImpl page);
-
-  @Create
-  public abstract PageImpl createHelpPage();
   
 }

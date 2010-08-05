@@ -85,7 +85,7 @@ public class DefaultWikiService implements WikiService {
       List<Attachment> attachments = new ArrayList<Attachment>();
       DocumentReference documentReference = prepareDocumentReference(wikiName, spaceName, pageName);
       org.exoplatform.wiki.service.WikiService wservice = (org.exoplatform.wiki.service.WikiService) PortalContainer.getComponent(org.exoplatform.wiki.service.WikiService.class);
-      Page page = wservice.getPageById(wikiName, spaceName, pageName);
+      Page page = wservice.getExsitedOrNewDraftPageById(wikiName, spaceName, pageName);
       Collection<AttachmentImpl> attachs = ((PageImpl) page).getAttachments();
       for (AttachmentImpl attach : attachs) {
         Attachment currentAttach = new Attachment();

@@ -43,6 +43,8 @@ public class Utils {
 	final public static String EXO_FAQQUESTIONHOME = "exo:faqQuestionHome".intern() ;
 	final public static String EXO_FAQCATEGORYHOME = "exo:faqCategoryHome".intern() ;
 	final public static String ALL = "All".intern() ;
+
+	final public static String UI_FAQ_VIEWER = "UIFAQViewer".intern();
 	/**
 	 *  This method convert string to string[] split with comma
 	 * @param str

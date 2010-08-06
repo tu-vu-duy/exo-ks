@@ -38,17 +38,40 @@ UIWikiAjaxRequest.prototype.autoCheckAnchor = function() {
   eXo.wiki.UIWikiAjaxRequest.checkAnchor();
 };
 
+UIWikiAjaxRequest.prototype.getCurrentHash = function() {
+  var r = window.location.href;
+  var i = r.indexOf("#");
+  return (i >= 0 ? r.substr(i + 1) : false);
+};
+
+UIWikiAjaxRequest.prototype.urlHasActionParameters = function() {
+  var r = window.location.href;
+  var i = r.indexOf("?");
+  if (i >= 0) {
+    r = r.substr(i + 1);
+    if (r && r.length > 0) {
+      i = r.indexOf("action=");
+      if (i >= 0) {
+        return true;
+      }
+      i = r.indexOf("op=");
+      return (i >= 0 ? true : false);
+    }
+  }
+  return false;
+};
+
 UIWikiAjaxRequest.prototype.checkAnchor = function() {
   // Check if it has changes
-  if (this.currentAnchor != document.location.hash) {
-    this.currentAnchor = document.location.hash;
+  if (this.currentAnchor != this.getCurrentHash()) {
+    this.currentAnchor = this.getCurrentHash();
     var action = null;
-    if (this.currentAnchor) {
-      var splits = this.currentAnchor.substring(1).split('&');
+    if (this.currentAnchor && this.currentAnchor.length > 0) {
+      var splits = this.currentAnchor.split('&');
       // Get the action name
       action = splits[0];
       action = document.getElementById(this.actionPrefix + action);
-    } else {
+    } else if (!this.urlHasActionParameters()) {
       action = document.getElementById(this.actionPrefix + this.defaultAction);
     }
     if (action) {

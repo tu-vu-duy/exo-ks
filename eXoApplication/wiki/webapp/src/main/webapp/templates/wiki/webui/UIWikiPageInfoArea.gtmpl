@@ -14,6 +14,7 @@
   author = (author != null) ? author : "anonymous";
   String updatedDate = df.format(currentWikiPage.getUpdatedDate());
   int attachmentsTotal =  currentWikiPage.getAttachments().size();
+  int versionsTotal = currentWikiPage.getVersionableMixin().getVersionHistory().getChildren().size() -1 ;
   
   String historyAnchor = "#" + uicomponent.SHOW_HISTORY;
   String historyActionId = UIWikiPortlet.WIKI_PORTLET_ACTION_PREFIX + uicomponent.SHOW_HISTORY;
@@ -27,5 +28,5 @@
 	  <a class="Link" href="$historyAnchor">(view change)</a>
 	  <a onclick="<%=uicomponent.event(uicomponent.SHOW_HISTORY);%>" id="$historyActionId" style="display:none;">&nbsp;</a>
 	</div>
-	<div class="TxtFeed"><b><%= attachmentsTotal %> </b><a class="Link" href="$togglelink">attachment (s)</a>  - <b>15</b> <a class="Link" href="">visitors</a></div>
+	<div class="TxtFeed"><b><%= attachmentsTotal %> </b><a class="Link" href="$togglelink">attachment (s)</a>  - <b><%= versionsTotal %></b> <a class="Link" href="">revisions</a></div>
 </div>

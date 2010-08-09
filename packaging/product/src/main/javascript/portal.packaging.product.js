@@ -31,7 +31,7 @@ function getProduct(version) {
   product.addDependencies(portal.web.portal);
   //product.addDependencies(portal.sample.extension) ; // CHANGED for KS, we don't want a rogue sample
   
-  portal.fck = new Project("org.exoplatform.platform", "exo.platform.web.fck", "war", "${org.exoplatform.platform.version}");
+  portal.fck = new Project("org.exoplatform.commons", "exo.platform.commons.fck", "war", "${org.exoplatform.commons.version}");
   portal.fck.deployName = "fck";
   product.addDependencies(portal.fck);
 

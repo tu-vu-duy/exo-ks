@@ -5,7 +5,7 @@
   
   <parent>
     <groupId>org.exoplatform.ks</groupId>
-    <artifactId>exo.ks.eXoApplication</artifactId>
+    <artifactId>ks</artifactId>
     <version>2.1.0-SNAPSHOT</version>
   </parent>  
   
@@ -16,7 +16,6 @@
   
   <properties>
     <org.chromattic.version>1.0.3</org.chromattic.version>
-    <org.exoplatform.platform.version>3.0.0-Alpha04-SNAPSHOT</org.exoplatform.platform.version>
     <org.xwiki.platform.version>2.3.1</org.xwiki.platform.version>
     <org.wikimodel.version>2.0.7-20100520</org.wikimodel.version>
     <gwt.version>2.0.0</gwt.version>

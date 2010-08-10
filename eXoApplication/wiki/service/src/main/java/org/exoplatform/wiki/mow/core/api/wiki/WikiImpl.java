@@ -16,6 +16,7 @@
  */
 package org.exoplatform.wiki.mow.core.api.wiki;
 
+import org.chromattic.api.UndeclaredRepositoryException;
 import org.chromattic.api.annotations.Create;
 import org.chromattic.api.annotations.MappedBy;
 import org.chromattic.api.annotations.Name;
@@ -67,6 +68,12 @@ public abstract class WikiImpl implements Wiki {
       content.setTitle(WikiNodeType.Definition.WIKI_HOME_TITLE) ;
       content.setSyntax(Syntax.XWIKI_2_0.toIdString());
       content.setText("This is a [[**wiki home page of " + getOwner()+"**>>" + WikiNodeType.Definition.WIKI_HOME_TITLE +"]]") ;
+      try {
+        home.checkin();
+        home.checkout();
+      } catch (Exception e) {
+        throw new UndeclaredRepositoryException("Can't create new version for WikiHome");
+      }
     }
     return home;
   }

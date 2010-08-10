@@ -104,7 +104,6 @@ public class WikiServiceImpl implements WikiService {
     page.setOwner(creator);
     page.getContent().setTitle(title);
     page.makeVersionable();
-    page.setChromatticSession(wStore.getSession());
     model.save();
     return page;
   }
@@ -457,7 +456,6 @@ public class WikiServiceImpl implements WikiService {
       wikiPage = session.findByPath(PageImpl.class, path);
     }
     if (wikiPage != null) {
-      wikiPage.setChromatticSession(session);
     }
     return wikiPage;
   }
@@ -484,7 +482,6 @@ public class WikiServiceImpl implements WikiService {
     WikiImpl wiki = (WikiImpl) getWiki(wikiType, owner, model);
     if (wiki != null) {
       WikiHome wikiHome = wiki.getWikiHome();
-      wikiHome.setChromatticSession(((WikiStoreImpl) model.getWikiStore()).getSession());
       return wikiHome;
     } else {
       return null;

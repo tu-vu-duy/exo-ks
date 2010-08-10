@@ -18,8 +18,8 @@ package org.exoplatform.wiki.mow.core.api;
 
 import org.chromattic.api.Chromattic;
 import org.chromattic.api.ChromatticSession;
-import org.exoplatform.commons.chromattic.ChromatticLifeCycle;
 import org.exoplatform.commons.chromattic.ChromatticManager;
+import org.exoplatform.wiki.service.impl.WikiChromatticLifeCycle;
 
 /**
  * @author <a href="mailto:patrice.lamarque@exoplatform.com">Patrice
@@ -28,18 +28,23 @@ import org.exoplatform.commons.chromattic.ChromatticManager;
  */
 public class MOWService {
 
-  private ChromatticManager   chromatticManager;
+  private ChromatticManager chromatticManager;
 
-  private ChromatticLifeCycle chromatticLifeCycle;
+  private WikiChromatticLifeCycle chromatticLifeCycle;
 
   public MOWService(ChromatticManager chromatticManager) {
     this.chromatticManager = chromatticManager;
-    this.chromatticLifeCycle = chromatticManager.getLifeCycle("wiki");
+    this.chromatticLifeCycle = (WikiChromatticLifeCycle) chromatticManager.getLifeCycle("wiki");
+    this.chromatticLifeCycle.setMOWService(this);
   }
 
   public ModelImpl getModel() {
     Chromattic chromattic = chromatticLifeCycle.getChromattic();
     ChromatticSession chromeSession = chromattic.openSession();
     return new ModelImpl(chromeSession);
+  }
+
+  public ChromatticSession getSession() {
+    return chromatticLifeCycle.getContext().getSession();
   }
 }

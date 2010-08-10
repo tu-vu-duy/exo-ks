@@ -132,7 +132,6 @@ public abstract class AbstractMOWTestcase extends TestCase {
     wikipage.setName(pageName);
     wikiHomePage.addWikiPage(wikipage);
     wikipage.makeVersionable();
-    wikipage.setChromatticSession(((WikiStoreImpl)model.getWikiStore()).getSession());
     return wikipage;
   }
   

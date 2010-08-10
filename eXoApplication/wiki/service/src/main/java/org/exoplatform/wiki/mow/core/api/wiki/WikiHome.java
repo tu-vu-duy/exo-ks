@@ -16,20 +16,10 @@
  */
 package org.exoplatform.wiki.mow.core.api.wiki;
 
-import java.util.Collection;
-import java.util.Iterator;
-
-import org.chromattic.api.DuplicateNameException;
 import org.chromattic.api.annotations.MappedBy;
-import org.chromattic.api.annotations.OneToMany;
 import org.chromattic.api.annotations.OneToOne;
-import org.chromattic.api.annotations.Owner;
 import org.chromattic.api.annotations.PrimaryType;
-import org.chromattic.api.annotations.Property;
-import org.exoplatform.wiki.mow.api.Attachment;
-import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.mow.api.WikiNodeType;
-import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
 
 /**
  * Created by The eXo Platform SAS

@@ -39,7 +39,7 @@
           creator = attachment.getCreator();
           creator = uicomponent.getFullName(creator);
         }
-        downloadLink = uicomponent.event(uicomponent.DOWNLOAD_ACTION, attachment.getName());
+        downloadLink = attachment.getDownloadURL();
         deleteLink = uicomponent.event(uicomponent.DELETE_ACTION, attachment.getName());
     %>
         <tr class="$rowClass">

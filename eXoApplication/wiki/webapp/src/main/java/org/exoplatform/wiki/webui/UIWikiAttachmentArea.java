@@ -54,7 +54,6 @@ import org.exoplatform.wiki.webui.form.UIFormUploadInput;
   template = "app:/templates/wiki/webui/UIWikiAttachmentArea.gtmpl",
   events = {
     @EventConfig(listeners = UIWikiAttachmentArea.UploadActionListener.class),
-    @EventConfig(listeners = UIWikiAttachmentArea.DownloadAttachmentActionListener.class, phase = Phase.DECODE),
     @EventConfig(listeners = UIWikiAttachmentArea.RemoveAttachmentActionListener.class, phase = Phase.DECODE)
   }
 )
@@ -148,15 +147,6 @@ public class UIWikiAttachmentArea extends UIForm {
         wikiAttachmentArea.addChild(uiInput);
       }
       
-    }
-  }
-  
-  static public class DownloadAttachmentActionListener extends EventListener<UIWikiAttachmentArea> {
-    public void execute(Event<UIWikiAttachmentArea> event) throws Exception {
-      String attId = event.getRequestContext().getRequestParameter(OBJECTID);
-      Page page = event.getSource().getCurrentWikiPage();
-      AttachmentImpl attach = ((PageImpl) page).getAttachment(attId);
-      event.getRequestContext().getJavascriptManager().addJavascript("ajaxRedirect('" + attach.getDownloadURL() + "');");
     }
   }
 

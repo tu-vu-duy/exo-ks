@@ -44,6 +44,7 @@ import org.exoplatform.wiki.chromattic.ext.ntdef.NTVersion;
 import org.exoplatform.wiki.chromattic.ext.ntdef.VersionableMixin;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.mow.api.WikiNodeType;
+import org.exoplatform.wiki.mow.core.api.MOWService;
 import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
 
 /**
@@ -55,18 +56,18 @@ import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
 @PrimaryType(name = WikiNodeType.WIKI_PAGE)
 public abstract class PageImpl implements Page {
   
-  private ChromatticSession session ;
-  
-  public ChromatticSession getChromatticSession() {
-    return session;
+  private MOWService mowService;
+
+  public void setMOWService(MOWService mowService) {
+    this.mowService = mowService;
   }
 
-  public void setChromatticSession(ChromatticSession chromatticSession) {
-    session = chromatticSession;
+  public ChromatticSession getChromatticSession() {
+    return mowService.getSession();
   }
   
   private Node getJCRPageNode() throws Exception {
-    return (Node) session.getJCRSession().getItem(getPath());
+    return (Node) getChromatticSession().getJCRSession().getItem(getPath());
   }
   
   @Name
@@ -151,10 +152,10 @@ public abstract class PageImpl implements Page {
   
   //TODO: replace by @Checkin when Chromattic support
   public NTVersion checkin() throws Exception {
-    session.save();
+    getChromatticSession().save();
     Node pageNode = getJCRPageNode();
     Version newVersion = pageNode.checkin();
-    NTVersion ntVersion = session.findByNode(NTVersion.class, newVersion);
+    NTVersion ntVersion = getChromatticSession().findByNode(NTVersion.class, newVersion);
     return ntVersion;
   }
 
@@ -183,6 +184,7 @@ public abstract class PageImpl implements Page {
     if (contentResource != null) {
       file.setContentResource(contentResource);      
     }
+    getChromatticSession().save();
     return file;
   }
   

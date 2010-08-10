@@ -174,7 +174,7 @@
     <component-plugin>
       <name>chromattic</name>
       <set-method>addLifeCycle</set-method>
-      <type>org.exoplatform.commons.chromattic.ChromatticLifeCycle</type>
+      <type>org.exoplatform.wiki.service.impl.WikiChromatticLifeCycle</type>
       <init-params>
         <value-param>
           <name>domain-name</name>

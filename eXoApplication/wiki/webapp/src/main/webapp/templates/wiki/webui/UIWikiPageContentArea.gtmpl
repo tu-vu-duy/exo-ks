@@ -4,6 +4,23 @@
   PageMode pageMode = uicomponent.getPageMode();
 %>
 <div class="UIWikiPageContentArea">
+	<div class="DecorationVersion">
+		<span class="Label"> You're viewing and old version of this page. view the </span> <a href="#" class="Title">Current Version</a>
+		<div class="ActionLink"><a href="#">Compare with Current</a>&nbsp;|&nbsp;<a href="#">Restore this Versionv</a>&nbsp;|&nbsp;<a href="#">View Page History</a></div>
+	</div>
+	<div class="Breadcum"><a href="#">Priv</a><span class="Label"> &nbsp;&nbsp; Version 1 &nbsp;&nbsp;</span> <a href="#">Next</a></div>
+	<div class="LabelContent">Lorem ipsum dolor sit amet</div>
+	<div class="TextContent">Consectetur adipiscing elit. Quisque egestas, nisl hendrerit tincidunt posuere, erat lorem interdum ante, ac tincidunt orci ligula nec quam.</div>
+	
+
+
+
+
+
+
+
+
+
   <!--
 	<p><b class="Tit">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</b><br/>Nunc ac velit tortor. Cras nibh metus, sollicitudin et molestie viverra, tristique vel nunc. Aliquam commodo, nunc rutrum tempus ultrices, urna augue interdum nisi, malesuada faucibus risus velit eget risus. Sed ipsum orci, lobortis id volutpat condimentum, adipiscing ut leo. Curabitur vel sem lacus. Nam consequat ligula et tellus egestas nec viverra leo feugiat. Curabitur tincidunt elementum tortor, a aliquam purus euismod et. Quisque placerat facilisis aliquet. Nulla convallis fringilla velit vel adipiscing. Duis laoreet eleifend nunc, sit amet pretium augue lobortis in. Fusce lobortis, diam in tincidunt consequat, erat lorem ornare magna, ac sagittis odio purus vel enim.</p>
 	<p><b class="Tit">Aliquam erat volutpat.</b><br/>Quisque egestas rutrum ultricies. Phasellus porta ante et arcu auctor at mattis nisi porttitor. Maecenas et semper quam. Aliquam tellus urna, tincidunt ac posuere at, varius eu neque. Vestibulum semper lacinia consectetur. Integer eu dapibus nibh. Nam hendrerit leo vitae felis pellentesque in mattis sapien dignissim. In pharetra laoreet lectus, vel luctus quam imperdiet id. Nullam interdum convallis ligula non fringilla. Maecenas ante odio, luctus vitae gravida sed, ullamcorper ut odio. Donec non enim vitae massa tincidunt placerat. Pellentesque nec dui ipsum. Proin et sollicitudin sapien. Nunc sed consequat orci.</p>

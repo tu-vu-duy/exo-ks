@@ -401,9 +401,58 @@
   min-height: 300px;
 }
 
-.UIWikiPageContentArea {
-	
+.UIWikiPageContentArea .DecorationVersion{
+	background: #eeeeee;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	padding: 8px;
 }
+
+.UIWikiPageContentArea .DecorationVersion .Label{
+	font-size: 12px;
+	font-weight: bold;
+	font-family: arial;
+}
+
+.UIWikiPageContentArea .DecorationVersion .Title{
+	font-size: 12px;
+	font-weight: bold;
+	font-family: arial;
+	color: #015e9c;
+	text-decoration:underline;
+}
+
+.UIWikiPageContentArea .DecorationVersion .ActionLink{
+	line-height: 24px;
+}
+
+.UIWikiPageContentArea .DecorationVersion .ActionLink a{
+	color: #555555;
+}
+
+.UIWikiPageContentArea .Breadcum{
+	line-height: 28px;
+	border-bottom: 1px solid #d6d6d6;
+	padding: 8px;
+}
+
+.UIWikiPageContentArea .Breadcum a{ 
+	color: #015e9c;
+	font-weight: bold;
+	text-decoration:underline;
+}
+
+.UIWikiPageContentArea .Breadcum .Label{ 
+	color: #555555;
+	font-weight: bold;
+}
+
+.UIWikiPageContentArea .LabelContent{ 
+	color: #015e9c;
+	font-weight: bold;
+	margin-top: 8px;
+}
+
 
 .UIWikiPageContentArea .Tit {
 	font-weight: bold;

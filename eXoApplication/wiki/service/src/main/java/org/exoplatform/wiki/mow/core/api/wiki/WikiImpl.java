@@ -35,28 +35,10 @@ import org.xwiki.rendering.syntax.Syntax;
  * @version $Revision$
  */
 public abstract class WikiImpl implements Wiki {
-
-  @OneToOne
-  @Owner
-  @MappedBy(WikiNodeType.Definition.WIKI_HOME_NAME)
-  protected abstract WikiHome getHome();
-  protected abstract void setHome(WikiHome homePage);
-
-  @OneToOne
-  @Owner
-  @MappedBy(WikiNodeType.Definition.TRASH_NAME)
-  public abstract Trash getTrash();
-  public abstract void setTrash(Trash trash);
-  
-  @Create
-  protected abstract WikiHome createWikiHome();
-
-  @Create
-  public abstract Trash createTrash();
   
   @Create
   public abstract PageImpl createWikiPage();
-  
+
   public WikiHome getWikiHome() {
     WikiHome home = getHome();
     if (home == null) {
@@ -64,10 +46,10 @@ public abstract class WikiImpl implements Wiki {
       setHome(home);
       home.makeVersionable();
       home.setOwner(getOwner());
-      ContentImpl content = home.getContent() ;
-      content.setTitle(WikiNodeType.Definition.WIKI_HOME_TITLE) ;
+      ContentImpl content = home.getContent();
+      content.setTitle(WikiNodeType.Definition.WIKI_HOME_TITLE);
       content.setSyntax(Syntax.XWIKI_2_0.toIdString());
-      content.setText("This is a [[**wiki home page of " + getOwner()+"**>>" + WikiNodeType.Definition.WIKI_HOME_TITLE +"]]") ;
+      content.setText("This is a [[**wiki home page of " + getOwner() + "**>>" + WikiNodeType.Definition.WIKI_HOME_TITLE + "]]");
       try {
         home.checkin();
         home.checkout();
@@ -78,17 +60,35 @@ public abstract class WikiImpl implements Wiki {
     return home;
   }
 
+  public LinkRegistry getLinkRegistry() {
+    LinkRegistry linkRegistry = getLinkRegistryByChromattic();
+    if (linkRegistry == null) {
+      linkRegistry = createLinkRegistry();
+      setLinkRegistryByChromattic(linkRegistry);
+    }
+    return linkRegistry;
+  }
+
+  public Trash getTrash() {
+    Trash trash = getTrashByChromattic();
+    if (trash == null) {
+      trash = createTrash();
+      setTrashByChromattic(trash);
+    }
+    return trash;
+  }
+
   @Name
   public abstract String getName();
 
-  @Property(name = WikiNodeType.Definition.OWNER )
+  @Property(name = WikiNodeType.Definition.OWNER)
   public abstract String getOwner();
-  
+
   public abstract void setOwner(String wikiOwner);
-  
+
   @Path
   public abstract String getPath();
-  
+
   public PageImpl getPageByID(String id) {
     throw new UnsupportedOperationException();
   }
@@ -96,5 +96,32 @@ public abstract class WikiImpl implements Wiki {
   public PageImpl getPageByURI(String uri) {
     throw new UnsupportedOperationException();
   }
+  
+  @OneToOne
+  @Owner
+  @MappedBy(WikiNodeType.Definition.WIKI_HOME_NAME)
+  protected abstract WikiHome getHome();
+  protected abstract void setHome(WikiHome homePage);
+  
+  @Create
+  protected abstract WikiHome createWikiHome();
+
+  @OneToOne
+  @Owner
+  @MappedBy(WikiNodeType.Definition.LINK_REGISTRY)
+  protected abstract LinkRegistry getLinkRegistryByChromattic();
+  protected abstract void setLinkRegistryByChromattic(LinkRegistry linkRegistry);
+
+  @Create
+  protected abstract LinkRegistry createLinkRegistry();
+  
+  @OneToOne
+  @Owner
+  @MappedBy(WikiNodeType.Definition.TRASH_NAME)
+  protected abstract Trash getTrashByChromattic();
+  protected abstract void setTrashByChromattic(Trash trash);
+
+  @Create
+  protected abstract Trash createTrash();
 
 }

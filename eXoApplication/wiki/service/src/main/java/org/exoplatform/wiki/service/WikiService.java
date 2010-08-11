@@ -45,6 +45,7 @@ public interface WikiService {
 	public List<Space> getAllSpaces() throws Exception ;*/
 	
 	public Page getPageById(String wikiType, String wikiOwner, String pageId) throws Exception ;
+	public Page getRelatedPage(String wikiType, String wikiOwner, String pageId) throws Exception;
 	public Page getExsitedOrNewDraftPageById(String wikiType, String wikiOwner, String pageId) throws Exception ;
 	public Page getPageByUUID(String uuid) throws Exception ;	
 	

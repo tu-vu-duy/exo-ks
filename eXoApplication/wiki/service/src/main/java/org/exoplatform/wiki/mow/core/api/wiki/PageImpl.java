@@ -43,6 +43,7 @@ import org.chromattic.ext.ntdef.Resource;
 import org.exoplatform.wiki.chromattic.ext.ntdef.NTVersion;
 import org.exoplatform.wiki.chromattic.ext.ntdef.VersionableMixin;
 import org.exoplatform.wiki.mow.api.Page;
+import org.exoplatform.wiki.mow.api.Wiki;
 import org.exoplatform.wiki.mow.api.WikiNodeType;
 import org.exoplatform.wiki.mow.core.api.MOWService;
 import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
@@ -259,6 +260,27 @@ public abstract class PageImpl implements Page {
       if (pageId.equals(page.getName()))  return page ;         
     }
     return null ;
+  }
+  
+  public Wiki getWiki() {
+    PageImpl parent = this.getParentPage();
+    if (parent == null) {
+      parent = this;
+    }
+    while (!parent.getName().equals(WikiNodeType.Definition.WIKI_HOME_NAME)) {
+      parent = parent.getParentPage();
+    }
+    WikiHome wikiHome = (WikiHome) parent;
+    PortalWiki portalWiki = wikiHome.getPortalWiki();
+    GroupWiki groupWiki = wikiHome.getGroupWiki();
+    UserWiki userWiki = wikiHome.getUserWiki();
+    if (portalWiki != null) {
+      return portalWiki;
+    } else if (groupWiki != null) {
+      return groupWiki;
+    } else {
+      return userWiki;
+    }
   }
   
   @Destroy

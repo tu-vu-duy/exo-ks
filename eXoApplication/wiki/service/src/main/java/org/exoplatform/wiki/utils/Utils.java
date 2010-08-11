@@ -1,14 +1,15 @@
 package org.exoplatform.wiki.utils;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.portal.config.model.PortalConfig;
 import org.exoplatform.services.jcr.RepositoryService;
 import org.exoplatform.services.security.ConversationState;
+import org.exoplatform.wiki.mow.api.Wiki;
 import org.exoplatform.wiki.mow.api.WikiNodeType;
+import org.exoplatform.wiki.mow.core.api.wiki.GroupWiki;
+import org.exoplatform.wiki.mow.core.api.wiki.PortalWiki;
+import org.exoplatform.wiki.mow.core.api.wiki.UserWiki;
 
 public class Utils {
   
@@ -58,4 +59,17 @@ public class Utils {
     }catch(Exception e){}
     return "system" ;
   }
+  
+  public static String getWikiType(Wiki wiki) {
+    if (wiki instanceof PortalWiki) {
+      return PortalConfig.PORTAL_TYPE;
+    } else if (wiki instanceof GroupWiki) {
+      return PortalConfig.GROUP_TYPE;
+    } else if (wiki instanceof UserWiki) {
+      return PortalConfig.USER_TYPE;
+    } else {
+      return null;
+    }
+  }
+  
 }

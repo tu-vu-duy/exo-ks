@@ -130,6 +130,22 @@
     </childNodeDefinitions>
   </nodeType>
   
+  <!-- Node type generated for the class org.exoplatform.wiki.mow.core.api.wiki.LinkRegistry -->
+  <nodeType name="wiki:linkregistry" isMixin="false" hasOrderableChildNodes="false">
+    <supertypes>
+      <supertype>nt:base</supertype>
+      <supertype>mix:referenceable</supertype>
+    </supertypes>
+    <propertyDefinitions/>
+    <childNodeDefinitions>
+      <childNodeDefinition name="*" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
+        <requiredPrimaryTypes>
+          <requiredPrimaryType>wiki:linkentry</requiredPrimaryType>
+        </requiredPrimaryTypes>
+      </childNodeDefinition>
+    </childNodeDefinitions>
+  </nodeType>
+  
   <!-- Node type generated for the class org.exoplatform.wiki.mow.core.api.wiki.UserWiki -->
   <nodeType name="wiki:userwiki" isMixin="false" hasOrderableChildNodes="false">
     <supertypes>
@@ -148,6 +164,16 @@
       <childNodeDefinition name="WikiHome" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
         <requiredPrimaryTypes>
           <requiredPrimaryType>exo:wikihome</requiredPrimaryType>
+        </requiredPrimaryTypes>
+      </childNodeDefinition>
+      <childNodeDefinition name="LinkRegistry" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
+        <requiredPrimaryTypes>
+          <requiredPrimaryType>wiki:linkregistry</requiredPrimaryType>
+        </requiredPrimaryTypes>
+      </childNodeDefinition>
+      <childNodeDefinition name="Trash" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
+        <requiredPrimaryTypes>
+          <requiredPrimaryType>wiki:trash</requiredPrimaryType>
         </requiredPrimaryTypes>
       </childNodeDefinition>
     </childNodeDefinitions>
@@ -173,6 +199,16 @@
           <requiredPrimaryType>exo:wikihome</requiredPrimaryType>
         </requiredPrimaryTypes>
       </childNodeDefinition>
+      <childNodeDefinition name="LinkRegistry" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
+        <requiredPrimaryTypes>
+          <requiredPrimaryType>wiki:linkregistry</requiredPrimaryType>
+        </requiredPrimaryTypes>
+      </childNodeDefinition>
+      <childNodeDefinition name="Trash" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
+        <requiredPrimaryTypes>
+          <requiredPrimaryType>wiki:trash</requiredPrimaryType>
+        </requiredPrimaryTypes>
+      </childNodeDefinition>
     </childNodeDefinitions>
   </nodeType>
 	
@@ -194,6 +230,11 @@
       <childNodeDefinition name="WikiHome" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
         <requiredPrimaryTypes>
           <requiredPrimaryType>exo:wikihome</requiredPrimaryType>
+        </requiredPrimaryTypes>
+      </childNodeDefinition>
+      <childNodeDefinition name="LinkRegistry" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
+        <requiredPrimaryTypes>
+          <requiredPrimaryType>wiki:linkregistry</requiredPrimaryType>
         </requiredPrimaryTypes>
       </childNodeDefinition>
       <childNodeDefinition name="Trash" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
@@ -246,6 +287,23 @@
     </supertypes>
     <propertyDefinitions>
     	<propertyDefinition name="creator" requiredType="String" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" multiple="false">
+        <valueConstraints/>
+      </propertyDefinition>
+    </propertyDefinitions>
+    <childNodeDefinitions/>
+  </nodeType>
+  
+  <!-- Node type generated for the class org.exoplatform.wiki.mow.core.api.wiki.LinkEntry -->
+  <nodeType name="wiki:linkentry" isMixin="false" hasOrderableChildNodes="false">
+    <supertypes>
+      <supertype>nt:base</supertype>
+      <supertype>mix:referenceable</supertype>
+    </supertypes>
+    <propertyDefinitions>
+      <propertyDefinition name="alias" requiredType="String" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" multiple="false">
+        <valueConstraints/>
+      </propertyDefinition>
+      <propertyDefinition name="newlink" requiredType="Path" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" multiple="false">
         <valueConstraints/>
       </propertyDefinition>
     </propertyDefinitions>

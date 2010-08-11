@@ -38,6 +38,10 @@ public interface WikiNodeType {
 
   public final static String USER_WIKI               = "wiki:userwiki";
 
+  public final static String LINK_REGISTRY           = "wiki:linkregistry";
+  
+  public final static String LINK_ENTRY              = "wiki:linkentry";
+  
   public final static String WIKI_HOME               = "exo:wikihome";
 
   public final static String WIKI_PAGE               = "wiki:page";
@@ -78,6 +82,10 @@ public interface WikiNodeType {
 
     public final static String WIKI_CONTAINER_REFERENCE   = "ref";
 
+    public final static String LINK_REGISTRY              = "LinkRegistry";
+    
+    public final static String NEW_LINK                   = "newlink";
+    
     public final static String WIKI_HOME_NAME             = "WikiHome";
 
     public final static String TRASH_NAME                 = "Trash";

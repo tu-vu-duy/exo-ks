@@ -21,6 +21,7 @@ import org.exoplatform.portal.config.model.PortalConfig;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.wiki.mow.api.Page;
+import org.exoplatform.wiki.mow.api.Wiki;
 import org.exoplatform.wiki.mow.core.api.wiki.AttachmentImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 import org.exoplatform.wiki.resolver.TitleResolver;
@@ -126,6 +127,9 @@ public class DefaultWikiModel implements WikiModel {
     WikiContext wikiMarkupContext = getWikiMarkupContext(documentName);
     WikiService wikiService = (WikiService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(WikiService.class);
     page = wikiService.getPageById(wikiMarkupContext.getType(),wikiMarkupContext.getOwner(),wikiMarkupContext.getPageId());
+      if (page == null) {
+        page = wikiService.getRelatedPage(wikiMarkupContext.getType(), wikiMarkupContext.getOwner(), wikiMarkupContext.getPageId());
+      }
     } catch (Exception e) {
       if(LOG.isWarnEnabled()){
         LOG.warn("An exception happened when checking available status of document: "+ documentName, e);
@@ -135,6 +139,23 @@ public class DefaultWikiModel implements WikiModel {
   }
 
   private String getDocumentViewURL(WikiContext context) {
+    try {
+      WikiService wikiService = (WikiService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(WikiService.class);
+      PageImpl page = (PageImpl) wikiService.getRelatedPage(context.getType(), context.getOwner(), context.getPageId());
+      if (page != null) {
+        Wiki wiki = page.getWiki();
+        String wikiType = Utils.getWikiType(wiki);
+        String wikiOwner = wiki.getOwner();
+        String pageId = page.getName();
+        context.setType(wikiType);
+        context.setOwner(wikiOwner);
+        context.setPageId(pageId);
+      }
+    } catch (Exception e) {
+      if (LOG.isWarnEnabled()) {
+        LOG.warn("An exception happened when process broken link.", e);
+      }
+    }
     StringBuilder sb = new StringBuilder();
     sb.append(context.getPortalURI());
     sb.append(context.getPortletURI());

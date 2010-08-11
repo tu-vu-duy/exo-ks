@@ -32,6 +32,8 @@ import org.exoplatform.wiki.mow.core.api.WikiStoreImpl;
 import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.AttachmentImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.GroupWiki;
+import org.exoplatform.wiki.mow.core.api.wiki.LinkEntry;
+import org.exoplatform.wiki.mow.core.api.wiki.LinkRegistry;
 import org.exoplatform.wiki.mow.core.api.wiki.MovedMixin;
 import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.PortalWiki;
@@ -104,6 +106,19 @@ public class WikiServiceImpl implements WikiService {
     page.setOwner(creator);
     page.getContent().setTitle(title);
     page.makeVersionable();
+    
+    //update LinkRegistry
+    LinkRegistry linkRegistry = wiki.getLinkRegistry();
+    String newEntryName = getLinkEntryName(wikiType, wikiOwner, pageId);
+    String newEntryAlias = getLinkEntryAlias(wikiType, wikiOwner, pageId);
+    LinkEntry newEntry = linkRegistry.getLinkEntries().get(newEntryName);
+    if (newEntry == null) {
+      newEntry = linkRegistry.createLinkEntry();
+      linkRegistry.getLinkEntries().put(newEntryName, newEntry);
+      newEntry.setAlias(newEntryAlias);
+    }
+    newEntry.setNewLink(newEntry);
+    
     model.save();
     return page;
   }
@@ -151,10 +166,6 @@ public class WikiServiceImpl implements WikiService {
       mix.setParentPath(page.getParentPage().getPath());
       WikiImpl wiki = (WikiImpl) getWiki(wikiType, wikiOwner, model);
       Trash trash = wiki.getTrash();
-      if (trash == null) {
-        trash = wiki.createTrash();
-        wiki.setTrash(trash);
-      }
       if(trash.isHasPage(page.getName())) {
         PageImpl oldDeleted = trash.getPage(page.getName()) ;
         String removedDate = oldDeleted.getRemovedMixin().getRemovedDate().toGMTString() ;
@@ -162,6 +173,11 @@ public class WikiServiceImpl implements WikiService {
         trash.addChild(newName, oldDeleted) ;        
       }      
       trash.addRemovedWikiPage(page);      
+      
+      //update LinkRegistry
+      LinkRegistry linkRegistry = wiki.getLinkRegistry();
+      linkRegistry.getLinkEntries().get(getLinkEntryName(wikiType, wikiOwner, pageId)).setNewLink(null);
+      
       session.save();
     } catch (Exception e) {
       log.error("Can't delete page '" + pageId + "' ", e) ;
@@ -186,7 +202,7 @@ public class WikiServiceImpl implements WikiService {
       return false;
     PageImpl currentPage = (PageImpl) getPageById(wikiType, wikiOwner, pageName);
     currentPage.getContent().setTitle(newTitle) ;
-    PageImpl parentPage = (PageImpl) getPageById(wikiType, wikiOwner, currentPage.getParentPage().getName());
+    PageImpl parentPage = currentPage.getParentPage();
     parentPage.addPage(newName, currentPage) ;
     if(currentPage.getRenamedMixin() != null) {
       RenamedMixin mix = currentPage.getRenamedMixin() ;
@@ -203,6 +219,21 @@ public class WikiServiceImpl implements WikiService {
       ids.add(pageName) ;
       mix.setOldPageIds(ids.toArray(new String[]{}));
     }
+    
+    //update LinkRegistry
+    WikiImpl wiki = (WikiImpl) parentPage.getWiki();
+    LinkRegistry linkRegistry = wiki.getLinkRegistry();
+    String newEntryName = getLinkEntryName(wikiType, wikiOwner, newName);
+    String newEntryAlias = getLinkEntryAlias(wikiType, wikiOwner, newName);
+    LinkEntry newEntry = linkRegistry.getLinkEntries().get(newEntryName);
+    if (newEntry == null) {
+      newEntry = linkRegistry.createLinkEntry();
+      linkRegistry.getLinkEntries().put(newEntryName, newEntry);
+      newEntry.setAlias(newEntryAlias);
+      newEntry.setNewLink(newEntry);
+    }
+    linkRegistry.getLinkEntries().get(getLinkEntryName(wikiType, wikiOwner, pageName)).setNewLink(newEntry);
+    
     parentPage.getChromatticSession().save() ;
     return true ;    
   }
@@ -259,6 +290,30 @@ public class WikiServiceImpl implements WikiService {
     return null;
   }
 
+  public Page getRelatedPage(String wikiType, String wikiOwner, String pageId) throws Exception {
+    Model model = getModel();
+    WikiImpl wiki = (WikiImpl) getWiki(wikiType, wikiOwner, model);
+    LinkRegistry linkRegistry = wiki.getLinkRegistry();
+    LinkEntry oldLinkEntry = linkRegistry.getLinkEntries().get(getLinkEntryName(wikiType, wikiOwner, pageId));
+    LinkEntry newLinkEntry = null;
+    if (oldLinkEntry != null) {
+      newLinkEntry = oldLinkEntry.getNewLink();
+    }
+    while (oldLinkEntry != newLinkEntry && newLinkEntry != null) {
+      oldLinkEntry = newLinkEntry;
+      newLinkEntry = oldLinkEntry.getNewLink();
+    }
+    if (newLinkEntry == null) {
+      return null;
+    }
+    String linkEntryAlias = newLinkEntry.getAlias();
+    String[] splits = linkEntryAlias.split("@");
+    String newWikiType = splits[0];
+    String newWikiOwner = splits[1];
+    String newPageId = linkEntryAlias.substring((newWikiType + "@" + newWikiOwner + "@").length());
+    return getPageById(newWikiType, newWikiOwner, newPageId);
+  }
+  
   public Page getExsitedOrNewDraftPageById(String wikiType, String wikiOwner, String pageId) throws Exception {
     Page existedPage = getPageById(wikiType, wikiOwner, pageId);
     if (existedPage != null) {
@@ -558,4 +613,15 @@ public class WikiServiceImpl implements WikiService {
     return syntaxPage;
   }
 
+  private String getLinkEntryName(String wikiType, String wikiOwner, String pageId) {
+    if (PortalConfig.GROUP_TYPE.equals(wikiType)) {
+      wikiOwner = wikiOwner.replace("/", "-");
+    }
+    return wikiType + "@" + wikiOwner + "@" + pageId;
+  }
+  
+  private String getLinkEntryAlias(String wikiType, String wikiOwner, String pageId) {
+    return wikiType + "@" + wikiOwner + "@" + pageId;
+  }
+  
 }

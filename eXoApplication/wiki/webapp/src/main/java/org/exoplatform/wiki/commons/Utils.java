@@ -40,12 +40,17 @@ import org.exoplatform.wiki.mow.core.api.WikiStoreImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.AttachmentImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 import org.exoplatform.wiki.rendering.RenderingService;
+import org.exoplatform.wiki.rendering.impl.RenderingServiceImpl;
 import org.exoplatform.wiki.resolver.PageResolver;
 import org.exoplatform.wiki.service.WikiContext;
 import org.exoplatform.wiki.service.WikiPageParams;
 import org.exoplatform.wiki.service.WikiService;
 import org.exoplatform.wiki.webui.UIWikiPageEditForm;
+import org.exoplatform.wiki.webui.UIWikiPortlet;
 import org.exoplatform.wiki.webui.UIWikiRichTextArea;
+import org.exoplatform.wiki.webui.WikiMode;
+import org.xwiki.context.Execution;
+import org.xwiki.context.ExecutionContext;
 import org.xwiki.rendering.syntax.Syntax;
 
 /**
@@ -151,12 +156,47 @@ public class Utils {
     return store.getWikis().toArray(new Wiki[]{}) ;
   }
   
+  public static void setUpWikiContext(UIWikiPortlet wikiPortlet, RenderingService renderingService) throws Exception {
+    Execution ec = ((RenderingServiceImpl) renderingService).getExecutionContext();
+    if (ec.getContext() == null) {
+      //
+      PortalRequestContext portalRequestContext = Util.getPortalRequestContext();
+      UIPortal uiPortal = Util.getUIPortal();
+      String portalURI = portalRequestContext.getPortalURI();
+      String pageNodeSelected = uiPortal.getSelectedNode().getUri();
+      //
+      ec.setContext(new ExecutionContext());
+      WikiContext wikiContext = new WikiContext();
+      wikiContext.setPortalURI(portalURI);
+      wikiContext.setPortletURI(pageNodeSelected);
+      WikiPageParams params = Utils.getCurrentWikiPageParams();
+      wikiContext.setType(params.getType());
+      wikiContext.setOwner(params.getOwner());
+      if (wikiPortlet.getWikiMode() == WikiMode.NEW) {
+        String sessionId = Util.getPortalRequestContext().getRequest().getSession(false).getId();
+        wikiContext.setPageId(sessionId);
+      } else {
+        wikiContext.setPageId(params.getPageId());
+      }
+      ec.getContext().setProperty(WikiContext.WIKICONTEXT, wikiContext);
+    }
+  }
+  
+  public static void removeWikiContext(RenderingService renderingService) throws Exception {
+    Execution ec = ((RenderingServiceImpl) renderingService).getExecutionContext();
+    if (ec != null) {
+      ec.removeContext();
+    }
+  }
+  
   public static void feedDataForWYSIWYGEditor(UIWikiPageEditForm pageEditForm, String xhtmlContent) throws Exception {
     if (xhtmlContent == null) {
       RenderingService renderingService = (RenderingService) PortalContainer.getComponent(RenderingService.class);
       String markupContent = pageEditForm.getUIFormTextAreaInput(UIWikiPageEditForm.FIELD_CONTENT).getValue();
       String markupSyntax = pageEditForm.getUIFormSelectBox(UIWikiPageEditForm.FIELD_SYNTAX).getValue();
+      setUpWikiContext(pageEditForm.getAncestorOfType(UIWikiPortlet.class), renderingService);
       String htmlContent = renderingService.render(markupContent, markupSyntax, Syntax.ANNOTATED_XHTML_1_0.toIdString());
+      removeWikiContext(renderingService);
       Util.getPortalRequestContext().getRequest().getSession(false).setAttribute(UIWikiRichTextArea.SESSION_KEY, htmlContent);
     } else {
       Util.getPortalRequestContext().getRequest().getSession(false).setAttribute(UIWikiRichTextArea.SESSION_KEY, xhtmlContent);

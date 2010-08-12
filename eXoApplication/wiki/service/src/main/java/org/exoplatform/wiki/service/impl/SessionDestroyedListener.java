@@ -20,6 +20,7 @@ import javax.servlet.http.HttpSessionEvent;
 
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.container.RootContainer;
+import org.exoplatform.container.component.RequestLifeCycle;
 import org.exoplatform.services.listener.Event;
 import org.exoplatform.services.listener.Listener;
 import org.exoplatform.services.log.ExoLogger;
@@ -53,6 +54,8 @@ public class SessionDestroyedListener extends Listener<PortalContainer, HttpSess
     }
 
     WikiService wikiService = (WikiService) PortalContainer.getComponent(WikiService.class);
+    RequestLifeCycle.begin(PortalContainer.getInstance());
     wikiService.deleteDraftNewPage(sessionId);
+    RequestLifeCycle.end();
   }
 }

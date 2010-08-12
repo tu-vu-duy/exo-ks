@@ -38,10 +38,6 @@ public class TestRenderingService extends AbstractRenderingTestCase {
   public void testRender() throws Exception {
     assertEquals("<p>This is <strong>bold</strong></p>", renderingService.render("This is **bold**", Syntax.XWIKI_2_0.toIdString(), Syntax.XHTML_1_0.toIdString()));
   }
-
-  public void testLinks() throws Exception {
-    assertTrue(renderingService.render("[[OK]]", Syntax.XWIKI_2_0.toIdString(), Syntax.XHTML_1_0.toIdString()).contains("wikicreatelink"));
-  }
   
   public void testRenderAnExistedInternalLink() throws Exception {
     Model model = mowService.getModel();

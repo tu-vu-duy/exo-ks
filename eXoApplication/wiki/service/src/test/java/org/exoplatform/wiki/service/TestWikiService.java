@@ -293,4 +293,25 @@ public class TestWikiService extends AbstractMOWTestcase {
     assertNotNull(syntaxPage);
   }
   
+  public void testBrokenLink() throws Exception {
+    wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "OriginalParentPage", "WikiHome");
+    wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "OriginalPage", "OriginalParentPage");
+    PageImpl relatedPage = (PageImpl) wService.getRelatedPage(PortalConfig.PORTAL_TYPE, "classic", "OriginalPage");
+    assertEquals("OriginalPage", relatedPage.getName());
+    wService.renamePage(PortalConfig.PORTAL_TYPE, "classic", "OriginalPage", "RenamedOriginalPage", "RenamedOriginalPage");
+    relatedPage = (PageImpl) wService.getRelatedPage(PortalConfig.PORTAL_TYPE, "classic", "OriginalPage");
+    assertEquals("RenamedOriginalPage", relatedPage.getName());
+    wService.renamePage(PortalConfig.PORTAL_TYPE, "classic", "RenamedOriginalPage", "RenamedOriginalPage2", "RenamedOriginalPage2");
+    relatedPage = (PageImpl) wService.getRelatedPage(PortalConfig.PORTAL_TYPE, "classic", "OriginalPage");
+    assertEquals("RenamedOriginalPage2", relatedPage.getName());
+    wService.movePage("RenamedOriginalPage2", "WikiHome", PortalConfig.PORTAL_TYPE, "classic", "classic");
+    relatedPage = (PageImpl) wService.getRelatedPage(PortalConfig.PORTAL_TYPE, "classic", "OriginalPage");
+    assertEquals("RenamedOriginalPage2", relatedPage.getName());
+    wService.renamePage(PortalConfig.PORTAL_TYPE, "classic", "RenamedOriginalPage2", "RenamedOriginalPage3", "RenamedOriginalPage3");
+    relatedPage = (PageImpl) wService.getRelatedPage(PortalConfig.PORTAL_TYPE, "classic", "OriginalPage");
+    assertEquals("RenamedOriginalPage3", relatedPage.getName());
+    wService.deletePage(PortalConfig.PORTAL_TYPE, "classic", "RenamedOriginalPage3");
+    assertNull(wService.getRelatedPage(PortalConfig.PORTAL_TYPE, "classic", "OriginalPage"));
+  }
+  
 }

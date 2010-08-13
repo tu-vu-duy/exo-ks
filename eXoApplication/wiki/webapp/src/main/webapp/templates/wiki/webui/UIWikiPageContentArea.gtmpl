@@ -4,14 +4,47 @@
   PageMode pageMode = uicomponent.getPageMode();
 %>
 <div class="UIWikiPageContentArea">
-	<div class="DecorationVersion">
+	<!--<div class="DecorationVersion">
 		<span class="Label"> You're viewing and old version of this page. view the </span> <a href="#" class="Title">Current Version</a>
 		<div class="ActionLink"><a href="#">Compare with Current</a>&nbsp;|&nbsp;<a href="#">Restore this Versionv</a>&nbsp;|&nbsp;<a href="#">View Page History</a></div>
 	</div>
 	<div class="Breadcum"><a href="#">Priv</a><span class="Label"> &nbsp;&nbsp; Version 1 &nbsp;&nbsp;</span> <a href="#">Next</a></div>
 	<div class="LabelContent">Lorem ipsum dolor sit amet</div>
 	<div class="TextContent">Consectetur adipiscing elit. Quisque egestas, nisl hendrerit tincidunt posuere, erat lorem interdum ante, ac tincidunt orci ligula nec quam.</div>
+	-->
 	
+	
+	
+	
+	
+	<div class="ComparedForm ClearFix">
+		<div class="ChangeVersionForm">
+			<span class="ChangeVersionInfo">Version 2 </span>  bye  <span class="Admin"> Nguyen Tien Viet</span>
+			<div class="DateChange">on Jul 12,2010 03:03</div>
+			<div class="Changes"><< Changes from <span style="font-weight: bold;">1</span> to <span style="font-weight: bold;">2</span></div>
+		</div>
+		<div class="ComparedWith"> Compared With </div>
+		<div class="ChangeVersionForm">
+			<span class="ChangeVersionInfo">Version 2 </span>  bye  <span class="Admin"> Nguyen Tien Viet</span>
+			<div class="DateChange">on Jul 12,2010 03:03</div>
+			<a href="#" class="Changes">( show comment )</a>
+		</div>
+		<div class="ChangeVersionForm" style="float: right; width: 220px;">
+			<span class="ChangeVersionInfo">Key</span><br>
+			<span class="LineRemoved">This line was removed.</span><br>
+			<span> this</span><span class="LineRemoved">Word</span><span>was removed. This word was </span><span class="LineAdded"> added </span><br>
+			<span> This line was added </span><span class="LineAdded"> added </span>
+		</div>
+	</div>
+	
+	<div class="ChangedForm">
+		<div class="Label"><span style="font-weight: bold;">Changes (126)</span><span style="Color:#165fb3;"> view page history</span></div>
+		<span class="LineAdded"> Lorem ipsum dolor sit amet </span>
+		<span> Consectetur adipiscing elit. Vivamus feugiat augue vitae sapien vulputate commodo. </span>
+		<div class="LineRemoved" style="height: 14px;"><span></span></div>
+		<span> Praesent id est sed risus elementum lacinia. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.  </span><br>
+		<span> Vestibulum sagittis dapibus dui vitae aliquet. Donec gravida, arcu sit amet ultrices lobortis,<span class="LineAdded"> lorem </span><span> elit convallis erat,</span><span class="LineRemoved" style="height: 14px; color:#ffe8da;"> Removed </span><span>at lacinia metus risus sit amet odio.</span>
+	</div>
 
 
 

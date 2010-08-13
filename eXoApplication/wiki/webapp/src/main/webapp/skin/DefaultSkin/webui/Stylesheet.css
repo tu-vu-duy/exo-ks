@@ -110,6 +110,7 @@
 .UIWikiPortlet table {
 	width: 100%;
 	border-collapse: collapse;
+	table-layout: fixed;
 }
 
 .UIWikiPortlet th {
@@ -118,13 +119,17 @@
 	text-align: left;
 	line-height: 30px;
 	padding-left: 10px;
-	border: 1px solid #FFFFFF;
+	border-left: none;
+	border-top: none;
+	border-bottom: none;
 }
 
 .UIWikiPortlet td {
 	text-align: left;
 	padding: 5px 10px;
-	border: 1px solid #d3d3d3;
+	border-left: none;
+	border-top: none;
+	border-bottom: none;
 }
 /*===========================*/
 
@@ -452,6 +457,65 @@
 	font-weight: bold;
 	margin-top: 8px;
 }
+
+.UIWikiPageArea .ComparedForm{
+	border-bottom: 1px solid #dadada;
+	padding-bottom: 12px;
+}
+
+.UIWikiPageArea .ComparedForm .ChangeVersionForm{
+	padding: 12px;
+	background: #f5f5f5;
+	float: left;
+}
+
+.UIWikiPageArea .ComparedForm .ChangeVersionForm .ChangeVersionInfo{
+	font-weight: bold;
+}
+
+.UIWikiPageArea .ComparedForm .ChangeVersionForm .Admin{
+	font-weight: bold;
+	color: #165fb3;
+}
+
+.UIWikiPageArea .ComparedForm .ChangeVersionForm .Changes{
+	color: #165fb3;
+	border-top:1px solid white;
+	line-height: 17px;
+}
+
+.UIWikiPageArea .ComparedForm .ChangeVersionForm .DateChange{
+	line-height: 20px;
+}
+
+.UIWikiPageArea .ComparedWith{
+	float: left;
+	padding:30px 12px 0px 12px;
+	font-weight: bold;
+}
+
+.UIWikiPageArea .LineRemoved{
+	background: #ffd8da;
+	text-decoration:line-through;
+	margin-bottom: 1px;
+}
+
+.UIWikiPageArea .LineAdded{
+	background: #b5ffbf;
+}
+
+.UIWikiPageArea .ChangedForm .Label{
+	line-height: 30px;
+	font-size: 12px;
+}
+
+.UIWikiPageVersionsList .HistoryLabel {
+	font-size: 24px;
+	font-weight: bold;
+	font-family: calibri;
+}
+
+
 
 
 .UIWikiPageContentArea .Tit {
@@ -892,29 +956,58 @@
 
 /* File Attachment */
 .UIWikiAttachmentArea {
-	margin-top: 25px;
+	padding: 10px 18px 18px 18px;
+}
+
+.UIWikiAttachmentArea .UIAction .ActionContainer {
+	margin: 0px;
+}
+
+.UIWikiAttachmentArea .UIAction td{
+	padding: 0px;
+	border: none;
+	text-align: center;
+}
+
+.UIWikiAttachmentArea .UIAction .LightBlueStyle .ButtonLeft {
+	background:url("background/LightBlueStyle.png") no-repeat scroll left 1px transparent;
+	padding-left: 2px;
+}
+
+.UIWikiAttachmentArea .UIAction .LightBlueStyle .ButtonRight {
+	background:url("background/LightBlueStyle.png") no-repeat scroll right bottom transparent;
+	padding-right: 4px;
+}
+
+.UIWikiAttachmentArea .UIAction .LightBlueStyle .ButtonMiddle {
+	background:url("background/LightBlueStyle.png") repeat-x center -30px transparent;
+	height: 30px;
+	line-height: 27px;
+}
+
+.UIWikiAttachmentArea .UIAction .LightBlueStyle .ButtonMiddle a{
+	color: white;
 }
 
 .UIWikiAttachmentArea .UIFormGrid {
 	width: 100%;
 	border-collapse: collapse;
+	border: 1px solid #d7d7d7;
 }
 
 .UIWikiAttachmentArea .UIFormGrid th {
 	background: #d7d7d7;
 	color: #636363;
-	text-align: left;
+	text-align: center;
 	line-height: 30px;
-	padding-left: 10px;
+	padding-left: 0px;
 	border-right: 1px solid #FFFFFF;
-	border-top: 1px solid #ffffff;
 }
 
 .UIWikiAttachmentArea .UIFormGrid td {
-	text-align: left;
-	padding: 5px 10px;
+	text-align: center;
+	padding: 5px 0px;
 	border-right: 1px solid #FFFFFF;
-	border-top: 1px solid #ffffff;
 }
 
 .UIWikiAttachmentArea .UIFormGrid .EvenRow {

@@ -1,4 +1,84 @@
-<%
+
+<div class="UIWikiPageVersionsList UIWikiAttachmentArea">
+	<div class="HistoryLabel">History page</div>
+    <div class="UIAction">
+		<table class="ActionContainer">
+			<tbody>
+				<tr>
+					<td>
+						<div class="ActionButton LightBlueStyle" >
+							<div class="ButtonLeft">
+								<div class="ButtonRight">
+									<div class="ButtonMiddle">
+										<a href="#">Compare Selected</a> 
+									</div>
+								</div>
+							</div>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+    <table cellspacing="0" borderspacing="0" class="UIFormGrid">
+      <thead >
+        <tr>
+          <th style="width:30px"><input type="checkbox"/></th>
+          <th style="width: 15%">Revision</th>
+          <th style="width: 20%">Date</th>
+          <th style="width: 15%">Author</th>
+          <th style="width: 35%">Summary</th>
+          <th style="width: 10%; border-right: 1px solid #d7d7d7;">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+		 <tr class="EvenRow">
+          <td>
+            <input type="checkbox"/>
+          </td>
+          <td class="Tit"><a title="View the revision" href="#">hjjkhk</a></td>
+          <td>jfhfhjh</td>
+          <td>jhhjghkj</td>
+          <td>fgdfg</td>
+          <td class="Tit" style="border-right: 1px solid #d7d7d7;"><a title="Restore the revision" href="#">Restore</a></td>
+        </tr>
+		 <tr class="OldRow">
+          <td>
+            <input type="checkbox"/>
+          </td>
+          <td class="Tit"><a title="View the revision" href="#">hjjkhk</a></td>
+          <td>jfhfhjh</td>
+          <td>jhhjghkj</td>
+          <td>gdfgd</td>
+          <td class="Tit" style="border-right: 1px solid #d7d7d7;"><a title="Restore the revision" href="#">Restore</a></td>
+        </tr>
+		<tr class="EvenRow">
+          <td>
+            <input type="checkbox"/>
+          </td>
+          <td class="Tit"><a title="View the revision" href="#">hjjkhk</a></td>
+          <td>jfhfhjh</td>
+          <td>jhhjghkj</td>
+          <td>gdgfg</td>
+          <td class="Tit" style="border-right: 1px solid #d7d7d7;"><a title="Restore the revision" href="#">Restore</a></td>
+        </tr>
+		<tr class="OldRow">
+          <td>
+            <input type="checkbox"/>
+          </td>
+          <td class="Tit"><a title="View the revision" href="#">hjjkhk</a></td>
+          <td>jfhfhjh</td>
+          <td>jhhjghkj</td>
+          <td>gdgfd</td>
+          <td class="Tit" style="border-right: 1px solid #d7d7d7;"><a title="Restore the revision" href="#">Restore</a></td>
+        </tr>
+      </tbody>
+    </table>
+
+</div>
+<!--  
+ <%
   import java.util.List;
   import java.util.ArrayList;
   import java.util.Locale;
@@ -81,4 +161,4 @@
       </tbody>
     </table>
   <% uiform.end();%>
-</div>
+</div> -->

@@ -48,6 +48,7 @@ import org.exoplatform.wiki.resolver.TitleResolver;
 import org.exoplatform.wiki.service.BreadcumbData;
 import org.exoplatform.wiki.service.SearchData;
 import org.exoplatform.wiki.service.SearchResult;
+import org.exoplatform.wiki.service.WikiPageParams;
 import org.exoplatform.wiki.service.WikiService;
 import org.exoplatform.wiki.utils.Utils;
 import org.xwiki.rendering.syntax.Syntax;
@@ -238,24 +239,27 @@ public class WikiServiceImpl implements WikiService {
     return true ;    
   }
 
-  public boolean movePage(String pageId,
-                          String newParentId,
-                          String wikiType,
-                          String srcSpace,
-                          String destSpace) throws Exception {
+  public boolean movePage(WikiPageParams currentLocationParams, WikiPageParams newLocationParams) throws Exception {
     try {
-      if (!isHasCreatePagePermission(Utils.getCurrentUser(), destSpace)) {
+      if (!isHasCreatePagePermission(Utils.getCurrentUser(), newLocationParams.getOwner())) {
         return false;
       }
       Model model = getModel();
       WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
       ChromatticSession session = wStore.getSession();
-      PageImpl movePage = (PageImpl) getPageById(wikiType, srcSpace, pageId);
+      PageImpl movePage = (PageImpl) getPageById(currentLocationParams.getType(),
+                                                 currentLocationParams.getOwner(),
+                                                 currentLocationParams.getPageId());
       MovedMixin mix = session.create(MovedMixin.class);
-      session.setEmbedded(movePage, MovedMixin.class, mix);
-      PageImpl destPage = (PageImpl) getPageById(wikiType, destSpace, newParentId);
+      if (movePage.getMovedMixin() == null) {
+        session.setEmbedded(movePage, MovedMixin.class, mix);
+      }
+      PageImpl destPage = (PageImpl) getPageById(newLocationParams.getType(),
+                                                 newLocationParams.getOwner(),
+                                                 newLocationParams.getPageId());
       movePage.setParentPage(destPage);
     } catch (Exception e) {
+      log.error("Can't move page '" + currentLocationParams.getPageId() + "' ", e);
       return false;
     }
     return true;

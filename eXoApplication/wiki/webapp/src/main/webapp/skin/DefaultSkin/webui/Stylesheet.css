@@ -1,6 +1,7 @@
 @import url('UIWikiBreadCrumb/Stylesheet.css') ;
 @import url('UIWikiSearchBox/Stylesheet.css') ;
 @import url('UIWikiRichTextEditor/Stylesheet.css') ;
+@import url('UITreeExplorer/Stylesheet.css') ;
 
 
 .ClearFix:after {
@@ -253,7 +254,7 @@
 
 .UIWikiPortlet .UIWikiPageControlArea .UIPageToolBar{
 	float: right;
-	margin-bottom: 2px;
+	margin-bottom: 0px;
 }
 
 .UIWikiPortlet .UIWikiPageControlArea .Icon {
@@ -282,6 +283,31 @@
 	background:url("background/UIPageToolBarIcon.png") no-repeat center -47px;
 }
 
+.UIWikiPageControlArea .UIPageToolBar .MoreLink {
+	width:40px;
+	color:#535353;	
+	float: right;
+	height: 14px;
+	margin: 0;
+}
+
+.UIWikiPageControlArea .UIPageToolBar .DropdownMenu {
+	position:absolute;
+	display:none;
+	background:white;	
+	width:100px;
+	top:26px;
+	right:0px;
+	border: 1px solid #C1C1C1;
+	text-align:left;
+	z-index:1000;
+}
+
+.UIWikiPageControlArea .UIPageToolBar .MoreItems {
+	width: 88px;
+	color:#535353;		
+}
+
 .UIWikiPageEditForm .UIWikiPageTitleControlForm_PageEditForm{
 	float:left;
 	margin-top: 8px;
@@ -290,7 +316,7 @@
 .UIWikiPageEditForm .UIPageToolBar{
 	margin: 14px 0 0;
 	float: right;
-	width: 60%;
+	width: 60%;	
 }
 
 .UIWikiPageEditForm .UIWikiPageTitleControlForm_PageEditForm {
@@ -358,7 +384,32 @@
 	background:url("background/UIPageToolBarIcon.png") no-repeat center -144px;
 }
 
-.UIPageToolBar #ConfirmMask{
+.UIWikiPageEditForm .UIPageToolBar .MoreLink {
+	width:40px;
+	color:#535353;	
+	float: right;
+	height: 14px;
+	margin: 0;
+}
+
+.UIWikiPageEditForm .UIPageToolBar .DropdownMenu {
+	position:absolute;
+	display:none;
+	background:white;	
+	width:100px;
+	top:26px;
+	right:0px;
+	border: 1px solid #C1C1C1;
+	text-align:left;
+	z-index:1000;
+}
+
+.UIWikiPageEditForm .UIPageToolBar .MoreItems {
+	width: 88px;
+	color:#535353;		
+}
+
+.UIPageToolBar .PopupDiv{
 	display: none;
 	position:absolute;
 	width: 100%;
@@ -1178,6 +1229,19 @@
 	color: #ffffff;
 	font-size: 12px;
 	font-weight: bold;
+}
+
+.UIWikiMovePageForm {
+  padding: 10px 0px 0px 10px;
+  color:black;
+}
+
+.UIWikiMovePageForm table {
+  margin-bottom:0;
+}
+
+.UIWikiMovePageForm table td {
+  border:none;
 }
 
 .UIWikiPageVersionsCompare .ChangesInfo {

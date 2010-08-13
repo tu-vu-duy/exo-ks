@@ -19,15 +19,22 @@ package org.exoplatform.wiki.webui.control.action;
 import java.util.Arrays;
 import java.util.List;
 
+import org.exoplatform.web.application.ApplicationMessage;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIComponent;
+import org.exoplatform.webui.core.UIPopupContainer;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.ext.filter.UIExtensionFilter;
 import org.exoplatform.webui.ext.filter.UIExtensionFilters;
+import org.exoplatform.webui.form.UIFormInputInfo;
+import org.exoplatform.webui.form.UIFormStringInput;
+import org.exoplatform.wiki.commons.Utils;
+import org.exoplatform.wiki.mow.api.WikiNodeType;
 import org.exoplatform.wiki.webui.UIWikiPortlet;
 import org.exoplatform.wiki.webui.control.filter.IsViewModeFilter;
 import org.exoplatform.wiki.webui.control.listener.UIPageToolBarActionListener;
+import org.exoplatform.wiki.webui.popup.UIWikiMovePageForm;
 
 /**
  * Created by The eXo Platform SAS
@@ -40,14 +47,14 @@ import org.exoplatform.wiki.webui.control.listener.UIPageToolBarActionListener;
     @EventConfig(listeners = MovePageActionComponent.MovePageActionListener.class)
   }
 )
-public class MovePageActionComponent extends UIComponent {
-  
+public class MovePageActionComponent extends UIComponent {  
   
   private static final List<UIExtensionFilter> FILTERS = Arrays.asList(new UIExtensionFilter[] { new IsViewModeFilter() });
 
   public MovePageActionComponent() {
     
   }
+
   @UIExtensionFilters
   public List<UIExtensionFilter> getFilters() {
     return FILTERS;
@@ -55,10 +62,25 @@ public class MovePageActionComponent extends UIComponent {
   
   public static class MovePageActionListener extends UIPageToolBarActionListener<MovePageActionComponent> {
     @Override
-    protected void processEvent(Event<MovePageActionComponent> event) throws Exception {
-      UIWikiPortlet wikiPortlet = event.getSource().getAncestorOfType(UIWikiPortlet.class);
-      System.out.println("\nThis is Move page action\n");
-            
+    protected void processEvent(Event<MovePageActionComponent> event) throws Exception {      
+      UIWikiPortlet uiWikiPortlet = event.getSource().getAncestorOfType(UIWikiPortlet.class);
+      if (Utils.getCurrentWikiPage().getName().equals(WikiNodeType.Definition.WIKI_HOME_NAME)) {
+        uiWikiPortlet.addMessage(new ApplicationMessage("UIWikiMovePageForm.can-not-move",
+                                                        null,
+                                                        ApplicationMessage.WARNING));
+        event.getRequestContext().addUIComponentToUpdateByAjax(uiWikiPortlet.getUIPopupMessages());
+        return;
+      }
+      UIPopupContainer uiPopupContainer = uiWikiPortlet.getChild(UIPopupContainer.class);
+      UIWikiMovePageForm movePageForm = uiPopupContainer.activate(UIWikiMovePageForm.class, 500);
+      String currentRelativePagePath = Utils.getCurrentHierachyPagePath();
+      UIFormStringInput currentLocationInput = movePageForm.getUIStringInput(UIWikiMovePageForm.CURRENT_LOCATION);
+      currentLocationInput.setValue(currentRelativePagePath);
+      UIFormInputInfo pageNameInfo = movePageForm.getUIFormInputInfo(UIWikiMovePageForm.PAGENAME_INFO);
+      pageNameInfo.setValue("You are about move page: "
+          + Utils.getCurrentWikiPage().getContent().getTitle());
+      event.getRequestContext().addUIComponentToUpdateByAjax(uiPopupContainer);
+      super.processEvent(event);
     }
   }
 }

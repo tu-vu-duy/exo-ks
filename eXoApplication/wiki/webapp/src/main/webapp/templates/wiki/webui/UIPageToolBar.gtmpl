@@ -4,8 +4,26 @@
   
 %>
 <div class="UIPageToolBar ClearFix" >
+	<div style="position:relative">
+		<div id="MoreMenu" class="DropdownMenu"> 
+		<%for(entry in uicomponent.getActions()) {
+			String action = entry.getActionName();    
+			def actionComponent = entry.getActionComponent();
+			String link = actionComponent.event(action);
+		%>
+			<% if(action.equals("MovePage")){
+			%>
+			<a href="$link" class="MoreItems Icon">Move page</a>
+			<%}%>
+		<%}%>
+		</div>
+	</div>
+
+<a id="MoreLink" class="MoreLink Icon">More <small>▼</small>
+</a>
 <%
 def rcontext = _ctx.getRequestContext() ;
+rcontext.getJavascriptManager().addJavascript("eXo.wiki.UIPageToolBarMore.init();");
 rcontext.getJavascriptManager().addJavascript("eXo.wiki.UISavePageConfirmation.initDragDrop();");
 String saveLink = "";
 String cancelLink = "";
@@ -60,7 +78,8 @@ for(entry in uicomponent.getActions()) {
 		<%}%>
 		<a onclick="$link" id="$actionId" style="display:none;">&nbsp;</a>
 <%}%>
-	<div id="ConfirmMask" align="center">
+
+	<div id="ConfirmMask" class="PopupDiv" align="center">
 		<div class="ConfirmBox">
 			<div class="ConfirmTitle" >
 				<b>Confirmation</b>

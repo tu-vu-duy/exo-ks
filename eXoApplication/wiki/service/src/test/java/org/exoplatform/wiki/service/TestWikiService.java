@@ -159,13 +159,37 @@ public class TestWikiService extends AbstractMOWTestcase {
     assertNotNull(wService.getPageById(PortalConfig.PORTAL_TYPE, "classic", "child")) ;
     assertNotNull(wService.getPageById(PortalConfig.PORTAL_TYPE, "classic", "newParent")) ;
     
-    assertTrue(wService.movePage("child", "newParent", "portal", "classic", "classic")) ;    
-    assertFalse(wService.movePage("childWrong", "newParent", "portal", "classic", "classic")) ;
+    WikiPageParams currentLocationParams= new WikiPageParams();
+    WikiPageParams newLocationParams= new WikiPageParams();
+    currentLocationParams.setPageId("child");
+    currentLocationParams.setType(PortalConfig.PORTAL_TYPE);
+    currentLocationParams.setOwner("classic");
+    newLocationParams.setPageId("newParent");
+    newLocationParams.setType(PortalConfig.PORTAL_TYPE);
+    newLocationParams.setOwner("classic");    
+    assertTrue(wService.movePage(currentLocationParams,newLocationParams)) ;      
     
-    wService.createPage(PortalConfig.PORTAL_TYPE, "acme", "acmePage", "WikiHome") ;
+    //moving page from different spaces
+    Model model = mowService.getModel();
+    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
+    WikiContainer<UserWiki> userWikiContainer = wStore.getWikiContainer(WikiType.USER);
+    UserWiki wiki = userWikiContainer.addWiki("demo");
+    wiki.getWikiHome();
+    model.save() ;
+    
+    wService.createPage(PortalConfig.USER_TYPE, "demo", "acmePage", "WikiHome") ;
     wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "classicPage", "WikiHome") ;
     
-    assertTrue(wService.movePage("classicPage", "acmePage", "portal", "classic", "acme")) ;
+    assertNotNull(wService.getPageById(PortalConfig.USER_TYPE, "demo", "acmePage")) ;
+    assertNotNull(wService.getPageById(PortalConfig.PORTAL_TYPE, "classic", "classicPage")) ;
+    
+    currentLocationParams.setPageId("acmePage");
+    currentLocationParams.setType(PortalConfig.USER_TYPE);
+    currentLocationParams.setOwner("demo");
+    newLocationParams.setPageId("classicPage");
+    newLocationParams.setType(PortalConfig.PORTAL_TYPE);
+    newLocationParams.setOwner("classic");   
+    assertTrue(wService.movePage(currentLocationParams,newLocationParams)) ;
   }
   
   public void testAddMixin() throws Exception{    
@@ -176,9 +200,8 @@ public class TestWikiService extends AbstractMOWTestcase {
     ChromatticSession session = wStore.getSession() ;
     MovedMixin mix = session.create(MovedMixin.class) ;
     session.setEmbedded(page, MovedMixin.class, mix) ;
-    assertSame(mix, page.getMovedMixin()) ;
+    assertSame(mix, page.getMovedMixin()) ;    
     assertSame(page, mix.getEntity()) ;
-    
   }
   
   public void testDeletePage() throws Exception{    
@@ -186,9 +209,7 @@ public class TestWikiService extends AbstractMOWTestcase {
     assertTrue(wService.deletePage(PortalConfig.PORTAL_TYPE, "classic", "deletePage")) ;
     //wait(10) ;
     wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "deletePage", "WikiHome") ;
-    assertTrue(wService.deletePage(PortalConfig.PORTAL_TYPE, "classic", "deletePage")) ;
-    
-    
+    assertTrue(wService.deletePage(PortalConfig.PORTAL_TYPE, "classic", "deletePage")) ;    
     assertNull(wService.getPageById(PortalConfig.PORTAL_TYPE, "classic", "deletePage")) ; 
     assertFalse(wService.deletePage(PortalConfig.PORTAL_TYPE, "classic", "WikiHome")) ;
   }
@@ -282,17 +303,15 @@ public class TestWikiService extends AbstractMOWTestcase {
     AttachmentImpl attachment1 = kspage.createAttachment("attachment.txt", Resource.createPlainText("this is a text attachment")) ;
     attachment1.setCreator("john") ;    
     assertEquals(attachment1.getName(), "attachment.txt") ;
-    assertNotNull(attachment1.getContentResource()) ;
-    
-    assertNotNull(wService.getAttachmentAsStream(attachment1.getPath()+"/jcr:content")) ;
-    
+    assertNotNull(attachment1.getContentResource()) ;    
+    assertNotNull(wService.getAttachmentAsStream(attachment1.getPath()+"/jcr:content")) ;    
   }
   
   public void testGetSyntaxPage() throws Exception {
     PageImpl syntaxPage = wService.getHelpSyntaxPage(Syntax.XWIKI_2_0.toIdString());
     assertNotNull(syntaxPage);
   }
-  
+
   public void testBrokenLink() throws Exception {
     wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "OriginalParentPage", "WikiHome");
     wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "OriginalPage", "OriginalParentPage");
@@ -304,7 +323,15 @@ public class TestWikiService extends AbstractMOWTestcase {
     wService.renamePage(PortalConfig.PORTAL_TYPE, "classic", "RenamedOriginalPage", "RenamedOriginalPage2", "RenamedOriginalPage2");
     relatedPage = (PageImpl) wService.getRelatedPage(PortalConfig.PORTAL_TYPE, "classic", "OriginalPage");
     assertEquals("RenamedOriginalPage2", relatedPage.getName());
-    wService.movePage("RenamedOriginalPage2", "WikiHome", PortalConfig.PORTAL_TYPE, "classic", "classic");
+    WikiPageParams currentPageParams= new WikiPageParams();
+    currentPageParams.setPageId("RenamedOriginalPage2");
+    currentPageParams.setOwner("classic");
+    currentPageParams.setType(PortalConfig.PORTAL_TYPE);
+    WikiPageParams newPageParams= new WikiPageParams();
+    newPageParams.setPageId("WikiHome");
+    newPageParams.setOwner("classic");
+    newPageParams.setType(PortalConfig.PORTAL_TYPE);
+    wService.movePage(currentPageParams,newPageParams);
     relatedPage = (PageImpl) wService.getRelatedPage(PortalConfig.PORTAL_TYPE, "classic", "OriginalPage");
     assertEquals("RenamedOriginalPage2", relatedPage.getName());
     wService.renamePage(PortalConfig.PORTAL_TYPE, "classic", "RenamedOriginalPage2", "RenamedOriginalPage3", "RenamedOriginalPage3");

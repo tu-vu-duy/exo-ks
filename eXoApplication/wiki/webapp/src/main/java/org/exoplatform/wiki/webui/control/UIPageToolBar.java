@@ -101,7 +101,8 @@ public class UIPageToolBar extends UIContainer {
 
   public String getUrlToSavePage(String componentId, String beanId) throws Exception {
     StringBuilder b = new StringBuilder();
-    b.append("javascript:eXo.wiki.UIForm.submitSavePageEvent('")
+    
+    b.append("javascript:eXo.wiki.UIForm.submitPageEvent('")
      .append(getParentFormId())
      .append("','");
     b.append(SavePageActionComponent.ACTION).append("','");

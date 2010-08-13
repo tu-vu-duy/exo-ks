@@ -74,7 +74,7 @@ public class UIWikiAdvanceSearchResult extends UIContainer {
   
   private String getWiki(String path) throws Exception {
     try{
-      return Utils.getCurrentWiki(); 
+      return Utils.getCurrentWiki().getName(); 
     }catch(Exception e){}
     return null ;
   }

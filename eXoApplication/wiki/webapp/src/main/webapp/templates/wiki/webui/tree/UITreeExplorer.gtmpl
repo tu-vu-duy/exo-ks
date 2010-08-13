@@ -1,0 +1,64 @@
+<%
+  import java.net.URLEncoder; 
+  import java.util.List;
+  import java.util.ArrayList;  
+  
+  import org.exoplatform.wiki.tree.SpaceTreeNode;
+  import org.exoplatform.portal.config.model.PortalConfig;  
+%>
+<div class="UITreeExplorer">
+<% 
+ String restURL= uicomponent.getRestUrl();
+ public void writeNodes() {    
+    //Root Tree   
+	SpaceTreeNode  portalNode =  new SpaceTreeNode(PortalConfig.PORTAL_TYPE);
+    SpaceTreeNode  groupNode =  new SpaceTreeNode(PortalConfig.GROUP_TYPE);
+    SpaceTreeNode  userNode =   new SpaceTreeNode(PortalConfig.USER_TYPE);
+	//Render Spaces 
+    renderSpaceTreeNode(portalNode,false );
+	renderSpaceTreeNode(groupNode,false );
+	renderSpaceTreeNode(userNode, true);	     
+ }
+  
+ public void renderSpaceTreeNode(SpaceTreeNode treeNode ,boolean isLastNode) {   
+    String nodeName = treeNode.getName();
+    String iconType = "Expand";
+    String lastNodeClass = "";
+    String nodeType = treeNode.getNodeType().toString();
+    String nodeTypeCSS= nodeType.substring(0,1).toUpperCase() + nodeType.substring(1).toLowerCase();
+    String absPath = treeNode.getAbsPath().replace("/", "+");   
+    if (isLastNode) {
+      lastNodeClass = "LastNode";
+    }
+    if (!treeNode.isHasChild()) {
+      iconType = "Empty";
+    }  
+    println "<div  class=\""+lastNodeClass+" Node\" >" ;
+    println "  <div class=\""+iconType+"Icon\" id=\"" + absPath + "\" onclick=\"event.cancelBubble=true;  if(eXo.wiki.UITreeExplorer.collapseExpand(this)) return;  eXo.wiki.UITreeExplorer.expandNode('" +  URLEncoder.encode(absPath, "utf-8") + "', this)\">" ;
+    println "    <div id=\"iconTreeExplorer\" onclick=\"event.cancelBubble=true;\"" + "class=\""+ nodeTypeCSS +" NodeType Node \""  + ">";
+    println "      <div class='NodeLabel'>" ;
+    println "        <a  onclick=\"event.cancelBubble=true; eXo.wiki.UITreeExplorer.selectNode('"+URLEncoder.encode(absPath, "utf-8")+ "')\" style='cursor: pointer;' title=\""+nodeName+"\">"+nodeName+"</a>" ;
+    println "      </div>" ; 
+    println "    </div>" ; 
+    println "  </div>" ; 
+    println "</div>" ;  
+ } 
+%>
+<div class="SideBarContent">  
+  <div class="BarContent">
+  Chose page to move
+  </div>
+  <div class="SideContent">
+	  <div class="UITreeExplorer" id="UITreeExplorer">
+		  <div style="white-space: nowrap; -moz-user-select: none;">
+		    <div class="NodeGroup">
+		      <%		       
+		       writeNodes();
+    	       %>
+    	       <input type="hidden" id="WikiRestURL" value="${restURL}">
+		    </div>
+		  </div>   	    
+		</div>
+  </div>
+</div>
+</div>

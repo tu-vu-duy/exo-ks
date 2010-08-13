@@ -1,5 +1,6 @@
 package org.exoplatform.wiki.utils;
 
+import java.util.Collection;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.portal.config.model.PortalConfig;
@@ -7,9 +8,13 @@ import org.exoplatform.services.jcr.RepositoryService;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.wiki.mow.api.Wiki;
 import org.exoplatform.wiki.mow.api.WikiNodeType;
+import org.exoplatform.wiki.mow.api.WikiType;
+import org.exoplatform.wiki.mow.core.api.MOWService;
+import org.exoplatform.wiki.mow.core.api.WikiStoreImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.GroupWiki;
 import org.exoplatform.wiki.mow.core.api.wiki.PortalWiki;
 import org.exoplatform.wiki.mow.core.api.wiki.UserWiki;
+import org.exoplatform.wiki.service.WikiPageParams;
 
 public class Utils {
   
@@ -58,6 +63,35 @@ public class Utils {
       return conversationState.getIdentity().getUserId();
     }catch(Exception e){}
     return "system" ;
+  }
+  
+  public static  Collection<Wiki> getWikisByType(WikiType wikiType)
+  {
+    MOWService mowService = (MOWService) PortalContainer.getComponent(MOWService.class);
+    WikiStoreImpl store = (WikiStoreImpl) mowService.getModel().getWikiStore();   
+    return store.getWikiContainer(wikiType).getAllWikis();     
+  }
+  
+  public static WikiPageParams getPageParamsFromPath(String path) {  
+    if (path == null) {
+      return null;
+    }
+    WikiPageParams result = new WikiPageParams();
+    path= path.trim();
+    if (path.indexOf("/") < 0) {
+      result.setType(path);
+    } else {
+      String[] array = path.split("/");
+      if (array.length >= 2) {
+        result.setType(array[0]);
+        result.setOwner(array[1]);
+        if (array.length >= 3) {
+          result.setPageId(array[array.length - 1]);
+        }
+      }
+
+    }
+    return result;
   }
   
   public static String getWikiType(Wiki wiki) {

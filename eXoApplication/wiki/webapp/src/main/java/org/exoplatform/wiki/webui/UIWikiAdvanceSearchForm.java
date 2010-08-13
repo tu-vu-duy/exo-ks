@@ -60,7 +60,7 @@ public class UIWikiAdvanceSearchForm extends UIForm {
   public UIWikiAdvanceSearchForm() throws Exception {
     addChild(new UIFormStringInput(TEXT, TEXT, null)) ;
     List<SelectItemOption<String>> spaces = new ArrayList<SelectItemOption<String>>() ;
-    String currentWiki = Utils.getCurrentWiki() ;
+    String currentWiki = Utils.getCurrentWiki().getName() ;
     Wiki[] wikis = Utils.getAllWikiSpace() ;
     for(Wiki wk : wikis){
       spaces.add(new SelectItemOption<String>(wk.getOwner(), ((PageImpl)wk.getWikiHome()).getPath())) ;      

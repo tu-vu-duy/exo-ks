@@ -35,10 +35,13 @@ import org.exoplatform.services.jcr.access.PermissionType;
 import org.exoplatform.services.jcr.core.ExtendedNode;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.mow.api.Wiki;
+import org.exoplatform.wiki.mow.api.WikiNodeType;
+import org.exoplatform.wiki.mow.api.WikiType;
 import org.exoplatform.wiki.mow.core.api.MOWService;
 import org.exoplatform.wiki.mow.core.api.WikiStoreImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.AttachmentImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
+import org.exoplatform.wiki.mow.core.api.wiki.WikiImpl;
 import org.exoplatform.wiki.rendering.RenderingService;
 import org.exoplatform.wiki.rendering.impl.RenderingServiceImpl;
 import org.exoplatform.wiki.resolver.PageResolver;
@@ -146,15 +149,19 @@ public class Utils {
     }    
   }
   
-  public static String getCurrentWiki() throws Exception {
-    return Utils.getCurrentWikiPageParams().getOwner();
+  public static Wiki getCurrentWiki() throws Exception {
+    MOWService mowService = (MOWService) PortalContainer.getComponent(MOWService.class);
+    WikiStoreImpl store = (WikiStoreImpl) mowService.getModel().getWikiStore();
+    String wikiType=  Utils.getCurrentWikiPageParams().getType();
+    String owner=  Utils.getCurrentWikiPageParams().getOwner();
+    return store.getWiki(WikiType.valueOf(wikiType.toUpperCase()), owner);    
   }
   
   public static Wiki[] getAllWikiSpace() {
     MOWService mowService = (MOWService) PortalContainer.getComponent(MOWService.class);
     WikiStoreImpl store = (WikiStoreImpl) mowService.getModel().getWikiStore();
     return store.getWikis().toArray(new Wiki[]{}) ;
-  }
+  } 
   
   public static void setUpWikiContext(UIWikiPortlet wikiPortlet, RenderingService renderingService) throws Exception {
     Execution ec = ((RenderingServiceImpl) renderingService).getExecutionContext();
@@ -212,10 +219,23 @@ public class Utils {
       PageImpl syntaxPage = wservice.getHelpSyntaxPage(syntaxId.replace("SLASH", "/").replace("DOT", "."));
       if (syntaxPage!=null)
       {
-      PageImpl fullHelpPage= syntaxPage.getChildPages().values().iterator().next();
+      PageImpl fullHelpPage= (PageImpl) syntaxPage.getChildPages().values().iterator().next();
       return fullHelpPage;
       }      
     }
     return null;
   }
+  public static String getCurrentHierachyPagePath() throws Exception
+  {
+    String currentWikiName = getCurrentWiki().getOwner();
+    String currentWikiPath = ((WikiImpl) getCurrentWiki()).getPath();
+    String currentPagePath = ((PageImpl) getCurrentWikiPage()).getPath();    
+    String prefixPath = getCurrentWikiPageParams().getType()+ "/" + currentWikiName;
+    String result = currentPagePath.replace(currentWikiPath, prefixPath);    
+    if (result.equals(prefixPath) ||result.equals(prefixPath +"/"+WikiNodeType.Definition.WIKI_HOME_NAME)) {
+      return "";
+    }   
+    return result;
+  }
+ 
 }

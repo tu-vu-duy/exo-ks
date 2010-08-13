@@ -26,7 +26,7 @@ function UIForm() {
 /**
  * Submits a form with the given action and the given parameters
  */
-UIForm.prototype.submitSavePageEvent = function(formId, action, params) {
+UIForm.prototype.submitPageEvent = function(formId, action, params) {
   var form = eXo.webui.UIForm.getFormElemt(formId) ;
 	 try {
 	  if (FCKeditorAPI && typeof FCKeditorAPI == "object") {

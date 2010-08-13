@@ -40,7 +40,7 @@ public interface WikiService {
 	public boolean deletePage(String wikiType, String wikiOwner, String pageId) throws Exception ;
 	public void deleteDraftNewPage(String draftNewPageId) throws Exception ;
 	public boolean renamePage(String wikiType, String wikiOwner, String pageName, String newName, String newTitle) throws Exception ;
-	public boolean movePage(String pageId, String newParentId, String wikiType, String srcSpace, String destSpace) throws Exception ;
+	public boolean movePage(WikiPageParams currentLocationParams, WikiPageParams newLocationParams) throws Exception ;
 	/*public List<Space> getSpaces(String wikiType) throws Exception ;
 	public List<Space> getAllSpaces() throws Exception ;*/
 	

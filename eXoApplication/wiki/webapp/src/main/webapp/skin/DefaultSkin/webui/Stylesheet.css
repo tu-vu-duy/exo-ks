@@ -505,57 +505,6 @@
 	margin-top: 8px;
 }
 
-.UIWikiPageArea .ComparedForm{
-	border-bottom: 1px solid #dadada;
-	padding-bottom: 12px;
-}
-
-.UIWikiPageArea .ComparedForm .ChangeVersionForm{
-	padding: 12px;
-	background: #f5f5f5;
-	float: left;
-}
-
-.UIWikiPageArea .ComparedForm .ChangeVersionForm .ChangeVersionInfo{
-	font-weight: bold;
-}
-
-.UIWikiPageArea .ComparedForm .ChangeVersionForm .Admin{
-	font-weight: bold;
-	color: #165fb3;
-}
-
-.UIWikiPageArea .ComparedForm .ChangeVersionForm .Changes{
-	color: #165fb3;
-	border-top:1px solid white;
-	line-height: 17px;
-}
-
-.UIWikiPageArea .ComparedForm .ChangeVersionForm .DateChange{
-	line-height: 20px;
-}
-
-.UIWikiPageArea .ComparedWith{
-	float: left;
-	padding:30px 12px 0px 12px;
-	font-weight: bold;
-}
-
-.UIWikiPageArea .LineRemoved{
-	background: #ffd8da;
-	text-decoration:line-through;
-	margin-bottom: 1px;
-}
-
-.UIWikiPageArea .LineAdded{
-	background: #b5ffbf;
-}
-
-.UIWikiPageArea .ChangedForm .Label{
-	line-height: 30px;
-	font-size: 12px;
-}
-
 .UIWikiPageVersionsList .HistoryLabel {
 	font-size: 24px;
 	font-weight: bold;
@@ -1227,6 +1176,75 @@
 	font-weight: bold;
 }
 
+.UIWikiPageVersionsCompare .ComparedForm{
+	border-bottom: 1px solid #dadada;
+	padding-bottom: 12px;
+}
+
+.UIWikiPageVersionsCompare .ComparedForm .ChangeVersionForm{
+	padding: 12px;
+	background: #f5f5f5;
+	float: left;
+}
+
+.UIWikiPageVersionsCompare .ComparedForm .ChangeVersionForm .ChangeVersionInfo{
+	font-weight: bold;
+}
+
+.UIWikiPageVersionsCompare .ComparedForm .ChangeVersionForm .Admin{
+	font-weight: bold;
+	color: #165fb3;
+}
+
+.UIWikiPageVersionsCompare .ComparedForm .ChangeVersionForm .Changes{
+	color: #165fb3;
+	border-top:1px solid white;
+	line-height: 17px;
+	cursor:pointer;
+}
+
+.UIWikiPageVersionsCompare .ComparedForm .ChangeVersionForm .DateChange{
+	line-height: 20px;
+}
+
+.UIWikiPageVersionsCompare .ComparedWith{
+	float: left;
+	padding:30px 12px 0px 12px;
+	font-weight: bold;
+}
+
+.UIWikiPageVersionsCompare .LineRemoved{
+	background: #ffd8da;
+	text-decoration:line-through;
+	margin-bottom: 1px;
+}
+
+.UIWikiPageVersionsCompare .LineAdded{
+	background: #b5ffbf;
+}
+
+.UIWikiPageVersionsCompare .ChangedForm .Label{
+	line-height: 30px;
+	font-size: 12px;
+}
+
+.UIWikiPageVersionsCompare .diff  {
+  margin-bottom: -5px;
+  overflow: auto;
+  padding: 3px 4px;
+  white-space: normal;
+}
+
+.UIWikiPageVersionsCompare .diffaddword  {
+  background: #b5ffbf;
+}
+
+.UIWikiPageVersionsCompare .diffremoveword  {
+  background: #ffd8da;
+  text-decoration: line-through;
+}
+
+/* Move page form*/
 .UIWikiMovePageForm {
   padding: 10px 0px 0px 10px;
   color:black;
@@ -1238,60 +1256,4 @@
 
 .UIWikiMovePageForm table td {
   border:none;
-}
-
-.UIWikiPageVersionsCompare .ChangesInfo {
-  margin: 5px;
-  padding:10px;
-  background-color: #D7D7D7;
-}
-
-.UIWikiPageVersionsCompare .ChangesInfo .ChangesInfoBox {
-  float: left;
-  width: 45%;
-  text-align: center;
-}
-
-.UIWikiPageVersionsCompare .ChangesInfo .ChangesInfoMiddleBox {
-  float: left;
-  width: 10%;
-  text-align: center;
-  font-size: 12px;
-  font-weight: bold;
-  vertical-align: middle;
-}
-
-.UIWikiPageVersionsCompare .ContentChanges {
-  margin: 5px;
-}
-
-.UIWikiPageVersionsCompare .ContentChanges .ContentChangesTitle {
-  background-color: #D7D7D7;
-  border-bottom: 1px solid #FFFFFF;
-  color: #636363;
-  font-size: 1.1em;
-  font-weight: bold;
-  line-height: 20px;
-  padding: 3px 5px;
-  text-align: center;
-}
-
-.UIWikiPageVersionsCompare .diff  {
-  margin-bottom: -5px;
-  overflow: auto;
-  padding: 3px 4px;
-  white-space: normal;
-}
-
-.UIWikiPageVersionsCompare .diffmodifiedline  {
-  margin: 0.8em 0;
-}
-
-.UIWikiPageVersionsCompare .diffaddword  {
-  color: #287F00;
-}
-
-.UIWikiPageVersionsCompare .diffremoveword  {
-  color: #CA9A9B;
-  text-decoration: line-through;
 }

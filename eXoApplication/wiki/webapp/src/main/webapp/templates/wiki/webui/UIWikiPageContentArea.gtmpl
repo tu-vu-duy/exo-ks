@@ -4,61 +4,6 @@
   PageMode pageMode = uicomponent.getPageMode();
 %>
 <div class="UIWikiPageContentArea">
-	<!--<div class="DecorationVersion">
-		<span class="Label"> You're viewing and old version of this page. view the </span> <a href="#" class="Title">Current Version</a>
-		<div class="ActionLink"><a href="#">Compare with Current</a>&nbsp;|&nbsp;<a href="#">Restore this Versionv</a>&nbsp;|&nbsp;<a href="#">View Page History</a></div>
-	</div>
-	<div class="Breadcum"><a href="#">Priv</a><span class="Label"> &nbsp;&nbsp; Version 1 &nbsp;&nbsp;</span> <a href="#">Next</a></div>
-	<div class="LabelContent">Lorem ipsum dolor sit amet</div>
-	<div class="TextContent">Consectetur adipiscing elit. Quisque egestas, nisl hendrerit tincidunt posuere, erat lorem interdum ante, ac tincidunt orci ligula nec quam.</div>
-	-->
-	
-	
-	
-	
-	
-	<div class="ComparedForm ClearFix">
-		<div class="ChangeVersionForm">
-			<span class="ChangeVersionInfo">Version 2 </span>  bye  <span class="Admin"> Nguyen Tien Viet</span>
-			<div class="DateChange">on Jul 12,2010 03:03</div>
-			<div class="Changes"><< Changes from <span style="font-weight: bold;">1</span> to <span style="font-weight: bold;">2</span></div>
-		</div>
-		<div class="ComparedWith"> Compared With </div>
-		<div class="ChangeVersionForm">
-			<span class="ChangeVersionInfo">Version 2 </span>  bye  <span class="Admin"> Nguyen Tien Viet</span>
-			<div class="DateChange">on Jul 12,2010 03:03</div>
-			<a href="#" class="Changes">( show comment )</a>
-		</div>
-		<div class="ChangeVersionForm" style="float: right; width: 220px;">
-			<span class="ChangeVersionInfo">Key</span><br>
-			<span class="LineRemoved">This line was removed.</span><br>
-			<span> this</span><span class="LineRemoved">Word</span><span>was removed. This word was </span><span class="LineAdded"> added </span><br>
-			<span> This line was added </span><span class="LineAdded"> added </span>
-		</div>
-	</div>
-	
-	<div class="ChangedForm">
-		<div class="Label"><span style="font-weight: bold;">Changes (126)</span><span style="Color:#165fb3;"> view page history</span></div>
-		<span class="LineAdded"> Lorem ipsum dolor sit amet </span>
-		<span> Consectetur adipiscing elit. Vivamus feugiat augue vitae sapien vulputate commodo. </span>
-		<div class="LineRemoved" style="height: 14px;"><span></span></div>
-		<span> Praesent id est sed risus elementum lacinia. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.  </span><br>
-		<span> Vestibulum sagittis dapibus dui vitae aliquet. Donec gravida, arcu sit amet ultrices lobortis,<span class="LineAdded"> lorem </span><span> elit convallis erat,</span><span class="LineRemoved" style="height: 14px; color:#ffe8da;"> Removed </span><span>at lacinia metus risus sit amet odio.</span>
-	</div>
-
-
-
-
-
-
-
-
-
-  <!--
-	<p><b class="Tit">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</b><br/>Nunc ac velit tortor. Cras nibh metus, sollicitudin et molestie viverra, tristique vel nunc. Aliquam commodo, nunc rutrum tempus ultrices, urna augue interdum nisi, malesuada faucibus risus velit eget risus. Sed ipsum orci, lobortis id volutpat condimentum, adipiscing ut leo. Curabitur vel sem lacus. Nam consequat ligula et tellus egestas nec viverra leo feugiat. Curabitur tincidunt elementum tortor, a aliquam purus euismod et. Quisque placerat facilisis aliquet. Nulla convallis fringilla velit vel adipiscing. Duis laoreet eleifend nunc, sit amet pretium augue lobortis in. Fusce lobortis, diam in tincidunt consequat, erat lorem ornare magna, ac sagittis odio purus vel enim.</p>
-	<p><b class="Tit">Aliquam erat volutpat.</b><br/>Quisque egestas rutrum ultricies. Phasellus porta ante et arcu auctor at mattis nisi porttitor. Maecenas et semper quam. Aliquam tellus urna, tincidunt ac posuere at, varius eu neque. Vestibulum semper lacinia consectetur. Integer eu dapibus nibh. Nam hendrerit leo vitae felis pellentesque in mattis sapien dignissim. In pharetra laoreet lectus, vel luctus quam imperdiet id. Nullam interdum convallis ligula non fringilla. Maecenas ante odio, luctus vitae gravida sed, ullamcorper ut odio. Donec non enim vitae massa tincidunt placerat. Pellentesque nec dui ipsum. Proin et sollicitudin sapien. Nunc sed consequat orci.</p>
-	<p>Donec vestibulum dui eu erat iaculis porta. Duis ut nunc quis ligula aliquet accumsan. Nam id ultrices enim. Aliquam euismod vestibulum neque, et imperdiet ligula laoreet ac. Nunc vitae augue odio. Donec gravida mi a felis tempus et posuere nibh porta. Mauris nec eros lorem. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aliquam eget quam nisl, eget elementum diam.</p>
-	-->
   <%
     if(pageMode == PageMode.HISTORY) {
       String viewCurrentVersionLink = uicomponent.event(uicomponent.VIEW_CURRENT_VERSION);
@@ -68,27 +13,23 @@
       String nextVersionsLink = uicomponent.isHasNextVersion() ? uicomponent.event(uicomponent.NEXT_VERSION) : null;
       String currentVersion = "Version " + uicomponent.versionName;
   %>
-  <div class="VersionInfo">
-    <span class="VersionInfoDescription">You are viewing an old version of this page. View the <a href="$viewCurrentVersionLink">current version</a>.</span>
-    <span class="PageHistoryView">
-      <a href="">Compare with Current</a>  |  
-      <a href="$restoreLink">Restore this Version</a>  |  
-      <a href="$viewHistoryLink">View Page History</a>
-    </span>
-    <div class="NavigationSpacing">
-    <%
-      if(previousVersionsLink != null){
-    %>
-      <a class="VersionNavigation" href="$previousVersionsLink"><< Previous</a>
-    <% } %>
-      <span class="CurrentVersion"><%= currentVersion %></span>
-    <%
-      if(nextVersionsLink != null){
-    %>
-      <a class="VersionNavigation" href="$nextVersionsLink">Next>></a>
-    <% } %>
-    </div>
-  </div>
+  <div class="DecorationVersion">
+		<span class="Label"> You're viewing an old version of this page. View the </span> <a href="$viewCurrentVersionLink" class="Title">current Version</a>
+		<div class="ActionLink"><a href="">Compare with Current</a>&nbsp;|&nbsp;<a href="$restoreLink">Restore this Versionv</a>&nbsp;|&nbsp;<a href="$viewHistoryLink">View Page History</a></div>
+	</div>
+	<div class="Breadcum">
+	<%
+    if(previousVersionsLink != null){
+  %>
+    <a href="$previousVersionsLink">Prev</a>
   <% } %>
+	  <span class="Label"><%= "&nbsp;&nbsp;" +  currentVersion + "&nbsp;&nbsp;" %></span> 
+	<%
+    if(nextVersionsLink != null){
+  %>
+	  <a href="$nextVersionsLink">Next</a>
+	<% } %>
+	</div>
+<% } %>
 ${uicomponent.htmlOutput}
 </div>

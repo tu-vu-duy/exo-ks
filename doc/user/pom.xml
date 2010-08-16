@@ -54,6 +54,7 @@
               <sourceFileName>eXoWiki.wiki</sourceFileName>
               <destinationDirectory>${wikbook.target}/src</destinationDirectory>
               <destinationFileName>index.xml</destinationFileName>
+              <syntaxId>confluence/1.0</syntaxId>
             </configuration>
           </plugin>
 
@@ -101,7 +102,7 @@
 
                  <!-- PDF -->
                  <foCustomization>${wikbook.target}/src/resources/xsl/fopdf.xsl</foCustomization>
-                 <imgSrcPath>${wikbook.source}/</imgSrcPath>
+                 <imgSrcPath>${wikbook.source}/images/</imgSrcPath>
                  <admonGraphicsPath>${wikbook.target}/src/resources/images/admons/</admonGraphicsPath>
 
                  <!-- Highlight source code -->

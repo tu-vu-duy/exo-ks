@@ -6,6 +6,7 @@ public class SearchData {
   private String content ;
   private String path ;
   private String pageId ;
+  private String wikiType;
   
   public SearchData(String path, String pageId) {
     this.path = path ;
@@ -56,6 +57,14 @@ public class SearchData {
     return pageId;
   }
 
+  public String getWikiType() {
+    return wikiType;
+  }
+
+  public void setWikiType(String wikiType) {
+    this.wikiType = wikiType;
+  }
+
   public String getChromatticStatement() {
     StringBuilder statement = new StringBuilder();    
     try {
@@ -84,7 +93,11 @@ public class SearchData {
   }
   
   public String getStatement() {
-    StringBuilder statement = new StringBuilder();    
+    StringBuilder statement = new StringBuilder();
+    String queryPath="";
+    if (path==null){
+      
+    }
     try {
       statement.append("SELECT title, jcr:primaryType, path, excerpt(.) ")
                .append("FROM nt:base ")

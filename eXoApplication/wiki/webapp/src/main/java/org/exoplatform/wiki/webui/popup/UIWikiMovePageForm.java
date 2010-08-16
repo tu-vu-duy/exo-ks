@@ -91,7 +91,7 @@ public class UIWikiMovePageForm extends UIForm implements UIPopupComponent {
       WikiPageParams currentLocationParams = Utils.getPageParamsFromPath(currentLocationInput.getValue());
       currentLocationParams.setPageId(TitleResolver.getPageId(currentLocationParams.getPageId(), false));
       WikiPageParams newLocationParams = Utils.getPageParamsFromPath(newLocationInput.getValue());
-      if ((newLocationParams==null)||(newLocationParams.getPageId() == null)) {
+      if ((newLocationParams==null)||(newLocationParams.getPageId() == null)||(currentLocationInput.getValue().equals(newLocationInput.getValue().trim()))) {
         uiWikiPortlet.addMessage(new ApplicationMessage("UIWikiMovePageForm.can-not-move-to-follow-path", null, ApplicationMessage.WARNING));
         event.getRequestContext().addUIComponentToUpdateByAjax(uiWikiPortlet.getUIPopupMessages()) ;
         return;

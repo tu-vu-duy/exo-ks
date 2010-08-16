@@ -1,4 +1,7 @@
 org.exoplatform.wiki.rendering.impl.DefaultWikiModel
+org.exoplatform.wiki.service.wysiwyg.CompactStringEntityReferenceSerializer
+org.exoplatform.wiki.service.wysiwyg.CurrentEntityReferenceValueProvider
+org.exoplatform.wiki.service.wysiwyg.DefaultLinkService
 org.exoplatform.wiki.service.wysiwyg.DefaultWikiService
 org.exoplatform.wiki.rendering.render.confluence.ConfluenceSyntaxRenderer
 org.exoplatform.wiki.rendering.render.confluence.ConfluenceSyntaxBlockRenderer

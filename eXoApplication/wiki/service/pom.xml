@@ -176,10 +176,11 @@
       <artifactId>xwiki-core-rendering-macro-message</artifactId>
       <version>${org.xwiki.platform.version}</version>
     </dependency>
+    <!-- From 2.4 , difficult to integrate code macro -->
     <dependency>
       <groupId>org.xwiki.platform</groupId>
       <artifactId>xwiki-core-rendering-macro-code</artifactId>
-      <version>${org.xwiki.platform.version}</version>
+      <version>2.3.2</version>
     </dependency>
     <dependency>
       <groupId>org.xwiki.contrib</groupId>
@@ -202,17 +203,17 @@
     <dependency>
       <groupId>org.suigeneris</groupId>
       <artifactId>jrcs.diff</artifactId>
-      <version>0.4.2</version>
+      <version>${org.suigeneris.version}</version>
     </dependency>
     <dependency>
       <groupId>org.suigeneris</groupId>
       <artifactId>jrcs.rcs</artifactId>
-      <version>0.4.2</version>
+      <version>${org.suigeneris.version}</version>
     </dependency>
     <dependency>
       <groupId>ecs</groupId>
       <artifactId>ecs</artifactId>
-      <version>1.4.2</version>
+      <version>${ecs.version}</version>
     </dependency>
     <!-- Code macro depends on -->
     <dependency>

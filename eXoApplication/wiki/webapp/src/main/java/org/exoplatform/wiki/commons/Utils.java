@@ -23,9 +23,11 @@ import java.util.Set;
 
 import javax.jcr.Node;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.exoplatform.commons.utils.MimeTypeResolver;
 import org.exoplatform.container.PortalContainer;
+import org.exoplatform.container.RootContainer;
 import org.exoplatform.download.DownloadService;
 import org.exoplatform.download.InputStreamDownloadResource;
 import org.exoplatform.portal.application.PortalRequestContext;
@@ -48,6 +50,7 @@ import org.exoplatform.wiki.resolver.PageResolver;
 import org.exoplatform.wiki.service.WikiContext;
 import org.exoplatform.wiki.service.WikiPageParams;
 import org.exoplatform.wiki.service.WikiService;
+import org.exoplatform.wiki.service.impl.SessionManager;
 import org.exoplatform.wiki.webui.UIWikiPageEditForm;
 import org.exoplatform.wiki.webui.UIWikiPortlet;
 import org.exoplatform.wiki.webui.UIWikiRichTextArea;
@@ -166,25 +169,8 @@ public class Utils {
   public static void setUpWikiContext(UIWikiPortlet wikiPortlet, RenderingService renderingService) throws Exception {
     Execution ec = ((RenderingServiceImpl) renderingService).getExecutionContext();
     if (ec.getContext() == null) {
-      //
-      PortalRequestContext portalRequestContext = Util.getPortalRequestContext();
-      UIPortal uiPortal = Util.getUIPortal();
-      String portalURI = portalRequestContext.getPortalURI();
-      String pageNodeSelected = uiPortal.getSelectedNode().getUri();
-      //
       ec.setContext(new ExecutionContext());
-      WikiContext wikiContext = new WikiContext();
-      wikiContext.setPortalURI(portalURI);
-      wikiContext.setPortletURI(pageNodeSelected);
-      WikiPageParams params = Utils.getCurrentWikiPageParams();
-      wikiContext.setType(params.getType());
-      wikiContext.setOwner(params.getOwner());
-      if (wikiPortlet.getWikiMode() == WikiMode.NEW) {
-        String sessionId = Util.getPortalRequestContext().getRequest().getSession(false).getId();
-        wikiContext.setPageId(sessionId);
-      } else {
-        wikiContext.setPageId(params.getPageId());
-      }
+      WikiContext wikiContext = getCurrentWikiContext(wikiPortlet);
       ec.getContext().setProperty(WikiContext.WIKICONTEXT, wikiContext);
     }
   }
@@ -197,17 +183,22 @@ public class Utils {
   }
   
   public static void feedDataForWYSIWYGEditor(UIWikiPageEditForm pageEditForm, String xhtmlContent) throws Exception {
+    UIWikiPortlet wikiPortlet = pageEditForm.getAncestorOfType(UIWikiPortlet.class);
+    HttpSession session = Util.getPortalRequestContext().getRequest().getSession(false);
     if (xhtmlContent == null) {
       RenderingService renderingService = (RenderingService) PortalContainer.getComponent(RenderingService.class);
       String markupContent = pageEditForm.getUIFormTextAreaInput(UIWikiPageEditForm.FIELD_CONTENT).getValue();
       String markupSyntax = pageEditForm.getUIFormSelectBox(UIWikiPageEditForm.FIELD_SYNTAX).getValue();
-      setUpWikiContext(pageEditForm.getAncestorOfType(UIWikiPortlet.class), renderingService);
+      setUpWikiContext(wikiPortlet, renderingService);
       String htmlContent = renderingService.render(markupContent, markupSyntax, Syntax.ANNOTATED_XHTML_1_0.toIdString());
       removeWikiContext(renderingService);
-      Util.getPortalRequestContext().getRequest().getSession(false).setAttribute(UIWikiRichTextArea.SESSION_KEY, htmlContent);
+      session.setAttribute(UIWikiRichTextArea.SESSION_KEY, htmlContent);
     } else {
-      Util.getPortalRequestContext().getRequest().getSession(false).setAttribute(UIWikiRichTextArea.SESSION_KEY, xhtmlContent);
+      session.setAttribute(UIWikiRichTextArea.SESSION_KEY, xhtmlContent);
     }
+    
+    SessionManager sessionManager = (SessionManager) RootContainer.getComponent(SessionManager.class);
+    sessionManager.addSessionContext(session.getId(), getCurrentWikiContext(wikiPortlet));
   }
 
   public static Page isRenderFullHelpPage() throws Exception {
@@ -236,6 +227,29 @@ public class Utils {
       return "";
     }   
     return result;
+  }
+  
+  private static WikiContext getCurrentWikiContext(UIWikiPortlet wikiPortlet) throws Exception {
+    //
+    PortalRequestContext portalRequestContext = Util.getPortalRequestContext();
+    UIPortal uiPortal = Util.getUIPortal();
+    String portalURI = portalRequestContext.getPortalURI();
+    String pageNodeSelected = uiPortal.getSelectedNode().getUri();
+    //
+    WikiContext wikiContext = new WikiContext();
+    wikiContext.setPortalURI(portalURI);
+    wikiContext.setPortletURI(pageNodeSelected);
+    WikiPageParams params = Utils.getCurrentWikiPageParams();
+    wikiContext.setType(params.getType());
+    wikiContext.setOwner(params.getOwner());
+    if (wikiPortlet.getWikiMode() == WikiMode.NEW) {
+      String sessionId = Util.getPortalRequestContext().getRequest().getSession(false).getId();
+      wikiContext.setPageId(sessionId);
+    } else {
+      wikiContext.setPageId(params.getPageId());
+    }
+
+    return wikiContext;
   }
  
 }

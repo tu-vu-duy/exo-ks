@@ -23,7 +23,10 @@ import org.exoplatform.container.RootContainer;
 import org.exoplatform.container.component.RequestLifeCycle;
 import org.exoplatform.wiki.rendering.RenderingService;
 import org.exoplatform.wiki.rendering.impl.RenderingServiceImpl;
+import org.exoplatform.wiki.service.WikiContext;
 import org.exoplatform.wiki.service.impl.SessionManager;
+import org.xwiki.context.Execution;
+import org.xwiki.context.ExecutionContext;
 
 import com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -54,31 +57,42 @@ public class WikiRemoteServiceServlet extends RemoteServiceServlet {
     
     String result;
     PortalContainer portalContainer;
+    SessionManager sessionManager;
+    String sessionId = getThreadLocalRequest().getSession(false).getId();
     try {
-      SessionManager sessionManager = (SessionManager) RootContainer.getComponent(SessionManager.class);
-      String sessionId = getThreadLocalRequest().getSession(false).getId();
+      sessionManager = (SessionManager) RootContainer.getComponent(SessionManager.class);
       portalContainer = RootContainer.getInstance().getPortalContainer(sessionManager.getSessionContainer(sessionId));
     } catch (Exception e) {
       return RPC.encodeResponseForFailure(null, e);
     }
     ExoContainer oldContainer = ExoContainerContext.getCurrentContainer();
     ExoContainerContext.setCurrentContainer(portalContainer);
-    
+
     RequestLifeCycle.begin(portalContainer);
 
     try {
       RPCRequest req = RPC.decodeRequest(payload, null, this);
       RenderingServiceImpl renderingService = (RenderingServiceImpl) portalContainer.getComponentInstanceOfType(RenderingService.class);
+      WikiContext wikiContext = (WikiContext) sessionManager.getSessionContext(sessionId);
+      Execution ec = ((RenderingServiceImpl) renderingService).getExecutionContext();
+      if (ec.getContext() == null) {
+        ec.setContext(new ExecutionContext());
+        ec.getContext().setProperty(WikiContext.WIKICONTEXT, wikiContext);
+      }
       RemoteService service = (RemoteService) renderingService.getComponent(req.getMethod().getDeclaringClass());
       result = RPC.invokeAndEncodeResponse(service, req.getMethod(), req.getParameters(), req.getSerializationPolicy());
+      ec.removeContext();
     } catch (IncompatibleRemoteServiceException ex) {
       log("IncompatibleRemoteServiceException in the processCall(String) method.", ex);
       result = RPC.encodeResponseForFailure(null, ex);
+    } catch (Exception e) {
+      log("Exception in the processCall(String) method.", e);
+      result = RPC.encodeResponseForFailure(null, e);
     } finally {
       ExoContainerContext.setCurrentContainer(oldContainer);
       RequestLifeCycle.end();
     }
-    
+
     return result;
   }
 

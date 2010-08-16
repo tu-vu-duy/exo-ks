@@ -26,6 +26,8 @@ import java.util.Hashtable;
  */
 public class SessionManager extends Hashtable<String, String> {
 
+  private Hashtable<String, Object> context = new Hashtable<String, Object>();
+  
   final public String getSessionContainer(String id)
   {
      return get(id);
@@ -34,11 +36,24 @@ public class SessionManager extends Hashtable<String, String> {
   final public void removeSessionContainer(String id)
   {
      remove(id);
+     removeSessionContext(id);
   }
   
   final public void addSessionContainer(String id, String scontainer)
   {
      put(id, scontainer);
+  }
+  
+  final public Object getSessionContext(String id) {
+    return this.context.get(id);
+  }
+  
+  final public void addSessionContext(String id, Object context) {
+    this.context.put(id, context);
+  }
+
+  final public void removeSessionContext(String id) {
+    this.context.remove(id);
   }
   
 }

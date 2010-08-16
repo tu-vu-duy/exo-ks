@@ -17,7 +17,6 @@
 package org.exoplatform.wiki.rendering.impl;
 
 import org.exoplatform.container.ExoContainerContext;
-import org.exoplatform.portal.config.model.PortalConfig;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.wiki.mow.api.Page;
@@ -156,18 +155,7 @@ public class DefaultWikiModel implements WikiModel {
         LOG.warn("An exception happened when process broken link.", e);
       }
     }
-    StringBuilder sb = new StringBuilder();
-    sb.append(context.getPortalURI());
-    sb.append(context.getPortletURI());
-    sb.append("/");
-    if(!PortalConfig.PORTAL_TYPE.equalsIgnoreCase(context.getType())){
-      sb.append(context.getType().toLowerCase());
-      sb.append("/");
-      sb.append(Utils.validateWikiOwner(context.getType(), context.getOwner()));
-      sb.append("/");
-    }
-    sb.append(context.getPageId());
-    return sb.toString();
+    return Utils.getDocumentURL(context);
   }
   
   private WikiContext getWikiMarkupContext(String documentName) {

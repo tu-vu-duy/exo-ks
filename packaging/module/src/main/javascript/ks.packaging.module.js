@@ -64,33 +64,33 @@ function getModule(params)
     new Project("org.exoplatform.ks", "exo.ks.eXoApplication.wiki.webapp", "war", "2.0.0-SNAPSHOT").
     addDependency(new Project("org.exoplatform.ks", "exo.ks.eXoApplication.wiki.service", "jar",  "2.0.0-SNAPSHOT")).
 	addDependency(new Project("org.exoplatform.commons", "exo.platform.commons.webui.ext", "jar",  "${org.exoplatform.commons.version}")).
-	addDependency(new Project("com.google.gwt", "gwt-servlet", "jar",  "2.0.0")).
-	addDependency(new Project("com.google.gwt", "gwt-user", "jar",  "2.0.0")).
-	addDependency(new Project("org.xwiki.platform", "xwiki-web-gwt-wysiwyg-client", "jar",  "2.3.1")).
+	addDependency(new Project("com.google.gwt", "gwt-servlet", "jar",  "${gwt.version}")).
+	addDependency(new Project("com.google.gwt", "gwt-user", "jar",  "${gwt.version}")).
+	addDependency(new Project("org.xwiki.platform", "xwiki-web-gwt-wysiwyg-client", "jar",  "${org.xwiki.platform.version}")).
 	addDependency(new Project("org.apache.pdfbox", "fontbox", "jar",  "1.1.0")).
-	addDependency(new Project("javax.validation", "validation-api", "jar",  "1.0.0.GA")).
-	addDependency(new Project("org.hibernate", "hibernate-validator", "jar",  "4.0.0.GA")).
-	addDependency(new Project("org.python", "jython-standalone", "jar",  "2.5.1-xwiki")).
-	addDependency(new Project("pygments", "pygments", "jar",  "1.3.1-xwiki")).
+	addDependency(new Project("javax.validation", "validation-api", "jar",  "${javax.validation.version}")).
+	addDependency(new Project("org.hibernate", "hibernate-validator", "jar",  "${hibernate-validator.version}")).
+	addDependency(new Project("org.python", "jython-standalone", "jar",  "${jython-standalone.version}")).
+	addDependency(new Project("pygments", "pygments", "jar",  "${pygments.version}")).
 	addDependency(new Project("net.sourceforge.htmlcleaner", "htmlcleaner", "jar",  "2.1")).
-	addDependency(new Project("org.xwiki.platform", "xwiki-core-configuration-api", "jar",  "2.3.1")).
-	addDependency(new Project("org.xwiki.platform", "xwiki-core-model", "jar",  "2.3.1")).
-	addDependency(new Project("org.xwiki.platform", "xwiki-core-context", "jar",  "2.3.1")).
-	addDependency(new Project("org.xwiki.platform", "xwiki-core-component-api", "jar",  "2.3.1")).
-	addDependency(new Project("org.xwiki.platform", "xwiki-core-properties", "jar",  "2.3.1")).
-	addDependency(new Project("org.xwiki.platform", "xwiki-core-xml", "jar",  "2.3.1")).
-	addDependency(new Project("org.xwiki.platform", "xwiki-core-script", "jar",  "2.3.1")).
-	addDependency(new Project("org.xwiki.platform", "xwiki-core-rendering-api", "jar",  "2.3.1")).
-	addDependency(new Project("org.xwiki.platform", "xwiki-core-component-default", "jar",  "2.3.1")).
-	addDependency(new Project("org.xwiki.platform", "xwiki-core-rendering-syntax-wikimodel", "jar",  "2.3.1")).
-	addDependency(new Project("org.xwiki.platform", "xwiki-core-rendering-macro-box", "jar",  "2.3.1")).
-	addDependency(new Project("org.xwiki.platform", "xwiki-core-rendering-macro-message", "jar",  "2.3.1")).
-	addDependency(new Project("org.xwiki.platform", "xwiki-core-rendering-macro-code", "jar",  "2.3.1")).
-	addDependency(new Project("org.xwiki.contrib", "xwiki-macro-column", "jar",  "1.1-SNAPSHOT")).
-	addDependency(new Project("org.wikimodel", "org.wikimodel.wem", "jar",  "2.0.7-20100629-1")).
-	addDependency(new Project("org.suigeneris", "jrcs.diff", "jar",  "0.4.2")).
-	addDependency(new Project("org.suigeneris", "jrcs.rcs", "jar",  "0.4.2")).
-	addDependency(new Project("ecs", "ecs", "jar",  "1.4.2"));
+	addDependency(new Project("org.xwiki.platform", "xwiki-core-configuration-api", "jar",  "${org.xwiki.platform.version}")).
+	addDependency(new Project("org.xwiki.platform", "xwiki-core-model", "jar",  "${org.xwiki.platform.version}")).
+	addDependency(new Project("org.xwiki.platform", "xwiki-core-context", "jar",  "${org.xwiki.platform.version}")).
+	addDependency(new Project("org.xwiki.platform", "xwiki-core-component-api", "jar",  "${org.xwiki.platform.version}")).
+    addDependency(new Project("org.xwiki.platform", "xwiki-core-component-default", "jar",  "${org.xwiki.platform.version}")).
+	addDependency(new Project("org.xwiki.platform", "xwiki-core-properties", "jar",  "${org.xwiki.platform.version}")).
+	addDependency(new Project("org.xwiki.platform", "xwiki-core-xml", "jar",  "${org.xwiki.platform.version}")).
+	addDependency(new Project("org.xwiki.platform", "xwiki-core-script", "jar",  "${org.xwiki.platform.version}")).
+	addDependency(new Project("org.xwiki.platform", "xwiki-core-rendering-api", "jar",  "${org.xwiki.platform.version}")).
+	addDependency(new Project("org.xwiki.platform", "xwiki-core-rendering-syntax-wikimodel", "jar",  "${org.xwiki.platform.version}")).
+	addDependency(new Project("org.xwiki.platform", "xwiki-core-rendering-macro-box", "jar",  "${org.xwiki.platform.version}")).
+	addDependency(new Project("org.xwiki.platform", "xwiki-core-rendering-macro-message", "jar",  "${org.xwiki.platform.version}")).
+	addDependency(new Project("org.xwiki.platform", "xwiki-core-rendering-macro-code", "jar",  "2.3.2")).
+	addDependency(new Project("org.xwiki.contrib", "xwiki-macro-column", "jar",  "${column-macro.version}")).
+	addDependency(new Project("org.wikimodel", "org.wikimodel.wem", "jar",  "${org.wikimodel.version}")).
+	addDependency(new Project("org.suigeneris", "jrcs.diff", "jar",  "${org.suigeneris.version}")).
+	addDependency(new Project("org.suigeneris", "jrcs.rcs", "jar",  "${org.suigeneris.version}")).
+	addDependency(new Project("ecs", "ecs", "jar",  "${ecs.version}"));
     
   module.eXoApplication.wiki.deployName = "wiki";
 

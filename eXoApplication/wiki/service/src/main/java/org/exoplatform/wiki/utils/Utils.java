@@ -1,6 +1,7 @@
 package org.exoplatform.wiki.utils;
 
 import java.util.Collection;
+
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.portal.config.model.PortalConfig;
@@ -14,6 +15,7 @@ import org.exoplatform.wiki.mow.core.api.WikiStoreImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.GroupWiki;
 import org.exoplatform.wiki.mow.core.api.wiki.PortalWiki;
 import org.exoplatform.wiki.mow.core.api.wiki.UserWiki;
+import org.exoplatform.wiki.service.WikiContext;
 import org.exoplatform.wiki.service.WikiPageParams;
 
 public class Utils {
@@ -54,6 +56,21 @@ public class Utils {
     RepositoryService repositoryService = (RepositoryService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(RepositoryService.class);
     sb.append(repositoryService.getConfig().getDefaultRepositoryName());
     sb.append("/");
+    return sb.toString();
+  }
+  
+  public static String getDocumentURL(WikiContext wikiContext) {
+    StringBuilder sb = new StringBuilder();
+    sb.append(wikiContext.getPortalURI());
+    sb.append(wikiContext.getPortletURI());
+    sb.append("/");
+    if (!PortalConfig.PORTAL_TYPE.equalsIgnoreCase(wikiContext.getType())) {
+      sb.append(wikiContext.getType().toLowerCase());
+      sb.append("/");
+      sb.append(Utils.validateWikiOwner(wikiContext.getType(), wikiContext.getOwner()));
+      sb.append("/");
+    }
+    sb.append(wikiContext.getPageId());
     return sb.toString();
   }
   

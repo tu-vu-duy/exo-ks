@@ -18,7 +18,10 @@ package org.exoplatform.wiki.tree;
 
 import java.util.Iterator;
 
+import org.exoplatform.wiki.mow.api.Wiki;
 import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
+import org.exoplatform.wiki.mow.core.api.wiki.WikiImpl;
+import org.exoplatform.wiki.utils.Utils;
 
 /**
  * Created by The eXo Platform SAS
@@ -27,31 +30,49 @@ import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
  * Aug 6, 2010  
  */
 public class PageTreeNode extends TreeNode {
-  private PageImpl           page; 
+  private PageImpl page;
 
-  public PageTreeNode(PageImpl page, String parentPath) throws Exception {
+  public PageTreeNode(PageImpl page) throws Exception {
+    super(page.getContent().getTitle(), TreeNodeType.PAGE);
     this.page = page;
-    this.name = page.getContent().getTitle();
-    this.absPath = parentPath + "/" + page.getName();    
-    this.hasChild=   this.page.getChildPages().size()>0;
-    this.nodeType= TreeNodeType.PAGE;
+    this.absPath = getAbsPath();
+    this.relPath = getRelPath();
+    this.hasChild = this.page.getChildPages().size() > 0;
   }
-  
-  public void setChildren() throws Exception
-  {
+
+  public void setChildren() throws Exception {
     Iterator<PageImpl> childPageIterator = page.getChildPages().values().iterator();
     while (childPageIterator.hasNext()) {
-      PageTreeNode child = new PageTreeNode(childPageIterator.next(), this.absPath);
+      PageTreeNode child = new PageTreeNode(childPageIterator.next());
       this.children.add(child);
     }
-  }  
+  }
 
   public PageTreeNode getChildByName(String name) throws Exception {
     for (TreeNode child : children) {
       if (child.getName().equals(name))
-        return (PageTreeNode)child;
+        return (PageTreeNode) child;
     }
     return null;
+  }
+
+  public String getRelPath() {
+    Wiki wiki = (Wiki) this.page.getWiki();
+    if (wiki != null) {
+      String wikiType = Utils.getWikiType(wiki);
+      String relPath = wikiType + "/" + wiki.getOwner() + "/" + this.page.getName();
+      return relPath;
+    }
+    return null;
+  }
+
+  public String getAbsPath() {
+    String wikiName = this.page.getWiki().getOwner();
+    String wikiPath = ((WikiImpl) this.page.getWiki()).getPath();
+    String pagePath = ((PageImpl) this.page).getPath();
+    String prefixPath = Utils.getWikiType(this.page.getWiki()) + "/" + wikiName;
+    String result = pagePath.replace(wikiPath, prefixPath);
+    return result;
   }
 
 }

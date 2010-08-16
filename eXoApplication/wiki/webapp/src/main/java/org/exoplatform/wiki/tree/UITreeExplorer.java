@@ -35,7 +35,7 @@ public class UITreeExplorer extends UIContainer {
   public String getRestUrl() {
     StringBuilder sb = new StringBuilder();
     sb.append("/").append(PortalContainer.getCurrentPortalContainerName()).append("/");
-    sb.append(PortalContainer.getCurrentRestContextName()).append("/wiki/");
+    sb.append(PortalContainer.getCurrentRestContextName()).append("/wiki/tree/");
     return sb.toString();
   }
 }

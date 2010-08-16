@@ -19,7 +19,7 @@
 		</div>
 	</div>
 
-<a id="MoreLink" class="MoreLink Icon">More <small>▼</small>
+<a id="MoreLink" class="MoreLink Icon">More
 </a>
 <%
 def rcontext = _ctx.getRequestContext() ;

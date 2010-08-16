@@ -22,6 +22,7 @@ import java.util.List;
 import org.exoplatform.wiki.mow.api.WikiNodeType;
 import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.WikiHome;
+import org.exoplatform.wiki.utils.Utils;
 
 /**
  * Created by The eXo Platform SAS
@@ -32,19 +33,19 @@ import org.exoplatform.wiki.mow.core.api.wiki.WikiHome;
 public class WikiHomeTreeNode extends TreeNode {
   private WikiHome           wikiHome;  
 
-  public WikiHomeTreeNode(WikiHome wikiHome, String parentPath) throws Exception {
+  public WikiHomeTreeNode(WikiHome wikiHome) throws Exception {
+    super(WikiNodeType.Definition.WIKI_HOME_TITLE, TreeNodeType.WIKIHOME);
     this.wikiHome = wikiHome;
-    this.name = WikiNodeType.Definition.WIKI_HOME_TITLE;    
-    this.absPath = parentPath + "/" + WikiNodeType.Definition.WIKI_HOME_NAME ;
-    this.hasChild= wikiHome.getChildPages().size()>0;
-    this.nodeType= TreeNodeType.WIKIHOME;
+    this.absPath= getAbsPath();
+    this.relPath= this.absPath;  
+    this.hasChild = wikiHome.getChildPages().size() > 0;   
   }
 
   public void setChildren() throws Exception
   {
     Iterator<PageImpl> childPageIterator = wikiHome.getChildPages().values().iterator();
     while (childPageIterator.hasNext()) {
-      PageTreeNode child = new PageTreeNode(childPageIterator.next(), this.absPath);
+      PageTreeNode child = new PageTreeNode(childPageIterator.next());
       this.children.add(child);
     }
   }
@@ -74,5 +75,10 @@ public class WikiHomeTreeNode extends TreeNode {
       }
     }
     return null;
+  }
+
+  public String getAbsPath() {
+    return Utils.getWikiType(this.wikiHome.getWiki()) + "/" + this.wikiHome.getOwner() + "/"
+        + WikiNodeType.Definition.WIKI_HOME_NAME;
   }
 }

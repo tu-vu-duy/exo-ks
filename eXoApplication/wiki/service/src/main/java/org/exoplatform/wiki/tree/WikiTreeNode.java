@@ -18,6 +18,7 @@ package org.exoplatform.wiki.tree;
 
 import org.exoplatform.wiki.mow.api.Wiki;
 import org.exoplatform.wiki.mow.core.api.wiki.WikiHome;
+import org.exoplatform.wiki.utils.Utils;
 
 /**
  * Created by The eXo Platform SAS
@@ -28,12 +29,12 @@ import org.exoplatform.wiki.mow.core.api.wiki.WikiHome;
 public class WikiTreeNode extends TreeNode {
   private Wiki wiki;
 
-  public WikiTreeNode(Wiki wiki, String parentPath) throws Exception {
+  public WikiTreeNode(Wiki wiki) throws Exception {
+    super(wiki.getOwner(), TreeNodeType.WIKI);
     this.wiki = wiki;
-    this.name = wiki.getOwner();  
-    this.absPath = parentPath + "/" + this.name;
+    this.absPath=  Utils.getWikiType(wiki) + "/" + wiki.getOwner();
+    this.relPath= this.absPath;   
     this.hasChild = true;
-    this.nodeType= TreeNodeType.WIKI;
   }
 
   public WikiHomeTreeNode getWikiHomeTreeNode() {
@@ -41,7 +42,7 @@ public class WikiTreeNode extends TreeNode {
   }
 
   public void setChildren() throws Exception {
-    this.children.add(new WikiHomeTreeNode((WikiHome) wiki.getWikiHome(), this.absPath));
+    this.children.add(new WikiHomeTreeNode((WikiHome) wiki.getWikiHome()));
   }
 
   public Wiki getWiki() {

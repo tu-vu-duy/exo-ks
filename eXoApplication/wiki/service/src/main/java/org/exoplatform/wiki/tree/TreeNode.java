@@ -31,10 +31,19 @@ public class TreeNode {
 
   protected String         absPath;
 
-  protected boolean        hasChild;
-  
-  protected TreeNodeType nodeType;
+  protected String         relPath;
 
+  protected boolean        hasChild;
+
+  protected TreeNodeType   nodeType;
+
+  protected List<TreeNode> children = new ArrayList<TreeNode>();
+  
+  public TreeNode(String name, TreeNodeType nodeType) {
+    this.name = name;
+    this.nodeType = nodeType;
+  }
+  
   public TreeNodeType getNodeType() {
     return nodeType;
   }
@@ -42,8 +51,6 @@ public class TreeNode {
   public void setNodeType(TreeNodeType nodeType) {
     this.nodeType = nodeType;
   }
-
-  protected List<TreeNode> children = new ArrayList<TreeNode>();
 
   public boolean isHasChild() {
     return hasChild;
@@ -71,6 +78,10 @@ public class TreeNode {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public String getRelPath() {
+    return relPath;
   }
 
 }

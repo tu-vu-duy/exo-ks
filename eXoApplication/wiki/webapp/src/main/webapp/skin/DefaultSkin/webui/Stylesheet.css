@@ -385,11 +385,7 @@
 }
 
 .UIWikiPageEditForm .UIPageToolBar .MoreLink {
-	width:40px;
-	color:#535353;	
-	float: right;
-	height: 14px;
-	margin: 0;
+	display:none;
 }
 
 .UIWikiPageEditForm .UIPageToolBar .DropdownMenu {

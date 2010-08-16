@@ -19,6 +19,7 @@ package org.exoplatform.wiki.service.impl;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -43,9 +44,7 @@ import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.WikiHome;
 import org.exoplatform.wiki.rendering.RenderingService;
 import org.exoplatform.wiki.rendering.impl.RenderingServiceImpl;
-import org.exoplatform.wiki.resolver.TitleResolver;
 import org.exoplatform.wiki.service.WikiContext;
-import org.exoplatform.wiki.service.WikiPageParams;
 import org.exoplatform.wiki.service.WikiRestService;
 import org.exoplatform.wiki.service.WikiService;
 import org.exoplatform.wiki.tree.PageTreeNode;
@@ -53,7 +52,6 @@ import org.exoplatform.wiki.tree.SpaceTreeNode;
 import org.exoplatform.wiki.tree.TreeNode;
 import org.exoplatform.wiki.tree.WikiHomeTreeNode;
 import org.exoplatform.wiki.tree.WikiTreeNode;
-import org.exoplatform.wiki.utils.Utils;
 import org.xwiki.context.Execution;
 import org.xwiki.context.ExecutionContext;
 import org.xwiki.rendering.syntax.Syntax;
@@ -136,54 +134,51 @@ public class WikiRestServiceImpl implements WikiRestService, ResourceContainer {
   }
 
   @GET
-  @Path("/{path}")
+  @Path("/tree/{path:.*}/")
   @Produces(MediaType.TEXT_HTML)
-  public Response getWikiTreeData(@PathParam("path") String absNodePath) {
+  public Response getWikiTreeData(@PathParam("path") String path) {
     try {
+      path= URLDecoder.decode(path, "utf-8");
       WikiStoreImpl store = (WikiStoreImpl) mowService.getModel().getWikiStore();
-
-      absNodePath = absNodePath.replace(".", "/");
-      absNodePath= URLDecoder.decode(absNodePath,"utf-8");
+      String[] arrayPath = path.split("/");
       StringBuilder responseData = new StringBuilder();
-
-      String parentPath = "";
-      if (absNodePath.indexOf("/") > 0) {
-        parentPath = absNodePath.substring(0, absNodePath.lastIndexOf("/"));
-      }
-      WikiPageParams nodeParams = Utils.getPageParamsFromPath(absNodePath);
-      if (nodeParams != null) {
-        responseData.append("<div class=\"NodeGroup\">");
-        String nodeType = nodeParams.getType();
-        String nodeOwner = nodeParams.getOwner();
-        String nodeName = nodeParams.getPageId();
-        nodeName= TitleResolver.getPageId(nodeName, false);
-        if ((nodeType != null) && (nodeOwner != null) && (nodeName != null)) {
-          if (!nodeName.equals(WikiNodeType.Definition.WIKI_HOME_NAME)) {
-            PageImpl expandPage = (PageImpl) wikiService.getPageById(nodeType, nodeOwner, nodeName);
-            PageTreeNode expandPageNode = new PageTreeNode(expandPage, parentPath);
-            expandPageNode.setChildren();
-            responseData.append(expandNode(expandPageNode).toString());
-          } else {
-            Wiki expandWiki = store.getWikiContainer(WikiType.valueOf(nodeType.toUpperCase()))
-                                   .getWiki(nodeOwner);
-            WikiHomeTreeNode expandWikiHome = new WikiHomeTreeNode((WikiHome) expandWiki.getWikiHome(),
-                                                                   parentPath);
-            expandWikiHome.setChildren();
-            responseData.append(expandNode(expandWikiHome).toString());
-          }
-        } else if (nodeType != null && nodeOwner != null) {
-
-          Wiki dataWiki = store.getWikiContainer(WikiType.valueOf(nodeType.toUpperCase()))
-                               .getWiki(nodeOwner);
-          WikiTreeNode expandWikiNode = new WikiTreeNode(dataWiki, parentPath);
-          expandWikiNode.setChildren();
-          responseData.append(expandNode(expandWikiNode).toString());
-        } else {
-          SpaceTreeNode expandSpaceNode = new SpaceTreeNode(nodeType);
-          expandSpaceNode.setChildren();
-          responseData.append(expandNode(expandSpaceNode).toString());
+      String wikiType = "";
+      String wikiOwner = "";
+      String pageId = "";
+      wikiType = arrayPath[0];
+      if (arrayPath.length >= 2) {
+        wikiOwner = arrayPath[1];
+        if (arrayPath.length >= 3) {
+          pageId = arrayPath[2];
         }
       }
+      responseData.append("<div class=\"NodeGroup\">");
+      if (!wikiOwner.equals("") && !pageId.equals("")) {
+        if (!pageId.equals(WikiNodeType.Definition.WIKI_HOME_NAME)) {
+          PageImpl expandPage = (PageImpl) wikiService.getPageById(wikiType, wikiOwner, pageId);
+          PageTreeNode expandPageNode = new PageTreeNode(expandPage);
+          expandPageNode.setChildren();
+          responseData.append(expandNode(expandPageNode).toString());
+        } else {
+          Wiki expandWiki = store.getWikiContainer(WikiType.valueOf(wikiType.toUpperCase()))
+                                 .getWiki(wikiOwner);
+          WikiHomeTreeNode expandWikiHome = new WikiHomeTreeNode((WikiHome) expandWiki.getWikiHome());
+          expandWikiHome.setChildren();
+          responseData.append(expandNode(expandWikiHome).toString());
+        }
+      } else if (!wikiOwner.equals("")) {
+
+        Wiki dataWiki = store.getWikiContainer(WikiType.valueOf(wikiType.toUpperCase()))
+                             .getWiki(wikiOwner);
+        WikiTreeNode expandWikiNode = new WikiTreeNode(dataWiki);
+        expandWikiNode.setChildren();
+        responseData.append(expandNode(expandWikiNode).toString());
+      } else {
+        SpaceTreeNode expandSpaceNode = new SpaceTreeNode(wikiType);
+        expandSpaceNode.setChildren();
+        responseData.append(expandNode(expandSpaceNode).toString());
+      }
+
       responseData.append("</div>");
       return Response.ok(responseData.toString(), MediaType.TEXT_HTML).cacheControl(cc).build();
     } catch (Exception e) {
@@ -215,7 +210,8 @@ public class WikiRestServiceImpl implements WikiRestService, ResourceContainer {
     String nodeTypeCSS= nodeType.substring(0,1).toUpperCase() + nodeType.substring(1).toLowerCase();
     String iconType = "Expand";
     String lastNodeClass = "";
-    String absPath = treeNode.getAbsPath().replace("/", ".");
+    String absPath = treeNode.getAbsPath();
+    String relPath= treeNode.getRelPath();
     if (isLastNode) {
       lastNodeClass = "LastNode";
     }
@@ -223,10 +219,10 @@ public class WikiRestServiceImpl implements WikiRestService, ResourceContainer {
       iconType = "Empty";
     }
     sb.append("<div  class=\""+lastNodeClass+" Node\" >") ;
-    sb.append("  <div class=\""+iconType+"Icon\" id=\"" + absPath + "\" onclick=\"event.cancelBubble=true;  if(eXo.wiki.UITreeExplorer.collapseExpand(this)) return;  eXo.wiki.UITreeExplorer.expandNode('" + URLEncoder.encode(absPath,"utf-8") + "', this)\">") ;
+    sb.append("  <div class=\""+iconType+"Icon\" id=\"" + relPath + "\" onclick=\"event.cancelBubble=true;  if(eXo.wiki.UITreeExplorer.collapseExpand(this)) return;  eXo.wiki.UITreeExplorer.expandNode('" + URLEncoder.encode(relPath,"utf-8") + "', this)\">") ;
     sb.append( "    <div id=\"iconTreeExplorer\" onclick=\"event.cancelBubble=true;\"" + "class=\""+nodeTypeCSS+" NodeType Node \""  + ">");
     sb.append( "      <div class='NodeLabel'>") ;
-    sb.append( "        <a  onclick=\"event.cancelBubble=true; eXo.wiki.UITreeExplorer.selectNode('"+absPath.replace(".", "/")+ "')\" style='cursor: pointer;' title=\""+nodeName+"\">"+nodeName+"</a>") ;
+    sb.append( "        <a  onclick=\"event.cancelBubble=true; eXo.wiki.UITreeExplorer.selectNode('"+absPath+ "')\" style='cursor: pointer;' title=\""+nodeName+"\">"+nodeName+"</a>") ;
     sb.append( "      </div>") ; 
     sb.append( "    </div>") ; 
     sb.append( "  </div>") ; 

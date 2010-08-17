@@ -136,7 +136,7 @@ public class UIWikiAttachmentArea extends UIForm {
           Page page = wikiAttachmentArea.getCurrentWikiPage();
           AttachmentImpl att = ((PageImpl) page).createAttachment(attachfile.getName(), attachfile);
           att.setCreator(event.getRequestContext().getRemoteUser());
-          Utils.reparePermissions(att);
+          org.exoplatform.wiki.utils.Utils.reparePermissions(att);
         } catch (ClassNotFoundException e) {
           uiApp.addMessage(new ApplicationMessage("UIApplication.msg.unknown-error", null, ApplicationMessage.ERROR));
           event.getRequestContext().addUIComponentToUpdateByAjax(uiApp.getUIPopupMessages());

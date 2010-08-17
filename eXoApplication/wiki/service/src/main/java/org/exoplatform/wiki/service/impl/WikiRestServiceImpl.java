@@ -16,12 +16,15 @@
  */
 package org.exoplatform.wiki.service.impl;
 
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -30,21 +33,32 @@ import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.fileupload.DiskFileUpload;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadBase;
+import org.apache.commons.io.FilenameUtils;
+import org.exoplatform.common.http.HTTPStatus;
+import org.exoplatform.commons.utils.MimeTypeResolver;
+import org.exoplatform.container.PortalContainer;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.rest.impl.EnvironmentContext;
 import org.exoplatform.services.rest.resource.ResourceContainer;
+import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.wiki.mow.api.Page;
 import org.exoplatform.wiki.mow.api.Wiki;
 import org.exoplatform.wiki.mow.api.WikiNodeType;
 import org.exoplatform.wiki.mow.api.WikiType;
 import org.exoplatform.wiki.mow.core.api.MOWService;
 import org.exoplatform.wiki.mow.core.api.WikiStoreImpl;
+import org.exoplatform.wiki.mow.core.api.wiki.AttachmentImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.WikiHome;
 import org.exoplatform.wiki.rendering.RenderingService;
 import org.exoplatform.wiki.rendering.impl.RenderingServiceImpl;
+import org.exoplatform.wiki.resolver.TitleResolver;
 import org.exoplatform.wiki.service.WikiContext;
+import org.exoplatform.wiki.service.WikiResource;
 import org.exoplatform.wiki.service.WikiRestService;
 import org.exoplatform.wiki.service.WikiService;
 import org.exoplatform.wiki.tree.PageTreeNode;
@@ -52,6 +66,7 @@ import org.exoplatform.wiki.tree.SpaceTreeNode;
 import org.exoplatform.wiki.tree.TreeNode;
 import org.exoplatform.wiki.tree.WikiHomeTreeNode;
 import org.exoplatform.wiki.tree.WikiTreeNode;
+import org.exoplatform.wiki.utils.Utils;
 import org.xwiki.context.Execution;
 import org.xwiki.context.ExecutionContext;
 import org.xwiki.rendering.syntax.Syntax;
@@ -131,6 +146,61 @@ public class WikiRestServiceImpl implements WikiRestService, ResourceContainer {
       return Response.serverError().entity(e.getMessage()).cacheControl(cc).build();
     }
     return Response.ok(pageContent, MediaType.TEXT_HTML).cacheControl(cc).build();
+  }
+
+  @POST
+  @Path("/upload/{wikiType}/{wikiOwner:.+}/{pageId}/")
+  public Response upload(@PathParam("wikiType") String wikiType,
+                         @PathParam("wikiOwner") String wikiOwner,
+                         @PathParam("pageId") String pageId) {
+    EnvironmentContext env = EnvironmentContext.getCurrent();
+    HttpServletRequest req = (HttpServletRequest) env.get(HttpServletRequest.class);
+    boolean isMultipart = FileUploadBase.isMultipartContent(req);
+    if (isMultipart) {
+      DiskFileUpload upload = new DiskFileUpload();
+      // Parse the request
+      try {
+        List<FileItem> items = upload.parseRequest(req);
+        for (FileItem fileItem : items) {
+          InputStream inputStream = fileItem.getInputStream();
+          byte[] imageBytes;
+          if (inputStream != null) {
+            imageBytes = new byte[inputStream.available()];
+            inputStream.read(imageBytes);
+          } else {
+            imageBytes = null;
+          }
+          String fileName = fileItem.getName();
+          String fileType = fileItem.getContentType();
+          if (fileName != null) {
+            // It's necessary because IE posts full path of uploaded files
+            fileName = FilenameUtils.getName(fileName);
+            fileType = FilenameUtils.getExtension(fileName);
+          }
+          String mimeType = new MimeTypeResolver().getMimeType(fileName);
+          WikiResource attachfile = new WikiResource(mimeType, "UTF-8", imageBytes);
+          attachfile.setName(TitleResolver.getPageId(fileName, false));
+          if (attachfile != null) {
+            WikiService wikiService = (WikiService) PortalContainer.getComponent(WikiService.class);
+            Page page = wikiService.getExsitedOrNewDraftPageById(wikiType, wikiOwner, pageId);
+            if (page != null) {
+              AttachmentImpl att = ((PageImpl) page).createAttachment(attachfile.getName(), attachfile);
+              ConversationState conversationState = ConversationState.getCurrent();
+              String creator = null;
+              if (conversationState != null && conversationState.getIdentity() != null) {
+                creator = conversationState.getIdentity().getUserId();
+              }
+              att.setCreator(creator);
+              Utils.reparePermissions(att);
+            }
+          }
+        }
+      } catch (Exception e) {
+        log.error(e.getMessage(), e);
+        return Response.status(HTTPStatus.BAD_REQUEST).entity(e.getMessage()).build();
+      }
+    }
+    return Response.ok().build();
   }
 
   @GET

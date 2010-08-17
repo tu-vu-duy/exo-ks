@@ -26,11 +26,15 @@ import org.exoplatform.container.PortalContainer;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.wiki.mow.api.Page;
+import org.exoplatform.wiki.mow.api.Wiki;
+import org.exoplatform.wiki.mow.api.WikiType;
 import org.exoplatform.wiki.mow.core.api.wiki.AttachmentImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
+import org.exoplatform.wiki.resolver.TitleResolver;
 import org.exoplatform.wiki.service.SearchData;
 import org.exoplatform.wiki.service.SearchResult;
 import org.exoplatform.wiki.service.WikiContext;
+import org.exoplatform.wiki.utils.Utils;
 import org.xwiki.component.annotation.Component;
 import org.xwiki.component.annotation.Requirement;
 import org.xwiki.context.Execution;
@@ -104,8 +108,11 @@ public class DefaultWikiService implements WikiService {
    * @see WikiService#getSpaceNames(String)
    */
   public List<String> getSpaceNames(String wikiName) {
-    // TODO: get all wikiOwner of the wikiName
     List<String> spaceNamesList = new ArrayList<String>();
+    Collection<Wiki> wikis = Utils.getWikisByType(WikiType.valueOf(wikiName.toUpperCase()));
+    for (Wiki wiki : wikis) {
+      spaceNamesList.add(wiki.getOwner());
+    }
     return spaceNamesList;
   }
 
@@ -127,14 +134,23 @@ public class DefaultWikiService implements WikiService {
    */
   public List<String> getPageNames(String wikiName, String spaceName) {
     org.exoplatform.wiki.service.WikiService wservice = (org.exoplatform.wiki.service.WikiService) PortalContainer.getComponent(org.exoplatform.wiki.service.WikiService.class);
+    SearchData data = new SearchData(null, "", null, null);
     try {
-      PageImpl homePage = (PageImpl) wservice.getPageById(wikiName, spaceName, "WikiHome");
-      //TODO: implement service to get page names of a wiki space
+      WikiContext wikiContext = getWikiContext();
+      PageList<SearchResult> results = wservice.search(wikiContext.getType(), wikiContext.getOwner(), data);
+      List<DocumentReference> documentReferences = prepareDocumentReferenceList(results);
+      List<WikiPage> wikiPages = getWikiPages(documentReferences);
       List<String> pagesNames = new ArrayList<String>();
-      pagesNames.add("WikiHome");
+      for (WikiPage page : wikiPages) {
+        String pageName = page.getReference().getPageName();
+        if (!pagesNames.contains(pageName)) {
+          pagesNames.add(pageName);
+        }
+      }
       return pagesNames;
     } catch (Exception e) {
-      throw new RuntimeException("Failed to search XWiki pages.", e);
+      log.error("Exception happened when list pages name", e);
+      throw new RuntimeException("Failed to list Wiki pages name.", e);
     }
   }
 
@@ -165,7 +181,8 @@ public class DefaultWikiService implements WikiService {
       List<DocumentReference> documentReferences = prepareDocumentReferenceList(results);
       return getWikiPages(documentReferences);
     } catch (Exception e) {
-      throw new RuntimeException("Failed to search XWiki pages.", e);
+      log.error("Exception happened when searching pages", e);
+      throw new RuntimeException("Failed to search Wiki pages.", e);
     }
   }
 
@@ -219,6 +236,7 @@ public class DefaultWikiService implements WikiService {
     org.exoplatform.wiki.service.WikiService wservice = (org.exoplatform.wiki.service.WikiService) PortalContainer.getComponent(org.exoplatform.wiki.service.WikiService.class);
     PageImpl page;
     try {
+      cleanedFileName = TitleResolver.getPageId(cleanedFileName, false);
       page = (PageImpl) wservice.getExsitedOrNewDraftPageById(attachmentReference.getWikiName(),
                                                               attachmentReference.getSpaceName(),
                                                               attachmentReference.getPageName());
@@ -303,7 +321,12 @@ public class DefaultWikiService implements WikiService {
    * @see WikiService#getUploadURL(org.xwiki.gwt.wysiwyg.client.wiki.EntityReference)
    */
   public String getUploadURL(org.xwiki.gwt.wysiwyg.client.wiki.EntityReference documentReference) {
-    return ("UPLOADURL");
+    StringBuilder sb = new StringBuilder();
+    sb.append("/").append(PortalContainer.getCurrentPortalContainerName()).append("/");
+    sb.append(PortalContainer.getCurrentRestContextName()).append("/wiki/upload/");
+    sb.append(documentReference.getWikiName()).append("/").append(documentReference.getSpaceName());
+    sb.append("/").append(documentReference.getPageName()).append("/");
+    return sb.toString();
   }
 
   /**

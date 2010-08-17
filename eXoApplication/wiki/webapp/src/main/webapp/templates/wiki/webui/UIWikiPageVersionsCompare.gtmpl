@@ -55,7 +55,7 @@
 			<span class="ChangeVersionInfo">Key</span><br>
 			<span class="LineRemoved">This line was removed.</span><br>
 			<span> this</span><span class="LineRemoved">Word</span><span>was removed. This word was </span><span class="LineAdded"> added </span><br>
-			<span> This line was added </span><span class="LineAdded"> added </span>
+			<span class="LineAdded"> This line was added </span>
 		</div>
 	</div>
 	

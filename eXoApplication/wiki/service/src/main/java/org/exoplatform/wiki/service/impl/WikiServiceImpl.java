@@ -250,6 +250,7 @@ public class WikiServiceImpl implements WikiService {
       PageImpl movePage = (PageImpl) getPageById(currentLocationParams.getType(),
                                                  currentLocationParams.getOwner(),
                                                  currentLocationParams.getPageId());
+      WikiImpl sourceWiki = (WikiImpl) movePage.getWiki();
       MovedMixin mix = session.create(MovedMixin.class);
       if (movePage.getMovedMixin() == null) {
         session.setEmbedded(movePage, MovedMixin.class, mix);
@@ -257,7 +258,24 @@ public class WikiServiceImpl implements WikiService {
       PageImpl destPage = (PageImpl) getPageById(newLocationParams.getType(),
                                                  newLocationParams.getOwner(),
                                                  newLocationParams.getPageId());
+      WikiImpl destWiki = (WikiImpl) destPage.getWiki();
       movePage.setParentPage(destPage);
+      
+      //update LinkRegistry
+      if (!newLocationParams.getType().equals(currentLocationParams.getType())) {
+        LinkRegistry sourceLinkRegistry = sourceWiki.getLinkRegistry();
+        LinkRegistry destLinkRegistry = destWiki.getLinkRegistry();
+        String newEntryName = getLinkEntryName(newLocationParams.getType(), newLocationParams.getOwner(), currentLocationParams.getPageId());
+        String newEntryAlias = getLinkEntryAlias(newLocationParams.getType(), newLocationParams.getOwner(), currentLocationParams.getPageId());
+        LinkEntry newEntry = destLinkRegistry.getLinkEntries().get(newEntryName);
+        if (newEntry == null) {
+          newEntry = destLinkRegistry.createLinkEntry();
+          destLinkRegistry.getLinkEntries().put(newEntryName, newEntry);
+          newEntry.setAlias(newEntryAlias);
+          newEntry.setNewLink(newEntry);
+        }
+        sourceLinkRegistry.getLinkEntries().get(getLinkEntryName(currentLocationParams.getType(), currentLocationParams.getOwner(), currentLocationParams.getPageId())).setNewLink(newEntry);
+      }
     } catch (Exception e) {
       log.error("Can't move page '" + currentLocationParams.getPageId() + "' ", e);
       return false;

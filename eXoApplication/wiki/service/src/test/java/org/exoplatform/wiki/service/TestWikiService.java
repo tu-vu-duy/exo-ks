@@ -337,7 +337,19 @@ public class TestWikiService extends AbstractMOWTestcase {
     wService.renamePage(PortalConfig.PORTAL_TYPE, "classic", "RenamedOriginalPage2", "RenamedOriginalPage3", "RenamedOriginalPage3");
     relatedPage = (PageImpl) wService.getRelatedPage(PortalConfig.PORTAL_TYPE, "classic", "OriginalPage");
     assertEquals("RenamedOriginalPage3", relatedPage.getName());
-    wService.deletePage(PortalConfig.PORTAL_TYPE, "classic", "RenamedOriginalPage3");
+    wService.createPage(PortalConfig.GROUP_TYPE, "/platform/users", "OriginalParentPage", "WikiHome");
+    // Move RenamedOriginalPage3 from portal type to group type
+    currentPageParams.setPageId("RenamedOriginalPage3");
+    currentPageParams.setOwner("classic");
+    currentPageParams.setType(PortalConfig.PORTAL_TYPE);
+    newPageParams.setPageId("OriginalParentPage");
+    newPageParams.setOwner("/platform/users");
+    newPageParams.setType(PortalConfig.GROUP_TYPE);
+    //
+    wService.movePage(currentPageParams,newPageParams);
+    relatedPage = (PageImpl) wService.getRelatedPage(PortalConfig.PORTAL_TYPE, "classic", "OriginalPage");
+    assertEquals("RenamedOriginalPage3", relatedPage.getName());
+    wService.deletePage(PortalConfig.GROUP_TYPE, "/platform/users", "RenamedOriginalPage3");
     assertNull(wService.getRelatedPage(PortalConfig.PORTAL_TYPE, "classic", "OriginalPage"));
   }
   

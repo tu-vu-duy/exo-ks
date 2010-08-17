@@ -56,7 +56,7 @@ import org.exoplatform.wiki.webui.UIWikiPortlet;
 )
 public class UIWikiMovePageForm extends UIForm implements UIPopupComponent {
   
-  final static public String PAGENAME_INFO= "ppageNameInfo";
+  final static public String PAGENAME_INFO= "pageNameInfo";
   
   final static public String CURRENT_LOCATION = "currentLocationInput";
 
@@ -88,15 +88,16 @@ public class UIWikiMovePageForm extends UIForm implements UIPopupComponent {
       UIWikiMovePageForm movePageForm = uiWikiPortlet.findFirstComponentOfType(UIWikiMovePageForm.class);
       UIFormStringInput currentLocationInput = movePageForm.getUIStringInput(CURRENT_LOCATION);
       UIFormStringInput newLocationInput = movePageForm.getUIStringInput(NEW_LOCATION);
+      
       WikiPageParams currentLocationParams = Utils.getPageParamsFromPath(currentLocationInput.getValue());
-      currentLocationParams.setPageId(TitleResolver.getPageId(currentLocationParams.getPageId(), false));
+      //currentLocationParams.setPageId(TitleResolver.getPageId(currentLocationParams.getPageId(), false));
       WikiPageParams newLocationParams = Utils.getPageParamsFromPath(newLocationInput.getValue());
       if ((newLocationParams==null)||(newLocationParams.getPageId() == null)||(currentLocationInput.getValue().equals(newLocationInput.getValue().trim()))) {
         uiWikiPortlet.addMessage(new ApplicationMessage("UIWikiMovePageForm.can-not-move-to-follow-path", null, ApplicationMessage.WARNING));
         event.getRequestContext().addUIComponentToUpdateByAjax(uiWikiPortlet.getUIPopupMessages()) ;
         return;
       }
-      newLocationParams.setPageId(TitleResolver.getPageId(newLocationParams.getPageId(), false));
+      //newLocationParams.setPageId(TitleResolver.getPageId(newLocationParams.getPageId(), false));
       wservice.movePage(currentLocationParams, newLocationParams);
       String portalURI = prContext.getPortalURI();
       StringBuilder newPageURL = new StringBuilder(portalURI + "wiki/");

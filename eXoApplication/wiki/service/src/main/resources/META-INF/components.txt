@@ -3,6 +3,8 @@ org.exoplatform.wiki.service.wysiwyg.CompactStringEntityReferenceSerializer
 org.exoplatform.wiki.service.wysiwyg.CurrentEntityReferenceValueProvider
 org.exoplatform.wiki.service.wysiwyg.DefaultLinkService
 org.exoplatform.wiki.service.wysiwyg.DefaultWikiService
+org.exoplatform.wiki.service.wysiwyg.WikiMacroDescriptorTranslator
+org.exoplatform.wiki.service.wysiwyg.WikiMacroService
 org.exoplatform.wiki.rendering.render.confluence.ConfluenceSyntaxRenderer
 org.exoplatform.wiki.rendering.render.confluence.ConfluenceSyntaxBlockRenderer
 org.exoplatform.wiki.rendering.render.confluence.ConfluenceSyntaxRendererFactory

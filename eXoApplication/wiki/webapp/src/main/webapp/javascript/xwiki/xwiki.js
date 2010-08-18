@@ -173,7 +173,7 @@ Object.extend(XWiki, {
 
       if (!wiki) { wiki = XWiki.currentWiki; }
       if (!space) { space = XWiki.currentSpace; }
-      if (!pageName) { pageName = "WebHome"; }
+      if (!pageName) { pageName = XWiki.currentPage; }
       if (!attachment) { attachment = ""; }
       if (!anchor) { anchor = ""; }
 
@@ -191,6 +191,44 @@ Object.extend(XWiki, {
           attachment: attachment,
           anchor: anchor
        };
+    },
+
+    /**
+     * Serializes the given resource.
+     *
+     * @param resource the resource to be serialized
+     * @return a string that can be passed to the #get(String) method to reconstruct the resource
+     */
+    serialize: function(resource) {
+        var name = '';
+        if (resource.wiki) {
+            name = resource.wiki;
+        }
+        if (resource.space) {
+            if (name.length > 0) {
+                name += XWiki.constants.wikiSpaceSeparator;
+            }
+            name += resource.space;
+        }
+        if (resource.name) {
+            if (name.length > 0) {
+                name += XWiki.constants.spacePageSeparator;
+            }
+            name += resource.name;
+        }
+        if (resource.attachment) {
+            if (name.length > 0) {
+                name += XWiki.constants.pageAttachmentSeparator;
+            }
+            name += resource.attachment;
+        }
+        if (resource.anchor) {
+            if (name.length > 0) {
+                name += XWiki.constants.anchorSeparator;
+            }
+            name += resource.anchor;
+        }
+        return name;
     }
   },
 
@@ -373,99 +411,135 @@ Object.extend(XWiki, {
           }
       }
   },
+  
+  /**
+   * Display a modal box allowing to create the new document from a template when clicking on broken links.
+   */
+  insertCreatePageFromTemplateModalBoxes: function() {
+      // Insert links only in view mode and for xwiki/2.0 documents.
+      if (XWiki.docsyntax == "xwiki/2.0" && XWiki.contextaction == "view" && XWiki.hasEdit) {
+          XWiki.widgets.CreatePagePopup = Class.create(XWiki.widgets.ModalPopup, {
+              initialize : function($super, interactionParameters) {
+                  var content =  new Element('div', {'class': 'modal-popup'});
+                  content.insert(interactionParameters.content);
+                  $super(
+                          content,
+                          {
+                              "show"  : { method : this.showDialog,  keys : [] },
+                              "close" : { method : this.closeDialog, keys : ['Esc'] }
+                          },
+                          {
+                              displayCloseButton : true,
+                              verticalPosition : "center",
+                              backgroundColor : "#FFF"
+                          }
+                  );
+                  this.showDialog();
+                  this.setClass("createpage-modal-popup");
+              }
+          });
+
+          var spans = document.body.select("span.wikicreatelink"); 
+          for (var i = 0; i < spans.length; i++) {
+              spans[i].down('a').observe('click', function(event) {               
+                  new Ajax.Request(event.currentTarget.href + '&xpage=createinline&ajax=1', {
+                      method:'get',
+                      onSuccess: function(transport) {
+                          var redirect = transport.getHeader('redirect');
+                          if (redirect) {
+                            window.location = redirect;
+                          } else {
+                            new XWiki.widgets.CreatePagePopup({content: transport.responseText});
+                          }
+                      },
+                      onFailure: function() {
+                        new XWiki.widgets.Notification("$msg.get('core.create.ajax.error')", 'error', {inactive: true}).show();
+                      }
+                  });                 
+                  event.stop();
+              });
+          }
+      }
+  },
+  
+  /**
+   * Enable live validation for inputs with classname 'required'.
+   */
+  initRequiredInputsValidation: function(content) {
+    // apply this transformation only in the inline and edit modes
+    if (XWiki.contextaction == "edit" || XWiki.contextaction == "inline") {
+      if (typeof content == "undefined") {
+        content = document.body;
+      }
+      var inputs = content.select("input.required");
+      for (var i = 0; i < inputs.length; i++) {
+        var input = inputs[i];
+        var validator = new LiveValidation(input, { validMessage: "" });
+        validator.add(Validate.Presence, {
+          failureMessage: "$msg.get('core.editors.validation.mandatoryField')"
+        });
+        validator.validate();
+      }
+    }
+  },
 
   /**
    * Watchlist methods.
    */
   watchlist : {
-
+ 
     /**
-     * Update the given menu (menuview or contentmenu). Allows to update the menu icon without page reload.
-     */
-    updateMenu : function(menu) {
-      new Ajax.Updater(
-              menu,
-              window.docgeturl + "?xpage=xpart&vm=" + menu + ".vm",
-              {
-                method: 'get',
-                onComplete: XWiki.watchlist.initialize
-              });
+     * Mapping between link IDs and associated actions.
+     */    
+    actionsMap : {
+        'tmWatchDocument' : 'adddocument',
+        'tmUnwatchDocument' : 'removedocument',
+        'tmWatchSpace' : 'addspace',
+        'tmUnwatchSpace' : 'removespace',
+        'tmWatchWiki' : 'addwiki',
+        'tmUnwatchWiki' : 'removewiki'
     },
 
     /**
-     * Add or remove the current document from the current user's watchlist.
-     *
-     * @param add True to add the document to the user's watchlist, false to remove it.
+     * Mapping allowing to know which action to display when a previous action has been executed.
      */
-    toggleDocument : function(add) {
-      var action = "removedocument";
-      if (add) {
-        action = "adddocument";
-      }
-      var surl = window.docgeturl + "?xpage=watch&do=" + action;
-      var myAjax = new Ajax.Request(
-        surl,
-        {
-          method: 'get',
-          onComplete: function() { XWiki.watchlist.updateMenu("contentmenu"); }
-        });
+    flowMap : {
+        'tmWatchDocument' : 'tmUnwatchDocument',
+        'tmUnwatchDocument' : 'tmWatchDocument',
+        'tmWatchSpace' : 'tmUnwatchSpace',
+        'tmUnwatchSpace' : 'tmWatchSpace',
+        'tmWatchWiki' : 'tmUnwatchWiki',
+        'tmUnwatchWiki' : 'tmWatchWiki'
     },
-
+    
     /**
-     * Add or remove the current space from the current user's watchlist.
+     * Execute a watchlist action (add or remove the given document/space/wiki from watchlist).
      *
-     * @param add True to add the space to the user's watchlist, false to remove it.
+     * @param element the element that fired the action.
      */
-    toggleSpace : function(add) {
-        var action = "removespace";
-        if (add) {
-          action = "addspace";
-        }
-        var surl = window.docgeturl + "?xpage=watch&do=" + action;
+    executeAction : function(element) {
+        var surl = window.docgeturl + "?xpage=watch&do=" + this.actionsMap[element.id];        
         var myAjax = new Ajax.Request(
           surl,
           {
             method: 'get',
-            onComplete: function() { XWiki.watchlist.updateMenu("menuview"); }
+            onComplete: function() {
+              if (element.nodeName == 'A') {
+                element.parentNode.toggleClassName('hidden');               
+                $(XWiki.watchlist.flowMap[element.id]).parentNode.toggleClassName('hidden');
+              } else {
+                element.toggleClassName('hidden');              
+                $(XWiki.watchlist.flowMap[element.id]).toggleClassName('hidden');
+              }
+            }
           });
-    },
-
-    /**
-     * Add or remove the current wiki from the current user's watchlist.
-     *
-     * @param add True to add the wiki to the user's watchlist, false to remove it.
-     */
-    toggleWiki : function(add) {
-        var action = "removewiki";
-        if (add) {
-          action = "addwiki";
-        }
-        var surl = window.docgeturl + "?xpage=watch&do=" + action;
-        var myAjax = new Ajax.Request(
-          surl,
-          {
-            method: 'get',
-            onComplete: function() { XWiki.watchlist.updateMenu("menuview"); }
-          });
-    },
-
-    /**
-     * Buttons mapping for watchlist UI.
-     */
-    buttonMapping : {
-        'tmWatchDocument' : function() { XWiki.watchlist.toggleDocument(true); },
-        'tmUnwatchDocument' : function() { XWiki.watchlist.toggleDocument(false); },
-        'tmWatchSpace' : function() { XWiki.watchlist.toggleSpace(true); },
-        'tmUnwatchSpace' : function() { XWiki.watchlist.toggleSpace(false); },
-        'tmWatchWiki' : function() { XWiki.watchlist.toggleWiki(true); },
-        'tmUnwatchWiki' : function() { XWiki.watchlist.toggleWiki(false); }
     },
 
     /**
      * Initialize watchlist UI.
      */
     initialize: function() {
-        for (button in XWiki.watchlist.buttonMapping) {
+        for (button in XWiki.watchlist.actionsMap) {
           if ($(button) != null) {
             var element = $(button);
             var self = this;
@@ -477,11 +551,12 @@ Object.extend(XWiki, {
             // unregister previously registered handler if any
             element.stopObserving('click');
             element.observe('click', function(event) {
+                Event.stop(event);
                 var element = event.element();
                 while (element.id == '') {
                     element = element.parentNode;
                 }
-                XWiki.watchlist.buttonMapping[element.id](); Event.stop(event);
+                XWiki.watchlist.executeAction(element);                 
               });
           }
         }
@@ -503,6 +578,8 @@ Object.extend(XWiki, {
       this.makeRenderingErrorsExpandable();
       this.fixLinksTargetAttribute();
       this.insertSectionEditLinks();
+      this.insertCreatePageFromTemplateModalBoxes();
+      this.initRequiredInputsValidation();
       this.watchlist.initialize();
 
       document.fire("xwiki:dom:loaded");
@@ -554,6 +631,7 @@ function toggleForm(form){
  * @return
  */
 function togglePanelVisibility(element, cookieName){
+  element = $(element);
   element.toggleClassName("collapsed");
   if (cookieName) {
     if (element.hasClassName("collapsed")) {
@@ -1011,11 +1089,11 @@ shortcut = {
                         shift: { wanted:false, pressed:false},
                         ctrl : { wanted:false, pressed:false},
                         alt  : { wanted:false, pressed:false},
-                        meta : { wanted:false, pressed:false}	//Meta is Mac specific
+                        meta : { wanted:false, pressed:false}   //Meta is Mac specific
                 };
-                if(e.ctrlKey)	modifiers.ctrl.pressed = true;
-                if(e.shiftKey)	modifiers.shift.pressed = true;
-                if(e.altKey)	modifiers.alt.pressed = true;
+                if(e.ctrlKey)   modifiers.ctrl.pressed = true;
+                if(e.shiftKey)  modifiers.shift.pressed = true;
+                if(e.altKey)    modifiers.alt.pressed = true;
                 if(e.metaKey)   modifiers.meta.pressed = true;
 
                 for(var i=0; k=keys[i],i<keys.length; i++) {
@@ -1206,12 +1284,85 @@ function BrowserDetect() {
 }
 var browser = new BrowserDetect();
 
-/*
+/**
+ * XWiki Model access APIs.
+ */
+XWiki.Document = Class.create({
+  /**
+   * Constructor. All parameters are optional, and default to the current document location.
+   */
+  initialize : function(page, space, wiki) {
+    this.page = page || XWiki.Document.currentPage;
+    this.space = space || XWiki.Document.currentSpace;
+    this.wiki = wiki || XWiki.Document.currentWiki;
+  },
+  /**
+   * Gets an URL pointing to this document.
+   */
+  getURL : function(action, queryString, fragment) {
+    action = action || 'view';
+    var url = XWiki.Document.URLTemplate;
+    url = url.replace("__space__", encodeURIComponent(this.space));
+    url = url.replace("__page__", (this.page == 'WebHome') ? '' : encodeURIComponent(this.page));
+    url = url.replace("__action__/", (action == 'view') ? '' : (encodeURIComponent(action) + "/"));
+    if (queryString) {
+      url += '?' + queryString;
+    }
+    if (fragment) {
+      url += '#' + fragment;
+    }
+    return url;
+  },
+  /**
+   * Gets an URL which points to the REST location for accessing this document.
+   */
+  getRestURL : function(entity, queryString) {
+    entity = entity || '';
+    var url = XWiki.Document.RestURLTemplate;
+    url = url.replace("__wiki__", this.wiki);
+    url = url.replace("__space__", this.space);
+    url = url.replace("__page__", this.page);
+    if (entity) {
+      url += "/" + entity;
+    }
+    if (queryString) {
+      url += '?' + queryString;
+    }
+    return url;
+  }
+});
+
+/* Initialize the document URL factory, and create XWiki.currentDocument. */
+document.observe('dom:loaded', function() {
+  XWiki.Document.currentWiki = ($$("meta[name=wiki]").length > 0) ? $$("meta[name=wiki]")[0].content : "xwiki";
+  XWiki.Document.currentSpace = ($$("meta[name=space]").length > 0) ? $$("meta[name=space]")[0].content : "Main";
+  XWiki.Document.currentPage = ($$("meta[name=page]").length > 0) ? $$("meta[name=page]")[0].content : "WebHome";
+  XWiki.Document.URLTemplate = "$xwiki.getURL('__space__.__page__', '__action__')";
+  XWiki.Document.RestURLTemplate = "${request.contextPath}/rest/wikis/__wiki__/spaces/__space__/pages/__page__";
+  XWiki.Document.WikiSearchURLStub = "${request.contextPath}/rest/wikis/__wiki__/search";
+  XWiki.Document.SpaceSearchURLStub = "${request.contextPath}/rest/wikis/__wiki__/spaces/__space__/search";
+  XWiki.Document.getRestSearchURL = function(queryString, space, wiki) {
+    wiki = wiki || XWiki.Document.currentWiki;
+    var url;
+    if (space) {
+      url = XWiki.Document.SpaceSearchURLStub.replace("__wiki__", wiki).replace("__space__", space);
+    } else {
+      url = XWiki.Document.WikiSearchURLStub.replace("__wiki__", wiki);
+    }
+    if (queryString) {
+      url += "?" + queryString;
+    }
+    return url;
+  };
+  XWiki.currentDocument = new XWiki.Document();
+});
+
+/**
  * Small JS improvement, which automatically hides and reinserts the default text for input fields, acting as a tip.
  *
  * To activate this behavior on an input element, add the "withTip" classname to it.
  */
-document.observe('dom:loaded', function() {
+document.observe('xwiki:dom:loaded', function() {
   var onFocus = function() {
     if (this.value==this.defaultValue) {
       this.value="";
@@ -1228,4 +1379,48 @@ document.observe('dom:loaded', function() {
     item.observe('focus', onFocus.bindAsEventListener(item));
     item.observe('blur', onBlur.bindAsEventListener(item));
   });
+});
+
+/**
+ * Small JS improvement, which suggests document names (doc.fullName) when typing in an input.
+ *
+ * To activate this behavior on an input elements, add the "suggestDocuments" classname to it.
+ */
+document.observe('xwiki:dom:loaded', function() {
+  if (typeof(XWiki.widgets.Suggest) != "undefined") {
+    $$("input.suggestDocuments").each(function(item) {
+      // Create the Suggest.
+      new XWiki.widgets.Suggest(item, {
+        // This document also provides the suggestions.
+        script: XWiki.Document.getRestSearchURL("scope=name&number=10&media=json&"),
+        varname: "q",
+        noresults: "Document not found",
+        json: true,
+        resultsParameter : "searchResults",
+        resultId : "id",
+        resultValue : "pageFullName",
+        resultInfo : "pageFullName",
+        timeout : 30000,
+        parentContainer : item.up()
+      });
+    });
+  }
+});
+
+/**
+ * Small JS improvement, which blocks normal browser autocomplete for fields which use an AJAX suggest,
+ * and initializes the suggest object early instead of waiting for the field to be focused.
+ *
+ * To activate this behavior on an input elements, add the "suggested" classname to it.
+ */
+document.observe('xwiki:dom:loaded', function() {
+  if (typeof(XWiki.widgets.Suggest) != "undefined") {
+    $$(".suggested").each(function(item) {
+      item.setAttribute("autocomplete", "off");
+      if (typeof item.onfocus === "function") {
+        item.onfocus();
+        item.removeAttribute("onfocus");
+      }
+    });
+  }
 });

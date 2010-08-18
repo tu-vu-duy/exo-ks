@@ -358,6 +358,7 @@ public class DefaultWikiService implements WikiService {
         nodeName = nodeName.substring(1);
       }
       WikiContext wikiContext = getWikiContext();
+      log.info("Prepair DocumentReference : " + wikiContext.getType() + "@" + wikiContext.getOwner() + "@" + nodeName);
       documentReferences.add(new DocumentReference(wikiContext.getType(), wikiContext.getOwner(), nodeName));
     }
     return documentReferences;

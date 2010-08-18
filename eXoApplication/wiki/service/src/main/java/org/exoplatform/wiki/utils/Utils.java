@@ -140,4 +140,10 @@ public class Utils {
     }
   }
   
+  public static Wiki[] getAllWikiSpace() {
+    MOWService mowService = (MOWService) PortalContainer.getComponent(MOWService.class);
+    WikiStoreImpl store = (WikiStoreImpl) mowService.getModel().getWikiStore();
+    return store.getWikis().toArray(new Wiki[]{}) ;
+  } 
+  
 }

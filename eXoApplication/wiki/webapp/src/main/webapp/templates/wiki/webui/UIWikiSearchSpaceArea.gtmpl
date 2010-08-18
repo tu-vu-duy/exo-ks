@@ -6,22 +6,11 @@
       uicomponent.renderChild(component.getClass()) ;
     }
   }
-%>	
-  <div class="UIAction">
-    <table class="ActionContainer">
-      <tr>
-        <td>
-          <div onclick="<%=uicomponent.event("Close")%>" class="ActionButton LightBlueStyle" >
-            <div class="ButtonLeft">
-              <div class="ButtonRight">
-                <div class="ButtonMiddle">
-                  <a href="#">Close</a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </td>
-      </tr>
-    </table>
-  </div>
+%> 
+   <div class="WikiBackLink">
+        <div class="BackLink" onclick="<%=uicomponent.event("Close")%>">
+          <a href="#"><< Return to Current Page</a>
+       </div>
+     <div style="ClearLeft"><span></span></div>
+   </div>
 </div>

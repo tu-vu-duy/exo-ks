@@ -134,10 +134,11 @@ public class DefaultWikiService implements WikiService {
    */
   public List<String> getPageNames(String wikiName, String spaceName) {
     org.exoplatform.wiki.service.WikiService wservice = (org.exoplatform.wiki.service.WikiService) PortalContainer.getComponent(org.exoplatform.wiki.service.WikiService.class);
-    SearchData data = new SearchData(null, "", null, null);
+   
     try {
       WikiContext wikiContext = getWikiContext();
-      PageList<SearchResult> results = wservice.search(wikiContext.getType(), wikiContext.getOwner(), data);
+      SearchData data = new SearchData(null, "", null,wikiContext.getType(),wikiContext.getOwner());
+      PageList<SearchResult> results = wservice.search(data);
       List<DocumentReference> documentReferences = prepareDocumentReferenceList(results);
       List<WikiPage> wikiPages = getWikiPages(documentReferences);
       List<String> pagesNames = new ArrayList<String>();
@@ -174,10 +175,11 @@ public class DefaultWikiService implements WikiService {
     String doubleQuote = "''";
     String escapedKeyword = keyword.replaceAll(quote, doubleQuote).toLowerCase();
     org.exoplatform.wiki.service.WikiService wservice = (org.exoplatform.wiki.service.WikiService) PortalContainer.getComponent(org.exoplatform.wiki.service.WikiService.class);
-    SearchData data = new SearchData(null, escapedKeyword, null, null);
+   
     try {
       WikiContext wikiContext = getWikiContext();
-      PageList<SearchResult> results = wservice.search(wikiContext.getType(), wikiContext.getOwner(), data);
+      SearchData data = new SearchData(null, escapedKeyword, null, wikiContext.getType(),wikiContext.getOwner());      
+      PageList<SearchResult> results = wservice.search(data);
       List<DocumentReference> documentReferences = prepareDocumentReferenceList(results);
       return getWikiPages(documentReferences);
     } catch (Exception e) {

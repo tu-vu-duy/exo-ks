@@ -229,58 +229,130 @@ public class TestWikiService extends AbstractMOWTestcase {
   }
   
   public void testSearchContent() throws Exception {
-    
-    PageImpl kspage = (PageImpl)wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "knowledge suite", "WikiHome") ;
-    kspage.getContent().setText("forum faq wiki") ;
-    
-    PageImpl cspage = (PageImpl)wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "collaboration suite", "WikiHome") ;
-    cspage.getContent().setText("calendar mail contact chat") ;
-    
-    //fulltext search
-    SearchData data = new SearchData("suite", null, null, "/exo:applications/eXoWiki/wikis/classic") ;
-    PageList<ContentImpl> result = wService.searchContent("portal", "classic", data) ;
-    assertEquals(2, result.getAll().size()) ;
-    
-  //title search
-    data = new SearchData(null, "knowledge", null, null) ;
-    result = wService.searchContent("portal", "classic", data) ;
-    assertEquals(1, result.getAll().size()) ;
-    
-    data = new SearchData(null, "collaboration", null, null) ;
-    result = wService.searchContent("portal", "classic", data) ;
-    assertEquals(1, result.getAll().size()) ;
-    
-  //content search
-    data = new SearchData(null, null, "forum", null) ;
-    result = wService.searchContent("portal", "classic", data) ;
-    assertEquals(1, result.getAll().size()) ;
-    
-    data = new SearchData(null, null, "calendar", null) ;
-    result = wService.searchContent("portal", "classic", data) ;
-    assertEquals(1, result.getAll().size()) ;
-    
-  //content & title search
-    data = new SearchData(null, "suite", "forum", null) ;
-    result = wService.searchContent("portal", "classic", data) ;
-    assertEquals(1, result.getAll().size()) ;
-    
+
+    Model model = mowService.getModel();
+    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
+    WikiContainer<UserWiki> userWikiContainer = wStore.getWikiContainer(WikiType.USER);
+    WikiContainer<PortalWiki> portalContainer = wStore.getWikiContainer(WikiType.PORTAL);
+    PortalWiki portalWiki = portalContainer.addWiki("ext");
+    UserWiki userWiki = userWikiContainer.addWiki("demo");
+    portalWiki.getWikiHome();
+    userWiki.getWikiHome();
+
+    PageImpl kspage = (PageImpl) wService.createPage(PortalConfig.PORTAL_TYPE,
+                                                     "classic",
+                                                     "knowledge suite",
+                                                     "WikiHome");
+    kspage.getContent().setText("forum faq wiki");
+
+    PageImpl ksExtpage = (PageImpl) wService.createPage(PortalConfig.PORTAL_TYPE,
+                                                        "ext",
+                                                        "knowledge suite",
+                                                        "WikiHome");
+    ksExtpage.getContent().setText("forum faq wiki");
+
+    PageImpl ksSocialpage = (PageImpl) wService.createPage(PortalConfig.USER_TYPE,
+                                                           "demo",
+                                                           "knowledge suite",
+                                                           "WikiHome");
+    ksSocialpage.getContent().setText("forum faq wiki");
+
+    PageImpl cspage = (PageImpl) wService.createPage(PortalConfig.PORTAL_TYPE,
+                                                     "classic",
+                                                     "collaboration suite",
+                                                     "WikiHome");
+    cspage.getContent().setText("calendar mail contact chat");
+
+    cspage.getChromatticSession().save();
+    // fulltext search
+    SearchData data = new SearchData("suite", null, null, "portal", "classic");
+    PageList<ContentImpl> result = wService.searchContent(data);
+    assertEquals(2, result.getAll().size());
+
+    data = new SearchData("suite", null, null, "portal", null);
+
+    result = wService.searchContent(data);
+    assertEquals(3, result.getAll().size());
+
+    data = new SearchData("suite", null, null, null, null);
+    result = wService.searchContent(data);
+    assertEquals(4, result.getAll().size());
+
+    // title search
+    data = new SearchData(null, "knowledge", null, "portal", "classic");
+    result = wService.searchContent(data);
+    assertEquals(1, result.getAll().size());
+
+    data = new SearchData(null, "collaboration", null, "portal", "classic");
+    result = wService.searchContent(data);
+    assertEquals(1, result.getAll().size());
+
+    data = new SearchData(null, "knowledge", null, "portal", null);
+    result = wService.searchContent(data);
+    assertEquals(2, result.getAll().size());
+
+    data = new SearchData(null, "knowledge", null, null, null);
+    result = wService.searchContent(data);
+    assertEquals(3, result.getAll().size());
+
+    // content search
+    data = new SearchData(null, null, "forum", "portal", "classic");
+    result = wService.searchContent(data);
+    assertEquals(1, result.getAll().size());
+
+    data = new SearchData(null, null, "calendar", "portal", "classic");
+    result = wService.searchContent(data);
+    assertEquals(1, result.getAll().size());
+
+    data = new SearchData(null, null, "forum", "portal", null);
+    result = wService.searchContent(data);
+    assertEquals(2, result.getAll().size());
+
+    data = new SearchData(null, null, "forum", null, null);
+    result = wService.searchContent(data);
+    assertEquals(3, result.getAll().size());
+
+    // content & title search
+    data = new SearchData(null, "suite", "forum", "portal", "classic");
+    result = wService.searchContent(data);
+    assertEquals(1, result.getAll().size());
+
+    data = new SearchData(null, "suite", "forum", "portal", null);
+    result = wService.searchContent(data);
+    assertEquals(2, result.getAll().size());
+
+    data = new SearchData(null, "suite", "forum", null, null);
+    result = wService.searchContent(data);
+    assertEquals(3, result.getAll().size());
+
   }
   
   public void testSearch() throws Exception {
+    Model model = mowService.getModel();
+    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
+    WikiContainer<PortalWiki> portalContainer = wStore.getWikiContainer(WikiType.PORTAL);
+    PortalWiki portalWiki=  portalContainer.addWiki("ext");
     
     PageImpl kspage = (PageImpl)wService.createPage(PortalConfig.PORTAL_TYPE, "classic", "knowledge", "WikiHome") ;
     kspage.getContent().setText("forum faq wiki exoplatform") ;
+    
+    PageImpl ksExtPage = (PageImpl)wService.createPage(PortalConfig.PORTAL_TYPE, "ext", "knowledge ext", "WikiHome") ;
+    ksExtPage.getContent().setText("forum faq wiki exoplatform") ;
     
     AttachmentImpl attachment1 = kspage.createAttachment("attachment1.txt", Resource.createPlainText("foo")) ;
     attachment1.setCreator("you") ;    
     assertEquals(attachment1.getName(), "attachment1.txt") ;
     assertNotNull(attachment1.getContentResource()) ;
     attachment1.setContentResource(Resource.createPlainText("exoplatform content mamagement")) ;    
-    
-    SearchData data = new SearchData("exoplatform", null, null, null) ;
-    
-    PageList<SearchResult> result = wService.search("portal", "classic", data) ;
+    kspage.getChromatticSession().save();
+    SearchData data = new SearchData("exoplatform", null, null,"portal","classic") ;
+   
+    PageList<SearchResult> result = wService.search(data) ;
     assertEquals(2, result.getAll().size()) ;    
+    
+    data = new SearchData("exoplatform", null, null,"portal",null) ;
+    result = wService.search(data) ;
+    assertEquals(3, result.getAll().size()) ;    
       
   }
   

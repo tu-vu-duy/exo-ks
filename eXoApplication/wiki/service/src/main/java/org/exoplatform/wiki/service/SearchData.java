@@ -1,23 +1,37 @@
 package org.exoplatform.wiki.service;
 
+import org.exoplatform.portal.config.model.PortalConfig;
+
 public class SearchData {
   private String text ;
   private String title ;
   private String content ;
-  private String path ;
-  private String pageId ;
-  private String wikiType;
+  private String wikiType ;
+  private String wikiOwner ;
+  private String pageId ; 
   
-  public SearchData(String path, String pageId) {
-    this.path = path ;
+  protected String jcrQueryPath;
+  
+  private static String ALL_PAGESPATH    = "%/WikiHome/%";
+  private static String PORTAL_PAGESPATH = "/exo:applications/eXoWiki/wikis/%/WikiHome/%";
+  private static String GROUP_PAGESPATH= "/Groups/%/ApplicationData/eXoWiki/WikiHome/%";
+  private static String USER_PAGESPATH="/Users/%/ApplicationData/eXoWiki/WikiHome/%";
+ 
+  
+  public SearchData(String wikiType, String wikiOwner, String pageId) {
+    this.wikiType= wikiType;
+    this.wikiOwner= wikiOwner;
     this.pageId = pageId ;
+    createJcrQueryPath();
   }
   
-  public SearchData(String text, String title, String content, String path) {
+  public SearchData(String text, String title, String content, String wikiType, String wikiOwner) {
     this.text = text ;
     this.title = title ;
     this.content = content ;
-    this.path = path ;
+    this.wikiType= wikiType;
+    this.wikiOwner= wikiOwner;
+    createJcrQueryPath();
   }
   
   public void setTitle(String title) {
@@ -33,14 +47,7 @@ public class SearchData {
   public String getContent() {
     return content;
   }
-  
-  public void setPath(String path) {
-    this.path = path;
-  }
-  public String getPath() {
-    return path;
-  }
-  
+
   public void setText(String text) {
     this.text = text;
   }
@@ -56,7 +63,7 @@ public class SearchData {
   public String getPageId() {
     return pageId;
   }
-
+ 
   public String getWikiType() {
     return wikiType;
   }
@@ -65,14 +72,37 @@ public class SearchData {
     this.wikiType = wikiType;
   }
 
+  public String getWikiOwner() {
+    return wikiOwner;
+  }
+
+  public void setWikiOwner(String wikiOwner) {
+    this.wikiOwner = wikiOwner;
+  }
+
+  public void createJcrQueryPath() {
+    if (wikiType == null && wikiOwner == null) {
+      this.jcrQueryPath = "jcr:path LIKE '" + ALL_PAGESPATH + "'";
+    }
+    if (wikiType != null) {
+      if (wikiType.equals(PortalConfig.PORTAL_TYPE))
+        this.jcrQueryPath = "jcr:path LIKE '" + PORTAL_PAGESPATH + "'";
+      else if (wikiType.equals(PortalConfig.GROUP_TYPE))
+        this.jcrQueryPath = "jcr:path LIKE '" + GROUP_PAGESPATH + "'";
+      else if (wikiType.equals(PortalConfig.USER_TYPE))
+        this.jcrQueryPath = "jcr:path LIKE '" + USER_PAGESPATH + "'";
+      if (wikiOwner != null) {
+        this.jcrQueryPath = this.jcrQueryPath.replaceFirst("%", wikiOwner);
+      }
+    }
+  }
+
   public String getChromatticStatement() {
     StringBuilder statement = new StringBuilder();    
     try {
       boolean isAnd = false ;
-      if(path != null && path.length() > 0) {
-        statement.append("jcr:path LIKE '"+ path + "/%'") ;
-        isAnd = true ;
-      }
+      statement.append(this.jcrQueryPath);
+      isAnd = true;
       if(text != null && text.length() > 0) {
         if(isAnd) statement.append(" AND ") ;
         statement.append(" CONTAINS(*, '").append(text).append("')") ; 
@@ -93,20 +123,16 @@ public class SearchData {
   }
   
   public String getStatement() {
-    StringBuilder statement = new StringBuilder();
-    String queryPath="";
-    if (path==null){
-      
-    }
+    StringBuilder statement = new StringBuilder();    
     try {
       statement.append("SELECT title, jcr:primaryType, path, excerpt(.) ")
                .append("FROM nt:base ")
                .append("WHERE ") ;
       boolean isAnd = false ;
-      if(path != null && path.length() > 0) {
-        statement.append("jcr:path LIKE '"+ path + "/%'") ;
-        isAnd = true ;
-      }
+     
+      statement.append(this.jcrQueryPath);
+      isAnd = true;
+      
       if(text != null && text.length() > 0) {
         if(isAnd) statement.append(" AND ") ;
         statement.append(" CONTAINS(*, '").append(text).append("')") ; 
@@ -133,11 +159,7 @@ public class SearchData {
       statement.append("SELECT * ")
                .append("FROM wiki:renamed ")
                .append("WHERE ") ;
-      
-      if(path != null && path.length() > 0) {
-        statement.append("jcr:path LIKE '"+ path + "/%'") ;
-      
-      }
+      statement.append(this.jcrQueryPath);
       if(getPageId() != null && getPageId().length() > 0) {
         statement.append(" AND ") ;
         statement.append(" oldPageIds = '").append(getPageId()).append("'") ;

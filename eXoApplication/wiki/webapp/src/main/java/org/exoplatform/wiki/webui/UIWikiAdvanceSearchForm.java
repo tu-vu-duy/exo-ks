@@ -17,26 +17,29 @@
 package org.exoplatform.wiki.webui;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.exoplatform.commons.utils.PageList;
 import org.exoplatform.container.PortalContainer;
+import org.exoplatform.portal.config.model.PortalConfig;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
-import org.exoplatform.webui.core.model.SelectItemOption;
+import org.exoplatform.webui.core.model.SelectItem;
+import org.exoplatform.webui.core.model.SelectOption;
+import org.exoplatform.webui.core.model.SelectOptionGroup;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.form.UIForm;
-import org.exoplatform.webui.form.UIFormSelectBox;
+import org.exoplatform.webui.form.UIFormSelectBoxWithGroups;
 import org.exoplatform.webui.form.UIFormStringInput;
-import org.exoplatform.wiki.commons.Utils;
 import org.exoplatform.wiki.mow.api.Wiki;
-import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
+import org.exoplatform.wiki.mow.api.WikiType;
 import org.exoplatform.wiki.service.SearchData;
 import org.exoplatform.wiki.service.SearchResult;
-import org.exoplatform.wiki.service.WikiPageParams;
 import org.exoplatform.wiki.service.WikiService;
+import org.exoplatform.wiki.utils.Utils;
 
 /**
  * Created by The eXo Platform SAS
@@ -48,49 +51,113 @@ import org.exoplatform.wiki.service.WikiService;
   lifecycle = UIFormLifecycle.class,
   template = "app:/templates/wiki/webui/UIWikiAdvanceSearchForm.gtmpl",
   events = {
-      @EventConfig(listeners = UIWikiAdvanceSearchForm.SearchActionListener.class)     
-            
+      @EventConfig(listeners = UIWikiAdvanceSearchForm.SearchActionListener.class)            
     }
 )
 
 public class UIWikiAdvanceSearchForm extends UIForm {
-  final static String TEXT = "text".intern() ;
-  final static String WIKI_SPACES = "wikiSpaces".intern() ;
+  final static String TEXT        = "text".intern();
+
+  final static String WIKI_SPACES = "wikiSpaces".intern();
   
   public UIWikiAdvanceSearchForm() throws Exception {
-    addChild(new UIFormStringInput(TEXT, TEXT, null)) ;
-    List<SelectItemOption<String>> spaces = new ArrayList<SelectItemOption<String>>() ;
-    String currentWiki = Utils.getCurrentWiki().getName() ;
-    Wiki[] wikis = Utils.getAllWikiSpace() ;
-    for(Wiki wk : wikis){
-      spaces.add(new SelectItemOption<String>(wk.getOwner(), ((PageImpl)wk.getWikiHome()).getPath())) ;      
-    }    
-    UIFormSelectBox selectSpaces = new UIFormSelectBox(WIKI_SPACES, WIKI_SPACES, spaces);
-    selectSpaces.setDefaultValue(currentWiki) ;
-    addChild(selectSpaces) ;
-    this.setActions(new String[]{"Search"});
+    addChild(new UIFormStringInput(TEXT, TEXT, null));
+    List<SelectOptionGroup> spaces = renderSpacesOptions();
+    UIFormSelectBoxWithGroups selectSpaces = new UIFormSelectBoxWithGroups(WIKI_SPACES,
+                                                                           WIKI_SPACES,
+                                                                           new ArrayList<SelectItem>(spaces));
+    
+    selectSpaces.setValue(getDefaultSelectSpaceValue());
+    addChild(selectSpaces);
+    
+    this.setActions(new String[] { "Search" });
+  }
+
+  public void resetWikiSpaces() throws Exception {
+    getChild(UIFormSelectBoxWithGroups.class).setOptions(new ArrayList<SelectItem>(renderSpacesOptions()))
+                                             .setValue(getDefaultSelectSpaceValue());
   }
   
-  public void resetWikiSpaces() throws Exception {
-    List<SelectItemOption<String>> spaces = new ArrayList<SelectItemOption<String>>() ;
-    Wiki[] wikis = Utils.getAllWikiSpace() ;
-    for(Wiki wk : wikis){
-      spaces.add(new SelectItemOption<String>(wk.getOwner(), ((PageImpl)wk.getWikiHome()).getPath())) ;      
+  public List<SelectOptionGroup> renderSpacesOptions() throws Exception {
+    List<SelectOptionGroup> listOptions = new ArrayList<SelectOptionGroup>();
+
+    if (getAllSpacesOptions().getOptions().size() > 0)
+      listOptions.add(getAllSpacesOptions());
+    if (getPortalSpacesOptions().getOptions().size() > 0)
+      listOptions.add(getPortalSpacesOptions());
+    if (getGroupSpacesOptions().getOptions().size() > 0)
+      listOptions.add(getGroupSpacesOptions());
+    if (getUserSpacesOptions().getOptions().size() > 0)
+      listOptions.add(getUserSpacesOptions());    
+    String currentWikiOwner = org.exoplatform.wiki.commons.Utils.getCurrentWikiPageParams().getOwner();    
+    return listOptions;
+  }
+
+  public SelectOptionGroup getAllSpacesOptions() {
+    SelectOptionGroup allSpaceOptions = new SelectOptionGroup("");
+    allSpaceOptions.addOption(new SelectOption("All Spaces", ""));
+    allSpaceOptions.addOption(new SelectOption("All Portal Spaces", PortalConfig.PORTAL_TYPE));
+    allSpaceOptions.addOption(new SelectOption("All Group Spaces", PortalConfig.GROUP_TYPE));
+    allSpaceOptions.addOption(new SelectOption("All User Spaces", PortalConfig.USER_TYPE));
+    return allSpaceOptions;
+  }
+
+  public SelectOptionGroup getPortalSpacesOptions() {
+    SelectOptionGroup portalSpaceOptions = new SelectOptionGroup("Portal Spaces");
+    Collection<Wiki> portalWikis = Utils.getWikisByType(WikiType.PORTAL);
+    for (Wiki wiki : portalWikis) {
+      portalSpaceOptions.addOption(new SelectOption(wiki.getOwner(), PortalConfig.PORTAL_TYPE + "/"
+          + wiki.getOwner()));
     }
-    getChild(UIFormSelectBox.class).setOptions(spaces) ;
-  } 
+    return portalSpaceOptions;
+  }
+
+  public SelectOptionGroup getGroupSpacesOptions() {
+    SelectOptionGroup groupSpaceOptions = new SelectOptionGroup("Group Spaces");
+    Collection<Wiki> groupWikis = Utils.getWikisByType(WikiType.GROUP);
+    for (Wiki wiki : groupWikis) {
+      groupSpaceOptions.addOption(new SelectOption(wiki.getOwner(), PortalConfig.GROUP_TYPE + "/"
+          + wiki.getOwner()));
+    }
+    return groupSpaceOptions;
+  }
+
+  public SelectOptionGroup getUserSpacesOptions() {
+    SelectOptionGroup userSpaceOptions = new SelectOptionGroup("User Spaces");
+    Collection<Wiki> userWikis = Utils.getWikisByType(WikiType.USER);
+    for (Wiki wiki : userWikis) {
+      userSpaceOptions.addOption(new SelectOption(wiki.getOwner(), PortalConfig.USER_TYPE + "/"
+          + wiki.getOwner()));
+    }
+    return userSpaceOptions;
+  }
   
   public void processSearchAction() throws Exception {
-    String text = getUIStringInput(TEXT).getValue();
-    String space = getUIFormSelectBox(WIKI_SPACES).getLabel();
-    String path = getUIFormSelectBox(WIKI_SPACES).getValue();
-    WikiPageParams params = Utils.getCurrentWikiPageParams();
     WikiService wservice = (WikiService) PortalContainer.getComponent(WikiService.class);
-    SearchData data = new SearchData(text, null, null, path);
-    PageList<SearchResult> results = wservice.search(params.getType(), space, data);
+    String text = getUIStringInput(TEXT).getValue();
+    UIFormSelectBoxWithGroups spaces= getChild(UIFormSelectBoxWithGroups.class);   
+    String path = getChild(UIFormSelectBoxWithGroups.class).getValue();
+    String wikiType = null;
+    String wikiOwner = null;
+    if (!path.equals("")) {
+      String[] arrayParams = path.split("/");
+      if (arrayParams.length >= 1) {
+        wikiType = arrayParams[0];
+        if (arrayParams.length >= 2)
+          wikiOwner = arrayParams[1];
+      }
+    }
+    SearchData data = new SearchData(text, null, null, wikiType, wikiOwner);
+    PageList<SearchResult> results = wservice.search(data);
     UIWikiAdvanceSearchResult uiSearchResults = getParent().findFirstComponentOfType(UIWikiAdvanceSearchResult.class);
     uiSearchResults.setKeyword(text);
     uiSearchResults.setResult(results);
+  }
+  
+  private String getDefaultSelectSpaceValue() throws Exception
+  {
+    return org.exoplatform.wiki.commons.Utils.getCurrentWikiPageParams().getType()
+    + "/" + org.exoplatform.wiki.commons.Utils.getCurrentWikiPageParams().getOwner();
   }
   
   static public class SearchActionListener extends EventListener<UIWikiAdvanceSearchForm> {
@@ -99,4 +166,5 @@ public class UIWikiAdvanceSearchForm extends UIForm {
       uiSearch.processSearchAction();
     }
   }  
+
 }

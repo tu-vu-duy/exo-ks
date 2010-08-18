@@ -11,21 +11,23 @@ import org.exoplatform.wiki.commons.Utils ;
 	PageList<SearchResult> results = uicomponent.getResults() ;	
 	
 	if(results != null && results.getPage(uicomponent.getPageIndex()).size() > 0) {
-		String wikiURI = uicomponent.getWikiNodeUri() ;		
+		
 		%>		
 		<div class="UIWikiAdvanceSearchResult">
 			<div class="ResultInfo">Showing 1- of <%= results.getPage(uicomponent.getPageIndex()).size() %> of <b>"<%=uicomponent.getKeyword()%>"</b></div>
 			<%
 				String viewPage = uicomponent.event("ViewPage") ;
 				for(SearchResult result in results.getPage(uicomponent.getPageIndex())) {
-					String pageURI = wikiURI + result.getNodeName() ;
-					String space = uicomponent.getWiki(result.getPath()) ;					
-					if(WikiNodeType.WIKI_PAGE_CONTENT.equals(result.getType())){		      	
+			     	String wikiURI = uicomponent.getWikiNodeUri(result) ;				
+					String space = uicomponent.getWiki(result).getOwner();
+					String wikiType= uicomponent.getWikiType(result);
+					String pageURI = wikiURI + result.getNodeName() ;					
+					if(WikiNodeType.WIKI_PAGE_CONTENT.equals(result.getType())){						      	
 		      	%>		      	
 		      	<div class="BlockResultFeed">
 							<a class="TxtTitFeed" onclick="$viewPage" href="$pageURI"><%=result.getTitle()%></a>
 							<div class="TxtDetail"><%=result.getExcerpt()%></div>
-							<div><a class="TxtMark" onclick="$viewPage" href="$wikiURI">$space</a></div>
+							<div><strong>$wikiType Space: </strong><a class="TxtMark" onclick="$viewPage" href="$wikiURI">$space</a></div>
 						</div>
 		      	<%	
 		      } else if (WikiNodeType.WIKI_ATTACHMENT_CONTENT.equals(result.getType())){
@@ -36,7 +38,7 @@ import org.exoplatform.wiki.commons.Utils ;
 		      	<div class="BlockResultFeed">
 		      		<a class="$extension TxtTitFeed" href="$downloadAction"><span><%=att.getName()%></span></a>
 							<div class="TxtDetail"><%=result.getExcerpt()%></div>
-							<div> <a class="TxtMark" onclick="$viewPage" href="$wikiURI">$space</a> > <a class="TxtMark" onclick="$viewPage" href="$pageURI"><%=uicomponent.getPageTitle(result.getPath())%></a></div>
+							<div><strong>$wikiType Space: </strong><a class="TxtMark" onclick="$viewPage" href="$wikiURI">$space</a> > <a class="TxtMark" onclick="$viewPage" href="$pageURI"><%=uicomponent.getPageTitle(result.getPath())%></a></div>
 						</div>    	
 		      	<%
 		      }      

@@ -29,6 +29,11 @@ import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.wiki.commons.Utils;
+import org.exoplatform.wiki.mow.api.Wiki;
+import org.exoplatform.wiki.mow.api.WikiNodeType;
+import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
+import org.exoplatform.wiki.mow.core.api.wiki.AttachmentImpl;
+import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 import org.exoplatform.wiki.service.SearchResult;
 import org.exoplatform.wiki.service.WikiPageParams;
 import org.exoplatform.wiki.service.WikiService;
@@ -72,13 +77,30 @@ public class UIWikiAdvanceSearchResult extends UIContainer {
   
   private String getKeyword () {return keyword ;}
   
-  private String getWiki(String path) throws Exception {
-    try{
-      return Utils.getCurrentWiki().getName(); 
-    }catch(Exception e){}
-    return null ;
+  private Wiki getWiki(SearchResult result) throws Exception {
+    Wiki searchWiki = null;
+    try {     
+      if (WikiNodeType.WIKI_PAGE_CONTENT.equals(result.getType())) {
+        ContentImpl searchContent= (ContentImpl)getObject(result.getPath(), result.getType());       
+         searchWiki = searchContent.getParent().getWiki();
+      } else {
+        //Search Object is attachment
+        AttachmentImpl searchAtt= (AttachmentImpl)getObject(result.getPath(), result.getType());
+        searchWiki = searchAtt.getParentPage().getWiki();
+      }
+    } catch (Exception e) {
+    }
+    return searchWiki;
   }
-  
+
+  private String getWikiType(SearchResult result) throws Exception {
+    try {
+      return org.exoplatform.wiki.utils.Utils.getWikiType(getWiki(result));
+    } catch (Exception e) {
+    }
+    return null;
+  }
+
   private Object getObject(String path, String type) throws Exception {
     WikiService wservice = (WikiService)PortalContainer.getComponent(WikiService.class) ;
     return wservice.findByPath(path, type) ;    
@@ -89,17 +111,19 @@ public class UIWikiAdvanceSearchResult extends UIContainer {
     return wservice.getPageTitleOfAttachment(path) ;    
   }
   
-  private String getWikiNodeUri() throws Exception {
-    WikiPageParams currentPageParams = Utils.getCurrentWikiPageParams();
+  private String getWikiNodeUri(SearchResult result) throws Exception {
+    Wiki wiki= getWiki(result);
+    String wikiType= getWikiType(result);
     PortalRequestContext portalRequestContext = Util.getPortalRequestContext();
     StringBuilder sb = new StringBuilder(portalRequestContext.getPortalURI());
     UIPortal uiPortal = Util.getUIPortal();
     String pageNodeSelected = uiPortal.getSelectedNode().getUri();
     sb.append(pageNodeSelected);
-    if (!PortalConfig.PORTAL_TYPE.equalsIgnoreCase(currentPageParams.getType())) {
-      sb.append(currentPageParams.getType());
+    if (!PortalConfig.PORTAL_TYPE.equalsIgnoreCase(wikiType)) {
       sb.append("/");
-      sb.append(currentPageParams.getOwner());
+      sb.append(wikiType);
+      sb.append("/");
+      sb.append(wiki.getOwner());
     }
     return sb.toString();
   }

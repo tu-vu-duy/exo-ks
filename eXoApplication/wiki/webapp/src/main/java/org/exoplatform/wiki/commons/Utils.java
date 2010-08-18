@@ -143,13 +143,7 @@ public class Utils {
     String owner=  Utils.getCurrentWikiPageParams().getOwner();
     return store.getWiki(WikiType.valueOf(wikiType.toUpperCase()), owner);    
   }
-  
-  public static Wiki[] getAllWikiSpace() {
-    MOWService mowService = (MOWService) PortalContainer.getComponent(MOWService.class);
-    WikiStoreImpl store = (WikiStoreImpl) mowService.getModel().getWikiStore();
-    return store.getWikis().toArray(new Wiki[]{}) ;
-  } 
-  
+    
   public static void setUpWikiContext(UIWikiPortlet wikiPortlet, RenderingService renderingService) throws Exception {
     Execution ec = ((RenderingServiceImpl) renderingService).getExecutionContext();
     if (ec.getContext() == null) {

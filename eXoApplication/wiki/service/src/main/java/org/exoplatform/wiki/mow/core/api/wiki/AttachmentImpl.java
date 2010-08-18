@@ -20,6 +20,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import org.chromattic.api.annotations.Destroy;
+import org.chromattic.api.annotations.ManyToOne;
 import org.chromattic.api.annotations.Name;
 import org.chromattic.api.annotations.Path;
 import org.chromattic.api.annotations.PrimaryType;
@@ -90,6 +91,9 @@ public abstract class AttachmentImpl extends NTFile implements Attachment {
     sb.append(getPath());
     return sb.toString();
   }
+  
+  @ManyToOne
+  public abstract PageImpl getParentPage();
   
   @Destroy
   public abstract void remove();

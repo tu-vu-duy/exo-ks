@@ -352,40 +352,38 @@ public class WikiServiceImpl implements WikiService {
     return null;
   }
 
-  public PageList<ContentImpl> searchContent(String wikiType, String wikiOwner, SearchData data) throws Exception {
+  public PageList<ContentImpl> searchContent(SearchData data) throws Exception {
     Model model = getModel();
-    WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
-    if (data.getPath() == null || data.getPath().length() <= 0) {
-      WikiHome home = getWikiHome(wikiType, wikiOwner);
-      data.setPath(home.getPath());
-    }
-    String statement = data.getChromatticStatement();
-    List<ContentImpl> list = new ArrayList<ContentImpl>();
-    if (statement != null) {
-      Iterator<ContentImpl> result = wStore.getSession()
-                                           .createQueryBuilder(ContentImpl.class)
-                                           .where(statement)
-                                           .get()
-                                           .objects();
-      while (result.hasNext()) {
-        list.add(result.next());
+    try {
+      WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
+      String statement = data.getChromatticStatement();
+      List<ContentImpl> list = new ArrayList<ContentImpl>();
+      if (statement != null) {
+        Iterator<ContentImpl> result = wStore.getSession()
+                                             .createQueryBuilder(ContentImpl.class)
+                                             .where(statement)
+                                             .get()
+                                             .objects();
+        while (result.hasNext()) {
+          list.add(result.next());
+        }
       }
+      return new ObjectPageList<ContentImpl>(list, 5);
+    } catch (Exception e) {
+      log.error("Can't search content", e);
     }
-    return new ObjectPageList<ContentImpl>(list, 5);
+    return null;
   }
 
-  public PageList<SearchResult> search(String wikiType, String wikiOwner, SearchData data) throws Exception {
+  public PageList<SearchResult> search(SearchData data) throws Exception {
 
     Model model = getModel();
     try {
       WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
-      if (data.getPath() == null || data.getPath().length() <= 0) {
-        WikiHome home = getWikiHome(wikiType, wikiOwner);
-        data.setPath(home.getPath());
-      }
       PageList<SearchResult> result = jcrDataStorage.search(wStore.getSession(), data);
       return result;
     } catch (Exception e) {
+      log.error("Can't search", e);
     }
     return null;
   }
@@ -393,8 +391,7 @@ public class WikiServiceImpl implements WikiService {
   public List<SearchResult> searchRenamedPage(String wikiType, String wikiOwner, String pageId) throws Exception {
     Model model = getModel();
     WikiStoreImpl wStore = (WikiStoreImpl) model.getWikiStore();
-    WikiHome home = getWikiHome(wikiType, wikiOwner);
-    SearchData data = new SearchData(home.getPath(), pageId);
+    SearchData data = new SearchData(wikiType, wikiOwner, pageId);
     return jcrDataStorage.searchRenamedPage(wStore.getSession(), data);
   }
 

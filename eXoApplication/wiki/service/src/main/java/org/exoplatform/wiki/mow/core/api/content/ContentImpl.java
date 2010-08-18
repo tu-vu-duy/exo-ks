@@ -50,7 +50,7 @@ public abstract class ContentImpl extends AbstractContainerContent implements Co
   
   
   @OneToOne
-  @MappedBy(WikiNodeType.WIKI_PAGE)
+  @MappedBy(WikiNodeType.Definition.CONTENT)
   public abstract PageImpl getParent();
 
 }

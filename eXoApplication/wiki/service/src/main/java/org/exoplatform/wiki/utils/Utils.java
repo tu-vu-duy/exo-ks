@@ -1,6 +1,7 @@
 package org.exoplatform.wiki.utils;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 import javax.jcr.Node;
 
@@ -18,6 +19,7 @@ import org.exoplatform.wiki.mow.core.api.MOWService;
 import org.exoplatform.wiki.mow.core.api.WikiStoreImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.AttachmentImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.GroupWiki;
+import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.PortalWiki;
 import org.exoplatform.wiki.mow.core.api.wiki.UserWiki;
 import org.exoplatform.wiki.service.WikiContext;
@@ -128,6 +130,12 @@ public class Utils {
     return result;
   }
   
+  public static String getPathFromPageParams(WikiPageParams param) {
+    if (param.getType() != null & param.getOwner() != null && param.getPageId() != null)
+      return param.getType() + "/" + param.getOwner() + "/" + param.getPageId();
+    return null;
+  }
+
   public static String getWikiType(Wiki wiki) {
     if (wiki instanceof PortalWiki) {
       return PortalConfig.PORTAL_TYPE;
@@ -146,4 +154,16 @@ public class Utils {
     return store.getWikis().toArray(new Wiki[]{}) ;
   } 
   
+  public static boolean isDescendantPage(PageImpl page, PageImpl parentPage )
+  {
+    Iterator<PageImpl> iter = parentPage.getChildPages().values().iterator();
+    while (iter.hasNext()) {
+      PageImpl childpage = (PageImpl) iter.next();
+      if (childpage.equals(page))
+        return true;
+      return isDescendantPage(page,childpage);
+    }
+    return false;
+  }
+
 }

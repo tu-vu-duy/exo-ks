@@ -21,6 +21,7 @@ import java.net.URLEncoder;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.portal.application.PortalRequestContext;
 import org.exoplatform.portal.config.model.PortalConfig;
+import org.exoplatform.portal.webui.portal.UIPortal;
 import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.web.application.ApplicationMessage;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
@@ -33,7 +34,7 @@ import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.form.UIForm;
 import org.exoplatform.webui.form.UIFormInputInfo;
 import org.exoplatform.webui.form.UIFormStringInput;
-import org.exoplatform.wiki.resolver.TitleResolver;
+import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
 import org.exoplatform.wiki.service.WikiPageParams;
 import org.exoplatform.wiki.service.WikiService;
 import org.exoplatform.wiki.tree.UITreeExplorer;
@@ -67,10 +68,10 @@ public class UIWikiMovePageForm extends UIForm implements UIPopupComponent {
   public String              MOVE             = "Move";
   
   public UIWikiMovePageForm() throws Exception {
-   addChild(new UIFormInputInfo(PAGENAME_INFO, PAGENAME_INFO, null));
-   addChild(new UIFormStringInput(CURRENT_LOCATION, CURRENT_LOCATION, null).setEditable(false));   
-   addChild(new UIFormStringInput(NEW_LOCATION, NEW_LOCATION, null));  
-   addChild(UITreeExplorer.class, null, UITREE).setRendered(true);
+    addChild(new UIFormInputInfo(PAGENAME_INFO, PAGENAME_INFO, null));
+    addChild(new UIFormStringInput(CURRENT_LOCATION, CURRENT_LOCATION, null).setEditable(false));
+    addChild(new UIFormStringInput(NEW_LOCATION, NEW_LOCATION, null));
+    addChild(UITreeExplorer.class, null, UITREE).setRendered(true);
   }
   
   static public class CloseActionListener extends EventListener<UIWikiMovePageForm> {
@@ -87,20 +88,40 @@ public class UIWikiMovePageForm extends UIForm implements UIPopupComponent {
       UIWikiPortlet uiWikiPortlet = event.getSource().getAncestorOfType(UIWikiPortlet.class);
       UIWikiMovePageForm movePageForm = uiWikiPortlet.findFirstComponentOfType(UIWikiMovePageForm.class);
       UIFormStringInput currentLocationInput = movePageForm.getUIStringInput(CURRENT_LOCATION);
-      UIFormStringInput newLocationInput = movePageForm.getUIStringInput(NEW_LOCATION);
-      
+      UIFormStringInput newLocationInput = movePageForm.getUIStringInput(NEW_LOCATION);      
       WikiPageParams currentLocationParams = Utils.getPageParamsFromPath(currentLocationInput.getValue());
-      //currentLocationParams.setPageId(TitleResolver.getPageId(currentLocationParams.getPageId(), false));
+     
       WikiPageParams newLocationParams = Utils.getPageParamsFromPath(newLocationInput.getValue());
-      if ((newLocationParams==null)||(newLocationParams.getPageId() == null)||(currentLocationInput.getValue().equals(newLocationInput.getValue().trim()))) {
-        uiWikiPortlet.addMessage(new ApplicationMessage("UIWikiMovePageForm.can-not-move-to-follow-path", null, ApplicationMessage.WARNING));
+      if (newLocationParams==null) {
+        uiWikiPortlet.addMessage(new ApplicationMessage("UIWikiMovePageForm.new-location-is-empty", null, ApplicationMessage.ERROR));
         event.getRequestContext().addUIComponentToUpdateByAjax(uiWikiPortlet.getUIPopupMessages()) ;
+        prContext.getResponse().sendRedirect(org.exoplatform.wiki.commons.Utils.getCurrentRequestURL());
         return;
       }
-      //newLocationParams.setPageId(TitleResolver.getPageId(newLocationParams.getPageId(), false));
+      //If exist page same with move page name in new location
+      PageImpl movepage = (PageImpl) wservice.getPageById(currentLocationParams.getType(),
+                                                          currentLocationParams.getOwner(),
+                                                          currentLocationParams.getPageId());
+      PageImpl existPage = (PageImpl) wservice.getPageById(newLocationParams.getType(),
+                                                           newLocationParams.getOwner(),
+                                                           currentLocationParams.getPageId());
+      if (existPage != null && !existPage.equals(movepage)) {
+        uiWikiPortlet.addMessage(new ApplicationMessage("UIWikiMovePageForm.same-name-in-new-location-space",
+                                                        null,
+                                                        ApplicationMessage.ERROR));
+        event.getRequestContext().addUIComponentToUpdateByAjax(uiWikiPortlet.getUIPopupMessages());
+        prContext.getResponse()
+                 .sendRedirect(org.exoplatform.wiki.commons.Utils.getCurrentRequestURL());
+        return;
+      }
+      
       wservice.movePage(currentLocationParams, newLocationParams);
+      
       String portalURI = prContext.getPortalURI();
-      StringBuilder newPageURL = new StringBuilder(portalURI + "wiki/");
+      StringBuilder newPageURL = new StringBuilder(portalURI);
+      UIPortal uiPortal = Util.getUIPortal();
+      String pageNodeSelected = uiPortal.getSelectedNode().getUri();
+      newPageURL.append(pageNodeSelected+"/");
       String encodedPageId= URLEncoder.encode(currentLocationParams.getPageId(),"UTF-8");
       if (newLocationParams.getType().equals(PortalConfig.PORTAL_TYPE)) {
         newPageURL.append(encodedPageId);

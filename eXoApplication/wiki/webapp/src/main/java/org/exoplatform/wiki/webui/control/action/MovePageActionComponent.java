@@ -19,6 +19,8 @@ package org.exoplatform.wiki.webui.control.action;
 import java.util.Arrays;
 import java.util.List;
 
+import org.exoplatform.portal.application.PortalRequestContext;
+import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.web.application.ApplicationMessage;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
@@ -62,17 +64,18 @@ public class MovePageActionComponent extends UIComponent {
   
   public static class MovePageActionListener extends UIPageToolBarActionListener<MovePageActionComponent> {
     @Override
-    protected void processEvent(Event<MovePageActionComponent> event) throws Exception {      
+    protected void processEvent(Event<MovePageActionComponent> event) throws Exception {
+      PortalRequestContext prContext = Util.getPortalRequestContext();
       UIWikiPortlet uiWikiPortlet = event.getSource().getAncestorOfType(UIWikiPortlet.class);
       if (Utils.getCurrentWikiPage().getName().equals(WikiNodeType.Definition.WIKI_HOME_NAME)) {
         uiWikiPortlet.addMessage(new ApplicationMessage("UIWikiMovePageForm.can-not-move",
                                                         null,
                                                         ApplicationMessage.WARNING));
-        event.getRequestContext().addUIComponentToUpdateByAjax(uiWikiPortlet.getUIPopupMessages());
+        event.getRequestContext().addUIComponentToUpdateByAjax(uiWikiPortlet.getUIPopupMessages());        
         return;
       }
       UIPopupContainer uiPopupContainer = uiWikiPortlet.getChild(UIPopupContainer.class);
-      UIWikiMovePageForm movePageForm = uiPopupContainer.activate(UIWikiMovePageForm.class, 500);
+      UIWikiMovePageForm movePageForm = uiPopupContainer.activate(UIWikiMovePageForm.class, 600);
       String currentRelativePagePath = Utils.getCurrentHierachyPagePath();
       UIFormStringInput currentLocationInput = movePageForm.getUIStringInput(UIWikiMovePageForm.CURRENT_LOCATION);
       currentLocationInput.setValue(currentRelativePagePath);

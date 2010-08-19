@@ -40,6 +40,14 @@ public class PageTreeNode extends TreeNode {
     this.hasChild = this.page.getChildPages().size() > 0;
   }
 
+  public PageImpl getPage() {
+    return page;
+  }
+
+  public void setPage(PageImpl page) {
+    this.page = page;
+  }
+
   public void setChildren() throws Exception {
     Iterator<PageImpl> childPageIterator = page.getChildPages().values().iterator();
     while (childPageIterator.hasNext()) {

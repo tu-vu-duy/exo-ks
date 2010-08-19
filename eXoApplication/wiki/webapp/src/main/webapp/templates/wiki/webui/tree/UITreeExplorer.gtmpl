@@ -9,25 +9,28 @@
 <div class="UITreeExplorer">
 <% 
  String restURL= uicomponent.getRestUrl();
- public void writeNodes() {    
+ String currentPagePath= uicomponent.getCurrentPagePath();
+ 
+ public void writeNodes(String currentPagePath) {    
     //Root Tree   
 	SpaceTreeNode  portalNode =  new SpaceTreeNode(PortalConfig.PORTAL_TYPE);
     SpaceTreeNode  groupNode =  new SpaceTreeNode(PortalConfig.GROUP_TYPE);
     SpaceTreeNode  userNode =   new SpaceTreeNode(PortalConfig.USER_TYPE);
 	//Render Spaces 
-    renderSpaceTreeNode(portalNode,false );
-	renderSpaceTreeNode(groupNode,false );
-	renderSpaceTreeNode(userNode, true);	     
+    renderSpaceTreeNode(portalNode,false,currentPagePath );
+	renderSpaceTreeNode(groupNode,false, currentPagePath );
+	renderSpaceTreeNode(userNode, true, currentPagePath);	     
  }
   
- public void renderSpaceTreeNode(SpaceTreeNode treeNode ,boolean isLastNode) {   
+ public void renderSpaceTreeNode(SpaceTreeNode treeNode ,boolean isLastNode, String currentPagePath) {
+    currentPagePath= currentPagePath.replace("/",".");   
     String nodeName = treeNode.getName();
     String iconType = "Expand";
     String lastNodeClass = "";
     String nodeType = treeNode.getNodeType().toString();
     String nodeTypeCSS= nodeType.substring(0,1).toUpperCase() + nodeType.substring(1).toLowerCase();
     String absPath = treeNode.getAbsPath();
-    String relPath= treeNode.getRelPath();
+    String relPath= treeNode.getRelPath().replace("/",".");
     if (isLastNode) {
       lastNodeClass = "LastNode";
     }
@@ -35,10 +38,10 @@
       iconType = "Empty";
     }  
     println "<div  class=\""+lastNodeClass+" Node\" >" ;
-    println "  <div class=\""+iconType+"Icon\" id=\"" + relPath + "\" onclick=\"event.cancelBubble=true;  if(eXo.wiki.UITreeExplorer.collapseExpand(this)) return;  eXo.wiki.UITreeExplorer.expandNode('" +  URLEncoder.encode(relPath, "utf-8") + "', this)\">" ;
+    println "  <div class=\""+iconType+"Icon\" id=\"" + relPath + "\" onclick=\"event.cancelBubble=true;  if(eXo.wiki.UITreeExplorer.collapseExpand(this)) return;  eXo.wiki.UITreeExplorer.expandNode('" +URLEncoder.encode( currentPagePath, "utf-8") + "/"+  URLEncoder.encode( relPath, "utf-8") + "', this)\">" ;
     println "    <div id=\"iconTreeExplorer\" onclick=\"event.cancelBubble=true;\"" + "class=\""+ nodeTypeCSS +" NodeType Node \""  + ">";
     println "      <div class='NodeLabel'>" ;
-    println "        <a  onclick=\"event.cancelBubble=true; eXo.wiki.UITreeExplorer.selectNode('"+URLEncoder.encode(absPath, "utf-8")+ "')\" style='cursor: pointer;' title=\""+nodeName+"\">"+nodeName+"</a>" ;
+    println "        <span style=\"cursor:auto\" title=\""+nodeName+"\">"+nodeName+"</span>" ;
     println "      </div>" ; 
     println "    </div>" ; 
     println "  </div>" ; 
@@ -54,7 +57,7 @@
 		  <div style="white-space: nowrap; -moz-user-select: none;">
 		    <div class="NodeGroup">
 		      <%		       
-		       writeNodes();
+		       writeNodes(currentPagePath);
     	       %>
     	       <input type="hidden" id="WikiRestURL" value="${restURL}">
 		    </div>

@@ -19,6 +19,8 @@ package org.exoplatform.wiki.tree ;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.core.UIContainer;
+import org.exoplatform.webui.form.UIFormStringInput;
+import org.exoplatform.wiki.webui.popup.UIWikiMovePageForm;
 
 /**
  * Created by The eXo Platform SAS
@@ -38,4 +40,11 @@ public class UITreeExplorer extends UIContainer {
     sb.append(PortalContainer.getCurrentRestContextName()).append("/wiki/tree/");
     return sb.toString();
   }
+  
+  public String getCurrentPagePath() {
+    UIWikiMovePageForm movePageForm = this.getAncestorOfType(UIWikiMovePageForm.class);
+    UIFormStringInput currentLocationInput = movePageForm.getUIStringInput(movePageForm.CURRENT_LOCATION);
+    return currentLocationInput.getValue();
+  }
+  
 }

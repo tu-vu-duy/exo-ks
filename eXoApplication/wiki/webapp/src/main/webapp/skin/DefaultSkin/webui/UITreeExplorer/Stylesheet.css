@@ -1,8 +1,8 @@
 @import url('DefaultSkin/icons/16x16/Stylesheet.css');
 
 .SideBarContent {
-  width: 450px;
-  height: 190px;
+  width: 550px;
+  height: 300px;
   border: #E4E4E4 solid 1px;
   margin: 5px 0 5px 0;
 }
@@ -18,15 +18,11 @@
 .SideBarContent .SideContent {
   padding-top: 5px;
   background: whiteSmoke;
+  height:270px;
   overflow: auto;
-  height: 170px;
-  border: #E4E4E4 solid 1px;
 }
 
- .UITreeExplorer {
-	padding-bottom: 20px;
-	_overflow: auto;
-	height: 185px;
+ .UITreeExplorer {	
 	_overflow-x: hidden;
 	_width: 183px;
 }
@@ -53,9 +49,11 @@
  .UITreeExplorer .NodeLabel {
   line-height: 16px;
 }
+ .UITreeExplorer .NodeLabel span {
+  font-style: italic;
+}
 
- .UITreeExplorer .ExpandIcon {
-  cursor: pointer;
+ .UITreeExplorer .ExpandIcon {  
   width: auto;
   height: auto;
   padding-left: 19px; /* orientation=lt */
@@ -64,8 +62,7 @@
 }
 
  .UITreeExplorer .CollapseIcon {
-  width: auto;
-  cursor: pointer;
+  width: auto;  
   padding-left: 19px; /* orientation=lt */
   padding-right: 19px; /* orientation=rt */
   display: block;
@@ -75,8 +72,7 @@
   color: blue;
 }
 
- .UITreeExplorer .EmptyIcon {
-  cursor: pointer;
+ .UITreeExplorer .EmptyIcon {  
   width: auto;
   height: auto;
   padding-left: 19px; /* orientation=lt */

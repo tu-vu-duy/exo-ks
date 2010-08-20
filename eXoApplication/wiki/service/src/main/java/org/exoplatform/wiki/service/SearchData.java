@@ -1,6 +1,7 @@
 package org.exoplatform.wiki.service;
 
 import org.exoplatform.portal.config.model.PortalConfig;
+import org.exoplatform.wiki.mow.api.WikiNodeType;
 
 public class SearchData {
   private String text ;
@@ -12,10 +13,21 @@ public class SearchData {
   
   protected String jcrQueryPath;
   
-  private static String ALL_PAGESPATH    = "%/WikiHome/%";
-  private static String PORTAL_PAGESPATH = "/exo:applications/eXoWiki/wikis/%/WikiHome/%";
-  private static String GROUP_PAGESPATH= "/Groups/%/ApplicationData/eXoWiki/WikiHome/%";
-  private static String USER_PAGESPATH="/Users/%/ApplicationData/eXoWiki/WikiHome/%";
+  private static String ALL_PAGESPATH    = "%/" + WikiNodeType.Definition.WIKI_HOME_NAME + "/%";
+
+  private static String PORTAL_PAGESPATH = "/exo:applications/"
+                                             + WikiNodeType.Definition.WIKI_APPLICATION + "/"
+                                             + WikiNodeType.Definition.WIKIS + "/%/"
+                                             + WikiNodeType.Definition.WIKI_HOME_NAME + "/%";
+
+  private static String GROUP_PAGESPATH  = "/Groups/%/ApplicationData/"
+                                             + WikiNodeType.Definition.WIKI_APPLICATION + "/"
+                                             + WikiNodeType.Definition.WIKI_HOME_NAME + "/%";
+
+  private static String USER_PAGESPATH   = "/Users/%/ApplicationData/"
+                                             + WikiNodeType.Definition.WIKI_APPLICATION + "/"
+                                             + WikiNodeType.Definition.WIKI_HOME_NAME + "/%";
+ 
  
   
   public SearchData(String wikiType, String wikiOwner, String pageId) {

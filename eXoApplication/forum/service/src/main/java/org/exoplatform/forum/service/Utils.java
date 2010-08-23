@@ -365,9 +365,27 @@ public class Utils {
 		return strBuilder;
 	}
 
-	 static public boolean hasPermission(List<String> listOfGroupMembershipUser, List<String> listOfCanviewUsers){
-	    for(String str : listOfGroupMembershipUser){
-	      if(listOfCanviewUsers.contains(str)) return true;
+	 //static public boolean hasPermission(List<String> listOfGroupMembershipUser, List<String> listOfCanviewUsers){
+	 //   for(String str : listOfGroupMembershipUser){
+	 //     if(listOfCanviewUsers.contains(str)) return true;
+	 //   }
+	 //   return false;
+	 // }
+	 
+	 static public boolean hasPermission(List<String> listOfCanviewrs, List<String> listOfBoundUsers){
+	    if(listOfBoundUsers == null || listOfCanviewrs == null) return false;
+	    List<String> tem = new ArrayList<String>();
+	    for(String str : listOfCanviewrs){
+	      if (str == null) continue;
+	      if(listOfBoundUsers.contains(str)) return true;
+	      if(str.contains("*")){
+	        str = str.substring(str.indexOf("/"), str.length());
+	        tem.add(str);
+	        if(listOfBoundUsers.contains(str)) return true;
+	      }
+	    }
+	    for(String s : listOfBoundUsers){
+	     if(tem.contains(s)) return true; 
 	    }
 	    return false;
 	  }

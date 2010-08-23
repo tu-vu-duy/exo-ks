@@ -90,7 +90,12 @@ function getModule(params)
     addDependency(new Project("org.wikimodel", "org.wikimodel.wem", "jar",  "${org.wikimodel.version}")).
     addDependency(new Project("org.suigeneris", "jrcs.diff", "jar",  "${org.suigeneris.version}")).
     addDependency(new Project("org.suigeneris", "jrcs.rcs", "jar",  "${org.suigeneris.version}")).
-    addDependency(new Project("ecs", "ecs", "jar",  "${ecs.version}"));
+    addDependency(new Project("ecs", "ecs", "jar",  "${ecs.version}")).
+    //For JCR
+    addDependency(new Project("org.apache.poi", "poi-ooxml", "jar", "3.6")).
+    addDependency(new Project("org.apache.poi", "poi", "jar", "3.6")).
+    addDependency(new Project("org.apache.poi", "poi-scratchpad", "jar", "3.6")).
+    addDependency(new Project("org.apache.xmlbeans", "xmlbeans", "jar", "2.3.0"));
     
   module.eXoApplication.wiki.deployName = "wiki";
 

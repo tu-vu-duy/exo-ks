@@ -10,7 +10,7 @@ import org.exoplatform.wiki.commons.Utils ;
 <%
 	PageList<SearchResult> results = uicomponent.getResults() ;	
 	
-	if(results != null && results.getPage(uicomponent.getPageIndex()).size() > 0) {
+	if(results != null &&  results.getAll().size() > 0) {
 		
 		%>		
 		<div class="UIWikiAdvanceSearchResult">
@@ -66,7 +66,8 @@ import org.exoplatform.wiki.commons.Utils ;
 				%>				
 				<a class="NextPage" href="$next">Next</a>
 			</div> 	
-			
+	</div>	
+	
 	<%} else {
 		%><div class="NoSearchResult">There is no search result...!</div><%
 	}
@@ -82,4 +83,3 @@ import org.exoplatform.wiki.commons.Utils ;
 				<a class="Number" href="#">26</a>
 				<a class="NextPage" href="#">Next</a>
 			</div-->
-</div>

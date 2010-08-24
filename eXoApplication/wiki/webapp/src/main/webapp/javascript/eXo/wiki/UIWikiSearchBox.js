@@ -50,6 +50,7 @@ UIWikiSearchBox.prototype.pressHandler = function(evt, textbox){
     return ;
   switch(keyNum){
     case 13: 
+      if (textbox.value.trim()!="")
       me.enterHandler(evt, textbox);
       break;
     case 27:

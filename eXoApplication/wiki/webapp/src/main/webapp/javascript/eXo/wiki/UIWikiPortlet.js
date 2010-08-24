@@ -18,3 +18,5 @@
  */
 
 if(!eXo.wiki) eXo.wiki = {};
+
+String.prototype.trim = function() {  return this.replace(/^\s+|\s+$/g, '');  }

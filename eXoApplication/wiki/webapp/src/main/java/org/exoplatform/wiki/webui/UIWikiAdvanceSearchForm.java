@@ -134,7 +134,7 @@ public class UIWikiAdvanceSearchForm extends UIForm {
   
   public void processSearchAction() throws Exception {
     WikiService wservice = (WikiService) PortalContainer.getComponent(WikiService.class);
-    String text = getUIStringInput(TEXT).getValue();
+    String text = getUIStringInput(TEXT).getValue().trim();
     UIFormSelectBoxWithGroups spaces= getChild(UIFormSelectBoxWithGroups.class);   
     String path = getChild(UIFormSelectBoxWithGroups.class).getValue();
     String wikiType = null;

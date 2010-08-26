@@ -90,8 +90,8 @@
   
    <javascript>
     <param>
-      <js-module>eXo.wiki.UIPageToolBarMore</js-module>
-      <js-path>/javascript/eXo/wiki/UIPageToolBarMore.js</js-path>
+      <js-module>eXo.wiki.UIWikiDropdownMenu</js-module>
+      <js-path>/javascript/eXo/wiki/UIWikiDropdownMenu.js</js-path>
     </param>
   </javascript>
  

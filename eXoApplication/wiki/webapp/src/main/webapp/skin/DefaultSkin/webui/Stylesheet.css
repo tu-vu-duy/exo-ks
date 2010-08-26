@@ -2,7 +2,7 @@
 @import url('UIWikiSearchBox/Stylesheet.css') ;
 @import url('UIWikiRichTextEditor/Stylesheet.css') ;
 @import url('UITreeExplorer/Stylesheet.css') ;
-
+@import url('UIWikiToolBar/Stylesheet.css') ;
 
 .ClearFix:after {
 	content: ".";
@@ -284,23 +284,15 @@
 }
 
 .UIWikiPageControlArea .UIPageToolBar .MoreLink {
-	width:40px;
-	color:#535353;	
-	float: right;
+  width:40px;
+	color:#535353;
 	height: 14px;
-	margin: 0;
 }
 
-.UIWikiPageControlArea .UIPageToolBar .DropdownMenu {
-	position:absolute;
-	display:none;
-	background:white;	
+.UIWikiPageControlArea .UIPageToolBar .MoreMenu {
 	width:100px;
 	top:26px;
-	right:0px;
-	border: 1px solid #C1C1C1;
-	text-align:left;
-	z-index:1000;
+	right:0px;	
 }
 
 .UIWikiPageControlArea .UIPageToolBar .MoreItems {
@@ -388,16 +380,16 @@
 	display:none;
 }
 
-.UIWikiPageEditForm .UIPageToolBar .DropdownMenu {
-	position:absolute;
-	display:none;
-	background:white;	
+.UIWikiPageControlArea .UIPageToolBar .MoreMenu {
 	width:100px;
 	top:26px;
-	right:0px;
-	border: 1px solid #C1C1C1;
-	text-align:left;
-	z-index:1000;
+	right:0px;	
+}
+
+.UIWikiPageEditForm .UIPageToolBar .MoreMenu {
+	width:100px;
+	top:26px;
+	right:0px;	
 }
 
 .UIWikiPageEditForm .UIPageToolBar .MoreItems {
@@ -1262,4 +1254,18 @@
 
 .UIWikiMovePageForm table td {
   border:none;
+}
+/* Hover Link and Menu */
+.UIWikiPortlet .HoverLink {	
+	float: right;	
+	margin: 0;
+}
+
+.UIWikiPortlet .HoverMenu {
+	position: absolute;	
+	background: white;	
+	text-align: left;
+	z-index: 1000;
+	border: 1px solid #C1C1C1;
+  display: none;
 }

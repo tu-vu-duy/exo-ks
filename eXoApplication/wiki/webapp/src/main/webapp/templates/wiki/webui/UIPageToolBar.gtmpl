@@ -3,9 +3,9 @@
   import org.exoplatform.wiki.commons.Utils;
   
 %>
-<div class="UIPageToolBar ClearFix" >
+<div id="$uicomponent.id" class="UIPageToolBar ClearFix" >
 	<div style="position:relative">
-		<div id="MoreMenu" class="DropdownMenu"> 
+		<div class="HoverMenu MoreMenu"> 
 		<%for(entry in uicomponent.getActions()) {
 			String action = entry.getActionName();    
 			def actionComponent = entry.getActionComponent();
@@ -19,11 +19,10 @@
 		</div>
 	</div>
 
-<a id="MoreLink" class="MoreLink Icon">More
-</a>
+<a class="HoverLink MoreLink Icon">More</a>
 <%
 def rcontext = _ctx.getRequestContext() ;
-rcontext.getJavascriptManager().addJavascript("eXo.wiki.UIPageToolBarMore.init();");
+rcontext.getJavascriptManager().addJavascript("eXo.wiki.UIWikiDropdownMenu.init(\""+uicomponent.id+"\");");
 rcontext.getJavascriptManager().addJavascript("eXo.wiki.UISavePageConfirmation.initDragDrop();");
 String saveLink = "";
 String cancelLink = "";

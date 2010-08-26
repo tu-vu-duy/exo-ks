@@ -17,10 +17,12 @@
 package org.exoplatform.wiki.service.impl;
 
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,8 +33,13 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.CacheControl;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.fileupload.DiskFileUpload;
 import org.apache.commons.fileupload.FileItem;
@@ -58,11 +65,18 @@ import org.exoplatform.wiki.mow.core.api.wiki.WikiHome;
 import org.exoplatform.wiki.rendering.RenderingService;
 import org.exoplatform.wiki.rendering.impl.RenderingServiceImpl;
 import org.exoplatform.wiki.resolver.TitleResolver;
+import org.exoplatform.wiki.service.Relations;
 import org.exoplatform.wiki.service.WikiContext;
 import org.exoplatform.wiki.service.WikiPageParams;
 import org.exoplatform.wiki.service.WikiResource;
 import org.exoplatform.wiki.service.WikiRestService;
 import org.exoplatform.wiki.service.WikiService;
+import org.exoplatform.wiki.service.rest.model.Link;
+import org.exoplatform.wiki.service.rest.model.ObjectFactory;
+import org.exoplatform.wiki.service.rest.model.PageSummary;
+import org.exoplatform.wiki.service.rest.model.Pages;
+import org.exoplatform.wiki.service.rest.model.Space;
+import org.exoplatform.wiki.service.rest.model.Spaces;
 import org.exoplatform.wiki.tree.PageTreeNode;
 import org.exoplatform.wiki.tree.SpaceTreeNode;
 import org.exoplatform.wiki.tree.TreeNode;
@@ -92,7 +106,9 @@ public class WikiRestServiceImpl implements WikiRestService, ResourceContainer {
   private final CacheControl     cc;
   
   private final MOWService mowService;
-
+  
+  private ObjectFactory  objectFactory = new ObjectFactory();
+  
   public WikiRestServiceImpl(WikiService wikiService, RenderingService renderingService, MOWService mowService) {
     this.wikiService = wikiService;
     this.renderingService = renderingService;
@@ -262,6 +278,183 @@ public class WikiRestServiceImpl implements WikiRestService, ResourceContainer {
       return Response.serverError().entity(e.getMessage()).cacheControl(cc).build();
     }
   }
+  
+  @GET
+  @Path("/{wikiType}/spaces")
+  @Produces("application/xml")
+  public Spaces getSpaces(@Context UriInfo uriInfo,
+                          @PathParam("wikiType") String wikiType,
+                          @QueryParam("start") Integer start,
+                          @QueryParam("number") Integer number) {
+    Spaces spaces = objectFactory.createSpaces();
+    List<String> spaceNames = new ArrayList<String>();
+    Collection<Wiki> wikis = Utils.getWikisByType(WikiType.valueOf(wikiType.toUpperCase()));
+    for (Wiki wiki : wikis) {
+      spaceNames.add(wiki.getOwner());
+    }
+    for (String spaceName : spaceNames) {
+      try {
+        Page page = wikiService.getPageById(wikiType, spaceName, WikiNodeType.Definition.WIKI_HOME_NAME);
+        spaces.getSpace().add(createSpace(objectFactory, uriInfo.getBaseUri(), wikiType, spaceName, page));
+      } catch (Exception e) {
+        log.error(e.getMessage(), e);
+      }
+    }
+    return spaces;
+  }
+
+  @GET
+  @Path("/{wikiType}/spaces/{wikiOwner:.+}/")
+  @Produces("application/xml")
+  public Space getSpace(@Context UriInfo uriInfo,
+                        @PathParam("wikiType") String wikiType,
+                        @PathParam("wikiOwner") String wikiOwner) {
+    Page page;
+    try {
+      page = wikiService.getPageById(wikiType, wikiOwner, WikiNodeType.Definition.WIKI_HOME_NAME);
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
+      return objectFactory.createSpace();
+    }
+    return createSpace(objectFactory, uriInfo.getBaseUri(), wikiType, wikiOwner, page);
+  }
+
+  @GET
+  @Path("/{wikiType}/spaces/{wikiOwner:.+}/pages")
+  @Produces("application/xml")
+  public Pages getPages(@Context UriInfo uriInfo,
+                        @PathParam("wikiType") String wikiType,
+                        @PathParam("wikiOwner") String wikiOwner,
+                        @QueryParam("start") Integer start,
+                        @QueryParam("number") Integer number,
+                        @QueryParam("parentId") String parentFilterExpression) {
+    Pages pages = objectFactory.createPages();
+    PageImpl page = null;
+    try {
+      page = (PageImpl) wikiService.getPageById(wikiType, wikiOwner, WikiNodeType.Definition.WIKI_HOME_NAME);
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
+    }
+    pages.getPageSummary().add(createPageSummary(objectFactory, uriInfo.getBaseUri(), page));
+    return pages;
+  }
+  
+  @GET
+  @Path("/{wikiType}/spaces/{wikiOwner:.+}/pages/{pageId}")
+  @Produces("application/xml")
+  public org.exoplatform.wiki.service.rest.model.Page getPage(@Context UriInfo uriInfo,
+                                                              @PathParam("wikiType") String wikiType,
+                                                              @PathParam("wikiOwner") String wikiOwner,
+                                                              @PathParam("pageId") String pageId) {
+    PageImpl page;
+    try {
+      page = (PageImpl) wikiService.getPageById(wikiType, wikiOwner, WikiNodeType.Definition.WIKI_HOME_NAME);
+      return createPage(objectFactory, uriInfo.getBaseUri(), uriInfo.getAbsolutePath(), page);
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
+      return objectFactory.createPage();
+    }
+  }
+  
+  public Space createSpace(ObjectFactory objectFactory,
+                           URI baseUri,
+                           String wikiName,
+                           String spaceName,
+                           Page home) {
+    Space space = objectFactory.createSpace();
+    space.setId(String.format("%s:%s", wikiName, spaceName));
+    space.setWiki(wikiName);
+    space.setName(spaceName);
+    if (home != null) {
+      space.setHome("home");
+      space.setXwikiRelativeUrl("home");
+      space.setXwikiAbsoluteUrl("home");
+    }
+
+    String pagesUri = UriBuilder.fromUri(baseUri)
+                                .path("/wiki/{wikiName}/spaces/{spaceName}/pages")
+                                .build(wikiName, spaceName)
+                                .toString();
+    Link pagesLink = objectFactory.createLink();
+    pagesLink.setHref(pagesUri);
+    pagesLink.setRel(Relations.PAGES);
+    space.getLink().add(pagesLink);
+
+    if (home != null) {
+      String homeUri = UriBuilder.fromUri(baseUri)
+                                 .path("/wiki/{wikiName}/spaces/{spaceName}/pages/{pageName}")
+                                 .build(wikiName, spaceName, home.getName())
+                                 .toString();
+      Link homeLink = objectFactory.createLink();
+      homeLink.setHref(homeUri);
+      homeLink.setRel(Relations.HOME);
+      space.getLink().add(homeLink);
+    }
+
+    String searchUri = UriBuilder.fromUri(baseUri)
+                                 .path("/wiki/{wikiName}/spaces/{spaceName}/search")
+                                 .build(wikiName, spaceName)
+                                 .toString();
+    Link searchLink = objectFactory.createLink();
+    searchLink.setHref(searchUri);
+    searchLink.setRel(Relations.SEARCH);
+    space.getLink().add(searchLink);
+
+    return space;
+
+  }
+
+  public org.exoplatform.wiki.service.rest.model.Page createPage(ObjectFactory objectFactory,
+                                                                 URI baseUri,
+                                                                 URI self,
+                                                                 PageImpl doc) throws Exception {
+    org.exoplatform.wiki.service.rest.model.Page page = objectFactory.createPage();
+    fillPageSummary(page, objectFactory, baseUri, doc);
+
+    page.setVersion("current");
+    page.setMajorVersion(1);
+    page.setMinorVersion(0);
+    page.setLanguage(doc.getContent().getSyntax());
+    page.setCreator(doc.getOwner());
+
+    GregorianCalendar calendar = new GregorianCalendar();
+    XMLGregorianCalendar xgcal = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
+    page.setCreated(xgcal);
+
+    page.setModifier(doc.getAuthor());
+
+    calendar = new GregorianCalendar();
+    calendar.setTime(doc.getUpdatedDate());
+    xgcal = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
+    page.setModified(xgcal);
+
+    page.setContent(doc.getContent().getText());
+
+    if (self != null) {
+      Link pageLink = objectFactory.createLink();
+      pageLink.setHref(self.toString());
+      pageLink.setRel(Relations.SELF);
+      page.getLink().add(pageLink);
+    }
+    return page;
+  }
+
+  public PageSummary createPageSummary(ObjectFactory objectFactory, URI baseUri, PageImpl doc) {
+    PageSummary pageSummary = objectFactory.createPageSummary();
+    fillPageSummary(pageSummary, objectFactory, baseUri, doc);
+    String wikiName = Utils.getWikiType(doc.getWiki());
+    String spaceName = doc.getWiki().getOwner();
+    String pageUri = UriBuilder.fromUri(baseUri)
+                               .path("/wiki/{wikiName}/spaces/{spaceName}/pages/{pageName}")
+                               .build(wikiName, spaceName, doc.getName())
+                               .toString();
+    Link pageLink = objectFactory.createLink();
+    pageLink.setHref(pageUri);
+    pageLink.setRel(Relations.PAGE);
+    pageSummary.getLink().add(pageLink);
+
+    return pageSummary;
+  }
 
   public StringBuilder expandNode(TreeNode treeNode, WikiPageParams currentPageParams) throws Exception {
     String currentPagePath = Utils.getPathFromPageParams(currentPageParams);
@@ -324,4 +517,81 @@ public class WikiRestServiceImpl implements WikiRestService, ResourceContainer {
     sb.append( "</div>") ; 
     return sb.toString();
   }
+  
+  private static void fillPageSummary(PageSummary pageSummary,
+                                      ObjectFactory objectFactory,
+                                      URI baseUri,
+                                      PageImpl doc) {
+    pageSummary.setWiki(Utils.getWikiType(doc.getWiki()));
+    pageSummary.setFullName(doc.getContent().getTitle());
+    pageSummary.setId(doc.getName());
+    pageSummary.setSpace(doc.getWiki().getOwner());
+    pageSummary.setName(doc.getName());
+    pageSummary.setTitle(doc.getContent().getTitle());
+    pageSummary.setXwikiRelativeUrl("doc.getURL(view)");
+    pageSummary.setXwikiAbsoluteUrl("doc.getExternalURL(view)");
+    pageSummary.setTranslations(objectFactory.createTranslations());
+    pageSummary.setSyntax(doc.getContent().getSyntax());
+
+    PageImpl parent = doc.getParentPage();
+    // parentId must not be set if the parent document does not exist.
+    if (parent != null) {
+      pageSummary.setParent(parent.getName());
+      pageSummary.setParentId(parent.getName());
+    } else {
+      pageSummary.setParentId("");
+    }
+
+    String spaceUri = UriBuilder.fromUri(baseUri)
+                                .path("/wiki/{wikiName}/spaces/{spaceName}")
+                                .build(Utils.getWikiType(doc.getWiki()), doc.getWiki().getOwner())
+                                .toString();
+    Link spaceLink = objectFactory.createLink();
+    spaceLink.setHref(spaceUri);
+    spaceLink.setRel(Relations.SPACE);
+    pageSummary.getLink().add(spaceLink);
+
+    if (parent != null) {
+      String parentUri = UriBuilder.fromUri(baseUri)
+                                   .path("/wiki/{wikiName}/spaces/{spaceName}/pages/{pageName}")
+                                   .build(Utils.getWikiType(parent.getWiki()),
+                                          parent.getWiki().getOwner(),
+                                          parent.getName())
+                                   .toString();
+      Link parentLink = objectFactory.createLink();
+      parentLink.setHref(parentUri);
+      parentLink.setRel(Relations.PARENT);
+      pageSummary.getLink().add(parentLink);
+    }
+
+    if (!doc.getChildPages().isEmpty()) {
+      String pageChildrenUri = UriBuilder.fromUri(baseUri)
+                                         .path("/wiki/{wikiName}/spaces/{spaceName}/pages/{pageName}/children")
+                                         .build(Utils.getWikiType(doc.getWiki()),
+                                                doc.getWiki().getOwner(),
+                                                doc.getName())
+                                         .toString();
+      Link pageChildrenLink = objectFactory.createLink();
+      pageChildrenLink.setHref(pageChildrenUri);
+      pageChildrenLink.setRel(Relations.CHILDREN);
+      pageSummary.getLink().add(pageChildrenLink);
+    }
+
+    if (!doc.getAttachments().isEmpty()) {
+      String attachmentsUri;
+      attachmentsUri = UriBuilder.fromUri(baseUri)
+                                 .path("/wiki/{wikiName}/spaces/{spaceName}/pages/{pageName}/attachments")
+                                 .build(Utils.getWikiType(doc.getWiki()),
+                                        doc.getWiki().getOwner(),
+                                        doc.getName())
+                                 .toString();
+
+      Link attachmentsLink = objectFactory.createLink();
+      attachmentsLink.setHref(attachmentsUri);
+      attachmentsLink.setRel(Relations.ATTACHMENTS);
+      pageSummary.getLink().add(attachmentsLink);
+    }
+
+  }
+
 }

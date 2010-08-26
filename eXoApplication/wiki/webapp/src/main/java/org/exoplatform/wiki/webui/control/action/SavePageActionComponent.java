@@ -85,6 +85,7 @@ public class SavePageActionComponent extends UIComponent {
     @Override
     protected void processEvent(Event<SavePageActionComponent> event) throws Exception {
       UIWikiPortlet wikiPortlet = event.getSource().getAncestorOfType(UIWikiPortlet.class);
+      Utils.reloadWYSIWYGEditor(wikiPortlet);
       UIApplication uiApp = event.getSource().getAncestorOfType(UIApplication.class);
       UIWikiPageTitleControlArea pageTitleControlForm = wikiPortlet.findComponentById(UIWikiPageControlArea.TITLE_CONTROL);
       UIWikiPageEditForm pageEditForm = wikiPortlet.findFirstComponentOfType(UIWikiPageEditForm.class);

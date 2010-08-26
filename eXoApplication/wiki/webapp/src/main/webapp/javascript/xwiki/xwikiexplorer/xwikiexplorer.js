@@ -22,6 +22,24 @@ if (typeof XWiki == "undefined") {
     alert("ERROR: xwikiexplorer.js depends on xwiki.js");
 }
 
+// Load skin and stylesheet for Smart Client
+for ( var name in isc.Page) {
+  if (isc.Page.hasOwnProperty(name)) {
+    if (isc.Page[name] && isc.Page[name].APP) {
+      isc.Page[name].APP = '';
+      break;
+    }
+  }
+}
+
+isc.Page.setSkinDir("/wiki/resources/js/xwiki/wysiwyg/xwe/sc/skins/Enterprise/");
+var sc_style_link = document.createElement('link');
+sc_style_link.setAttribute('rel', 'stylesheet');
+sc_style_link.type = 'text/css';
+sc_style_link.href = '/wiki/resources/js/xwiki/wysiwyg/xwe/sc/skins/Enterprise/skin_styles.css';
+document.body.appendChild(sc_style_link);
+//
+
 /*
  * REST constants.
  */
@@ -30,7 +48,7 @@ XWiki.constants.rest = {
     /**
      * Base URI for XWiki REST service.
      */
-    baseRestURI : XWiki.contextPath + "/rest/",
+    baseRestURI : eXo.env.portal.context + '/' + eXo.env.rest.context + "/",
 
     /**
      * REST children relationship.
@@ -62,8 +80,8 @@ isc.XWEResultTree.addClassProperties({
     constants : {
         addNodeSuffix : "..new",
         attachmentsTitle : "$msg.get('xwikiexplorer.attachments.title')",
-        addPageTitle : "$msg.get('xwikiexplorer.addpage.title')",
-        addAttachmentTitle : "$msg.get('xwikiexplorer.addattachment.title')"
+        addPageTitle : "New page...",
+        addAttachmentTitle : "Upload file..."
     }
 });
 
@@ -277,7 +295,7 @@ isc.XWEResultTree.addMethods({
      */
     filterNodesByName : function(nodes, namesToFilter) {
         for (var i = 0; i < nodes.length; i++) {            
-            if (XWiki.blacklistedSpaces.indexOf(nodes[i].name) != -1) {                
+            if (XWiki.blacklistedSpaces && XWiki.blacklistedSpaces.indexOf(nodes[i].name) != -1) {                
                 this.remove(nodes[i]);
             }
         }
@@ -290,7 +308,7 @@ isc.XWEResultTree.addMethods({
             space: node.space,
             title: isc.XWEResultTree.constants.addPageTitle,
             parentId: node.id,
-            icon: "$xwiki.getSkinFile('icons/silk/bullet_add.gif')",
+            icon: "/wiki/skin/DefaultSkin/webui/background/bullet_add.gif",
             resource: node.resource,
             isNewPage: true,
             isNewAttachment: false,
@@ -321,7 +339,7 @@ isc.XWEResultTree.addMethods({
             space: node.space,
             title: isc.XWEResultTree.constants.addAttachmentTitle,
             parentId: node.id,
-            icon: "$xwiki.getSkinFile('icons/silk/bullet_add.gif')",
+            icon: "/wiki/skin/DefaultSkin/webui/background/bullet_add.gif",
             resource: node.resource,
             isNewPage: false,
             isNewAttachment: true,
@@ -387,7 +405,7 @@ isc.XWEResultTree.addMethods({
                 parentId: node.id,
                 xwikiRelativeURL: node.xwikiRelativeURL + XWiki.constants.anchorSeparator +
                                   XWiki.constants.docextraAttachmentsAnchor,
-                icon: "$xwiki.getSkinFile('icons/silk/page_white_zip.gif')",
+                icon: "/wiki/skin/DefaultSkin/webui/background/page_white_zip.gif",
                 resource: XWiki.resource.get(node.id + XWiki.constants.anchorSeparator +
                                             XWiki.constants.docextraAttachmentsAnchor),
                 isXWikiAttachment: true,
@@ -436,7 +454,7 @@ isc.XWEDataSource.addProperties({
     /*
      * Isomorphic DataSource per-DataSource type (will be overriden) options.
      */
-    dataURL : XWiki.constants.rest.baseRestURI + "wikis/", // Default (farm) REST URL.
+    dataURL : XWiki.constants.rest.baseRestURI + "wiki/", // Default (farm) REST URL.
     recordXPath : "/xwiki:wikis/xwiki:wiki", // Default (farm) XPATH for our resources.
     fields : [ // Default fields (farm) in the resource.
         { name:"id", required: true, type: "text", primaryKey:true },
@@ -448,7 +466,7 @@ isc.XWEDataSource.addProperties({
     /*
      * XWiki Explorer (XWE) per-DataSource type (will be overriden) options.
      */
-    icon : "$xwiki.getSkinFile('icons/silk/database.gif')",
+    icon : "/wiki/skin/DefaultSkin/webui/background/database.gif",
 
     /**
      * Properties passed to the RPCManager when request are performed.
@@ -503,12 +521,12 @@ isc.XWEWikiDataSource.addProperties({
         { name:"title", type: "text" },
         { name:"xwikiRelativeUrl", type: "text" }
     ],    
-    icon : "$xwiki.getSkinFile('icons/silk/folder.gif')"
+    icon : "/wiki/skin/DefaultSkin/webui/background/folder.gif"
 });
 
 isc.XWEWikiDataSource.addMethods({
     init : function() {
-        this.dataURL = XWiki.constants.rest.baseRestURI + "wikis/" + this.wiki + "/spaces";
+        this.dataURL = XWiki.constants.rest.baseRestURI + "wiki/" + eXo.wiki.currentWiki + "/spaces";
         this.Super("init", arguments);
     }
 });
@@ -545,18 +563,18 @@ isc.XWESpaceDataSource.addProperties({
         { name:"xwikiRelativeUrl", type: "text" },
         { name:"link", propertiesOnly: true }
     ],    
-    icon : "$xwiki.getSkinFile('icons/silk/page_white_text.gif')"
+    icon : "/wiki/skin/DefaultSkin/webui/background/page_white_text.gif"
 });
 
 isc.XWESpaceDataSource.addMethods({
     init : function() {
-        this.dataURL = XWiki.constants.rest.baseRestURI + "wikis/" + this.wiki + "/spaces/"
+        this.dataURL = XWiki.constants.rest.baseRestURI + "wiki/" + eXo.wiki.currentWiki + "/spaces/"
                 + this.space + "/pages";
         // Override transformRequest method to allow the insertion of a fake initial parent when
         // parent property is null. This fake initial parent is a regex that allow to retrieve only
         // pages without parent or with a parent outside of the current space.
         this.transformRequest = function (dsRequest) {
-            var prefixedSpace = this.wiki + XWiki.constants.wikiSpaceSeparator + this.space;
+            var prefixedSpace = eXo.wiki.currentWiki + XWiki.constants.wikiSpaceSeparator + this.space;
             if (dsRequest.originalData.parentId == prefixedSpace || dsRequest.originalData.parentId == null) {
                 dsRequest.originalData.parentId = "^(?!" + prefixedSpace + "\.).*$";
             }
@@ -596,12 +614,12 @@ isc.XWEPageDataSource.addProperties({
         { name:"parent", required: true, type: "text" },
         { name:"link", propertiesOnly: true }
     ],
-    icon : "$xwiki.getSkinFile('icons/silk/page_white_text.gif')"
+    icon : "/wiki/skin/DefaultSkin/webui/background/page_white_text.gif"
 });
 
 isc.XWEPageDataSource.addMethods({
     init : function() {
-        this.dataURL = XWiki.constants.rest.baseRestURI + "wikis/" + this.wiki + "/spaces/" + this.space
+        this.dataURL = XWiki.constants.rest.baseRestURI + "wiki/" + eXo.wiki.currentWiki + "/spaces/" + this.space
                 + "/pages/" + this.page;
         this.Super("init", arguments);
     }
@@ -634,12 +652,12 @@ isc.XWEAttachmentsDataSource.addProperties({
         { name:"title", type: "text" },
         { name:"xwikiRelativeUrl", type: "text" }
     ],
-    icon : "$xwiki.getSkinFile('icons/silk/attach.gif')"
+    icon : "/wiki/skin/DefaultSkin/webui/background/attach.gif"
 });
 
 isc.XWEAttachmentsDataSource.addMethods({
     init : function() {
-        this.dataURL = XWiki.constants.rest.baseRestURI + "wikis/" + this.wiki + "/spaces/"
+        this.dataURL = XWiki.constants.rest.baseRestURI + "wiki/" + eXo.wiki.currentWiki + "/spaces/"
                 + this.space + "/pages/"
                 + this.page + "/attachments";
         this.Super("init", arguments);
@@ -666,7 +684,7 @@ isc.XWETreeGrid.addProperties({
     },
     // Style:
     showHeader: false, // Hide the sort header.
-    folderIcon : "$xwiki.getSkinFile('icons/silk/database.gif')", // Icon to use, will be overriden by datasources.
+    folderIcon : "/wiki/skin/DefaultSkin/webui/background/database.gif", // Icon to use, will be overriden by datasources.
     position : "relative", // CSS position.
     dropIconSuffix : "", // Keep the same icon for all states (opened, closed, etc).
     openIconSuffix : "", // Keep the same icon for all states (opened, closed, etc).
@@ -801,7 +819,7 @@ isc.XWETreeGrid.addMethods({
                 // page parent from the xmlDoc response. If the parent has already been loaded, it opens it, if not
                 // it calls the openParent method again, this time with the parent of the resource.
                 var fetchCallback = function(xmlDoc, xmlText, rpcResponse, rpcRequest) {
-                    if (xmlDoc.httpResponseCode == 200) {
+                    if (xmlDoc.httpResponseCode == 200 && xmlDoc.data[0]) {
                         var parentRes = XWiki.resource.get(xmlDoc.data[0].parent);
                         var parentNode = rt.findById(parentRes.fullName);
                         // Store the parent / child relationship in the cache to avoid the need of another request if this
@@ -955,7 +973,7 @@ isc.XWETreeGrid.addMethods({
         if (this.displaySuggest) {
             var inputFocus = function() {
                 var suggest = new ajaxSuggest(this, {
-                    script: '/xwiki/rest/wikis/' + XWiki.currentWiki + '/search?scope=name&',
+                    script: '/xwiki/rest/wiki/' + XWiki.currentWiki + '/search?scope=name&',
                     varname:'q'
                 });
                 // We override XWiki's ajax suggest setSuggestions method to adapt it to XWiki REST search results.

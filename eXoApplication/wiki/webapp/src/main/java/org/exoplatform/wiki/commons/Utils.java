@@ -47,6 +47,7 @@ import org.exoplatform.wiki.service.WikiContext;
 import org.exoplatform.wiki.service.WikiPageParams;
 import org.exoplatform.wiki.service.WikiService;
 import org.exoplatform.wiki.service.impl.SessionManager;
+import org.exoplatform.wiki.webui.UIWikiPageArea;
 import org.exoplatform.wiki.webui.UIWikiPageEditForm;
 import org.exoplatform.wiki.webui.UIWikiPortlet;
 import org.exoplatform.wiki.webui.UIWikiRichTextArea;
@@ -205,6 +206,13 @@ public class Utils {
       return "";
     }   
     return result;
+  }
+  
+  public static void reloadWYSIWYGEditor(UIWikiPortlet wikiPortlet) {
+    UIWikiPageArea wikiPageArea = wikiPortlet.getChild(UIWikiPageArea.class);
+    UIWikiPageEditForm wikiPageEditForm = wikiPageArea.getChild(UIWikiPageEditForm.class);
+    UIWikiRichTextArea wikiRichTextArea = wikiPageEditForm.getChild(UIWikiRichTextArea.class);
+    wikiRichTextArea.setReloaded(false);
   }
   
   private static WikiContext getCurrentWikiContext(UIWikiPortlet wikiPortlet) throws Exception {

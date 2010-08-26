@@ -108,12 +108,12 @@ public class DefaultWikiService implements WikiService {
    * @see WikiService#getSpaceNames(String)
    */
   public List<String> getSpaceNames(String wikiName) {
-    List<String> spaceNamesList = new ArrayList<String>();
+    List<String> spaceNames = new ArrayList<String>();
     Collection<Wiki> wikis = Utils.getWikisByType(WikiType.valueOf(wikiName.toUpperCase()));
     for (Wiki wiki : wikis) {
-      spaceNamesList.add(wiki.getOwner());
+      spaceNames.add(wiki.getOwner());
     }
-    return spaceNamesList;
+    return spaceNames;
   }
 
   /**

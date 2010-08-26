@@ -131,9 +131,41 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>unpack-dependencies</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>com.smartgwt</groupId>
+                  <artifactId>smartgwt</artifactId>
+                  <version>${smartgwt.version}</version>
+                  <type>jar</type>
+                  <outputDirectory>${project.build.directory}/smartclient</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
           <archiveClasses>true</archiveClasses>
+            <webResources>
+              <!-- Add SmartClient skins -->
+              <resource>
+                <directory>${project.build.directory}/smartclient/com/smartclient/theme/enterprise/public/sc/skins</directory>
+                <targetPath>resources/js/xwiki/wysiwyg/xwe/sc/skins</targetPath>
+                <filtering>false</filtering>
+              </resource>
+            </webResources>
         </configuration>
       </plugin>
       <plugin>

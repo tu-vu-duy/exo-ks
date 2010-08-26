@@ -45,6 +45,8 @@ public class UIWikiRichTextArea extends UIContainer {
   
   public static final String SESSION_KEY = "WIKI_RICH_TEXT_AREA_CONTENT";
   
+  private boolean reloaded = false;
+  
   public UIWikiRichTextArea(){
     UIFormTextAreaInput richTextAreaInput = new UIFormTextAreaInput(RICHTEXT_AREA_INPUT, RICHTEXT_AREA_INPUT, "");
     addChild(richTextAreaInput);
@@ -53,6 +55,10 @@ public class UIWikiRichTextArea extends UIContainer {
   public UIFormTextAreaInput getUIFormTextAreaInput()
   {
      return findComponentById(RICHTEXT_AREA_INPUT);
+  }
+  
+  public void setReloaded(boolean reloaded) {
+    this.reloaded = reloaded;
   }
   
   public String getRestUrlToViewCurrentPage() {
@@ -93,6 +99,10 @@ public class UIWikiRichTextArea extends UIContainer {
       wikiPageParams.setPageId(sessionId);
     }
     return wikiPageParams;
+  }
+  
+  private boolean isReloaded() {
+    return reloaded;
   }
   
 }

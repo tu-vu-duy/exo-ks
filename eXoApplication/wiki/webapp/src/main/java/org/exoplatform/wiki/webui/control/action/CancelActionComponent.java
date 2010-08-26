@@ -64,6 +64,7 @@ public class CancelActionComponent extends UIComponent {
     @Override
     protected void processEvent(Event<CancelActionComponent> event) throws Exception {
       UIWikiPortlet wikiPortlet = event.getSource().getAncestorOfType(UIWikiPortlet.class);
+      Utils.reloadWYSIWYGEditor(wikiPortlet);
       UIWikiPageTitleControlArea pageTitleControlForm = wikiPortlet.findComponentById(UIWikiPageControlArea.TITLE_CONTROL);
       try {
         Page page = Utils.getCurrentWikiPage();

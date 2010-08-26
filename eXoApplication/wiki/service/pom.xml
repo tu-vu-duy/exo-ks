@@ -272,5 +272,30 @@
     </dependency>
     
   </dependencies>
-  
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.jvnet.jaxb2.maven2</groupId>
+        <artifactId>maven-jaxb2-plugin</artifactId>
+        <version>0.7.4</version>
+        <configuration>
+          <extension>true</extension>
+          <schemaDirectory>src/main/resources</schemaDirectory>
+          <generateDirectory>${basedir}/src/main/java</generateDirectory>
+          <generatePackage>org.exoplatform.wiki.service.rest.model</generatePackage>
+          <verbose>true</verbose>
+          <removeOldOutput>false</removeOldOutput>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
 </project>

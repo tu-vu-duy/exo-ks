@@ -28,44 +28,44 @@ public class Relations {
 
   public static final String WADL            = "wadl";
 
-  public static final String WIKIS           = "http://www.exoplatform.org/rel/wikis";
+  public static final String WIKIS           = "http://www.xwiki.org/rel/wikis";
 
-  public static final String SPACES          = "http://www.exoplatform.org/rel/spaces";
+  public static final String SPACES          = "http://www.xwiki.org/rel/spaces";
 
-  public static final String PAGES           = "http://www.exoplatform.org/rel/pages";
+  public static final String PAGES           = "http://www.xwiki.org/rel/pages";
 
-  public static final String PAGE            = "http://www.exoplatform.org/rel/page";
+  public static final String PAGE            = "http://www.xwiki.org/rel/page";
 
-  public static final String SPACE           = "http://www.exoplatform.org/rel/space";
+  public static final String SPACE           = "http://www.xwiki.org/rel/space";
 
-  public static final String PARENT          = "http://www.exoplatform.org/rel/parent";
+  public static final String PARENT          = "http://www.xwiki.org/rel/parent";
 
-  public static final String HOME            = "http://www.exoplatform.org/rel/home";
+  public static final String HOME            = "http://www.xwiki.org/rel/home";
 
-  public static final String ATTACHMENT_DATA = "http://www.exoplatform.org/rel/attachmentData";
+  public static final String ATTACHMENT_DATA = "http://www.xwiki.org/rel/attachmentData";
 
-  public static final String ATTACHMENTS     = "http://www.exoplatform.org/rel/attachments";
+  public static final String ATTACHMENTS     = "http://www.xwiki.org/rel/attachments";
 
-  public static final String OBJECTS         = "http://www.exoplatform.org/rel/objects";
+  public static final String OBJECTS         = "http://www.xwiki.org/rel/objects";
 
-  public static final String OBJECT          = "http://www.exoplatform.org/rel/object";
+  public static final String OBJECT          = "http://www.xwiki.org/rel/object";
 
-  public static final String CLASSES         = "http://www.exoplatform.org/rel/classes";
+  public static final String CLASSES         = "http://www.xwiki.org/rel/classes";
 
-  public static final String HISTORY         = "http://www.exoplatform.org/rel/history";
+  public static final String HISTORY         = "http://www.xwiki.org/rel/history";
 
-  public static final String CLASS           = "http://www.exoplatform.org/rel/class";
+  public static final String CLASS           = "http://www.xwiki.org/rel/class";
 
-  public static final String PROPERTY        = "http://www.exoplatform.org/rel/property";
+  public static final String PROPERTY        = "http://www.xwiki.org/rel/property";
 
-  public static final String PROPERTIES      = "http://www.exoplatform.org/rel/properties";
+  public static final String PROPERTIES      = "http://www.xwiki.org/rel/properties";
 
-  public static final String MODIFICATIONS   = "http://www.exoplatform.org/rel/modifications";
+  public static final String MODIFICATIONS   = "http://www.xwiki.org/rel/modifications";
 
-  public static final String CHILDREN        = "http://www.exoplatform.org/rel/children";
+  public static final String CHILDREN        = "http://www.xwiki.org/rel/children";
 
-  public static final String SEARCH          = "http://www.exoplatform.org/rel/search";
+  public static final String SEARCH          = "http://www.xwiki.org/rel/search";
 
-  public static final String SYNTAXES        = "http://www.exoplatform.org/rel/syntaxes";
+  public static final String SYNTAXES        = "http://www.xwiki.org/rel/syntaxes";
   
 }

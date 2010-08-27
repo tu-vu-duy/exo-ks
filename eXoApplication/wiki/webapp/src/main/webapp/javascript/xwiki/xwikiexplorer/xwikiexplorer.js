@@ -1051,7 +1051,7 @@ isc.XWETreeGrid.addMethods({
             // Set the input value to the clean ID of the clicked node.
             this.input.value = resId;
             // Set the cache to the value we've set to prevent the tree from jumping to the WebHome node afterwards.
-            this.inputValueCache = resId;
+            //this.inputValueCache = resId;
         } else {
             node.clickCallback(viewer, node, recordNum);
         }

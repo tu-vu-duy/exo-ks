@@ -171,9 +171,9 @@ Object.extend(XWiki, {
       var attachment = this.getAttachmentFromResourceName(name);
       var anchor = this.getAnchorFromResourceName(name);
 
-      if (!wiki) { wiki = XWiki.currentWiki; }
-      if (!space) { space = XWiki.currentSpace; }
-      if (!pageName) { pageName = XWiki.currentPage; }
+      if (!wiki) { wiki = eXo.wiki.currentWiki; }
+      if (!space) { space = eXo.wiki.currentSpace; }
+      if (!pageName) { pageName = eXo.wiki.currentPage; }
       if (!attachment) { attachment = ""; }
       if (!anchor) { anchor = ""; }
 

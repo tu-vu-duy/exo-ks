@@ -330,12 +330,28 @@ public class WikiRestServiceImpl implements WikiRestService, ResourceContainer {
                         @QueryParam("parentId") String parentFilterExpression) {
     Pages pages = objectFactory.createPages();
     PageImpl page = null;
+    boolean isWikiHome = true;
     try {
-      page = (PageImpl) wikiService.getPageById(wikiType, wikiOwner, WikiNodeType.Definition.WIKI_HOME_NAME);
+      String parentId = WikiNodeType.Definition.WIKI_HOME_NAME;
+      if (parentFilterExpression != null && parentFilterExpression.length() > 0
+          && !parentFilterExpression.startsWith("^(?!")) {
+        parentId = parentFilterExpression;
+        if (parentId.indexOf(".") >= 0) {
+          parentId = parentId.substring(parentId.indexOf(".") + 1);
+        }
+        isWikiHome = false;
+      }
+      page = (PageImpl) wikiService.getPageById(wikiType, wikiOwner, parentId);
     } catch (Exception e) {
       log.error(e.getMessage(), e);
     }
-    pages.getPageSummary().add(createPageSummary(objectFactory, uriInfo.getBaseUri(), page));
+    if (isWikiHome) {
+      pages.getPageSummary().add(createPageSummary(objectFactory, uriInfo.getBaseUri(), page));
+    } else {
+      for (PageImpl childPage : page.getChildPages().values()) {
+        pages.getPageSummary().add(createPageSummary(objectFactory, uriInfo.getBaseUri(), childPage));
+      }
+    }
     return pages;
   }
   
@@ -524,12 +540,12 @@ public class WikiRestServiceImpl implements WikiRestService, ResourceContainer {
                                       PageImpl doc) {
     pageSummary.setWiki(Utils.getWikiType(doc.getWiki()));
     pageSummary.setFullName(doc.getContent().getTitle());
-    pageSummary.setId(doc.getName());
+    pageSummary.setId(Utils.getWikiType(doc.getWiki())+ ":" + doc.getWiki().getOwner() + "." + doc.getName());
     pageSummary.setSpace(doc.getWiki().getOwner());
     pageSummary.setName(doc.getName());
     pageSummary.setTitle(doc.getContent().getTitle());
-    pageSummary.setXwikiRelativeUrl("doc.getURL(view)");
-    pageSummary.setXwikiAbsoluteUrl("doc.getExternalURL(view)");
+    pageSummary.setXwikiRelativeUrl("http://localhost:8080/ksdemo/rest-ksdemo/wiki/portal/spaces/classic/pages/WikiHome");
+    pageSummary.setXwikiAbsoluteUrl("http://localhost:8080/ksdemo/rest-ksdemo/wiki/portal/spaces/classic/pages/WikiHome");
     pageSummary.setTranslations(objectFactory.createTranslations());
     pageSummary.setSyntax(doc.getContent().getSyntax());
 
@@ -539,6 +555,7 @@ public class WikiRestServiceImpl implements WikiRestService, ResourceContainer {
       pageSummary.setParent(parent.getName());
       pageSummary.setParentId(parent.getName());
     } else {
+      pageSummary.setParent("");
       pageSummary.setParentId("");
     }
 

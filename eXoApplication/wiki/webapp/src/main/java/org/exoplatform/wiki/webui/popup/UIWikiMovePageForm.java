@@ -86,14 +86,14 @@ public class UIWikiMovePageForm extends UIForm implements UIPopupComponent {
       WikiService wservice = (WikiService) PortalContainer.getComponent(WikiService.class);
       PortalRequestContext prContext = Util.getPortalRequestContext();
       UIWikiPortlet uiWikiPortlet = event.getSource().getAncestorOfType(UIWikiPortlet.class);
-      UIWikiMovePageForm movePageForm = uiWikiPortlet.findFirstComponentOfType(UIWikiMovePageForm.class);
+      UIWikiMovePageForm movePageForm = event.getSource();
       UIFormStringInput currentLocationInput = movePageForm.getUIStringInput(CURRENT_LOCATION);
       UIFormStringInput newLocationInput = movePageForm.getUIStringInput(NEW_LOCATION);      
       WikiPageParams currentLocationParams = Utils.getPageParamsFromPath(currentLocationInput.getValue());
      
       WikiPageParams newLocationParams = Utils.getPageParamsFromPath(newLocationInput.getValue());
       if (newLocationParams==null) {
-        uiWikiPortlet.addMessage(new ApplicationMessage("UIWikiMovePageForm.new-location-is-empty", null, ApplicationMessage.ERROR));
+        uiWikiPortlet.addMessage(new ApplicationMessage("UIWikiMovePageForm.msg.new-location-is-empty", null, ApplicationMessage.ERROR));
         event.getRequestContext().addUIComponentToUpdateByAjax(uiWikiPortlet.getUIPopupMessages()) ;
         prContext.getResponse().sendRedirect(org.exoplatform.wiki.commons.Utils.getCurrentRequestURL());
         return;
@@ -106,7 +106,7 @@ public class UIWikiMovePageForm extends UIForm implements UIPopupComponent {
                                                            newLocationParams.getOwner(),
                                                            currentLocationParams.getPageId());
       if (existPage != null && !existPage.equals(movepage)) {
-        uiWikiPortlet.addMessage(new ApplicationMessage("UIWikiMovePageForm.same-name-in-new-location-space",
+        uiWikiPortlet.addMessage(new ApplicationMessage("UIWikiMovePageForm.msg.same-name-in-new-location-space",
                                                         null,
                                                         ApplicationMessage.ERROR));
         event.getRequestContext().addUIComponentToUpdateByAjax(uiWikiPortlet.getUIPopupMessages());

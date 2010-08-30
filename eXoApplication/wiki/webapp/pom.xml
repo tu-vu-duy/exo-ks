@@ -225,7 +225,7 @@
 
   <profiles>
     <profile>
-      <id>rel</id>
+      <id>release</id>
       <properties>
         <gwt.style>OBF</gwt.style>
         <xwe.module>org.xwiki.gwt.wysiwyg.Wysiwyg</xwe.module>

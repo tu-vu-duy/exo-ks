@@ -79,7 +79,7 @@ isc.ClassFactory.defineClass("XWEResultTree", isc.ResultTree);
 isc.XWEResultTree.addClassProperties({
     constants : {
         addNodeSuffix : "..new",
-        attachmentsTitle : "$msg.get('xwikiexplorer.attachments.title')",
+        attachmentsTitle : "Attachments",
         addPageTitle : "New page...",
         addAttachmentTitle : "Upload file..."
     }
@@ -875,9 +875,9 @@ isc.XWETreeGrid.addMethods({
         var rt = this.getData();
         
         // Get selectedResource from the selected node if any.
-        if (this.getSelectedRecord() != null) {
+        /*if (this.getSelectedRecord() != null) {
             selectedRes = this.getSelectedRecord().resource;
-        }
+        }*/
         
         // Open wiki node if the tree is displaying multiple wikis.        
         if (currentDSClass == "XWEDataSource") {            

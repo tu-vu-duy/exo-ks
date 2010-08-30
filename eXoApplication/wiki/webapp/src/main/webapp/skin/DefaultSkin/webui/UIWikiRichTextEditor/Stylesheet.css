@@ -41,3 +41,8 @@
   padding: 3px 4px;
   vertical-align: middle;
 }
+
+div nobr {
+  float: left;
+}
+  

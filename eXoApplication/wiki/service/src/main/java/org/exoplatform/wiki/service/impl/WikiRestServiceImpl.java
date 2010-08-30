@@ -71,6 +71,8 @@ import org.exoplatform.wiki.service.WikiPageParams;
 import org.exoplatform.wiki.service.WikiResource;
 import org.exoplatform.wiki.service.WikiRestService;
 import org.exoplatform.wiki.service.WikiService;
+import org.exoplatform.wiki.service.rest.model.Attachment;
+import org.exoplatform.wiki.service.rest.model.Attachments;
 import org.exoplatform.wiki.service.rest.model.Link;
 import org.exoplatform.wiki.service.rest.model.ObjectFactory;
 import org.exoplatform.wiki.service.rest.model.PageSummary;
@@ -372,6 +374,29 @@ public class WikiRestServiceImpl implements WikiRestService, ResourceContainer {
     }
   }
   
+  @GET
+  @Path("/{wikiType}/spaces/{wikiOwner:.+}/pages/{pageId}/attachments")
+  @Produces("application/xml")
+  public Attachments getAttachments(@Context UriInfo uriInfo,
+                                    @PathParam("wikiType") String wikiType,
+                                    @PathParam("wikiOwner") String wikiOwner,
+                                    @PathParam("pageId") String pageId,
+                                    @QueryParam("start") Integer start,
+                                    @QueryParam("number") Integer number) {
+    Attachments attachments = objectFactory.createAttachments();
+    PageImpl page;
+    try {
+      page = (PageImpl) wikiService.getPageById(wikiType, wikiOwner, pageId);
+      Collection<AttachmentImpl> pageAttachments = page.getAttachments();
+      for (AttachmentImpl pageAttachment : pageAttachments) {
+        attachments.getAttachment().add(createAttachment(objectFactory, uriInfo.getBaseUri(), pageAttachment, "attachment", "attachment"));
+      }
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
+    }
+    return attachments;
+  }
+
   public Space createSpace(ObjectFactory objectFactory,
                            URI baseUri,
                            String wikiName,
@@ -470,6 +495,29 @@ public class WikiRestServiceImpl implements WikiRestService, ResourceContainer {
     pageSummary.getLink().add(pageLink);
 
     return pageSummary;
+  }
+  
+  public Attachment createAttachment(ObjectFactory objectFactory,
+                                     URI baseUri,
+                                     AttachmentImpl pageAttachment,
+                                     String xwikiRelativeUrl,
+                                     String xwikiAbsoluteUrl) throws Exception {
+    Attachment attachment = objectFactory.createAttachment();
+
+    fillAttachment(attachment, objectFactory, baseUri, pageAttachment, xwikiRelativeUrl, xwikiAbsoluteUrl);
+
+    PageImpl page = pageAttachment.getParentPage();
+
+    String attachmentUri = UriBuilder.fromUri(baseUri)
+                                     .path("/wiki/{wikiName}/spaces/{spaceName}/pages/{pageName}/attachments/{attachmentName}")
+                                     .build(Utils.getWikiType(page.getWiki()), page.getWiki().getOwner(), page.getName(), pageAttachment.getName())
+                                     .toString();
+    Link attachmentLink = objectFactory.createLink();
+    attachmentLink.setHref(attachmentUri);
+    attachmentLink.setRel(Relations.ATTACHMENT_DATA);
+    attachment.getLink().add(attachmentLink);
+
+    return attachment;
   }
 
   public StringBuilder expandNode(TreeNode treeNode, WikiPageParams currentPageParams) throws Exception {
@@ -609,6 +657,41 @@ public class WikiRestServiceImpl implements WikiRestService, ResourceContainer {
       pageSummary.getLink().add(attachmentsLink);
     }
 
+  }
+  
+  private void fillAttachment(Attachment attachment,
+                              ObjectFactory objectFactory,
+                              URI baseUri,
+                              AttachmentImpl pageAttachment,
+                              String xwikiRelativeUrl,
+                              String xwikiAbsoluteUrl) throws Exception {
+    PageImpl page = pageAttachment.getParentPage();
+
+    attachment.setId(String.format("%s@%s", page.getName(), pageAttachment.getName()));
+    attachment.setName(pageAttachment.getName());
+    attachment.setSize((int) pageAttachment.getWeightInBytes());
+    attachment.setVersion("current");
+    attachment.setPageId(page.getName());
+    attachment.setPageVersion("current");
+    attachment.setMimeType(pageAttachment.getContentResource().getMimeType());
+    attachment.setAuthor(pageAttachment.getCreator());
+
+    GregorianCalendar calendar = new GregorianCalendar();
+    calendar.setTime(pageAttachment.getCreated());
+    XMLGregorianCalendar xgcal = DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
+    attachment.setDate(xgcal);
+
+    attachment.setXwikiRelativeUrl(xwikiRelativeUrl);
+    attachment.setXwikiAbsoluteUrl(xwikiAbsoluteUrl);
+
+    String pageUri = UriBuilder.fromUri(baseUri)
+                               .path("/wiki/{wikiName}/spaces/{spaceName}/pages/{pageName}")
+                               .build(Utils.getWikiType(page.getWiki()), page.getWiki().getOwner(), page.getName())
+                               .toString();
+    Link pageLink = objectFactory.createLink();
+    pageLink.setHref(pageUri);
+    pageLink.setRel(Relations.PAGE);
+    attachment.getLink().add(pageLink);
   }
 
 }

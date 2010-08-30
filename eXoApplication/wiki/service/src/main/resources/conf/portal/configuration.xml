@@ -48,6 +48,10 @@
         <value>jar:/wikisyntax/help/Confluence1.0_Short.txt</value>
         <value>jar:/wikisyntax/help/Confluence1.0_Full.txt</value>
       </values-param>
+      <properties-param>
+        <name>preferences</name>
+        <property name="defaultSyntax" value="xwiki/2.0"/>              
+      </properties-param> 
     </init-params>
   </component>
   

@@ -66,6 +66,10 @@ public interface WikiNodeType {
 
   public final static String WIKI_REMOVED            = "wiki:removed";
 
+  public final static String WIKI_PREFERENCES        = "wiki:preferences";
+  
+  public final static String WIKI_PREFERENCES_SYNTAX        = "wiki:preferencessyntax";
+
   public interface Definition {
 
     public final static String WIKI_APPLICATION           = "eXoWiki";
@@ -128,5 +132,12 @@ public interface WikiNodeType {
 
     public final static String DRAFT_NEW_PAGES            = "draftNewPages";
 
+    public final static String ALLOW_MULTIPLE_SYNTAXES    = "allowMutipleSyntaxes";
+
+    public final static String DEFAULT_SYNTAX             = "defaultSyntax";
+
+    public final static String PREFERENCES                = "Preferences";
+
+    public final static String PREFERENCES_SYNTAX         = "PreferencesSyntax";
   }
 }

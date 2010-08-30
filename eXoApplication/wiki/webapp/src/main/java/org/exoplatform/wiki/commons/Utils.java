@@ -39,6 +39,7 @@ import org.exoplatform.wiki.mow.api.WikiType;
 import org.exoplatform.wiki.mow.core.api.MOWService;
 import org.exoplatform.wiki.mow.core.api.WikiStoreImpl;
 import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
+import org.exoplatform.wiki.mow.core.api.wiki.Preferences;
 import org.exoplatform.wiki.mow.core.api.wiki.WikiImpl;
 import org.exoplatform.wiki.rendering.RenderingService;
 import org.exoplatform.wiki.rendering.impl.RenderingServiceImpl;
@@ -207,14 +208,19 @@ public class Utils {
     }   
     return result;
   }
-  
+
+  public static Preferences getCurrentPreferences() throws Exception {
+    WikiImpl currentWiki = (WikiImpl) getCurrentWiki();
+    return currentWiki.getPreferences();
+  }
+ 
   public static void reloadWYSIWYGEditor(UIWikiPortlet wikiPortlet) {
     UIWikiPageArea wikiPageArea = wikiPortlet.getChild(UIWikiPageArea.class);
     UIWikiPageEditForm wikiPageEditForm = wikiPageArea.getChild(UIWikiPageEditForm.class);
     UIWikiRichTextArea wikiRichTextArea = wikiPageEditForm.getChild(UIWikiRichTextArea.class);
     wikiRichTextArea.setReloaded(false);
   }
-  
+ 
   private static WikiContext getCurrentWikiContext(UIWikiPortlet wikiPortlet) throws Exception {
     //
     PortalRequestContext portalRequestContext = Util.getPortalRequestContext();

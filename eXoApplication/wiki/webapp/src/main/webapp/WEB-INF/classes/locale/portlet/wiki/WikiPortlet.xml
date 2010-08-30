@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bundle>
+  <UIWikiEditPreferencesForm>    
+    <label>
+      <DefaultSyntax>Default syntax</DefaultSyntax>
+      <AllowChoseOthers>Allow User to chose others syntaxes</AllowChoseOthers>     
+    </label>
+    <action>
+      <Save>Save</Save>
+      <Cancel>Cancel</Cancel>
+    </action>
+  </UIWikiEditPreferencesForm>
+  <!--
+  ###################################################################
+  -->
+  <!--
+  ###################################################################
+  -->  
+</bundle>

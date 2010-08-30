@@ -176,6 +176,11 @@
           <requiredPrimaryType>wiki:trash</requiredPrimaryType>
         </requiredPrimaryTypes>
       </childNodeDefinition>
+      <childNodeDefinition name="Preferences" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
+        <requiredPrimaryTypes>
+          <requiredPrimaryType>wiki:preferences</requiredPrimaryType>
+        </requiredPrimaryTypes>
+      </childNodeDefinition>
     </childNodeDefinitions>
   </nodeType>
   
@@ -209,6 +214,11 @@
           <requiredPrimaryType>wiki:trash</requiredPrimaryType>
         </requiredPrimaryTypes>
       </childNodeDefinition>
+      <childNodeDefinition name="Preferences" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
+        <requiredPrimaryTypes>
+          <requiredPrimaryType>wiki:preferences</requiredPrimaryType>
+        </requiredPrimaryTypes>
+      </childNodeDefinition>
     </childNodeDefinitions>
   </nodeType>
 	
@@ -240,6 +250,11 @@
       <childNodeDefinition name="Trash" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
         <requiredPrimaryTypes>
           <requiredPrimaryType>wiki:trash</requiredPrimaryType>
+        </requiredPrimaryTypes>
+      </childNodeDefinition>
+        <childNodeDefinition name="Preferences" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
+        <requiredPrimaryTypes>
+          <requiredPrimaryType>wiki:preferences</requiredPrimaryType>
         </requiredPrimaryTypes>
       </childNodeDefinition>
     </childNodeDefinitions>
@@ -413,5 +428,33 @@
     </childNodeDefinitions>
   </nodeType>
   
+  <nodeType name="wiki:preferences" isMixin="false" hasOrderableChildNodes="false">
+    <supertypes>
+      <supertype>nt:base</supertype>      
+    </supertypes>
+     <childNodeDefinitions> 
+      <childNodeDefinition name="PreferencesSyntax" defaultPrimaryType="" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" sameNameSiblings="false">
+        <requiredPrimaryTypes>
+          <requiredPrimaryType>wiki:preferencessyntax</requiredPrimaryType>
+        </requiredPrimaryTypes>
+       </childNodeDefinition>
+     </childNodeDefinitions>
+  </nodeType>
+   
+  <nodeType name="wiki:preferencessyntax" isMixin="false" hasOrderableChildNodes="false">
+    <supertypes>
+      <supertype>nt:base</supertype>      
+    </supertypes>
+    <propertyDefinitions>
+      <propertyDefinition name="defaultSyntax" requiredType="String" autoCreated="false" mandatory="false" onParentVersion="COPY" protected="false" multiple="false">
+        <valueConstraints/>
+      </propertyDefinition>   
+      <propertyDefinition name="allowMutipleSyntaxes" requiredType="Boolean" autoCreated="false" mandatory="true" onParentVersion="COPY" protected="false" multiple="false">
+        <valueConstraints/>
+      </propertyDefinition>     
+    </propertyDefinitions>
+    <childNodeDefinitions/>
+  </nodeType> 
+    
 </nodeTypes>
   

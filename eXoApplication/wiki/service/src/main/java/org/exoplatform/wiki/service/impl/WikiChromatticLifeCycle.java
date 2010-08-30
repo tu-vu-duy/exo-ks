@@ -20,6 +20,7 @@ import org.exoplatform.commons.chromattic.ChromatticLifeCycle;
 import org.exoplatform.commons.chromattic.SessionContext;
 import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.wiki.mow.core.api.MOWService;
+import org.exoplatform.wiki.service.WikiService;
 
 /**
  * Created by The eXo Platform SAS
@@ -30,9 +31,15 @@ import org.exoplatform.wiki.mow.core.api.MOWService;
 public class WikiChromatticLifeCycle extends ChromatticLifeCycle {
 
   private MOWService mowService;
+  
+  private WikiService wService;
 
   public void setMOWService(MOWService mowService) {
     this.mowService = mowService;
+  }
+  
+  public void setWikiService(WikiService wService) {
+    this.wService = wService;
   }
 
   public WikiChromatticLifeCycle(InitParams params) {
@@ -41,7 +48,7 @@ public class WikiChromatticLifeCycle extends ChromatticLifeCycle {
 
   @Override
   protected void onOpenSession(SessionContext context) {
-    context.getSession().addEventListener(new Injector(mowService));
+    context.getSession().addEventListener(new Injector(mowService,wService));
   }
 
 }

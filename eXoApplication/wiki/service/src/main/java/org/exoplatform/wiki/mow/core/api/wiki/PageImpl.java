@@ -47,6 +47,7 @@ import org.exoplatform.wiki.mow.api.Wiki;
 import org.exoplatform.wiki.mow.api.WikiNodeType;
 import org.exoplatform.wiki.mow.core.api.MOWService;
 import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
+import org.exoplatform.wiki.service.WikiService;
 
 /**
  * Created by The eXo Platform SAS
@@ -58,13 +59,23 @@ import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
 public abstract class PageImpl implements Page {
   
   private MOWService mowService;
+  
+  private WikiService wService;
 
   public void setMOWService(MOWService mowService) {
     this.mowService = mowService;
   }
+  
+  public void setWikiService(WikiService wService) {
+    this.wService = wService;
+  }
 
   public ChromatticSession getChromatticSession() {
     return mowService.getSession();
+  }
+  
+  public WikiService getWikiService(){
+    return wService;
   }
   
   private Node getJCRPageNode() throws Exception {

@@ -19,6 +19,7 @@ package org.exoplatform.wiki.service.impl;
 import org.chromattic.api.event.LifeCycleListener;
 import org.exoplatform.wiki.mow.core.api.MOWService;
 import org.exoplatform.wiki.mow.core.api.wiki.PageImpl;
+import org.exoplatform.wiki.service.WikiService;
 
 /**
  * Created by The eXo Platform SAS
@@ -30,14 +31,18 @@ public class Injector implements LifeCycleListener {
 
   private final MOWService mowService;
 
-  public Injector(MOWService mowService) {
+  private final WikiService wService;
+
+  public Injector(MOWService mowService,WikiService wService ) {
     this.mowService = mowService;
+    this.wService = wService;
   }
 
   @Override
   public void added(String id, String path, String name, Object o) {
     if (o instanceof PageImpl) {
       ((PageImpl) o).setMOWService(mowService);
+      ((PageImpl) o).setWikiService(wService);
     }
   }
 
@@ -45,6 +50,7 @@ public class Injector implements LifeCycleListener {
   public void created(Object o) {
     if (o instanceof PageImpl) {
       ((PageImpl) o).setMOWService(mowService);
+      ((PageImpl) o).setWikiService(wService);
     }
   }
 
@@ -52,6 +58,7 @@ public class Injector implements LifeCycleListener {
   public void loaded(String id, String path, String name, Object o) {
     if (o instanceof PageImpl) {
       ((PageImpl) o).setMOWService(mowService);
+      ((PageImpl) o).setWikiService(wService);
     }
   }
 
@@ -59,6 +66,7 @@ public class Injector implements LifeCycleListener {
   public void removed(String id, String path, String name, Object o) {
     if (o instanceof PageImpl) {
       ((PageImpl) o).setMOWService(mowService);
+      ((PageImpl) o).setWikiService(wService);
     }
   }
 

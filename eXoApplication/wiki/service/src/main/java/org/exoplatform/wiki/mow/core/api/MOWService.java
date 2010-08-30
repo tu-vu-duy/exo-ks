@@ -19,6 +19,7 @@ package org.exoplatform.wiki.mow.core.api;
 import org.chromattic.api.Chromattic;
 import org.chromattic.api.ChromatticSession;
 import org.exoplatform.commons.chromattic.ChromatticManager;
+import org.exoplatform.wiki.service.WikiService;
 import org.exoplatform.wiki.service.impl.WikiChromatticLifeCycle;
 
 /**
@@ -32,10 +33,11 @@ public class MOWService {
 
   private WikiChromatticLifeCycle chromatticLifeCycle;
 
-  public MOWService(ChromatticManager chromatticManager) {
+  public MOWService(ChromatticManager chromatticManager, WikiService wService) {
     this.chromatticManager = chromatticManager;
     this.chromatticLifeCycle = (WikiChromatticLifeCycle) chromatticManager.getLifeCycle("wiki");
     this.chromatticLifeCycle.setMOWService(this);
+    this.chromatticLifeCycle.setWikiService(wService);
   }
 
   public ModelImpl getModel() {

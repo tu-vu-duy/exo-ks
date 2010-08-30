@@ -116,9 +116,26 @@
             <field name="name"><string>Cancel</string></field>
             <field name="component"><string>org.exoplatform.wiki.webui.control.action.CancelActionComponent</string></field>
           </object>
-        </object-param>        
+        </object-param>
+         <object-param>
+          <name>Browse</name>
+          <object type="org.exoplatform.webui.ext.UIExtension">
+            <field name="type"><string>org.exoplatform.wiki.UIWikiToolBar</string></field>
+            <field name="rank"><int>50</int></field>
+            <field name="name"><string>Browse</string></field>
+            <field name="component"><string>org.exoplatform.wiki.webui.control.action.BrowseActionComponent</string></field>
+          </object>
+        </object-param>   
+        <object-param>
+          <name>Preferences</name>
+          <object type="org.exoplatform.webui.ext.UIExtension">
+            <field name="type"><string>org.exoplatform.wiki.UIWikiToolBar</string></field>
+            <field name="rank"><int>100</int></field>
+            <field name="name"><string>Preferences</string></field>
+            <field name="component"><string>org.exoplatform.wiki.webui.control.action.PreferencesActionComponent</string></field>
+          </object>
+        </object-param>                  
       </init-params>
     </component-plugin>
   </external-component-plugins>
-  
 </configuration>

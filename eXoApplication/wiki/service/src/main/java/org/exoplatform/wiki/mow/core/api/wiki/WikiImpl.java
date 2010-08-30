@@ -27,7 +27,6 @@ import org.chromattic.api.annotations.Property;
 import org.exoplatform.wiki.mow.api.Wiki;
 import org.exoplatform.wiki.mow.api.WikiNodeType;
 import org.exoplatform.wiki.mow.core.api.content.ContentImpl;
-import org.xwiki.rendering.syntax.Syntax;
 
 /**
  * @author <a href="mailto:patrice.lamarque@exoplatform.com">Patrice
@@ -48,8 +47,8 @@ public abstract class WikiImpl implements Wiki {
       home.setOwner(getOwner());
       ContentImpl content = home.getContent();
       content.setTitle(WikiNodeType.Definition.WIKI_HOME_TITLE);
-      content.setSyntax(Syntax.XWIKI_2_0.toIdString());
-      content.setText("This is a [[**wiki home page of " + getOwner() + "**>>" + WikiNodeType.Definition.WIKI_HOME_TITLE + "]]");
+      content.setSyntax(home.getWikiService().getDefaultWikiSyntaxId());
+      content.setText("This is a Wiki Home page of " + getOwner());
       try {
         home.checkin();
         home.checkout();
@@ -76,6 +75,16 @@ public abstract class WikiImpl implements Wiki {
       setTrashByChromattic(trash);
     }
     return trash;
+  }
+  
+  public Preferences getPreferences()
+  {
+    Preferences preferences = getPreferencesByChromattic();
+    if (preferences == null) {
+      preferences = createPreferences();
+      setPreferencesByChromattic(preferences);
+    }
+    return preferences;
   }
 
   @Name
@@ -123,5 +132,14 @@ public abstract class WikiImpl implements Wiki {
 
   @Create
   protected abstract Trash createTrash();
-
+  
+  @OneToOne
+  @Owner
+  @MappedBy(WikiNodeType.Definition.PREFERENCES)
+  protected abstract Preferences getPreferencesByChromattic();
+  protected abstract void setPreferencesByChromattic(Preferences preferences);
+  
+  @Create
+  protected abstract Preferences createPreferences();
+  
 }

@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.exoplatform.container.PortalContainer;
 import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
@@ -75,6 +76,8 @@ public class AddPageActionComponent extends UIComponent {
   }
 
   public static void processAddPageAction(Map<String, Object> uiExtensionContext) throws Exception {
+    WikiService wservice = (WikiService)PortalContainer.getComponent(WikiService.class) ;
+    
     UIWikiPortlet wikiPortlet = (UIWikiPortlet) uiExtensionContext.get(UIWikiPortlet.class.getName());
     String pageTitle = (String) uiExtensionContext.get(WikiContext.PAGETITLE);
     UIWikiPageEditForm pageEditForm = wikiPortlet.findFirstComponentOfType(UIWikiPageEditForm.class);
@@ -88,7 +91,14 @@ public class AddPageActionComponent extends UIComponent {
     WikiService wikiService = wikiPortlet.getApplicationComponent(WikiService.class);
     String sessionId = Util.getPortalRequestContext().getRequest().getSession(false).getId();
     wikiService.createDraftNewPage(sessionId);
-    syntaxTypeSelectBox.setValue(wikiService.getDefaultWikiSyntaxId());
+    
+    String currentDefaultSyntaxt = Utils.getCurrentPreferences().getPreferencesSyntax().getDefaultSyntax();
+    if (currentDefaultSyntaxt == null) {
+      currentDefaultSyntaxt = wservice.getDefaultWikiSyntaxId();
+    }
+    
+    syntaxTypeSelectBox.setValue(currentDefaultSyntaxt);
+    syntaxTypeSelectBox.setEnable(Utils.getCurrentPreferences().getPreferencesSyntax().getAllowMutipleSyntaxes());
     UIWikiSidePanelArea sidePanelForm = pageEditForm.findFirstComponentOfType(UIWikiSidePanelArea.class);
     sidePanelForm.renderHelpContent(syntaxTypeSelectBox.getValue());
     if (pageTitle != null && pageTitle.length() > 0) {

@@ -16,6 +16,7 @@ import org.exoplatform.commons.utils.PageList;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.configuration.ConfigurationManager;
 import org.exoplatform.container.xml.InitParams;
+import org.exoplatform.container.xml.PropertiesParam;
 import org.exoplatform.container.xml.ValuesParam;
 import org.exoplatform.portal.config.model.PortalConfig;
 import org.exoplatform.services.jcr.ext.hierarchy.NodeHierarchyCreator;
@@ -63,6 +64,10 @@ public class WikiServiceImpl implements WikiService {
 
   final static private String   GROUP_APPLICATION = "groupApplicationData";
 
+  final static private String   PREFERENCES       = "preferences";
+  
+  final static private String   DEFAULT_SYNTAX       = "defaultSyntax";
+
   private ConfigurationManager  configManager;
 
   private NodeHierarchyCreator  nodeCreator;
@@ -70,6 +75,8 @@ public class WikiServiceImpl implements WikiService {
   private JCRDataStorage        jcrDataStorage;
 
   private Iterator<ValuesParam> syntaxHelpParams;
+
+  private PropertiesParam           preferencesParams;
 
   private static final Log      log               = ExoLogger.getLogger(WikiServiceImpl.class);
 
@@ -82,6 +89,7 @@ public class WikiServiceImpl implements WikiService {
     this.jcrDataStorage = jcrDataStorage;      
     if (initParams != null) {
       syntaxHelpParams = initParams.getValuesParamIterator();
+      preferencesParams = initParams.getPropertiesParam(PREFERENCES);
     }
   }
 
@@ -458,6 +466,9 @@ public class WikiServiceImpl implements WikiService {
   }
   
   public String getDefaultWikiSyntaxId() {
+    if (preferencesParams != null) {
+      return preferencesParams.getProperty(DEFAULT_SYNTAX);
+    }
     return Syntax.XWIKI_2_0.toIdString();
   }
 

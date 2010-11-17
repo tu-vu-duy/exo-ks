@@ -61,6 +61,11 @@
       <version>${project.version}</version>
       <type>js</type>
     </dependency>
+    <dependency>
+      <groupId>org.fontbox</groupId>
+      <artifactId>fontbox</artifactId>
+      <version>${org.fontbox.version}</version>      
+    </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -96,14 +101,7 @@
               </artifactItems>
             </configuration>
           </execution>
-          <!--
-                        <artifactItem>
-                           <groupId>org.exoplatform.delivery</groupId>
-                           <artifactId>exopackage-conf</artifactId>
-                           <type>zip</type>
-                           <outputDirectory>target/exopackage-conf</outputDirectory>
-                        </artifactItem>
-                        -->
+        
           <execution>
             <id>copy-dependencies</id>
             <phase>compile</phase>

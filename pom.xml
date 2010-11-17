@@ -59,6 +59,7 @@
     <commons-collections.version>3.2.1</commons-collections.version>
     <org.mortbay.jetty.cometd-bayeux.version>6.1.11</org.mortbay.jetty.cometd-bayeux.version>
     <org.jboss.version>2.2.14.GA</org.jboss.version>
+    <org.fontbox.version>0.1.0</org.fontbox.version>
     <!-- ************** -->
     <!-- Build settings -->
     <!-- ************** -->

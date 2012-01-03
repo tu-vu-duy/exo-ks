@@ -308,7 +308,7 @@ isc.XWEResultTree.addMethods({
             space: node.space,
             title: isc.XWEResultTree.constants.addPageTitle,
             parentId: node.id,
-            icon: "/wiki/skin/DefaultSkin/webui/background/bullet_add.gif",
+            icon: "/wiki/skin/DefaultSkin/webui/UIWikiRichTextEditor/images/bullet_add.gif",
             resource: node.resource,
             isNewPage: true,
             isNewAttachment: false,
@@ -339,7 +339,7 @@ isc.XWEResultTree.addMethods({
             space: node.space,
             title: isc.XWEResultTree.constants.addAttachmentTitle,
             parentId: node.id,
-            icon: "/wiki/skin/DefaultSkin/webui/background/bullet_add.gif",
+            icon: "/wiki/skin/DefaultSkin/webui/UIWikiRichTextEditor/images/bullet_add.gif",
             resource: node.resource,
             isNewPage: false,
             isNewAttachment: true,
@@ -405,7 +405,7 @@ isc.XWEResultTree.addMethods({
                 parentId: node.id,
                 xwikiRelativeURL: node.xwikiRelativeURL + XWiki.constants.anchorSeparator +
                                   XWiki.constants.docextraAttachmentsAnchor,
-                icon: "/wiki/skin/DefaultSkin/webui/background/page_white_zip.gif",
+                icon: "/wiki/skin/DefaultSkin/webui/UIWikiRichTextEditor/images/page_white_zip.gif",
                 resource: XWiki.resource.get(node.id + XWiki.constants.anchorSeparator +
                                             XWiki.constants.docextraAttachmentsAnchor),
                 isXWikiAttachment: true,
@@ -466,7 +466,7 @@ isc.XWEDataSource.addProperties({
     /*
      * XWiki Explorer (XWE) per-DataSource type (will be overriden) options.
      */
-    icon : "/wiki/skin/DefaultSkin/webui/background/database.gif",
+    icon : "/wiki/skin/DefaultSkin/webui/UIWikiRichTextEditor/images/database.gif",
 
     /**
      * Properties passed to the RPCManager when request are performed.
@@ -521,12 +521,12 @@ isc.XWEWikiDataSource.addProperties({
         { name:"title", type: "text" },
         { name:"xwikiRelativeUrl", type: "text" }
     ],    
-    icon : "/wiki/skin/DefaultSkin/webui/background/folder.gif"
+    icon : "/wiki/skin/DefaultSkin/webui/UIWikiRichTextEditor/images/folder.gif"
 });
 
 isc.XWEWikiDataSource.addMethods({
     init : function() {
-        this.dataURL = XWiki.constants.rest.baseRestURI + "wiki/" + eXo.wiki.currentWiki + "/spaces";
+        this.dataURL = XWiki.constants.rest.baseRestURI + "wiki/" + eXo.wiki.UIWikiRichTextArea.wiki + "/spaces";
         this.Super("init", arguments);
     }
 });
@@ -563,18 +563,18 @@ isc.XWESpaceDataSource.addProperties({
         { name:"xwikiRelativeUrl", type: "text" },
         { name:"link", propertiesOnly: true }
     ],    
-    icon : "/wiki/skin/DefaultSkin/webui/background/page_white_text.gif"
+    icon : "/wiki/skin/DefaultSkin/webui/UIWikiRichTextEditor/images/page_white_text.gif"
 });
 
 isc.XWESpaceDataSource.addMethods({
     init : function() {
-        this.dataURL = XWiki.constants.rest.baseRestURI + "wiki/" + eXo.wiki.currentWiki + "/spaces/"
+        this.dataURL = XWiki.constants.rest.baseRestURI + "wiki/" + eXo.wiki.UIWikiRichTextArea.wiki + "/spaces/"
                 + this.space + "/pages";
         // Override transformRequest method to allow the insertion of a fake initial parent when
         // parent property is null. This fake initial parent is a regex that allow to retrieve only
         // pages without parent or with a parent outside of the current space.
         this.transformRequest = function (dsRequest) {
-            var prefixedSpace = eXo.wiki.currentWiki + XWiki.constants.wikiSpaceSeparator + this.space;
+            var prefixedSpace = eXo.wiki.UIWikiRichTextArea.wiki + XWiki.constants.wikiSpaceSeparator + this.space;
             if (dsRequest.originalData.parentId == prefixedSpace || dsRequest.originalData.parentId == null) {
                 dsRequest.originalData.parentId = "^(?!" + prefixedSpace + "\.).*$";
             }
@@ -614,12 +614,12 @@ isc.XWEPageDataSource.addProperties({
         { name:"parent", required: true, type: "text" },
         { name:"link", propertiesOnly: true }
     ],
-    icon : "/wiki/skin/DefaultSkin/webui/background/page_white_text.gif"
+    icon : "/wiki/skin/DefaultSkin/webui/UIWikiRichTextEditor/images/page_white_text.gif"
 });
 
 isc.XWEPageDataSource.addMethods({
     init : function() {
-        this.dataURL = XWiki.constants.rest.baseRestURI + "wiki/" + eXo.wiki.currentWiki + "/spaces/" + this.space
+        this.dataURL = XWiki.constants.rest.baseRestURI + "wiki/" + eXo.wiki.UIWikiRichTextArea.wiki + "/spaces/" + this.space
                 + "/pages/" + this.page;
         this.Super("init", arguments);
     }
@@ -652,12 +652,12 @@ isc.XWEAttachmentsDataSource.addProperties({
         { name:"title", type: "text" },
         { name:"xwikiRelativeUrl", type: "text" }
     ],
-    icon : "/wiki/skin/DefaultSkin/webui/background/attach.gif"
+    icon : "/wiki/skin/DefaultSkin/webui/UIWikiRichTextEditor/images/attach.gif"
 });
 
 isc.XWEAttachmentsDataSource.addMethods({
     init : function() {
-        this.dataURL = XWiki.constants.rest.baseRestURI + "wiki/" + eXo.wiki.currentWiki + "/spaces/"
+        this.dataURL = XWiki.constants.rest.baseRestURI + "wiki/" + eXo.wiki.UIWikiRichTextArea.wiki + "/spaces/"
                 + this.space + "/pages/"
                 + this.page + "/attachments";
         this.Super("init", arguments);
@@ -694,7 +694,7 @@ isc.XWETreeGrid.addProperties({
     /*
      * XWiki variables.
      */
-    wiki : XWiki.currentWiki,
+    wiki : eXo.wiki.UIWikiRichTextArea.wiki,
     space : null,
     displaySuggest : true,
     defaultValue : "Main.WebHome",

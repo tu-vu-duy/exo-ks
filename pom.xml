@@ -14,9 +14,9 @@
   <description>eXo Knowledge Suite (KS) is a suite of collaborative applications oriented to knowledge management. It not only holds on-line discussions and posts user generated content but also answers the most frequently asked questions about sites/services.</description>
   <url>http://wiki.exoplatform.org/xwiki/bin/view/KS/</url>
   <scm>
-   <connection>scm:git:git://github.com/tu-vu-duy/tuvd-ks.git</connection>
-   <developerConnection>scm:git:ssh://git@github.com:tu-vu-duy/tuvd-ks.git</developerConnection>
-   <url>https://tu-vu-duy@github.com/tu-vu-duy/tuvd-ks.git</url>
+   <connection>scm:git:git://github.com/tu-vu-duy/exo-ks.git</connection>
+   <developerConnection>scm:git:ssh://git@github.com:tu-vu-duy/exo-ks.git</developerConnection>
+   <url>https://tu-vu-duy@github.com/tu-vu-duy/exo-ks.git</url>
   </scm>
   <issueManagement>
     <system>jira</system>

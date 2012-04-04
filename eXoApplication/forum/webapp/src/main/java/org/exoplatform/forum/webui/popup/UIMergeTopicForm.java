@@ -21,12 +21,12 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.exoplatform.container.ExoContainerContext;
-import org.exoplatform.forum.ForumTransformHTML;
 import org.exoplatform.forum.ForumUtils;
 import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.Topic;
 import org.exoplatform.forum.service.Utils;
 import org.exoplatform.forum.webui.UIForumPortlet;
+import org.exoplatform.ks.common.CommonUtils;
 import org.exoplatform.ks.common.webui.BaseUIForm;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
@@ -60,8 +60,6 @@ public class UIMergeTopicForm extends BaseUIForm implements UIPopupComponent {
 
   private List<Topic>         listTopic;
 
-  private String              link;
-
   public UIMergeTopicForm() throws Exception {
   }
 
@@ -82,14 +80,6 @@ public class UIMergeTopicForm extends BaseUIForm implements UIPopupComponent {
     addUIFormInput(titleThread);
   }
 
-  public String getLink() {
-    return link;
-  }
-
-  public void setLink(String link) {
-    this.link = link;
-  }
-
   public void updateTopics(List<Topic> topics) {
     this.listTopic = topics;
   }
@@ -107,7 +97,7 @@ public class UIMergeTopicForm extends BaseUIForm implements UIPopupComponent {
       String topicMergeId = uiForm.getUIFormSelectBox(DESTINATION).getValue();
       String topicMergeTitle = uiForm.getUIStringInput(TITLE).getValue();
       if (!ForumUtils.isEmpty(topicMergeTitle)) {
-        topicMergeTitle = org.exoplatform.ks.common.Utils.encodeSpecialCharInTitle(topicMergeTitle);
+        topicMergeTitle = CommonUtils.encodeSpecialCharInTitle(topicMergeTitle);
         Topic topicMerge = new Topic();
         for (Topic topic : uiForm.listTopic) {
           if (topicMergeId.equals(topic.getId())) {
@@ -121,37 +111,36 @@ public class UIMergeTopicForm extends BaseUIForm implements UIPopupComponent {
           String temp[] = destTopicPath.split(ForumUtils.SLASH);
           String categoryId = temp[temp.length - 3];
           String forumId = temp[temp.length - 2];
-          ForumService forumService = (ForumService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(ForumService.class);
-          String link = uiForm.getLink();
+          ForumService forumService = (ForumService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(ForumService.class);          
           WebuiRequestContext context = WebuiRequestContext.getCurrentInstance();
           ResourceBundle res = context.getApplicationResourceBundle();
           String emailContent = res.getString("UINotificationForm.label.EmailToAuthorMoved");
-          try {
-            for (Topic topic : uiForm.listTopic) {
-              if (topicMergeId.equals(topic.getId())) {
-                continue;
-              }
-              try {
-                // set link
-                link = ForumUtils.createdForumLink(ForumUtils.TOPIC, "pathId").replaceFirst("private", "public");
-                forumService.mergeTopic(categoryId + ForumUtils.SLASH + forumId + ForumUtils.SLASH + topic.getId(), destTopicPath, emailContent, link);
-              } catch (Exception e) {
-                isMerge = false;
-                break;
-              }
+          for (Topic topic : uiForm.listTopic) {
+            if (topicMergeId.equals(topic.getId())) {
+              continue;
             }
-            if (isMerge) {
-              topicMerge.setTopicName(topicMergeTitle);
-              try {
-                List<Topic> list = new ArrayList<Topic>();
-                list.add(topicMerge);
-                forumService.modifyTopic(list, Utils.CHANGE_NAME);
-              } catch (Exception e) {
-                uiForm.log.error("Merge topic is fall ", e);
-                isMerge = false;
-              }
+            try {
+              // set link
+              String link = ForumUtils.createdForumLink(ForumUtils.TOPIC, "pathId", false);
+              forumService.mergeTopic(categoryId + ForumUtils.SLASH + forumId + ForumUtils.SLASH + topic.getId(),
+                                      destTopicPath,
+                                      emailContent,
+                                      link);
+            } catch (Exception e) {
+              isMerge = false;
+              break;
             }
-          } catch (Exception e) {
+          }
+          if (isMerge) {
+            topicMerge.setTopicName(topicMergeTitle);
+            try {
+              List<Topic> list = new ArrayList<Topic>();
+              list.add(topicMerge);
+              forumService.modifyTopic(list, Utils.CHANGE_NAME);
+            } catch (Exception e) {
+              uiForm.log.error("Merge topic is fall ", e);
+              isMerge = false;
+            }
           }
         } else {
           isMerge = false;

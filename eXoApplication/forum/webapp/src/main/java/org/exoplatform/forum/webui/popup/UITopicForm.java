@@ -23,9 +23,8 @@ import java.util.List;
 import javax.jcr.PathNotFoundException;
 
 import org.apache.commons.lang.StringUtils;
-import org.exoplatform.forum.ForumTransformHTML;
 import org.exoplatform.forum.ForumUtils;
-import org.exoplatform.forum.TimeConvertUtils;
+import org.exoplatform.forum.service.BufferAttachment;
 import org.exoplatform.forum.service.Forum;
 import org.exoplatform.forum.service.ForumAttachment;
 import org.exoplatform.forum.service.Post;
@@ -42,6 +41,8 @@ import org.exoplatform.forum.webui.UITopicContainer;
 import org.exoplatform.forum.webui.UITopicDetail;
 import org.exoplatform.forum.webui.popup.UIForumInputWithActions.ActionData;
 import org.exoplatform.ks.bbcode.core.ExtendedBBCodeProvider;
+import org.exoplatform.ks.common.CommonUtils;
+import org.exoplatform.ks.common.TransformHTML;
 import org.exoplatform.ks.common.UserHelper;
 import org.exoplatform.ks.common.webui.BaseEventListener;
 import org.exoplatform.ks.common.webui.UIPopupContainer;
@@ -56,14 +57,14 @@ import org.exoplatform.webui.core.UITree;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.core.model.SelectItemOption;
 import org.exoplatform.webui.event.Event;
-import org.exoplatform.webui.event.Event.Phase;
 import org.exoplatform.webui.event.EventListener;
-import org.exoplatform.webui.form.UIFormCheckBoxInput;
+import org.exoplatform.webui.event.Event.Phase;
 import org.exoplatform.webui.form.UIFormInputIconSelector;
 import org.exoplatform.webui.form.UIFormInputInfo;
 import org.exoplatform.webui.form.UIFormSelectBox;
 import org.exoplatform.webui.form.UIFormStringInput;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
+import org.exoplatform.webui.form.input.UICheckBoxInput;
 import org.exoplatform.webui.form.validator.MandatoryValidator;
 import org.exoplatform.webui.form.wysiwyg.UIFormWYSIWYGInput;
 import org.exoplatform.webui.organization.account.UIUserSelector;
@@ -80,8 +81,8 @@ import org.exoplatform.webui.organization.account.UIUserSelector;
             lifecycle = UIFormLifecycle.class,
             template = "app:/templates/forum/webui/popup/UITopicForm.gtmpl",
             events = {
-              @EventConfig(listeners = UITopicForm.PreviewThreadActionListener.class), 
-              @EventConfig(listeners = UITopicForm.SubmitThreadActionListener.class), 
+              @EventConfig(listeners = UITopicForm.PreviewThreadActionListener.class,phase = Phase.DECODE), 
+              @EventConfig(listeners = UITopicForm.SubmitThreadActionListener.class,phase = Phase.DECODE), 
               @EventConfig(listeners = UITopicForm.AttachmentActionListener.class,phase = Phase.DECODE), 
               @EventConfig(listeners = UITopicForm.RemoveAttachmentActionListener.class,phase = Phase.DECODE), 
               @EventConfig(listeners = UITopicForm.CancelActionListener.class,phase = Phase.DECODE),
@@ -155,8 +156,6 @@ public class UITopicForm extends BaseForumForm implements UISelector {
 
   private String                topicId;
 
-  private String                link                             = ForumUtils.EMPTY_STR;
-
   private Forum                 forum;
 
   private boolean               isMod                            = false;
@@ -171,7 +170,6 @@ public class UITopicForm extends BaseForumForm implements UISelector {
 
   private boolean               isDoubleClickSubmit              = false;
 
-  @SuppressWarnings("unchecked")
   public UITopicForm() throws Exception {
     if (getId() == null)
       setId("UITopicForm");
@@ -202,9 +200,9 @@ public class UITopicForm extends BaseForumForm implements UISelector {
     UIFormSelectBox topicType = new UIFormSelectBox(FIELD_TOPICTYPE_SELECTBOX, FIELD_TOPICTYPE_SELECTBOX, ls);
     topicType.setDefaultValue(TopicType.DEFAULT_ID);
 
-    UIFormCheckBoxInput moderatePost = new UIFormCheckBoxInput<Boolean>(FIELD_MODERATEPOST_CHECKBOX, FIELD_MODERATEPOST_CHECKBOX, false);
-    UIFormCheckBoxInput checkWhenAddPost = new UIFormCheckBoxInput<Boolean>(FIELD_NOTIFYWHENADDPOST_CHECKBOX, FIELD_NOTIFYWHENADDPOST_CHECKBOX, false);
-    UIFormCheckBoxInput sticky = new UIFormCheckBoxInput<Boolean>(FIELD_STICKY_CHECKBOX, FIELD_STICKY_CHECKBOX, false);
+    UICheckBoxInput moderatePost = new UICheckBoxInput(FIELD_MODERATEPOST_CHECKBOX, FIELD_MODERATEPOST_CHECKBOX, false);
+    UICheckBoxInput checkWhenAddPost = new UICheckBoxInput(FIELD_NOTIFYWHENADDPOST_CHECKBOX, FIELD_NOTIFYWHENADDPOST_CHECKBOX, false);
+    UICheckBoxInput sticky = new UICheckBoxInput(FIELD_STICKY_CHECKBOX, FIELD_STICKY_CHECKBOX, false);
     UIFormTextAreaInput canView = new UIFormTextAreaInput(FIELD_CANVIEW_INPUT, FIELD_CANVIEW_INPUT, null);
     UIFormTextAreaInput canPost = new UIFormTextAreaInput(FIELD_CANPOST_INPUT, FIELD_CANPOST_INPUT, null);
     UIFormWYSIWYGInput formWYSIWYGInput = new UIFormWYSIWYGInput(FIELD_MESSAGECONTENT, FIELD_MESSAGECONTENT, ForumUtils.EMPTY_STR);
@@ -277,26 +275,18 @@ public class UITopicForm extends BaseForumForm implements UISelector {
     threadOption.setActionField(FIELD_TOPICTYPE_SELECTBOX, actions);
   }
 
-  public String getLink() {
-    return link;
-  }
-
-  public void setLink(String link) {
-    this.link = link;
-  }
-
   public void setIsDetail(boolean isDetail) {
     this.isDetail = isDetail;
   }
 
-  public void setTopicIds(String categoryId, String forumId, Forum forum, long userRole) throws Exception {
+  public void setTopicIds(String categoryId, String forumId, Forum forum) throws Exception {
     this.categoryId = categoryId;
     this.forumId = forumId;
     this.topic = new Topic();
     this.forum = forum;
     UIForumInputWithActions threadContent = this.getChildById(FIELD_THREADCONTEN_TAB);
     threadContent.getUIStringInput(FIELD_EDITREASON_INPUT).setRendered(false);
-    if (userRole == 0) {
+    if (getUserProfile().getUserRole() == 0) {
       addActionAddTopicType();
     }
     setShowInfo();
@@ -309,7 +299,7 @@ public class UITopicForm extends BaseForumForm implements UISelector {
     if (!ForumUtils.isArrayEmpty(canV)) {
       info = getLabel("CanViewParentInfo");
     } else {
-      canV = getForumService().getPermissionTopicByCategory(categoryId, "viewer");
+      canV = getForumService().getPermissionTopicByCategory(categoryId, Utils.EXO_VIEWER);
       if (!ForumUtils.isArrayEmpty(canV)) {
         info = getLabel("CanViewParentInfo");
       }
@@ -320,7 +310,7 @@ public class UITopicForm extends BaseForumForm implements UISelector {
     if (!ForumUtils.isArrayEmpty(canV)) {
       info = getLabel("CanPostParentInfo");
     } else {
-      canV = getForumService().getPermissionTopicByCategory(categoryId, "poster");
+      canV = getForumService().getPermissionTopicByCategory(categoryId, Utils.EXO_POSTER);
       if (!ForumUtils.isArrayEmpty(canV)) {
         info = getLabel("CanPostParentInfo");
       }
@@ -350,8 +340,7 @@ public class UITopicForm extends BaseForumForm implements UISelector {
   public void deActivate() throws Exception {
   }
 
-  @SuppressWarnings("unused")
-  private boolean getIsSelected(int id) {
+  protected boolean getIsSelected(int id) {
     if (this.id == id)
       return true;
     return false;
@@ -386,8 +375,12 @@ public class UITopicForm extends BaseForumForm implements UISelector {
     inputSet.setActionField(FIELD_ATTACHMENTS, getUploadFileList());
   }
 
-  public void addToUploadFileList(ForumAttachment attachfile) {
+  public void addUploadFile(ForumAttachment attachfile) {
     attachments_.add(attachfile);
+  }
+
+  public void addUploadFileList(List<BufferAttachment> attachfiles) {
+    attachments_.addAll(attachfiles);
   }
 
   public void removeFromUploadFileList(ForumAttachment attachfile) {
@@ -416,7 +409,7 @@ public class UITopicForm extends BaseForumForm implements UISelector {
       this.topic = getForumService().getTopic(categoryId, forumId, topicId, ForumUtils.EMPTY_STR);
       UIForumInputWithActions threadContent = this.getChildById(FIELD_THREADCONTEN_TAB);
       threadContent.getUIStringInput(FIELD_EDITREASON_INPUT).setRendered(true);
-      threadContent.getUIStringInput(FIELD_TOPICTITLE_INPUT).setValue(this.topic.getTopicName());
+      threadContent.getUIStringInput(FIELD_TOPICTITLE_INPUT).setValue(CommonUtils.decodeSpecialCharToHTMLnumber(topic.getTopicName()));
       threadContent.getChild(UIFormWYSIWYGInput.class).setValue(this.topic.getDescription());
 
       UIForumInputWithActions threadOption = this.getChildById(FIELD_THREADOPTION_TAB);
@@ -429,13 +422,12 @@ public class UITopicForm extends BaseForumForm implements UISelector {
       else
         stat = "unlock";
       threadOption.getUIFormSelectBox(FIELD_TOPICSTATUS_SELECTBOX).setValue(stat);
-      threadOption.getUIFormCheckBoxInput(FIELD_MODERATEPOST_CHECKBOX).setChecked(this.topic.getIsModeratePost());
+      threadOption.getUICheckBoxInput(FIELD_MODERATEPOST_CHECKBOX).setChecked(this.topic.getIsModeratePost());
       if (this.topic.getIsNotifyWhenAddPost() != null && this.topic.getIsNotifyWhenAddPost().trim().length() > 0) {
-        threadOption.getUIFormCheckBoxInput(FIELD_NOTIFYWHENADDPOST_CHECKBOX).setChecked(true);
+        threadOption.getUICheckBoxInput(FIELD_NOTIFYWHENADDPOST_CHECKBOX).setChecked(true);
       }
-
       threadOption.getUIFormSelectBox(FIELD_TOPICTYPE_SELECTBOX).setValue(this.topic.getTopicType());
-      threadOption.getUIFormCheckBoxInput(FIELD_STICKY_CHECKBOX).setChecked(this.topic.getIsSticky());
+      threadOption.getUICheckBoxInput(FIELD_STICKY_CHECKBOX).setChecked(this.topic.getIsSticky());
 
       UIForumInputWithActions threadPermission = this.getChildById(FIELD_THREADPERMISSION_TAB);
       threadPermission.getUIFormTextAreaInput(FIELD_CANVIEW_INPUT).setValue(ForumUtils.unSplitForForum(this.topic.getCanView()));
@@ -454,25 +446,23 @@ public class UITopicForm extends BaseForumForm implements UISelector {
     public void onEvent(Event<UITopicForm> event, UITopicForm uiForm, final String objectId) throws Exception {
       int t = 0, k = 1;
       UIForumInputWithActions threadContent = uiForm.getChildById(FIELD_THREADCONTEN_TAB);
-      UIFormStringInput stringInputTitle = threadContent.getUIStringInput(FIELD_TOPICTITLE_INPUT);
-      String topicTitle = "  " + stringInputTitle.getValue();
-      topicTitle = topicTitle.trim();
+      String topicTitle = (" " + threadContent.getUIStringInput(FIELD_TOPICTITLE_INPUT).getValue()).trim();
       String message = threadContent.getChild(UIFormWYSIWYGInput.class).getValue();
-      String checksms = ForumTransformHTML.cleanHtmlCode(message, new ArrayList<String>((new ExtendedBBCodeProvider()).getSupportedBBCodes()));
+      String checksms = TransformHTML.cleanHtmlCode(message, new ArrayList<String>((new ExtendedBBCodeProvider()).getSupportedBBCodes()));
       checksms = checksms.replaceAll("&nbsp;", " ");
       t = checksms.trim().length();
-      if (topicTitle.length() < 1 && topicTitle.equals("null")) {
+      if (topicTitle.length() <= 0 || topicTitle.equals("null")) {
         k = 0;
       }
-      topicTitle = org.exoplatform.ks.common.Utils.encodeSpecialCharInTitle(topicTitle);
       if (t > 0 && k != 0 && !checksms.equals("null")) {
-        String userName = UserHelper.getCurrentUser();
+        String userName = uiForm.getUserProfile().getUserId();
+        topicTitle = CommonUtils.encodeSpecialCharInTitle(topicTitle);
         Post postNew = new Post();
         postNew.setOwner(userName);
         postNew.setName(topicTitle);
         if (ForumUtils.isEmpty(uiForm.topicId)) {
-          postNew.setCreatedDate(TimeConvertUtils.getInstanceTempCalendar().getTime());
-          postNew.setModifiedDate(TimeConvertUtils.getInstanceTempCalendar().getTime());
+          postNew.setCreatedDate(CommonUtils.getGreenwichMeanTime().getTime());
+          postNew.setModifiedDate(CommonUtils.getGreenwichMeanTime().getTime());
         } else {
           postNew.setCreatedDate(uiForm.topic.getCreatedDate());
           postNew.setModifiedDate(uiForm.topic.getModifiedDate());
@@ -488,16 +478,17 @@ public class UITopicForm extends BaseForumForm implements UISelector {
         viewPost.setPostView(postNew);
         viewPost.setActionForm(new String[] { "Close" });
       } else {
-        String[] args = { ForumUtils.EMPTY_STR };
+        String[] args = new String[] {  uiForm.getLabel(FIELD_MESSAGECONTENT) };
         if (k == 0) {
           args = new String[] { uiForm.getLabel(FIELD_TOPICTITLE_INPUT) };
-          if (t == 0)
-            args = new String[] { uiForm.getLabel(FIELD_TOPICTITLE_INPUT) + ", " + uiForm.getLabel(FIELD_MESSAGECONTENT) };
-          warning("NameValidator.msg.ShortText", args);
-        } else if (t == 0) {
-          args = new String[] { uiForm.getLabel(FIELD_MESSAGECONTENT) };
+          if (t <= 0)
+            args = new String[] { uiForm.getLabel(FIELD_TOPICTITLE_INPUT) + " " + 
+                                  uiForm.getLabel("and") + " " + uiForm.getLabel(FIELD_MESSAGECONTENT) };
+          warning("NameValidator.msg.ShortMessage", args);
+        } else if (t <= 0) {
           warning("NameValidator.msg.ShortMessage", args);
         }
+        return;
       }
     }
   }
@@ -508,14 +499,12 @@ public class UITopicForm extends BaseForumForm implements UISelector {
         return;
       uiForm.isDoubleClickSubmit = true;
       UIForumPortlet forumPortlet = uiForm.getAncestorOfType(UIForumPortlet.class);
-      UserProfile userProfile = forumPortlet.getUserProfile();
+      UserProfile userProfile = uiForm.getUserProfile();
       try {
         if (forumPortlet.checkForumHasAddTopic(uiForm.categoryId, uiForm.forumId)) {
           int t = 0, k = 1;
           UIForumInputWithActions threadContent = uiForm.getChildById(FIELD_THREADCONTEN_TAB);
-          UIFormStringInput stringInputTitle = threadContent.getUIStringInput(FIELD_TOPICTITLE_INPUT);
-          String topicTitle = " " + stringInputTitle.getValue();
-          topicTitle = topicTitle.trim();
+          String topicTitle = (" " + threadContent.getUIStringInput(FIELD_TOPICTITLE_INPUT).getValue()).trim();
           int maxText = ForumUtils.MAXTITLE;
           if (topicTitle.length() > maxText) {
             String[] args = { uiForm.getLabel(FIELD_TOPICTITLE_INPUT), String.valueOf(maxText) };
@@ -531,15 +520,15 @@ public class UITopicForm extends BaseForumForm implements UISelector {
             return;
           }
           String message = threadContent.getChild(UIFormWYSIWYGInput.class).getValue();
-          message = message.replaceAll("<script", "&lt;script").replaceAll("<link", "&lt;link").replaceAll("</script>", "&lt;/script>");
-          String checksms = ForumTransformHTML.cleanHtmlCode(message, new ArrayList<String>((new ExtendedBBCodeProvider()).getSupportedBBCodes()));
-          message = StringUtils.replace(message, "'", "&apos;");
+          String checksms = TransformHTML.cleanHtmlCode(message, new ArrayList<String>((new ExtendedBBCodeProvider()).getSupportedBBCodes()));
           checksms = checksms.replaceAll("&nbsp;", " ");
           t = checksms.trim().length();
-          if (topicTitle.length() <= 0 && topicTitle.equals("null")) {
+          if (topicTitle.length() <= 0 || topicTitle.equals("null")) {
             k = 0;
           }
           if (t > 0 && k != 0 && !checksms.equals("null")) {
+            message = message.replaceAll("<script", "&lt;script").replaceAll("<link", "&lt;link").replaceAll("</script>", "&lt;/script>");
+            message = StringUtils.replace(message, "'", "&#39;");
             boolean isOffend = false;
             boolean hasForumMod = false;
             if (!uiForm.isMod()) {
@@ -558,8 +547,8 @@ public class UITopicForm extends BaseForumForm implements UISelector {
               if (uiForm.forum != null)
                 hasForumMod = uiForm.forum.getIsModerateTopic();
             }
-            topicTitle = org.exoplatform.ks.common.Utils.encodeSpecialCharInTitle(topicTitle);
-            editReason = org.exoplatform.ks.common.Utils.encodeSpecialCharInTitle(editReason);
+            topicTitle = CommonUtils.encodeSpecialCharInTitle(topicTitle);
+            editReason = CommonUtils.encodeSpecialCharInTitle(editReason);
 
             UIForumInputWithActions threadOption = uiForm.getChildById(FIELD_THREADOPTION_TAB);
             String topicType = threadOption.getUIFormSelectBox(FIELD_TOPICTYPE_SELECTBOX).getValue();
@@ -567,9 +556,9 @@ public class UITopicForm extends BaseForumForm implements UISelector {
               topicType = " ";
             String topicState = threadOption.getUIFormSelectBox(FIELD_TOPICSTATE_SELECTBOX).getValue();
             String topicStatus = threadOption.getUIFormSelectBox(FIELD_TOPICSTATUS_SELECTBOX).getValue();
-            Boolean moderatePost = (Boolean) threadOption.getUIFormCheckBoxInput(FIELD_MODERATEPOST_CHECKBOX).getValue();
-            Boolean whenNewPost = (Boolean) threadOption.getUIFormCheckBoxInput(FIELD_NOTIFYWHENADDPOST_CHECKBOX).getValue();
-            Boolean sticky = (Boolean) threadOption.getUIFormCheckBoxInput(FIELD_STICKY_CHECKBOX).getValue();
+            Boolean moderatePost = (Boolean) threadOption.getUICheckBoxInput(FIELD_MODERATEPOST_CHECKBOX).getValue();
+            Boolean whenNewPost = (Boolean) threadOption.getUICheckBoxInput(FIELD_NOTIFYWHENADDPOST_CHECKBOX).getValue();
+            Boolean sticky = (Boolean) threadOption.getUICheckBoxInput(FIELD_STICKY_CHECKBOX).getValue();
             UIForumInputWithActions threadPermission = uiForm.getChildById(FIELD_THREADPERMISSION_TAB);
             String canPost = threadPermission.getUIFormTextAreaInput(FIELD_CANPOST_INPUT).getValue();
             String canView = threadPermission.getUIFormTextAreaInput(FIELD_CANVIEW_INPUT).getValue();
@@ -593,7 +582,7 @@ public class UITopicForm extends BaseForumForm implements UISelector {
             }
             // set link
             Topic topicNew = uiForm.topic;
-            String link = ForumUtils.createdForumLink(ForumUtils.TOPIC, topicNew.getId()).replaceFirst("private", "public");
+            String link = ForumUtils.createdForumLink(ForumUtils.TOPIC, topicNew.getId(), false);
             //
             String userName = userProfile.getUserId();
             topicNew.setOwner(userName);
@@ -612,8 +601,6 @@ public class UITopicForm extends BaseForumForm implements UISelector {
                 try {
                   email = UserHelper.getUserByUserId(userName).getEmail();
                 } catch (Exception e) {
-                }
-                if (ForumUtils.isEmpty(email)) {
                   email = "true";
                 }
               }
@@ -656,11 +643,11 @@ public class UITopicForm extends BaseForumForm implements UISelector {
                   uiForm.isDetail = false;
                 }
               } catch (PathNotFoundException e) {
-                forumPortlet.rederForumHome();
+                forumPortlet.renderForumHome();
                 forumPortlet.cancelAction();
-                warning("UITopicForm.msg.forum-deleted");
                 event.getRequestContext().addUIComponentToUpdateByAjax(forumPortlet);
                 uiForm.isDoubleClickSubmit = false;
+                warning("UITopicForm.msg.forum-deleted", false);
                 return;
               }
             } else {
@@ -686,8 +673,8 @@ public class UITopicForm extends BaseForumForm implements UISelector {
                 categoryContainer.getChild(UICategories.class).setIsRenderChild(false);
                 forumPortlet.getChild(UIBreadcumbs.class).setUpdataPath(Utils.FORUM_SERVICE);
                 forumPortlet.cancelAction();
-                warning("UITopicForm.msg.forum-deleted");
                 event.getRequestContext().addUIComponentToUpdateByAjax(forumPortlet);
+                warning("UITopicForm.msg.forum-deleted");
                 uiForm.isDoubleClickSubmit = false;
                 return;
               }
@@ -696,32 +683,36 @@ public class UITopicForm extends BaseForumForm implements UISelector {
             forumPortlet.cancelAction();
             if (isOffend || hasForumMod) {
               if (isOffend)
-                warning("MessagePost.msg.isOffend");
+                warning("MessagePost.msg.isOffend", false);
               else {
                 String[] args = new String[] { "forum", "thread" };
-                warning("MessageThread.msg.isModerate", args);
+                warning("MessageThread.msg.isModerate", args, false);
               }
             }
             event.getRequestContext().addUIComponentToUpdateByAjax(forumPortlet);
           } else {
+            String[] args = new String[] {  uiForm.getLabel(FIELD_MESSAGECONTENT) };
             if (k == 0) {
-              String[] args = new String[] { uiForm.getLabel(FIELD_TOPICTITLE_INPUT) };
+              args = new String[] { uiForm.getLabel(FIELD_TOPICTITLE_INPUT) };
               if (t <= 0)
-                args = new String[] { uiForm.getLabel(FIELD_TOPICTITLE_INPUT) + " and " + uiForm.getLabel(FIELD_MESSAGECONTENT) };
-              warning("NameValidator.msg.ShortText", args);
+                args = new String[] { uiForm.getLabel(FIELD_TOPICTITLE_INPUT) + " " + 
+                                      uiForm.getLabel("and") + " " + uiForm.getLabel(FIELD_MESSAGECONTENT) };
               uiForm.isDoubleClickSubmit = false;
+              warning("NameValidator.msg.ShortMessage", args);
             } else if (t <= 0) {
-              warning("NameValidator.msg.ShortMessage", new String[] { "Message" });
               uiForm.isDoubleClickSubmit = false;
+              warning("NameValidator.msg.ShortMessage", args);
             }
+            return;
           }
         } else {
           forumPortlet.cancelAction();
+          forumPortlet.removeCacheUserProfile();
           UITopicContainer topicContainer = forumPortlet.findFirstComponentOfType(UITopicContainer.class);
           topicContainer.setUpdateForum(uiForm.categoryId, uiForm.forum, 0);
-          warning("UITopicForm.msg.no-permission");
           event.getRequestContext().addUIComponentToUpdateByAjax(forumPortlet);
           uiForm.isDoubleClickSubmit = false;
+          warning("UITopicForm.msg.no-permission", false);
           return;
         }
       } catch (Exception e) {
@@ -731,8 +722,8 @@ public class UITopicForm extends BaseForumForm implements UISelector {
         categoryContainer.getChild(UICategories.class).setIsRenderChild(false);
         forumPortlet.getChild(UIBreadcumbs.class).setUpdataPath(Utils.FORUM_SERVICE);
         forumPortlet.cancelAction();
-        warning("UITopicForm.msg.forum-deleted");
         event.getRequestContext().addUIComponentToUpdateByAjax(forumPortlet);
+        warning("UITopicForm.msg.forum-deleted", false);
       }
     }
   }

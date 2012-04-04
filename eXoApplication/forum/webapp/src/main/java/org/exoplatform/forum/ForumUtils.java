@@ -35,8 +35,10 @@ import java.util.Set;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.portlet.PortletPreferences;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
+import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.forum.service.ForumAdministration;
 import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.MessageBuilder;
@@ -47,6 +49,7 @@ import org.exoplatform.portal.application.PortalRequestContext;
 import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.social.core.space.SpaceUtils;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.application.portlet.PortletRequestContext;
 
@@ -94,6 +97,8 @@ public class ForumUtils {
 
   public static final String EMPTY_STR               = "".intern();
 
+  public static final String SPACE_GROUP_ID          = SpaceUtils.SPACE_GROUP.replace(SLASH, EMPTY_STR);
+  
   public static final int    MAXSIGNATURE            = 300;
 
   public static final int    MAXTITLE                = 100;
@@ -102,15 +107,8 @@ public class ForumUtils {
 
   public static final long   MAXMESSAGE              = 10000;
 
-  static String buildForumLink(String url, String selectedNode, String portalName, String type, String id) throws Exception {
-    if (url.indexOf(portalName) > 0) {
-      if (url.indexOf(portalName + SLASH + selectedNode) < 0) {
-        url = url.replaceFirst(portalName, portalName + SLASH + selectedNode);
-      }
-    }
-    selectedNode = portalName + SLASH + selectedNode;
-    url = url.substring(0, url.lastIndexOf(selectedNode) + selectedNode.length());
-    StringBuilder link = new StringBuilder().append(url);
+  private static String buildForumLink(String url, String type, String id) {
+    StringBuilder link = new StringBuilder(url);
     if (!isEmpty(type) && !isEmpty(id)) {
       if (link.lastIndexOf(SLASH) == (link.length() - 1))
         link.append(type);
@@ -122,15 +120,35 @@ public class ForumUtils {
     return link.toString();
   }
 
-  public static String createdForumLink(String type, String id) throws Exception {
+  public static String createdForumLink(String type, String id, boolean isPrivate) throws Exception {    
+    String containerName = ((ExoContainerContext) ExoContainerContext.getCurrentContainer()
+                           .getComponentInstanceOfType(ExoContainerContext.class)).getPortalContainerName();
+    String pageNodeSelected = Util.getUIPortal().getSelectedUserNode().getURI();
     PortalRequestContext portalContext = Util.getPortalRequestContext();
-    String url = portalContext.getRequest().getRequestURL().toString();
-    String selectedNode = Util.getUIPortal().getSelectedUserNode().getURI();
-    String portalName = portalContext.getPortalOwner();
-    return buildForumLink(url, selectedNode, portalName, type, id);
+    String fullUrl = ((HttpServletRequest) portalContext.getRequest()).getRequestURL().toString();
+    String host = fullUrl.substring(0, fullUrl.indexOf(containerName) -1);
+    return buildLink((host + portalContext.getPortalURI()), containerName , pageNodeSelected, type, id, isPrivate);
   }
 
-  public static boolean isValidEmailAddresses(String addressList) throws Exception {
+  public static String buildLink(String portalURI, String containerName, String selectedNode, String type, String id, boolean isPrivate){
+    StringBuilder sb = new StringBuilder();
+    portalURI = portalURI.concat(selectedNode).concat(SLASH);
+    if (!isPrivate) {
+      sb.append(buildForumLink(portalURI, type, id));
+    } else {
+      String host = portalURI.substring(0, portalURI.indexOf(containerName) -1);
+      sb.append(host)
+        .append(SLASH)
+        .append(containerName)
+        .append(SLASH)
+        .append("login?&initialURI=")
+        .append(buildForumLink(portalURI.replaceFirst(host, EMPTY_STR), type, id))
+        .toString();
+    }
+    return sb.toString();
+  }
+
+  public static boolean isValidEmailAddresses(String addressList){
     if (isEmpty(addressList))
       return true;
     addressList = StringUtils.remove(addressList, " ");
@@ -184,7 +202,7 @@ public class ForumUtils {
     return null;
   }
 
-  public static String[] getStarNumber(double voteRating) throws Exception {
+  public static String[] getStarNumber(double voteRating) {
     int star = (int) voteRating;
     String[] className = new String[6];
     float k = 0;
@@ -232,7 +250,7 @@ public class ForumUtils {
     return strOrderBy;
   }
   
-  public static String updateMultiValues(String value, String values) throws Exception {
+  public static String updateMultiValues(String value, String values) {
     if (!isEmpty(values)) {
       values = removeSpaceInString(values);
       if (!isStringInStrings(values.split(COMMA), value)) {
@@ -250,7 +268,7 @@ public class ForumUtils {
     return getCensoredKeyword(forumAdministration.getCensoredKeyword());
   }
 
-  public static String[] getCensoredKeyword(String stringKey) throws Exception {
+  public static String[] getCensoredKeyword(String stringKey) {
     if (!isEmpty(stringKey)) {
       String str = EMPTY_STR;
       while (!stringKey.equals(str)) {
@@ -265,7 +283,7 @@ public class ForumUtils {
     return new String[] {};
   }
 
-  public static String[] splitForForum(String str) throws Exception {
+  public static String[] splitForForum(String str) {
     if (!isEmpty(str)) {
       str = StringUtils.remove(str, " ");
       if (str.contains(COMMA)) {
@@ -279,7 +297,7 @@ public class ForumUtils {
       return new String[] { EMPTY_STR };
   }
 
-  public static String unSplitForForum(String[] str) throws Exception {
+  public static String unSplitForForum(String[] str) {
     if (str == null || str.length == 0)
       return EMPTY_STR;
     StringBuilder rtn = new StringBuilder();
@@ -294,7 +312,7 @@ public class ForumUtils {
     return rtn.toString();
   }
 
-  public static String removeSpaceInString(String str) throws Exception {
+  public static String removeSpaceInString(String str) {
     if (!isEmpty(str)) {
       String strs[] = new String[] { ";", COMMA+" ", " "+COMMA, COMMA+COMMA};
       for (int i = 0; i < strs.length; i++) {
@@ -327,7 +345,7 @@ public class ForumUtils {
     return str;
   }
 
-  public static String removeStringResemble(String s) throws Exception {
+  public static String removeStringResemble(String s) {
     List<String> list = new ArrayList<String>();
     if (!isEmpty(s)) {
       String temp[] = splitForForum(s);
@@ -360,7 +378,7 @@ public class ForumUtils {
     return false;
   }
 
-  public static String[] addStringToString(String input, String output) throws Exception {
+  public static String[] addStringToString(String input, String output) {
     List<String> list = new ArrayList<String>();
     if (!isEmpty(output)) {
       if (!isEmpty(input)) {
@@ -394,18 +412,21 @@ public class ForumUtils {
   }
   
   public static boolean isStringInStrings(String[] strings, String string) {
-    string = string.trim();
-    for (String string1 : strings) {
-      string1 = string1.trim();
-      if (string.equals(string1))
-        return true;
+    if (isEmpty(string)) {
+      return false;
     }
-    return false;
+    if (isArrayEmpty(strings)) {
+      return false;
+    }
+    return isStringInList(Arrays.asList(strings), string.trim());
   }
 
   public static boolean isStringInList(List<String> list, String string) {
-    if (list.contains(string))
-      return true;
+    for (String str : list) {
+      if (str.trim().equals(string)) {
+        return true;
+      }
+    }
     return false;
   }
 
@@ -424,7 +445,7 @@ public class ForumUtils {
     return str;
   }
 
-  public static List<String> addArrayToList(List<String> list, String[] array) throws Exception {
+  public static List<String> addArrayToList(List<String> list, String[] array) {
     if (array == null)
       return list;
     if (list.isEmpty() && !isArrayEmpty(array))
@@ -483,7 +504,7 @@ public class ForumUtils {
     portletPref.store();
   }
 
-  public static SettingPortletPreference getPorletPreference() throws Exception {
+  public static SettingPortletPreference getPorletPreference() {
     SettingPortletPreference preference = new SettingPortletPreference();
     PortletRequestContext pcontext = (PortletRequestContext) WebuiRequestContext.getCurrentInstance();
     PortletPreferences portletPref = pcontext.getRequest().getPreferences();
@@ -529,8 +550,13 @@ public class ForumUtils {
     portletPref.setValue("invisibleForums", listForumId);
     portletPref.store();
   }
+  
+  public static boolean isAjaxRequest() {
+    PortalRequestContext portalContext = Util.getPortalRequestContext();
+    return portalContext.useAjax();
+  }
 
-  public static List<String> getListInValus(String value) throws Exception {
+  public static List<String> getListInValus(String value) {
     List<String> list = new ArrayList<String>();
     if (!ForumUtils.isEmpty(value)) {
       list.addAll(Arrays.asList(ForumUtils.addStringToString(value, value)));
@@ -541,14 +567,15 @@ public class ForumUtils {
   public static int getLimitUploadSize(boolean isAvatar) {
     PortletRequestContext pcontext = (PortletRequestContext) WebuiRequestContext.getCurrentInstance();
     PortletPreferences portletPref = pcontext.getRequest().getPreferences();
-    int limitMB = DEFAULT_VALUE_UPLOAD_PORTAL;
+    int limitMB;
     try {
       if (isAvatar) {
         limitMB = Integer.parseInt(portletPref.getValue(UPLOAD_AVATAR_SIZE, EMPTY_STR).trim());
       } else {
         limitMB = Integer.parseInt(portletPref.getValue(UPLOAD_FILE_SIZE, EMPTY_STR).trim());
       }
-    } catch (Exception e) {
+    } catch (NumberFormatException e) {
+      limitMB = DEFAULT_VALUE_UPLOAD_PORTAL;
     }
     return limitMB;
   }

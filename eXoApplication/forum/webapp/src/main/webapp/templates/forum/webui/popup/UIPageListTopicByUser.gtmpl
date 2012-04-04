@@ -25,9 +25,8 @@
 	 	<div class="UIForumContainer">
 			<div class="ContentContainer">
 				<div class="UITopicList">
-					<div style="overflow:auto; margin:2px 0px;">
+					<div style="overflow:auto; margin:2px 0px;" class="ClearFix">
 						<% uicomponent.renderChild(UIForumPageIterator.class) ; %>
-						<div style="clear:right; height:0px;"><span></span></div>
 					</div>
 					<table cellspacing="0" cellpadding="0" border="0" class="UIGrid">
 						<thead>
@@ -39,10 +38,10 @@
 										<a class="DownArrow1Icon"><%=_ctx.appRes("UIPageListTopicByUser.label.threadStarter");%></a>
 									</div>
 								</th>
-								<th style="width:96px;">
+								<th style="width:80px;">
 									<a href="<%=uicomponent.event("SetOrderBy","voteRating");%>"><%=_ctx.appRes("UITopicContainer.label.Rating");%></a>
 								</th>
-								<th style="width:130px;">
+								<th style="width:90px;">
 									<div onclick="<%=uicomponent.event("SetOrderBy","lastPostDate");%>">
 									  <div class="DownArrow1Icon">
 									    <div class="THFixHidden" style="width: 114px;">
@@ -51,10 +50,10 @@
 									  </div>
 									</div>
 								</th>
-								<th style="width:60px;">
+								<th style="width:80px;">
 									<div onclick="<%=uicomponent.event("SetOrderBy","postCount");%>">
 									  <div class="DownArrow1Icon">
-									    <div class="THFixHidden" style="width: 44px;">
+									    <div class="THFixHidden" style="width: 65px;">
 									      <%=_ctx.appRes("UITopicContainer.label.Replies");%>
 									    </div>
 									  </div>
@@ -70,7 +69,7 @@
 									</div>
 								</th>
 								<%if(isAdmin){ %>
-								  <th style="width:50px;"><%=_ctx.appRes("UIPageListTopicByUser.label.Delete");%></th>
+								  <th style="width:85px;"><%=_ctx.appRes("UIPageListTopicByUser.label.Delete");%></th>
 								<%}%>
 							</tr>
 						</thead>
@@ -102,8 +101,7 @@
 										title = "TitleBold";
 										newPost = "New";									
 									}
-									postDate.setTime(topic.getLastPostDate().getTime() - setTime);
-									String lastPostDate = TimeConvertUtils.getFormatDate((userProfile.getShortDateFormat() + ", " + userProfile.getTimeFormat()),postDate);
+									String lastPostDate = TimeConvertUtils.convertXTimeAgo(topic.getLastPostDate(), (userProfile.getShortDateFormat() + ", " + userProfile.getTimeFormat()), setTime);
 									String hot = ""; 
 									if(topic.getPostCount() > 30) hot = "Hot"; 
 									String iconTopicStatus = hot+"Thread"+newPost+"Post" ;
@@ -114,8 +112,7 @@
 										iconTopicStatus = hot+"Thread"+newPost+"ClosePost" ;
 									}
 									String titleTopicStatus = _ctx.appRes("UITopicContainer.label." + iconTopicStatus);
-									//linkOpen = ForumSessionUtils.getBreadcumbUrl(uicomponent.url("OpenTopic", topicId), uicomponent.id, "OpenTopic", "" );
-									linkOpen = ForumUtils.createdForumLink(ForumUtils.TOPIC, topicId);
+									linkOpen = ForumUtils.createdForumLink(ForumUtils.TOPIC, topicId, false);
 							%>
 								<tr class="$classRow">
 									<td class="Tdbox"><div class="ThreadStatusIcon $iconTopicStatus" title="$titleTopicStatus"><span></span></div></td>
@@ -125,7 +122,7 @@
 										<% if(topic.getIsSticky()) {%>
 											<span class="Text StickyIcon"><%=_ctx.appRes("UITopicContainer.label.Sticky");%>:</span>
 										<% } %>
-											<a actions="<%=uicomponent.event("OpenTopic", topicId)%>" href="$linkOpen" title="$titlePost" class="ActionLink $title">$topicTitle</a>
+											<a rel="<%=uicomponent.event("OpenTopic", topicId)%>" href="$linkOpen" title="$titlePost" class="ActionLink $title">$topicTitle</a>
 										</div>
 									</td>
 									<td class="Tdbox">
@@ -133,7 +130,7 @@
 										<% String[] classNames = uicomponent.getStarNumber(topic) ; 
 											 String SumVote = classNames[5] ;
 										%>
-					 						<div class="AvgRatingImages" title="<%=ForumUtils.getLabel(_ctx.appRes("UIForumPortlet.label.TopicRatingVotes"), SumVote);%>">
+					 						<div class="AvgRatingImages ClearFix" title="<%=ForumUtils.getLabel(_ctx.appRes("UIForumPortlet.label.TopicRatingVotes"), SumVote);%>">
 					 					<%	
 											for(className in classNames) {
 												if(className.equals("star")) className = "Voted" ;
@@ -143,7 +140,7 @@
 										%>
 								 				<div class="VoteIcon $className"><span></span></div>
 										 <% } %>
-							 					<div style="clear:left;"><span></span></div>
+							 				
 				 							</div>
 					 					</div>
 									</td>
@@ -163,7 +160,7 @@
 						 		%>
 						 		<tr>
 						 				<td colspan="8" align="center">
-						 					<div style="margin:5px 0px 10px 0px"><b><%=_ctx.appRes("UIForumPortlet.label.NoThread");%></b></div>
+						 					<div style="margin:5px 0px 10px 0px"><strong><%=_ctx.appRes("UIForumPortlet.label.NoThread");%></strong></div>
 						 				</td>
 						 			</tr>
 					 		<%
@@ -171,9 +168,8 @@
 					 	 %>
 						</tbody>
 					</table>
-					<div style="overflow:auto;">
+					<div style="overflow:auto;" class="ClearFix">
 						<% uicomponent.renderChild(UIForumPageIterator.class) ; %>
-						<div style="clear:right; height:0px;"><span></span></div>
 					</div>						
 				</div>
 			</div>

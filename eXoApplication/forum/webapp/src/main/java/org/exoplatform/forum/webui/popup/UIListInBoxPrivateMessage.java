@@ -29,6 +29,7 @@ import org.exoplatform.forum.webui.UIForumPageIterator;
 import org.exoplatform.forum.webui.UIForumPortlet;
 import org.exoplatform.ks.common.webui.UIPopupAction;
 import org.exoplatform.ks.common.webui.UIPopupContainer;
+import org.exoplatform.web.application.ApplicationMessage;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIContainer;
@@ -65,8 +66,7 @@ public class UIListInBoxPrivateMessage extends UIContainer {
     addChild(UIForumPageIterator.class, null, "PageListInBoxMessage");
   }
 
-  @SuppressWarnings("unused")
-  private UserProfile getUserProfile() throws Exception {
+  protected UserProfile getUserProfile() throws Exception {
     if (userProfile == null) {
       userProfile = this.getAncestorOfType(UIForumPortlet.class).getUserProfile();
     }
@@ -74,13 +74,12 @@ public class UIListInBoxPrivateMessage extends UIContainer {
     return userProfile;
   }
 
-  @SuppressWarnings("unused")
-  private boolean isRenderIterator() {
+  protected boolean isRenderIterator() {
     return isRenderIterator;
   }
 
-  @SuppressWarnings( { "unused", "unchecked" })
-  private List<ForumPrivateMessage> getListInBoxPrivateMessage() throws Exception {
+  @SuppressWarnings("unchecked")
+  protected List<ForumPrivateMessage> getListInBoxPrivateMessage() throws Exception {
     JCRPageList pageList = this.forumService.getPrivateMessage(userName, Utils.RECEIVE_MESSAGE);
     UIForumPageIterator forumPageIterator = this.getChild(UIForumPageIterator.class);
     forumPageIterator.updatePageList(pageList);
@@ -93,7 +92,6 @@ public class UIListInBoxPrivateMessage extends UIContainer {
     return this.listInbox;
   }
 
-  @SuppressWarnings("unused")
   private ForumPrivateMessage getPrivateMessage(String id) throws Exception {
     List<ForumPrivateMessage> list = this.listInbox;
     for (ForumPrivateMessage forumPrivateMessage : list) {
@@ -118,7 +116,10 @@ public class UIListInBoxPrivateMessage extends UIContainer {
           privateMessageForm.setPrivateMessage(privateMessage);
           event.getRequestContext().addUIComponentToUpdateByAjax(popupContainer);
           forumPortlet.getUserProfile();
-        } catch (Exception e) {
+        } catch (Exception e) {          
+          event.getRequestContext()
+               .getUIApplication()
+               .addMessage(new ApplicationMessage("UIListInBoxPrivateMessage.msg.fail-view", null, ApplicationMessage.WARNING));
         }
         event.getRequestContext().addUIComponentToUpdateByAjax(forumPortlet);
       }

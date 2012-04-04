@@ -1,17 +1,23 @@
 <% 
   import org.exoplatform.portal.webui.util.Util ;
-  String registerUri = Util.getPortalRequestContext().getPortalURI() + "register";
+  import org.exoplatform.web.url.PortalURL;
+  import org.exoplatform.web.url.navigation.NavigationResource;
+  import org.exoplatform.portal.mop.SiteType;
+  
+  PortalURL nodeURL = nodeurl();
+  NavigationResource resource = new NavigationResource(SiteType.PORTAL, Util.getPortalRequestContext().getPortalOwner(), "register");
+  String registerUri = nodeURL.setResource(resource).toString();
 %>
 <div class="UIKSGuidedTour ClearFix" id="UIKSGuidedTour" style="border: 1px solid red;">
 
 	<ul class="LeftKSGuidedTour">
-		<li class="Button HightLineButton" onclick="showContent(this)" onmouseover="onMouseOverButton(this)" onmouseout="onMouseOutButton(this)">
+		<li class="Button HightLineButton" onclick="showContent(this)" onmouseover="onMouseOverButton(this)" onfocus="onMouseOverButton(this)" onmouseout="onMouseOutButton(this)" onblur="onMouseOutButton(this)">
 			<h5>Quick Overview</h5>
 		</li>
-		<li class="Button NormalButton" onclick="showContent(this)" onmouseover="onMouseOverButton(this)" onmouseout="onMouseOutButton(this)">
+		<li class="Button NormalButton" onclick="showContent(this)" onmouseover="onMouseOverButton(this)" onfocus="onMouseOverButton(this)" onmouseout="onMouseOutButton(this)" onblur="onMouseOutButton(this)">
 			<h5>Publish Expertise</h5>
 		</li>
-		<li class="Button NormalButton" onclick="showContent(this)" onmouseover="onMouseOverButton(this)" onmouseout="onMouseOutButton(this)">
+		<li class="Button NormalButton" onclick="showContent(this)" onmouseover="onMouseOverButton(this)" onfocus="onMouseOverButton(this)" onmouseout="onMouseOutButton(this)" onblur="onMouseOutButton(this)">
 			<h5>Forge Knowledge</h5>
 		</li>
 		<li class="SignUpButton">
@@ -42,7 +48,7 @@
 				<tr>
 					<td>
 						<div class="H4">
-							<img class="ImageKS" src="/eXoResources/skin/DefaultSkin/background/Blank.gif" alt=""/>
+							<img class="ImageKS" src="/eXoResources/skin/DefaultSkin/background/Blank.gif" alt="Moderate and organize the knowledge"/>
 						</div>
 					</td>
 					<td>
@@ -61,7 +67,7 @@
 					</td>
 					<td>
 						<div class="H5">
-							<img class="ImageKS" src="/eXoResources/skin/DefaultSkin/background/Blank.gif" alt=""/>
+							<img class="ImageKS" src="/eXoResources/skin/DefaultSkin/background/Blank.gif" alt="Easy to find"/>
 						</div>
 					</td>
 				</tr>
@@ -74,7 +80,7 @@
 				<tr>
 					<td>
 						<div class="H1">
-							<img class="ImageKS" alt="" src="/eXoResources/skin/DefaultSkin/background/Blank.gif"/>
+							<img class="ImageKS" alt="Easy to use" src="/eXoResources/skin/DefaultSkin/background/Blank.gif"/>
 						</div>
 					</td>
 					<td>
@@ -89,7 +95,7 @@
 					</td>
 					<td>
 						<div class="H2">
-							<img class="ImageKS" src="/eXoResources/skin/DefaultSkin/background/Blank.gif" alt=""/>
+							<img class="ImageKS" src="/eXoResources/skin/DefaultSkin/background/Blank.gif" alt="Encourage involvement"/>
 						</div>
 					</td>
 				</tr>
@@ -98,7 +104,7 @@
 				<tr>
 					<td>
 						<div class="H3">
-							<img class="ImageKS" src="/eXoResources/skin/DefaultSkin/background/Blank.gif" alt=""/>
+							<img class="ImageKS" src="/eXoResources/skin/DefaultSkin/background/Blank.gif" alt="Easy to find"/>
 						</div>
 					</td>
 					<td>

@@ -11,11 +11,11 @@
 <div class="UIShowBookMarkForm">
 	<% uiform.begin() %>
 		<div class="HorizontalLayout" style="_width:88%;">
-		  <div style="overflow:auto; padding-bottom:2px;">
+		  <div style="overflow:auto; padding-bottom:2px;" class="ClearFix">
 				<% 
 				  uiform.renderChild(uiform.BOOKMARK_ITERATOR);
 				%>
-				<div style="clear:right;"><span></span></div>
+
 			</div>
 			<table class="UIGrid">
 				<thead>
@@ -38,17 +38,15 @@
 								linkName = links.substring(index+2,lastIndex);
 								linkPath = links.substring(lastIndex + 2);
 								links = "topicIcon//topicName//"+linkPath;
-								//linkBm = uiform.url("OpenLink",linkPath);		
-								//linkBm = ForumSessionUtils.getBreadcumbUrl(linkBm, uiform.id, "OpenLink", "");
-								linkBm = ForumUtils.createdForumLink(uiform.getType(linkPath), linkPath);					
+								linkBm = ForumUtils.createdForumLink(uiform.getType(linkPath), linkPath, false);					
 					%>
 					<tr>
 						<td><div class="$icon" style="width:24px;height:24px;"><span></span></div></td>
 						<td>
-							<a class="ActionLink" actions="<%=uiform.event("OpenLink",linkPath);%>;" href="$linkBm">$linkName</a>
+							<a class="ActionLink" rel="<%=uiform.event("OpenLink",linkPath);%>;" href="$linkBm">$linkName</a>
 						</td>
 						<td>
-							<div onclick="<%=uiform.event("DeleteLink",links);%>" style="cursor:pointer; margin:0 auto; width:18px;">
+							<div onclick="<%=uiform.event("DeleteLink", linkPath);%>" style="cursor:pointer; margin:0 auto; width:18px;">
 								<div class="DeleteIcon"><span></span></div>
 							</div>
 						</td>
@@ -57,31 +55,15 @@
 					   } else {%>
 					<tr>
 						<td colspan="3" align="center">
-							<div><b><%=_ctx.appRes("UIShowBookMarkForm.label.NoLinks");%></b></div>
+							<div><strong><%=_ctx.appRes("UIShowBookMarkForm.label.NoLinks");%></strong></div>
 						</td>
 					</tr>
 					<% } %>
 				</tbody>
 			</table>
 		</div>
-		<div class="UIAction"> 
-			<table class="ActionContainer">
-				<tr>
-					<td align="center">
-						<div onclick="<%=uicomponent.event("Cancel")%>" class="ActionButton LightBlueStyle">
-							<div class="ButtonLeft">
-								<div class="ButtonRight">
-									<div class="ButtonMiddle">
-										<a href="javascript:void(0);">
-											<%=_ctx.appRes("UIShowBookMarkForm.label.Cancel");%>
-										</a>
-									</div>
-								</div>
-							</div>
-						</div>
-					</td>
-				</tr>
-	 		</table> 
-		</div>
+		<div class="UIAction">
+      <a href="javascript:void(0);" onclick="<%=uicomponent.event("Cancel")%>" class="ActionButton LightBlueStyle"><%=_ctx.appRes("UIShowBookMarkForm.label.Cancel");%></a>
+    </div>
 	<%uiform.end()%>
 </div>

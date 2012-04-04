@@ -2,7 +2,7 @@
 	import org.exoplatform.web.application.JavascriptManager;
 	def jsManager = _ctx.getRequestContext().getJavascriptManager() 
 %>
-<div class="UITopicTypeManagerForm UIBBCodeManagerForm">
+<div class="UIBBCodeManagerForm UITopicTypeManagerForm">
 	<% uiform.begin() %>
 	<div class="AutoPruneContainer" id="TopicTypeManagerForm">
 		<div style="padding:0px 16px 0px 1px;">
@@ -32,14 +32,14 @@
 						<td style="width:60px; text-align:center"><div class="Icon16x16 <%=topicType.getIcon()%>" style="margin:auto"><span></span></div></td>
 						<td style="text-align:left"><%=topicType.getName()%></td>
 						<td width="80px">
-							<div class="ActionContainer" style="margin:0px auto; width:60px;">
+							<div class="ActionContainer ClearFix" style="margin:0px auto; width:60px;">
 								<div style="cursor:pointer; float:left; margin:4px;" onclick="<%=uiform.event("EditTopicType", topicTId)%>">
 									 <div title="<%=_ctx.appRes("UITopicTypeManagerForm.title.Edit"); %>" class="Icon16x16 EditIcon"><span></span></div>							
 								</div>
 								<div style="cursor:pointer; float:left; margin:4px;" onclick="<%=uiform.event("DeleteTopicType", topicTId)%>">
 									 <div title="<%=_ctx.appRes("UITopicTypeManagerForm.title.Delete"); %>" class="Icon16x16 DeleteIcon"><span></span></div>							
 								</div>
-								<div style="clear:left;"><span></span></div>
+
 							</div>
 						</td>
 					</tr>
@@ -48,28 +48,13 @@
 			</table>
 		</div>
 	<% jsManager.addJavascript("eXo.forum.UIForumPortlet.setAutoScrollTable('TopicTypeManagerForm', 'TableContent','UIGrid');") ; %>
-		<div class="UIAction"> 
-			<table class="ActionContainer">
-				<tr>
-					<td align="center">
-					<% for(action in uicomponent.getActions()) { 
-						 String actionLabel = _ctx.appRes(uicomponent.getName() + ".action." + action); 
-						 String link = uicomponent.event(action) ;
-					%>
-							<div onclick="$link" class="ActionButton LightBlueStyle">
-								<div class="ButtonLeft">
-									<div class="ButtonRight">
-										<div class="ButtonMiddle">
-											<a href="javascript:void(0);">$actionLabel</a>
-										</div>
-									</div>
-								</div>
-							</div>
-						<%}%>
-					</td>
-				</tr>
-			</table> 
-		</div>
+		<div class="UIAction">
+  <% for(action in uicomponent.getActions()) { 
+		 String actionLabel = _ctx.appRes(uicomponent.getName() + ".action." + action); 
+  %>
+      <a href="javascript:void(0);" onclick="<%=uicomponent.event(action);%>" class="ActionButton LightBlueStyle">$actionLabel</a>
+      <%}%>
+    </div>
 	</div>
 	<%uiform.end()%>			
 </div>

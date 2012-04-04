@@ -28,14 +28,13 @@ import org.exoplatform.faq.webui.FAQUtils;
 import org.exoplatform.ks.common.webui.BaseUIForm;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
-import org.exoplatform.webui.core.UIComponent;
 import org.exoplatform.webui.core.UIPopupComponent;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
-import org.exoplatform.webui.form.UIFormCheckBoxInput;
 import org.exoplatform.webui.form.UIFormInputWithActions;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
+import org.exoplatform.webui.form.input.UICheckBoxInput;
 
 /**
  * Created by The eXo Platform SAS 
@@ -52,7 +51,6 @@ import org.exoplatform.webui.form.UIFormTextAreaInput;
         @EventConfig(listeners = UIFAQSettingForm.SelectTabActionListener.class) 
     }
 )
-@SuppressWarnings( { "unchecked", "unused" })
 public class UIFAQSettingForm extends BaseUIForm implements UIPopupComponent {
   public static final String SELECT_CATEGORY_TAB    = "SelectCategoryTab";
 
@@ -66,53 +64,44 @@ public class UIFAQSettingForm extends BaseUIForm implements UIPopupComponent {
 
   private FAQSetting         faqSetting_;
 
-  private List<Cate>         listCate               = new ArrayList<Cate>();
-
   private FAQService         faqService_;
 
-  private int                id_                    = 0;
+  private List<Cate>         listCate;
+
+  private List<String>       categoryIds;
 
   private boolean            useAjax                = false;
 
-  private List<String>       categoriesId           = new ArrayList<String>();
+  private int                id_                    = 0;
 
-  private String             homeCategoryName       = "";
+  protected String           homeCategoryName       = "";
 
   public UIFAQSettingForm() throws Exception {
     faqService_ = (FAQService) PortalContainer.getInstance().getComponentInstanceOfType(FAQService.class);
+    homeCategoryName = faqService_.getCategoryNameOf(Utils.CATEGORY_HOME);
     UIFormInputWithActions selectCategoryTab = new UIFormInputWithActions(SELECT_CATEGORY_TAB);
     UIFormInputWithActions editTemplateTab = new UIFormInputWithActions(EDIT_TEMPLATE_TAB);
     UIFormInputWithActions preferenceTab = new UIFormInputWithActions(PREFERENCE_TAB);
 
     UIFormTextAreaInput textAreaInput = new UIFormTextAreaInput(FIELD_TEMPLATE_TEXTARE, FIELD_TEMPLATE_TEXTARE, null);
     editTemplateTab.addUIFormInput(textAreaInput);
-
-    homeCategoryName = faqService_.getCategoryNameOf(Utils.CATEGORY_HOME);
-    initSettingForm();
-    UIFormCheckBoxInput<Boolean> checkBoxInput = null;
-    for (Cate cate : listCate) {
-      checkBoxInput = new UIFormCheckBoxInput<Boolean>(cate.getCategory().getId(), cate.getCategory().getId(), false);
-      checkBoxInput.setChecked(cate.getCategory().isView());
-      selectCategoryTab.addChild(checkBoxInput);
-    }
-    UIFormCheckBoxInput<Boolean> useAjaxCheckBox = new UIFormCheckBoxInput<Boolean>(FIELD_USEAJAX_CHECKBOX, FIELD_USEAJAX_CHECKBOX, false);
-    useAjaxCheckBox.setChecked(useAjax);
+    UICheckBoxInput useAjaxCheckBox = new UICheckBoxInput(FIELD_USEAJAX_CHECKBOX, FIELD_USEAJAX_CHECKBOX, false);
     preferenceTab.addChild(useAjaxCheckBox);
     addUIFormInput(selectCategoryTab);
     addUIFormInput(editTemplateTab);
     addUIFormInput(preferenceTab);
-    setTemplateEdit();
-    this.setActions(new String[] { "Save" });
+    setActions(new String[] { "Save" });
   }
 
-  public List<String> getCategoriesId() {
-    return categoriesId;
-  }
-
-  private boolean getIsSelected(int id) {
+  protected boolean getIsSelected(int id) {
     if (this.id_ == id)
       return true;
     return false;
+  }
+
+  public void defaulValue() throws Exception {
+    categoryIds = FAQUtils.getCategoriesIdFAQPortlet();
+    useAjax = FAQUtils.getUseAjaxFAQPortlet();
   }
 
   private void setTemplateEdit() throws Exception {
@@ -125,20 +114,40 @@ public class UIFAQSettingForm extends BaseUIForm implements UIPopupComponent {
     withActions.getUIFormTextAreaInput(FIELD_TEMPLATE_TEXTARE).setValue(template);
   }
 
-  private List<Cate> getListCate() {
-    return this.listCate;
-  }
-
   public void initSettingForm() throws Exception {
-    categoriesId = FAQUtils.getCategoriesIdFAQPortlet();
-    useAjax = FAQUtils.getUseAjaxFAQPortlet();
-    this.listCate.addAll(faqService_.listingCategoryTree());
-    this.faqSetting_ = new FAQSetting();
+    // set useAjax
+    UIFormInputWithActions withActions = getChildById(PREFERENCE_TAB);
+    withActions.getUICheckBoxInput(FIELD_USEAJAX_CHECKBOX).setChecked(useAjax);
+    // set value for check-box of categories viewer
+    UIFormInputWithActions selectCategoryTab = getChildById(SELECT_CATEGORY_TAB);
+    listCate = faqService_.listingCategoryTree();
+    UICheckBoxInput checkBoxInput = null;
+    String catId;
+    for (Cate cate : listCate) {
+      catId = cate.getCategory().getId();
+      checkBoxInput = selectCategoryTab.getUICheckBoxInput(catId);
+      if (checkBoxInput == null) {
+        checkBoxInput = new UICheckBoxInput(catId, catId, false);
+        selectCategoryTab.addChild(checkBoxInput);
+      }
+      if (categoryIds.isEmpty()) {
+        checkBoxInput.setChecked(cate.getCategory().isView());
+      } else if (categoryIds.contains(catId)) {
+        checkBoxInput.setChecked(true);
+      } else {
+        checkBoxInput.setChecked(false);
+      }
+    }
+    // set value of template
+    setTemplateEdit();
+    // set value of order
+    faqSetting_ = new FAQSetting();
     String orderType = faqSetting_.getOrderType();
-    if (orderType == null || orderType.equals("asc"))
+    if (orderType == null || orderType.equals("asc")) {
       faqSetting_.setOrderType("desc");
-    else
+    } else {
       faqSetting_.setOrderType("asc");
+    }
   }
 
   public void activate() throws Exception {
@@ -147,21 +156,20 @@ public class UIFAQSettingForm extends BaseUIForm implements UIPopupComponent {
   public void deActivate() throws Exception {
   }
 
-  private List<String> getCheckedId() throws Exception {
-    List<String> list = new ArrayList<String>();
+  private void savePortletPreference() throws Exception {
+    categoryIds = new ArrayList<String>();
     UIFormInputWithActions selectCateTab = getChildById(SELECT_CATEGORY_TAB);
-    List<UIComponent> children = selectCateTab.getChildren();
-    for (UIComponent child : children) {
-      if (child instanceof UIFormCheckBoxInput) {
-        if (((UIFormCheckBoxInput) child).isChecked()) {
-          list.add(child.getId());
-        }
+    String catId;
+    for (Cate cate : listCate) {
+      catId = cate.getCategory().getId();
+      if (selectCateTab.getUICheckBoxInput(catId).isChecked()) {
+        categoryIds.add(catId);
       }
     }
     UIFormInputWithActions withActions = getChildById(PREFERENCE_TAB);
-    UIFormCheckBoxInput useAjaxCheckBox = withActions.getUIFormCheckBoxInput(FIELD_USEAJAX_CHECKBOX);
+    UICheckBoxInput useAjaxCheckBox = withActions.getUICheckBoxInput(FIELD_USEAJAX_CHECKBOX);
     useAjax = useAjaxCheckBox.isChecked();
-    return list;
+    FAQUtils.saveFAQPortletPreference(categoryIds, useAjax);
   }
 
   static public class SaveActionListener extends EventListener<UIFAQSettingForm> {
@@ -171,17 +179,18 @@ public class UIFAQSettingForm extends BaseUIForm implements UIPopupComponent {
         UIFormInputWithActions withActions = uiform.getChildById(EDIT_TEMPLATE_TAB);
         String textAre = withActions.getUIFormTextAreaInput(FIELD_TEMPLATE_TEXTARE).getValue();
         if (FAQUtils.isFieldEmpty(textAre)) {
-          uiform.warning("UIViewerSettingForm.msg.ContentTemplateEmpty");
-          return;
+          uiform.warning("UIViewerSettingForm.msg.ContentTemplateEmpty", true);
         } else {
           uiform.faqService_.saveTemplate(textAre);
+          // Your template have been saved.
+          uiform.info("UIViewerSettingForm.msg.SaveTemplateOK", false);
         }
         uiform.setTemplateEdit();
       } else {
-        uiform.categoriesId = uiform.getCheckedId();
-        FAQUtils.saveFAQPortletPreference(uiform.categoriesId, uiform.useAjax);
+        uiform.savePortletPreference();
+        uiform.info("UIViewerSettingForm.msg.SavePortletPreference", false);
       }
-      event.getRequestContext().addUIComponentToUpdateByAjax(uiform);
+      event.getRequestContext().addUIComponentToUpdateByAjax(uiform.getParent());
     }
   }
 
@@ -190,9 +199,6 @@ public class UIFAQSettingForm extends BaseUIForm implements UIPopupComponent {
       String id = event.getRequestContext().getRequestParameter(OBJECTID);
       UIFAQSettingForm uiform = event.getSource();
       uiform.id_ = Integer.parseInt(id);
-      if (uiform.id_ >= 1) {
-        uiform.categoriesId = uiform.getCheckedId();
-      }
       event.getRequestContext().addUIComponentToUpdateByAjax(uiform);
     }
   }

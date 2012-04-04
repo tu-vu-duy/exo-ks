@@ -27,6 +27,7 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
+import org.exoplatform.forum.service.impl.JCRDataStorage;
 import org.exoplatform.ks.common.jcr.PropertyReader;
 import org.exoplatform.ks.common.jcr.SessionManager;
 
@@ -174,7 +175,7 @@ public class ForumPageList extends JCRPageList {
   }
 
   @SuppressWarnings("unchecked")
-  protected void populateCurrentPageSearch(int page, List list, boolean isWatch, boolean isSearchUser) throws Exception {
+  protected void populateCurrentPageSearch(int page, List list, boolean isWatch, boolean isSearchUser) {
     int pageSize = getPageSize();
     int position = 0;
     if (page == 1)
@@ -183,7 +184,6 @@ public class ForumPageList extends JCRPageList {
       position = (page - 1) * pageSize;
     }
     int endIndex = pageSize * page;
-    endIndex = (endIndex < list.size()) ? endIndex : list.size() - 1;
     if (!isSearchUser) {
       if (!isWatch)
         currentListPage_ = new ArrayList<ForumSearch>();
@@ -193,6 +193,7 @@ public class ForumPageList extends JCRPageList {
       currentListPage_ = new CopyOnWriteArrayList();
       list = listValue_;
     }
+    endIndex = (endIndex < list.size()) ? endIndex : list.size();
     if (endIndex > position) {
       currentListPage_.addAll(list.subList(position, endIndex));
     }
@@ -235,36 +236,14 @@ public class ForumPageList extends JCRPageList {
     postNew.setLink(reader.string(ForumNodeTypes.EXO_LINK));
     postNew.setIsApproved(reader.bool(ForumNodeTypes.EXO_IS_APPROVED));
     postNew.setIsHidden(reader.bool(ForumNodeTypes.EXO_IS_HIDDEN));
+    postNew.setIsWaiting(reader.bool(ForumNodeTypes.EXO_IS_WAITING));
     postNew.setIsActiveByTopic(reader.bool(ForumNodeTypes.EXO_IS_ACTIVE_BY_TOPIC));
     postNew.setUserPrivate(reader.strings(ForumNodeTypes.EXO_USER_PRIVATE));
     postNew.setNumberAttach(reader.l(ForumNodeTypes.EXO_NUMBER_ATTACH));
     if (postNew.getNumberAttach() > 0) {
-      postNew.setAttachments(getAttachmentsByNode(postNode));
+      postNew.setAttachments(JCRDataStorage.getAttachmentsByNode(postNode));
     }
     return postNew;
-  }
-
-  private List<ForumAttachment> getAttachmentsByNode(Node node) throws Exception {
-    List<ForumAttachment> attachments = new ArrayList<ForumAttachment>();
-    NodeIterator postAttachments = node.getNodes();
-    Node nodeFile;
-    while (postAttachments.hasNext()) {
-      Node nodeContent = postAttachments.nextNode();
-      if (nodeContent.isNodeType(ForumNodeTypes.EXO_FORUM_ATTACHMENT)) {
-        JCRForumAttachment attachment = new JCRForumAttachment();
-        nodeFile = nodeContent.getNode(ForumNodeTypes.JCR_CONTENT);
-        attachment.setId(nodeContent.getName());
-        attachment.setPathNode(nodeContent.getPath());
-        attachment.setMimeType(nodeFile.getProperty(ForumNodeTypes.JCR_MIME_TYPE).getString());
-        attachment.setName(nodeFile.getProperty(ForumNodeTypes.EXO_FILE_NAME).getString());
-        attachment.setSize(nodeFile.getProperty(ForumNodeTypes.JCR_DATA).getStream().available());
-        String workspace = nodeContent.getSession().getWorkspace().getName();
-        attachment.setWorkspace(workspace);
-        attachment.setPath("/" + workspace + nodeContent.getPath());
-        attachments.add(attachment);
-      }
-    }
-    return attachments;
   }
 
   private Topic getTopic(Node topicNode) throws Exception {
@@ -309,15 +288,16 @@ public class ForumPageList extends JCRPageList {
     topicNew.setCanPost(reader.strings(ForumNodeTypes.EXO_CAN_POST, new String[] {}));
     if (topicNode.isNodeType(ForumNodeTypes.EXO_FORUM_WATCHING))
       topicNew.setEmailNotification(reader.strings(ForumNodeTypes.EXO_EMAIL_WATCHING, new String[] {}));
-    try {
-      if (topicNew.getNumberAttachment() > 0) {
-//        String idFirstPost = topicNode.getName().replaceFirst(Utils.TOPIC, Utils.POST);
-//        Node FirstPostNode = topicNode.getNode(idFirstPost);
-//        topicNew.setAttachments(getAttachmentsByNode(FirstPostNode));
-      }
-    } catch (Exception e) {
-//      log.debug("Failed to set attachments in topicNew.", e);
-    }
+    // try {
+    // if (topicNew.getNumberAttachment() > 0) {
+    // String idFirstPost = topicNode.getName().replaceFirst(Utils.TOPIC,
+    // Utils.POST);
+    // Node FirstPostNode = topicNode.getNode(idFirstPost);
+    // topicNew.setAttachments(getAttachmentsByNode(FirstPostNode));
+    // }
+    // } catch (Exception e) {
+    // log.debug("Failed to set attachments in topicNew.", e);
+    // }
     return topicNew;
   }
 
@@ -376,7 +356,7 @@ public class ForumPageList extends JCRPageList {
   }
 
   @Override
-  protected void populateCurrentPageList(int page, List list) throws Exception {
+  protected void populateCurrentPageList(int page, List list) {
     int pageSize = getPageSize();
     int position = 0;
     if (page == 1)

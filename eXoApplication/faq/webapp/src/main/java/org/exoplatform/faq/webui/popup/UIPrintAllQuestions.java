@@ -28,6 +28,7 @@ import org.exoplatform.faq.service.FAQSetting;
 import org.exoplatform.faq.service.Question;
 import org.exoplatform.faq.webui.FAQUtils;
 import org.exoplatform.faq.webui.UIAnswersPortlet;
+import org.exoplatform.ks.common.CommonUtils;
 import org.exoplatform.ks.common.webui.BaseUIForm;
 import org.exoplatform.ks.common.webui.UIPopupAction;
 import org.exoplatform.webui.application.WebuiRequestContext;
@@ -51,13 +52,12 @@ import org.exoplatform.webui.event.EventListener;
         @EventConfig(listeners = UIPrintAllQuestions.CloseActionListener.class) 
     }
 )
-@SuppressWarnings("unused")
 public class UIPrintAllQuestions extends BaseUIForm implements UIPopupComponent {
   private String[]     sizes_          = new String[] { "bytes", "KB", "MB" };
 
   private String       categoryId      = null;
 
-  private String       currentUser_;
+  protected String     currentUser_;
 
   private boolean      canEditQuestion = false;
 
@@ -65,7 +65,7 @@ public class UIPrintAllQuestions extends BaseUIForm implements UIPopupComponent 
 
   private FAQSetting   faqSetting_     = null;
 
-  private boolean      viewAuthorInfor = true;
+  protected boolean    viewAuthorInfor = true;
 
   private RenderHelper renderHelper    = new RenderHelper();
 
@@ -83,7 +83,7 @@ public class UIPrintAllQuestions extends BaseUIForm implements UIPopupComponent 
     }
   }
 
-  private String getQuestionRelationById(String questionId) {
+  protected String getQuestionRelationById(String questionId) {
     try {
       Question question = faqService_.getQuestionById(questionId);
       if (question != null) {
@@ -98,18 +98,18 @@ public class UIPrintAllQuestions extends BaseUIForm implements UIPopupComponent 
   public String getImageUrl(String imagePath) throws Exception {
     String url = "";
     try {
-      url = org.exoplatform.ks.common.Utils.getImageUrl(imagePath);
+      url = CommonUtils.getImageUrl(imagePath);
     } catch (Exception e) {
       log.debug("Image must exist: ", e);
     }
     return url;
   }
 
-  private String getAvatarUrl(String userId) throws Exception {
+  protected String getAvatarUrl(String userId) throws Exception {
     return FAQUtils.getUserAvatar(userId);
   }
 
-  private String convertSize(long size) {
+  protected String convertSize(long size) {
     String result = "";
     long residual = 0;
     int i = 0;

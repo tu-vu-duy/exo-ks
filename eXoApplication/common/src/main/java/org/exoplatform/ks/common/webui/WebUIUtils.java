@@ -16,12 +16,17 @@
  */
 package org.exoplatform.ks.common.webui;
 
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
+
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.exoplatform.portal.application.PortalRequestContext;
 import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.form.wysiwyg.FCKEditorConfig;
 
 /**
@@ -48,5 +53,22 @@ public class WebUIUtils {
     FCKEditorConfig fckconfig = new FCKEditorConfig();
     fckconfig.put("CustomConfigurationsPath", "/ksResources/fckconfig/fckconfig.js");
     return fckconfig;
+  }
+  
+  public String getLabel(String key) throws Exception {
+    return getLabel(null, key);
+  }
+
+  public static String getLabel(String componentId, String label) {
+    if (!StringUtils.isEmpty(componentId)) {
+      label = componentId.concat(".label.").concat(label);
+    }
+    try {
+      WebuiRequestContext context = WebuiRequestContext.getCurrentInstance();
+      ResourceBundle res = context.getApplicationResourceBundle();
+      return res.getString(label);
+    } catch (MissingResourceException e) {
+      return label;
+    }
   }
 }

@@ -7,12 +7,12 @@
 	List InBoxmails = uicomponent.getListInBoxPrivateMessage() ;
 %>
 <div class="ForumMail UIInBox" id="$uicomponent.id">
-	<div style="overflow:auto; margin:2px 0px;">
+	<div style="overflow:auto; margin:2px 0px;" class="ClearFix">
 		<%
 			if(uicomponent.isRenderIterator()) { 
 				uicomponent.renderChild(UIForumPageIterator.class) ; 
 		%>
-		<div style="clear:right; height:0px;"><span></span></div>
+
 		<% } %>
 	</div>
 	<table cellspacing="0" class="UIGrid" id="PermissionInfo" border="0" cellpadding="0">
@@ -31,17 +31,15 @@
 				String classCssInbox = "EvenRow";
 				long setTime = (long)(userProfile.getTimeZone()*3600000) ;
 				i = 0;
-				Date fromDate = new Date();
 				for(mail in InBoxmails) {
 					if(i%2 == 0) classCssInbox = "EvenRow";
 					else classCssInbox = "OddRow";
 					++i;
 					String mailId = mail.getId();
 					String nameMail = mail.getName() ;
-					if(mail.getIsUnread())nameMail = "<b>" + nameMail + "</b>";
+					if(mail.getIsUnread())nameMail = "<strong>" + nameMail + "</strong>";
 					String fromUser = mail.getFrom();
-					fromDate.setTime(mail.getReceivedDate().getTime() - setTime);
-					String strFromDate = TimeConvertUtils.getFormatDate(formatDate, fromDate);
+					String strFromDate = TimeConvertUtils.convertXTimeAgo(mail.getReceivedDate(), formatDate, setTime);
 		%>
 			<tr class="$classCssInbox">
 				<td class="text"><a href="<%=uicomponent.event("ViewMessage",mailId)%>">$nameMail</a></td>
@@ -63,7 +61,7 @@
 		 <%  }
 		   } else {%>
 		  <tr>
-				<td colspan="4"><div align="center"><b><%=_ctx.appRes("UIPrivateMessageForm.label.NoMessages");%></b></div></td>
+				<td colspan="4"><div align="center"><strong><%=_ctx.appRes("UIPrivateMessageForm.label.NoMessages");%></strong></div></td>
 			</tr>
 		<% } %>
 		</tbody>

@@ -65,7 +65,7 @@ public class UIAnswersContainer extends UIContainer {
     FAQUtils.getPorletPreference(faqSetting_);
     faqSetting_.setCurrentUser(currentUser_);
     if (!FAQUtils.isFieldEmpty(currentUser_)) {
-      if (faqService_.isAdminRole(currentUser_))
+      if (faqService_.isAdminRole(null))
         faqSetting_.setIsAdmin("TRUE");
       else
         faqSetting_.setIsAdmin("FALSE");
@@ -75,8 +75,8 @@ public class UIAnswersContainer extends UIContainer {
     }
     String cateIdView = Utils.CATEGORY_HOME;
     if (!faqSetting_.isAdmin() && !faqSetting_.isPostQuestionInRootCategory()) {
-      propetyOfUser = UserHelper.getAllGroupAndMembershipOfUser(currentUser_);
-      List<Category> cates = faqService_.getSubCategories(cateIdView, faqSetting_, false, propetyOfUser);
+      propetyOfUser = UserHelper.getAllGroupAndMembershipOfUser(null);
+      List<Category> cates = faqService_.getSubCategories(cateIdView, faqSetting_, true, propetyOfUser);
       if (cates != null && cates.size() > 0)
         cateIdView = cateIdView + "/" + cates.get(0).getId();
     }
@@ -100,7 +100,6 @@ public class UIAnswersContainer extends UIContainer {
     if (isAjax != null && Boolean.parseBoolean(isAjax))
       return;
     FAQUtils.getPorletPreference(faqSetting_);
-    try {
       UIQuestions questions = getChild(UIQuestions.class);
       questions.setViewRootCate();
       boolean b = questions.isViewRootCate();
@@ -109,11 +108,9 @@ public class UIAnswersContainer extends UIContainer {
       }
       if (Utils.CATEGORY_HOME.equals(questions.getCategoryId()))
         isRenderChild = hasPermission;
-    } catch (Exception e) {
-    }
   }
 
-  public boolean isRenderCategory(String categoryId) throws Exception {
+  public boolean isRenderCategory(String categoryId) {
     try {
       Category category = faqService_.getCategoryById(categoryId);
       if (currentUser_ != null && currentUser_.trim().length() > 0) {
@@ -123,18 +120,19 @@ public class UIAnswersContainer extends UIContainer {
           faqSetting_.setCanEdit(true);
         } else if (category.getModerators() != null && category.getModerators().length > 0 && category.getModerators()[0].trim().length() > 0) {
           if (propetyOfUser.isEmpty())
-            propetyOfUser = UserHelper.getAllGroupAndMembershipOfUser(currentUser_);
+            propetyOfUser = UserHelper.getAllGroupAndMembershipOfUser(null);
           faqSetting_.setCanEdit(Utils.hasPermission(propetyOfUser, Arrays.asList(category.getModerators())));
         }
       }
       if (!faqSetting_.isCanEdit() && category.getUserPrivate() != null && category.getUserPrivate().length > 0 && category.getUserPrivate()[0].trim().length() > 0) {
         if (propetyOfUser.isEmpty())
-          propetyOfUser = UserHelper.getAllGroupAndMembershipOfUser(currentUser_);
-        return Utils.hasPermission(propetyOfUser, Arrays.asList(category.getUserPrivate()));
+          propetyOfUser = UserHelper.getAllGroupAndMembershipOfUser(null);
+        return Utils.hasPermission(propetyOfUser, Arrays.asList(category.getUserPrivate()));        
       }
+      return true;
     } catch (Exception e) {
+      return true;
     }
-    return true;
   }
 
   public FAQSetting getFAQSetting() {

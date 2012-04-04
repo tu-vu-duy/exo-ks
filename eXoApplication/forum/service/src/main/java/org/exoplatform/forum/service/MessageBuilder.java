@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.exoplatform.ks.common.CommonUtils;
 import org.exoplatform.services.mail.Message;
 
 /**
@@ -33,6 +34,8 @@ import org.exoplatform.services.mail.Message;
  */
 public class MessageBuilder {
   public final static String  CONTEN_EMAIL = Utils.DEFAULT_EMAIL_CONTENT;
+
+  public final static String  SLASH        = "/".intern();
 
   private String              id;
 
@@ -48,6 +51,8 @@ public class MessageBuilder {
 
   private String              addType;
 
+  private String              addName;
+
   private String              message;
 
   private String              catName;
@@ -57,6 +62,8 @@ public class MessageBuilder {
   private String              topicName;
 
   private String              link;
+
+  private String              privateLink;
 
   private String              dateFormat;
 
@@ -135,6 +142,14 @@ public class MessageBuilder {
 
   public void setAddType(String addType) {
     this.addType = addType;
+  }
+
+  public String getAddName() {
+    return addName;
+  }
+  
+  public void setAddName(String addName) {
+    this.addName = addName;
   }
 
   public String getMessage() {
@@ -221,7 +236,25 @@ public class MessageBuilder {
     types.put(Utils.POST, post);
   }
 
+  public void setPrivateLink() {
+    try {
+      String host = CommonUtils.getDomainURL();
+      if(!CommonUtils.isEmpty(link)) {
+        if(link.indexOf("http") == 0) {
+          link = link.substring(link.indexOf(SLASH, 8));
+        }
+        String link = this.link;
+        this.link = host + link;
+        String ptContainer = link.substring(1, link.indexOf(SLASH, 2));
+        privateLink = new StringBuilder(host).append(SLASH).append(ptContainer).append(SLASH).append("login?&initialURI=").append(link).append(SLASH).append(id).toString();
+      }
+    } catch (Exception e) {
+      privateLink = link;
+    }
+  }
+
   public Message getContentEmail() {
+    setPrivateLink();
     Message message = new Message();
     message.setMimeType(ForumNodeTypes.TEXT_HTML);
     message.setFrom(owner);
@@ -232,43 +265,45 @@ public class MessageBuilder {
     } else {
       headerSubject = "[" + catName + "][" + forumName + "]" + topicName;
     }
-    message.setSubject(headerSubject);
+    message.setSubject(CommonUtils.decodeSpecialCharToHTMLnumber(headerSubject));
     String content_ = StringUtils.replace(content, "$OBJECT_NAME", objName);
     content_ = StringUtils.replace(content_, "$OBJECT_WATCH_TYPE", types.get(watchType));
     content_ = StringUtils.replace(content_, "$ADD_TYPE", types.get(addType));
+    content_ = StringUtils.replace(content_, "$ADD_NAME", addName);
     content_ = StringUtils.replace(content_, "$POST_CONTENT", this.message);
     Format formatter = new SimpleDateFormat(timeFormat);
     content_ = StringUtils.replace(content_, "$TIME", formatter.format(createdDate) + " " + zoneTime);
     formatter = new SimpleDateFormat(dateFormat);
     content_ = StringUtils.replace(content_, "$DATE", formatter.format(createdDate));
     content_ = StringUtils.replace(content_, "$POSTER", owner);
-    content_ = StringUtils.replace(content_, "$VIEWPOST_LINK", link + "/" + id);
-    content_ = StringUtils.replace(content_, "$VIEWPOST_PRIVATE_LINK", link.replace("public", "private") + "/" + id);
-    content_ = StringUtils.replace(content_, "$REPLYPOST_LINK", link.replace("public", "private") + "/" + id + "/true");
+    content_ = StringUtils.replace(content_, "$VIEWPOST_LINK", link + SLASH + id);
+    content_ = StringUtils.replace(content_, "$VIEWPOST_PRIVATE_LINK", privateLink);
+    content_ = StringUtils.replace(content_, "$REPLYPOST_LINK", privateLink + "/true");
 
     content_ = StringUtils.replace(content_, "$CATEGORY", catName);
     content_ = StringUtils.replace(content_, "$FORUM", forumName);
     content_ = StringUtils.replace(content_, "$TOPIC", topicName);
-    message.setBody(org.exoplatform.ks.common.Utils.convertCodeHTML(content_));
+    message.setBody(CommonUtils.convertCodeHTML(content_));
     return message;
   }
 
   public Message getContentEmailMoved() {
+    setPrivateLink();
     Message message = new Message();
     message.setMimeType(ForumNodeTypes.TEXT_HTML);
     message.setFrom(owner);
-    message.setSubject(headerSubject);
+    message.setSubject(CommonUtils.decodeSpecialCharToHTMLnumber(headerSubject));
 
     String content_ = StringUtils.replace(content, "$OBJECT_NAME", objName);
     content_ = StringUtils.replace(content_, "$OBJECT_PARENT_NAME", addType);
     content_ = StringUtils.replace(content_, "$POSTER", owner);
     content_ = StringUtils.replace(content_, "$VIEWPOST_LINK", link);
-    content_ = StringUtils.replace(content_, "$VIEWPOST_PRIVATE_LINK", link.replace("public", "private"));
-    content_ = StringUtils.replace(content_, "$REPLYPOST_LINK", link.replace("public", "private") + "/true");
+    content_ = StringUtils.replace(content_, "$VIEWPOST_PRIVATE_LINK", privateLink);
+    content_ = StringUtils.replace(content_, "$REPLYPOST_LINK", privateLink + "/true");
 
     content_ = StringUtils.replace(content_, "$OBJECT_PARENT_TYPE", types.get(Utils.CATEGORY));
     content_ = StringUtils.replace(content_, "$OBJECT_TYPE", types.get(Utils.FORUM));
-    message.setBody(org.exoplatform.ks.common.Utils.convertCodeHTML(content_));
+    message.setBody(CommonUtils.convertCodeHTML(content_));
     return message;
   }
 

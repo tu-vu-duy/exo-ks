@@ -31,15 +31,17 @@ import org.exoplatform.forum.webui.UIForumPageIterator;
 import org.exoplatform.forum.webui.UIForumPortlet;
 import org.exoplatform.forum.webui.UITopicContainer;
 import org.exoplatform.forum.webui.UITopicDetail;
+import org.exoplatform.portal.application.PortalRequestContext;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.web.application.ApplicationMessage;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIPopupComponent;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.event.Event;
-import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.event.Event.Phase;
+import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.form.UIForm;
 
 /**
@@ -118,28 +120,24 @@ public class UIWatchToolsForm extends UIForm implements UIPopupComponent {
   }
 
   @SuppressWarnings("unchecked")
-  public List<String> getListEmail() throws Exception {
+  public List<String> getListEmail() {
     int pageSelect = pageIterator.getPageSelected();
     List<String> list = new ArrayList<String>();
-    try {
-      list.addAll(this.pageList.getPageList(pageSelect, this.listEmail));
-      if (list.isEmpty()) {
-        while (list.isEmpty() && pageSelect > 1) {
-          list.addAll(this.pageList.getPageList(--pageSelect, this.listEmail));
-          pageIterator.setSelectPage(pageSelect);
-        }
+    list.addAll(this.pageList.getPageList(pageSelect, this.listEmail));
+    if (list.isEmpty()) {
+      while (list.isEmpty() && pageSelect > 1) {
+        list.addAll(this.pageList.getPageList(--pageSelect, this.listEmail));
+        pageIterator.setSelectPage(pageSelect);
       }
-    } catch (Exception e) {
     }
     return list;
   }
 
   public void setUnWatchEmail(String[] emails, String unwatchEmail) {
-    if (emails.length == 1)
+    if (emails.length == 1) {
       setEmails(emails);
-    else if (emails.length > 1) {
+    } else if (emails.length > 1) {
       List<String> temp = new ArrayList<String>();
-      int i = 0;
       for (String em : emails) {
         if (!em.equals(unwatchEmail)) {
           temp.add(em);
@@ -190,6 +188,10 @@ public class UIWatchToolsForm extends UIForm implements UIPopupComponent {
         }
         event.getRequestContext().addUIComponentToUpdateByAjax(uiForm);
       } catch (Exception e) {
+        event.getRequestContext()
+             .getUIApplication()
+             .addMessage(new ApplicationMessage("UIWatchToolsForm.msg.fail-delete-email", null, ApplicationMessage.WARNING));
+        ((PortalRequestContext) event.getRequestContext().getParentAppRequestContext()).ignoreAJAXUpdateOnPortlets(true);        
       }
     }
   }

@@ -127,7 +127,7 @@ public class TestBBCodeRenderer extends TestCase {
   public void testBuiltinBBCodes() {
     BBCodeRenderer renderer = new BBCodeRenderer();
     renderer.setBbCodeProvider(new BuiltinBBCodeProvider());
-    assertEquals("<b>param</b>", renderer.render("[B]param[/B]"));
+    assertEquals("<strong>param</strong>", renderer.render("[B]param[/B]"));
     assertEquals("<i>param</i>", renderer.render("[I]param[/I]"));
     assertEquals("<u>param</u>", renderer.render("[U]param[/U]"));
     assertEquals("<font color=\"blue\">param</font>", renderer.render("[COLOR=blue]param[/COLOR]"));
@@ -142,7 +142,7 @@ public class TestBBCodeRenderer extends TestCase {
     assertEquals("<a target=\"_blank\" href=\"http://www.exoplatform.org\">http://www.exoplatform.org</a>", renderer.render("[URL]http://www.exoplatform.org[/URL]"));
     assertEquals("<a target=\"_blank\" href=\"http://www.exoplatform.org\">eXo</a>", renderer.render("[URL=http://www.exoplatform.org]eXo[/URL]"));
     assertEquals("<a href=\"http://www.exoplatform.org\">eXo</a>", renderer.render("[GOTO=http://www.exoplatform.org]eXo[/GOTO]"));
-    assertEquals("<img border=\"0\" alt=\"\" src=\"param\" class=\"inlineimg\"/>", renderer.render("[IMG]param[/IMG]"));
+    assertEquals("<img border=\"0\" alt=\"param\" src=\"param\" class=\"inlineimg\"/>", renderer.render("[IMG]param[/IMG]"));
     assertEquals("<blockquote>param</blockquote>", renderer.render("[QUOTE]param[/QUOTE]"));
     assertEquals("<blockquote cite=\"author\">param</blockquote>", renderer.render("[QUOTE=author]param[/QUOTE]"));
     assertEquals("<span class=\"option\">param</span>", renderer.render("[CSS=option]param[/CSS]"));

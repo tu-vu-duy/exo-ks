@@ -32,6 +32,7 @@ import org.exoplatform.faq.webui.FAQUtils;
 import org.exoplatform.faq.webui.UIAnswersPageIterator;
 import org.exoplatform.faq.webui.UIAnswersPortlet;
 import org.exoplatform.faq.webui.UIQuestions;
+import org.exoplatform.ks.common.CommonUtils;
 import org.exoplatform.ks.common.webui.BaseEventListener;
 import org.exoplatform.ks.common.webui.UIPopupAction;
 import org.exoplatform.ks.common.webui.UIPopupContainer;
@@ -39,7 +40,6 @@ import org.exoplatform.web.application.ApplicationMessage;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
-import org.exoplatform.webui.core.UIApplication;
 import org.exoplatform.webui.core.UIPopupComponent;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.core.model.SelectItemOption;
@@ -67,7 +67,6 @@ import org.exoplatform.webui.form.UIFormSelectBox;
         @EventConfig(listeners = UIQuestionsInfo.ResponseQuestionActionListener.class) 
     }
 )
-@SuppressWarnings("unused")
 public class UIQuestionsInfo extends BaseUIFAQForm implements UIPopupComponent {
   private static final String            LIST_QUESTION_INTERATOR              = "FAQUserPageIteratorTab1";
 
@@ -129,7 +128,7 @@ public class UIQuestionsInfo extends BaseUIFAQForm implements UIPopupComponent {
     setListQuestion();
   }
 
-  private boolean hasInGroup(List<String> listGroup, String[] listPermission) {
+  protected boolean hasInGroup(List<String> listGroup, String[] listPermission) {
     for (String per : listPermission) {
       if (per != null && per.trim().length() > 0 && listGroup.contains(per))
         return true;
@@ -153,8 +152,9 @@ public class UIQuestionsInfo extends BaseUIFAQForm implements UIPopupComponent {
       moderateCates.clear();
       for (String str : listCate) {
         try {
-          this.listCategories.add(new SelectItemOption<String>(str.substring(40), str.substring(0, 40)));
-          moderateCates.add(str.substring(0, 40));
+          int idxOfSemicolon = str.indexOf(CommonUtils.SEMICOLON) ;
+          this.listCategories.add(new SelectItemOption<String>(str.substring(idxOfSemicolon + 1), str.substring(0, idxOfSemicolon)));
+          moderateCates.add(str.substring(0, idxOfSemicolon));
         } catch (StringIndexOutOfBoundsException e) {
           if (str.indexOf(Utils.CATEGORY_HOME) == 0) {
             this.listCategories.add(new SelectItemOption<String>(str.substring(Utils.CATEGORY_HOME.length()), Utils.CATEGORY_HOME));
@@ -168,27 +168,27 @@ public class UIQuestionsInfo extends BaseUIFAQForm implements UIPopupComponent {
     }
   }
 
-  private String[] getQuestionActions() {
+  protected String[] getQuestionActions() {
     return new String[] { "AddLanguage", "Attachment", "Save", "Close" };
   }
 
-  private String[] getQuestionNotAnsweredActions() {
+  protected String[] getQuestionNotAnsweredActions() {
     return new String[] { "QuestionRelation", "Attachment", "Save", "Close" };
   }
 
-  private String[] getTab() {
+  protected String[] getTab() {
     return new String[] { "Question managerment", "Question not yet answered" };
   }
 
-  private boolean getIsEdit() {
+  protected boolean getIsEdit() {
     return isEditTab_;
   }
 
-  private boolean getIsResponse() {
+  protected boolean getIsResponse() {
     return isResponseTab_;
   }
 
-  private long getTotalpages(String pageInteratorId) {
+  protected long getTotalpages(String pageInteratorId) {
     UIAnswersPageIterator pageIterator = this.getChildById(pageInteratorId);
     try {
       return pageIterator.getInfoPage().get(3);
@@ -242,7 +242,7 @@ public class UIQuestionsInfo extends BaseUIFAQForm implements UIPopupComponent {
     }
   }
 
-  private String getCategoryPath(String questionPath) {
+  protected String getCategoryPath(String questionPath) {
     try {
       return getFAQService().getParentCategoriesName(questionPath.substring(0, questionPath.indexOf("/" + Utils.QUESTION_HOME)));
     } catch (Exception e) {
@@ -251,7 +251,7 @@ public class UIQuestionsInfo extends BaseUIFAQForm implements UIPopupComponent {
     }
   }
 
-  private List<Question> getListQuestion() {
+  protected List<Question> getListQuestion() {
     if (!isChangeTab_) {
       pageSelect = pageIterator.getPageSelected();
       listQuestion_ = new ArrayList<Question>();
@@ -278,7 +278,7 @@ public class UIQuestionsInfo extends BaseUIFAQForm implements UIPopupComponent {
    * 
    * @return the list question not answered
    */
-  private List<Question> getListQuestionNotAnswered() {
+  protected List<Question> getListQuestionNotAnswered() {
     if (!isChangeTab_) {
       pageSelectNotAnswer = pageQuesNotAnswerIterator.getPageSelected();
       listQuestionNotYetAnswered_.clear();
@@ -312,9 +312,9 @@ public class UIQuestionsInfo extends BaseUIFAQForm implements UIPopupComponent {
         questionManagerForm.isViewResponseQuestion = false;
         questionManagerForm.isEditQuestion = true;
       } catch (Exception e) {
-        UIApplication uiApplication = questionsInfo.getAncestorOfType(UIApplication.class);
-        uiApplication.addMessage(new ApplicationMessage("UIQuestions.msg.question-id-deleted", null, ApplicationMessage.WARNING));
-        event.getRequestContext().addUIComponentToUpdateByAjax(uiApplication.getUIPopupMessages());
+        event.getRequestContext().getUIApplication().addMessage(new ApplicationMessage("UIQuestions.msg.question-id-deleted",
+                                                                                       null,
+                                                                                       ApplicationMessage.WARNING));        
         for (int i = 0; i < questionsInfo.listQuestion_.size(); i++) {
           if (questionsInfo.listQuestion_.get(i).getId().equals(quesId)) {
             questionsInfo.listQuestion_.remove(i);
@@ -335,7 +335,7 @@ public class UIQuestionsInfo extends BaseUIFAQForm implements UIPopupComponent {
       try {
         Question question = questionsInfo.getFAQService().getQuestionById(questionId);
         boolean isModerateAnswer = questionsInfo.getFAQService().isModerateAnswer(question.getPath());
-        UIResponseForm responseForm = questionManagerForm.getChildById(questionManagerForm.UI_RESPONSE_FORM);
+        UIResponseForm responseForm = questionManagerForm.getChildById(UIQuestionManagerForm.UI_RESPONSE_FORM);
         responseForm.setFAQSetting(questionsInfo.faqSetting_);
         responseForm.updateChildOfQuestionManager(true);
         responseForm.setModertator(true);
@@ -347,7 +347,7 @@ public class UIQuestionsInfo extends BaseUIFAQForm implements UIPopupComponent {
         questionManagerForm.isViewResponseQuestion = true;
         questionManagerForm.isResponseQuestion = true;
       } catch (Exception e) {
-        warning("UIQuestions.msg.question-id-deleted");
+        warning("UIQuestions.msg.question-id-deleted", false);
         for (int i = 0; i < questionsInfo.listQuestion_.size(); i++) {
           if (questionsInfo.listQuestion_.get(i).getPath().equals(questionId)) {
             questionsInfo.listQuestion_.remove(i);
@@ -386,7 +386,7 @@ public class UIQuestionsInfo extends BaseUIFAQForm implements UIPopupComponent {
         }
         // event.getRequestContext().addUIComponentToUpdateByAjax(popupAction) ;
       } catch (Exception e) {
-        warning("UIQuestions.msg.question-id-deleted");
+        warning("UIQuestions.msg.question-id-deleted", false);
         for (int i = 0; i < questionsInfo.listQuestion_.size(); i++) {
           if (questionsInfo.listQuestion_.get(i).getId().equals(questionId)) {
             questionsInfo.listQuestion_.remove(i);
@@ -466,7 +466,7 @@ public class UIQuestionsInfo extends BaseUIFAQForm implements UIPopupComponent {
         event.getRequestContext().addUIComponentToUpdateByAjax(questions);
       } catch (Exception e) {
         questionsInfo.log.error("Can not Change Question Status, exception: " + e.getMessage());
-        warning("UIQuestions.msg.question-id-deleted");
+        warning("UIQuestions.msg.question-id-deleted", false);
       }
       event.getRequestContext().addUIComponentToUpdateByAjax(questionsInfo.getAncestorOfType(UIPopupContainer.class));
     }

@@ -14,9 +14,9 @@
 	 	<div class="UIForumContainer">
 			<div class="ContentContainer">
 				<div class="UITopicList">
-					<div style="overflow:auto; margin:2px 0px;">
+					<div style="overflow:auto; margin:2px 0px;" class="ClearFix">
 						<% uicomponent.renderChild(UIForumPageIterator.class) ; %>
-						<div style="clear:right; height:0px;"><span></span></div>
+
 					</div>
 					<table cellspacing="0" border="0" cellpadding="0" class="UIGrid">
 						<thead>
@@ -33,7 +33,6 @@
 							if(!topics.isEmpty()) {
 								String classRow = "whileRow";
 								int i = 0;
-								Date postDate = new Date();
 								for(topic in topics){
 									if(i%2 == 0) classRow = "whileRow";
 									else classRow = "OddRow";
@@ -42,8 +41,7 @@
 									String topicTitle = topic.getTopicName();
 									String topicBy = topic.getOwner();
 									String isActive = "" + topic.getIsActive();
-									postDate.setTime(topic.getCreatedDate().getTime() - setTime);
-									String lastPostDate = TimeConvertUtils.getFormatDate(formatDate, postDate);
+									String lastPostDate = TimeConvertUtils.convertXTimeAgo(topic.getCreatedDate(), formatDate, setTime);
 									String titlePost = uicomponent.getTitleInHTMLCode(topic.getDescription());
 									titlePost = ForumUtils.getSubString(titlePost, 100);
 									String postCount = String.valueOf(topic.getPostCount());
@@ -81,7 +79,7 @@
 						 		%>
 						 		<tr>
 					 				<td colspan="5" align="center">
-					 					<div style="margin:5px 0px 10px 0px"><b><%=_ctx.appRes("UIForumPortlet.label.NoThread");%></b></div>
+					 					<div style="margin:5px 0px 10px 0px"><strong><%=_ctx.appRes("UIForumPortlet.label.NoThread");%></strong></div>
 					 				</td>
 						 		</tr>
 					 		<%

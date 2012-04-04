@@ -32,6 +32,7 @@ import javax.jcr.NodeIterator;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.component.ComponentPlugin;
 import org.exoplatform.container.xml.InitParams;
+import org.exoplatform.forum.service.CacheUserProfile;
 import org.exoplatform.forum.service.Category;
 import org.exoplatform.forum.service.DataStorage;
 import org.exoplatform.forum.service.Forum;
@@ -59,8 +60,8 @@ import org.exoplatform.forum.service.Topic;
 import org.exoplatform.forum.service.TopicType;
 import org.exoplatform.forum.service.UserLoginLogEntry;
 import org.exoplatform.forum.service.UserProfile;
-import org.exoplatform.forum.service.Utils;
 import org.exoplatform.forum.service.Watch;
+import org.exoplatform.ks.common.CommonUtils;
 import org.exoplatform.ks.common.conf.RoleRulesPlugin;
 import org.exoplatform.management.annotations.ManagedBy;
 import org.exoplatform.services.log.ExoLogger;
@@ -96,7 +97,7 @@ public class ForumServiceImpl implements ForumService, Startable {
   private JobSchedulerService        jobSchedulerService;
 
   protected List<ForumEventListener> listeners_      = new ArrayList<ForumEventListener>(3);
-
+  
   public ForumServiceImpl(InitParams params, ExoContainerContext context, DataStorage dataStorage, ForumStatisticsService forumStatisticsService, JobSchedulerService jobSchedulerService) {
     this.storage = dataStorage;
     this.forumStatisticsService = forumStatisticsService;
@@ -241,14 +242,29 @@ public class ForumServiceImpl implements ForumService, Startable {
    * {@inheritDoc}
    */
   public void removeMember(User user) throws Exception {
-    if (storage.deleteUserProfile(user.getUserName()))
-      forumStatisticsService.removeMember(user.getUserName());
+    String userName = user.getUserName();
+    if (storage.deleteUserProfile(userName))
+      forumStatisticsService.removeMember(userName);
+    UserProfile userProfile = CacheUserProfile.getFromCache(userName);
+    if (userProfile != null) {
+      UserProfile profile = new UserProfile();
+      profile.setUserId(userName);
+      profile.setUserTitle(UserProfile.USER_REMOVED);
+      profile.setUserRole(UserProfile.USER_DELETED);
+      profile.setIsBanned(true);
+      CacheUserProfile.storeInCache(userName, profile);
+    }
   }
 
   public void createUserProfile(User user) throws Exception {
 
   }
 
+  
+  public void calculateDeletedGroup(String groupId, String groupName) throws Exception {
+    storage.calculateDeletedGroup(groupId, groupName);
+  }
+  
   /**
    * {@inheritDoc}
    */
@@ -296,7 +312,7 @@ public class ForumServiceImpl implements ForumService, Startable {
   /**
    * {@inheritDoc}
    */
-  public List<Category> getCategories() throws Exception {
+  public List<Category> getCategories() {
     return storage.getCategories();
   }
 
@@ -348,7 +364,7 @@ public class ForumServiceImpl implements ForumService, Startable {
   /**
    * {@inheritDoc}
    */
-  public Forum getForum(String categoryId, String forumId) throws Exception {
+  public Forum getForum(String categoryId, String forumId){
     return storage.getForum(categoryId, forumId);
   }
 
@@ -376,7 +392,7 @@ public class ForumServiceImpl implements ForumService, Startable {
   /**
    * {@inheritDoc}
    */
-  public void modifyTopic(List<Topic> topics, int type) throws Exception {
+  public void modifyTopic(List<Topic> topics, int type) {
     storage.modifyTopic(topics, type);
   }
 
@@ -409,7 +425,7 @@ public class ForumServiceImpl implements ForumService, Startable {
   /**
    * {@inheritDoc}
    */
-  public void setViewCountTopic(String path, String userRead) throws Exception {
+  public void setViewCountTopic(String path, String userRead){
     storage.setViewCountTopic(path, userRead);
   }
 
@@ -457,12 +473,14 @@ public class ForumServiceImpl implements ForumService, Startable {
    */
   public void moveTopic(List<Topic> topics, String destForumPath, String mailContent, String link) throws Exception {
     storage.moveTopic(topics, destForumPath, mailContent, link);
+    CacheUserProfile.clearCache();
   }
 
   /**
    * {@inheritDoc}
    */
-  public Topic removeTopic(String categoryId, String forumId, String topicId) throws Exception {
+  public Topic removeTopic(String categoryId, String forumId, String topicId) {
+    CacheUserProfile.clearCache();
     return storage.removeTopic(categoryId, forumId, topicId);
   }
 
@@ -523,7 +541,7 @@ public class ForumServiceImpl implements ForumService, Startable {
   /**
    * {@inheritDoc}
    */
-  public void modifyPost(List<Post> posts, int type) throws Exception {
+  public void modifyPost(List<Post> posts, int type){
     storage.modifyPost(posts, type);
   }
 
@@ -545,6 +563,7 @@ public class ForumServiceImpl implements ForumService, Startable {
    */
   public void movePost(String[] postPaths, String destTopicPath, boolean isCreatNewTopic, String mailContent, String link) throws Exception {
     storage.movePost(postPaths, destTopicPath, isCreatNewTopic, mailContent, link);
+    CacheUserProfile.clearCache();
   }
 
   /**
@@ -552,12 +571,14 @@ public class ForumServiceImpl implements ForumService, Startable {
    */
   public void mergeTopic(String srcTopicPath, String destTopicPath, String mailContent, String link) throws Exception {
     storage.mergeTopic(srcTopicPath, destTopicPath, mailContent, link);
+    CacheUserProfile.clearCache();
   }
 
   /**
    * {@inheritDoc}
    */
-  public Post removePost(String categoryId, String forumId, String topicId, String postId) throws Exception {
+  public Post removePost(String categoryId, String forumId, String topicId, String postId) {
+    CacheUserProfile.clearCache();
     return storage.removePost(categoryId, forumId, topicId, postId);
   }
 
@@ -669,7 +690,7 @@ public class ForumServiceImpl implements ForumService, Startable {
   /**
    * {@inheritDoc}
    */
-  public void unTag(String tagId, String userName, String topicPath) throws Exception {
+  public void unTag(String tagId, String userName, String topicPath) {
     storage.unTag(tagId, userName, topicPath);
   }
 
@@ -684,7 +705,9 @@ public class ForumServiceImpl implements ForumService, Startable {
    * {@inheritDoc}
    */
   public void saveUserProfile(UserProfile userProfile, boolean isOption, boolean isBan) throws Exception {
+    String userId = userProfile.getUserId();
     storage.saveUserProfile(userProfile, isOption, isBan);
+    removeCacheUserProfile(userId);
   }
 
   /**
@@ -720,6 +743,7 @@ public class ForumServiceImpl implements ForumService, Startable {
    */
   public void saveUserBookmark(String userName, String bookMark, boolean isNew) throws Exception {
     storage.saveUserBookmark(userName, bookMark, isNew);
+    removeCacheUserProfile(userName);
   }
 
   /**
@@ -774,7 +798,7 @@ public class ForumServiceImpl implements ForumService, Startable {
   /**
    * {@inheritDoc}
    */
-  public ForumSubscription getForumSubscription(String userId) throws Exception {
+  public ForumSubscription getForumSubscription(String userId) {
     return storage.getForumSubscription(userId);
   }
 
@@ -851,7 +875,7 @@ public class ForumServiceImpl implements ForumService, Startable {
   /**
    * {@inheritDoc}
    */
-  public List<ForumSearch> getAdvancedSearch(ForumEventQuery eventQuery, List<String> listCateIds, List<String> listForumIds) throws Exception {
+  public List<ForumSearch> getAdvancedSearch(ForumEventQuery eventQuery, List<String> listCateIds, List<String> listForumIds){
     return storage.getAdvancedSearch(eventQuery, listCateIds, listForumIds);
   }
 
@@ -886,7 +910,7 @@ public class ForumServiceImpl implements ForumService, Startable {
   /**
    * {@inheritDoc}
    */
-  public List<ForumSearch> getJobWattingForModerator(String[] paths) throws Exception {
+  public List<ForumSearch> getJobWattingForModerator(String[] paths){
     return storage.getJobWattingForModerator(paths);
   }
 
@@ -926,7 +950,8 @@ public class ForumServiceImpl implements ForumService, Startable {
       String[] array = mostUsersOnline.split(","); // OMG responsible of this should loose a finger!
       try {
         mostOnline = Integer.parseInt(array[0].trim());
-      } catch (Exception e) {
+      } catch (NumberFormatException e) {
+        mostOnline = 0;
       }
     }
     if (maxOnline > mostOnline) {
@@ -950,8 +975,9 @@ public class ForumServiceImpl implements ForumService, Startable {
       onlineUserList_.add(userId);
     }
     UserLoginLogEntry loginEntry = new UserLoginLogEntry(userId, onlineUserList_.size(), 
-                                                         org.exoplatform.ks.common.Utils.getGreenwichMeanTime());
+                                                         CommonUtils.getGreenwichMeanTime());
     queue.add(loginEntry);
+    CacheUserProfile.storeInCache(userId, storage.getDefaultUserProfile(userId, null));
   }
 
   /**
@@ -961,6 +987,7 @@ public class ForumServiceImpl implements ForumService, Startable {
     if (onlineUserList_.contains(userId)) {
       onlineUserList_.remove(userId);
     }
+    removeCacheUserProfile(userId);
   }
 
   /**
@@ -1039,21 +1066,21 @@ public class ForumServiceImpl implements ForumService, Startable {
   /**
    * {@inheritDoc}
    */
-  public void evaluateActiveUsers(String query) throws Exception {
+  public void evaluateActiveUsers(String query) {
     storage.evaluateActiveUsers(query);
   }
 
   /**
    * {@inheritDoc}
    */
-  public void updateTopicAccess(String userId, String topicId) throws Exception {
+  public void updateTopicAccess(String userId, String topicId) {
     storage.updateTopicAccess(userId, topicId);
   }
 
   /**
    * {@inheritDoc}
    */
-  public void updateForumAccess(String userId, String forumId) throws Exception {
+  public void updateForumAccess(String userId, String forumId){
     storage.updateForumAccess(userId, forumId);
   }
 
@@ -1096,7 +1123,15 @@ public class ForumServiceImpl implements ForumService, Startable {
    * {@inheritDoc}
    */
   public UserProfile getDefaultUserProfile(String userName, String ip) throws Exception {
-    return storage.getDefaultUserProfile(userName, ip);
+    UserProfile userProfile = CacheUserProfile.getFromCache(userName);
+    if (userProfile == null) {
+      userProfile = storage.getDefaultUserProfile(userName, null);
+      CacheUserProfile.storeInCache(userName, userProfile);
+    }
+    if (!userProfile.getIsBanned() && ip != null) {
+      userProfile.setIsBanned(storage.isBanIp(ip));
+    }
+    return userProfile;
   }
 
   /**
@@ -1125,6 +1160,7 @@ public class ForumServiceImpl implements ForumService, Startable {
    */
   public void saveUserSettingProfile(UserProfile userProfile) throws Exception {
     storage.saveUserSettingProfile(userProfile);
+    removeCacheUserProfile(userProfile.getUserId());
   }
 
   /**
@@ -1228,7 +1264,7 @@ public class ForumServiceImpl implements ForumService, Startable {
   /**
    * {@inheritDoc}
    */
-  public void setDefaultAvatar(String userName) throws Exception {
+  public void setDefaultAvatar(String userName) {
     storage.setDefaultAvatar(userName);
   }
 
@@ -1305,7 +1341,7 @@ public class ForumServiceImpl implements ForumService, Startable {
   /**
    * {@inheritDoc}
    */
-  public List<TopicType> getTopicTypes() throws Exception {
+  public List<TopicType> getTopicTypes(){
     return storage.getTopicTypes();
   }
 
@@ -1373,5 +1409,11 @@ public class ForumServiceImpl implements ForumService, Startable {
   public void addListenerPlugin(ForumEventListener listener) throws Exception {
     listeners_.add(listener);
   }
-
+  
+  public void removeCacheUserProfile(String userName) throws Exception {
+    UserProfile userProfile = CacheUserProfile.getFromCache(userName);
+    if (userProfile != null && UserProfile.USER_DELETED != userProfile.getUserRole()) {
+      CacheUserProfile.removeInCache(userName);
+    }
+  }
 }

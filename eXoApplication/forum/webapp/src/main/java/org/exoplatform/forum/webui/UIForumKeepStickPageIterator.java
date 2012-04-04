@@ -28,7 +28,7 @@ import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.core.UIComponent;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
-import org.exoplatform.webui.form.UIFormCheckBoxInput;
+import org.exoplatform.webui.form.input.UICheckBoxInput;
 
 /**
  * Created by The eXo Platform SAS
@@ -85,8 +85,12 @@ public class UIForumKeepStickPageIterator extends BaseForumForm {
   }
 
   public String getURLGopage(String number) throws Exception {
-    String type = (objectId.indexOf(Utils.FORUM_SERVICE) >= 0) ? Utils.FORUM_SERVICE : ((objectId.indexOf(Utils.CATEGORY) >= 0) ? ForumUtils.CATEGORY : ((objectId.indexOf(Utils.FORUM) >= 0) ? ForumUtils.FORUM : ((objectId.indexOf(Utils.TOPIC) >= 0) ? ForumUtils.TOPIC : (ForumUtils.EMPTY_STR))));
-    String link = ForumUtils.createdForumLink(type, objectId + ForumUtils.SLASH + number);
+    String type = (objectId.indexOf(Utils.FORUM_SERVICE) >= 0) ? Utils.FORUM_SERVICE : 
+                  ((objectId.indexOf(Utils.CATEGORY) >= 0) ? ForumUtils.CATEGORY : 
+                    ((objectId.indexOf(Utils.FORUM) >= 0) ? ForumUtils.FORUM : 
+                      ((objectId.indexOf(Utils.TOPIC) >= 0) ? ForumUtils.TOPIC : 
+                        (ForumUtils.EMPTY_STR))));
+    String link = ForumUtils.createdForumLink(type, objectId + ForumUtils.SLASH + number, false);
     return link;
   }
 
@@ -144,7 +148,6 @@ public class UIForumKeepStickPageIterator extends BaseForumForm {
     return this.pageSelect;
   }
 
-  @SuppressWarnings("unchecked")
   public List<String> getIdSelected() throws Exception {
     List<UIComponent> children = this.getChildren();
     List<String> ids = new ArrayList<String>();
@@ -153,8 +156,8 @@ public class UIForumKeepStickPageIterator extends BaseForumForm {
         ids.addAll(pageCheckedList.get(i));
     }
     for (UIComponent child : children) {
-      if (child instanceof UIFormCheckBoxInput) {
-        if (((UIFormCheckBoxInput) child).isChecked()) {
+      if (child instanceof UICheckBoxInput) {
+        if (((UICheckBoxInput) child).isChecked()) {
           if (!ids.contains(child.getName()))
             ids.add(child.getName());
         }
@@ -165,7 +168,6 @@ public class UIForumKeepStickPageIterator extends BaseForumForm {
   }
 
   static public class GoPageActionListener extends EventListener<UIForumKeepStickPageIterator> {
-    @SuppressWarnings("unchecked")
     public void execute(Event<UIForumKeepStickPageIterator> event) throws Exception {
       UIForumKeepStickPageIterator keepStickPageIter = event.getSource();
       UIComponent component = keepStickPageIter;
@@ -173,8 +175,8 @@ public class UIForumKeepStickPageIterator extends BaseForumForm {
       try {
         List<UIComponent> children = keepStickPageIter.getChildren();
         for (UIComponent child : children) {
-          if (child instanceof UIFormCheckBoxInput) {
-            if (((UIFormCheckBoxInput) child).isChecked()) {
+          if (child instanceof UICheckBoxInput) {
+            if (((UICheckBoxInput) child).isChecked()) {
               checkedList.add(child.getId());
             }
           }

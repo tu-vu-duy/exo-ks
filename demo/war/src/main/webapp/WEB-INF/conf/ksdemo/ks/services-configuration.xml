@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.exoplaform.org/xml/ns/kernel_1_0.xsd http://www.exoplaform.org/xml/ns/kernel_1_0.xsd"
-  xmlns="http://www.exoplaform.org/xml/ns/kernel_1_0.xsd">
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd http://www.exoplatform.org/xml/ns/kernel_1_2.xsd"
+  xmlns="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd">
 
   <component>
    <type>org.exoplatform.upload.UploadService</type>
@@ -117,8 +117,8 @@
         <values-param>
           <name>locations</name>
           <description>location where Forum export format file is stored</description>
-          <!-- value>war:/data/forum/data-full-forum.zip</value -->
-          <!-- value>war:/data/forum/forumCategory.xml</value -->
+          <!-- value>war:/data/data-full-forum.zip</value -->
+          <!-- value>war:/data/forumCategory.xml</value -->
         </values-param>
       </init-params>
     </component-plugin> 
@@ -245,6 +245,22 @@
       </init-params>
     </component-plugin>    
       
+  </external-component-plugins>
+  
+  <external-component-plugins>
+    <target-component>org.exoplatform.services.jcr.RepositoryService</target-component>      
+    <component-plugin> 
+      <name>add.ks.nodeType</name>
+      <set-method>addPlugin</set-method>
+      <type>org.exoplatform.services.jcr.impl.AddNodeTypePlugin</type>
+      <init-params>
+        <values-param>
+          <name>autoCreatedInNewRepository</name>
+          <description>Node types configuration file</description>
+          <value>war:/conf/ksdemo/ks/upgrade-nodetypes.xml</value>
+        </values-param>
+      </init-params>
+    </component-plugin>
   </external-component-plugins>
   
 </configuration>  

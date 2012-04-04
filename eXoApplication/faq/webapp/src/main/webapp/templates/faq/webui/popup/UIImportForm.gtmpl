@@ -11,7 +11,7 @@
 					%>
 							<tr>
 								<td class="FieldLabel" style="white-space:nowrap; line-height:20px;">
-									$fieldName
+									<label for="<%=field.getId()%>">$fieldName</label>
 								</td>
 								<td class="FieldComponent"><% uiform.renderField(field) %></td>
 							</tr>
@@ -24,27 +24,13 @@
 			</div>
 		</div>
 		
-		<div class="UIAction"> 
-			<table class="ActionContainer" style="text-align:center">
-				<tr>
-					<td align="center">
-	        <% for(action in uicomponent.getActions()) { 
+		<div class="UIAction">
+    <% for(action in uicomponent.getActions()) { 
 	        	 String actionLabel = _ctx.appRes(uicomponent.getName() + ".action." + action); 
 	           String link = uicomponent.event(action) ;
 	        %>
-	        		<div onclick="$link" class="ActionButton LightBlueStyle">
-		      	  	<div class="ButtonLeft">
-		        	  	<div class="ButtonRight">
-		          	  	<div class="ButtonMiddle">
-		          	  		<a href="javascript:void(0);">$actionLabel</a>
-	          	  		</div>
-		            	</div>
-		          	</div>
-		        	</div>
-	          <%}%>
-	      	</td>
-				</tr>
-		  </table> 
-		</div>
+      <a href="javascript:void(0);" onclick="$link" class="ActionButton LightBlueStyle">$actionLabel</a>
+       <%}%>
+    </div>
 	<%uiform.end()%>
 </div>

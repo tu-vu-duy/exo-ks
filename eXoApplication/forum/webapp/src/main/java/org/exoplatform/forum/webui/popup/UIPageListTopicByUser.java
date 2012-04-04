@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.exoplatform.container.ExoContainerContext;
-import org.exoplatform.forum.ForumTransformHTML;
 import org.exoplatform.forum.ForumUtils;
 import org.exoplatform.forum.service.Category;
 import org.exoplatform.forum.service.Forum;
@@ -38,6 +37,7 @@ import org.exoplatform.forum.webui.UITopicDetail;
 import org.exoplatform.forum.webui.UITopicDetailContainer;
 import org.exoplatform.forum.webui.UITopicPoll;
 import org.exoplatform.ks.bbcode.core.ExtendedBBCodeProvider;
+import org.exoplatform.ks.common.TransformHTML;
 import org.exoplatform.ks.common.webui.UIPopupAction;
 import org.exoplatform.ks.common.webui.UIPopupContainer;
 import org.exoplatform.services.log.ExoLogger;
@@ -87,8 +87,7 @@ public class UIPageListTopicByUser extends UIContainer {
     addChild(UIForumPageIterator.class, null, "PageListTopicByUser");
   }
 
-  @SuppressWarnings("unused")
-  private UserProfile getUserProfile() throws Exception {
+  protected UserProfile getUserProfile() throws Exception {
     UIForumPortlet forumPortlet = this.getAncestorOfType(UIForumPortlet.class);
     isUseAjax = forumPortlet.isUseAjax();
     return this.userProfile = forumPortlet.getUserProfile();
@@ -102,13 +101,12 @@ public class UIPageListTopicByUser extends UIContainer {
     this.userName = userName;
   }
 
-  @SuppressWarnings("unused")
-  private String getTitleInHTMLCode(String s) {
-    return ForumTransformHTML.getTitleInHTMLCode(s, new ArrayList<String>((new ExtendedBBCodeProvider()).getSupportedBBCodes()));
+  protected String getTitleInHTMLCode(String s) {
+    return TransformHTML.getTitleInHTMLCode(s, new ArrayList<String>((new ExtendedBBCodeProvider()).getSupportedBBCodes()));
   }
 
-  @SuppressWarnings( { "unchecked", "unused" })
-  private List<Topic> getTopicsByUser() throws Exception {
+  @SuppressWarnings("unchecked")
+  protected List<Topic> getTopicsByUser() throws Exception {
     UIForumPageIterator forumPageIterator = this.getChild(UIForumPageIterator.class);
     try {
       boolean isMod = false;
@@ -134,8 +132,7 @@ public class UIPageListTopicByUser extends UIContainer {
     return (Topic) forumService.getObjectNameById(topicId, Utils.TOPIC);
   }
 
-  @SuppressWarnings("unused")
-  private String[] getStarNumber(Topic topic) throws Exception {
+  protected String[] getStarNumber(Topic topic) throws Exception {
     double voteRating = topic.getVoteRating();
     return ForumUtils.getStarNumber(voteRating);
   }
@@ -162,7 +159,9 @@ public class UIPageListTopicByUser extends UIContainer {
       topic = uiForm.forumService.getTopicUpdate(topic, false);
       UIForumPortlet forumPortlet = uiForm.getAncestorOfType(UIForumPortlet.class);
       if (topic == null) {
-        forumPortlet.addMessage(new ApplicationMessage("UIShowBookMarkForm.msg.link-not-found", null, ApplicationMessage.WARNING));
+        event.getRequestContext().getUIApplication().addMessage(new ApplicationMessage("UIShowBookMarkForm.msg.link-not-found",
+                                                                                       null,
+                                                                                       ApplicationMessage.WARNING));
         return;
       }
       
@@ -178,12 +177,16 @@ public class UIPageListTopicByUser extends UIContainer {
           forum = uiForm.forumService.getForum(categoryId, forumId);
           isRead = forumPortlet.checkCanView(category, forum, topic);
         } catch (Exception e) {
-          forumPortlet.addMessage(new ApplicationMessage("UIShowBookMarkForm.msg.link-not-found", null, ApplicationMessage.WARNING));
+          event.getRequestContext().getUIApplication().addMessage(new ApplicationMessage("UIShowBookMarkForm.msg.link-not-found",
+                                                                                         null,
+                                                                                         ApplicationMessage.WARNING));
           return;
         }
       }
       if(!isRead) {
-        forumPortlet.addMessage(new ApplicationMessage("UIForumPortlet.msg.do-not-permission", new String[] {}, ApplicationMessage.WARNING));
+        event.getRequestContext().getUIApplication().addMessage(new ApplicationMessage("UIForumPortlet.msg.do-not-permission",
+                                                                                       new String[] {},
+                                                                                       ApplicationMessage.WARNING));
           return;
       }
 

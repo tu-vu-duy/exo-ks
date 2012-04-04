@@ -17,14 +17,11 @@
 package org.exoplatform.forum.webui.popup;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import org.exoplatform.forum.ForumTransformHTML;
 import org.exoplatform.forum.ForumUtils;
 import org.exoplatform.forum.service.Category;
 import org.exoplatform.forum.service.Forum;
-import org.exoplatform.forum.service.ForumServiceUtils;
 import org.exoplatform.forum.service.JCRPageList;
 import org.exoplatform.forum.service.Post;
 import org.exoplatform.forum.service.Topic;
@@ -34,6 +31,7 @@ import org.exoplatform.forum.webui.BaseForumForm;
 import org.exoplatform.forum.webui.UIForumPageIterator;
 import org.exoplatform.forum.webui.UIForumPortlet;
 import org.exoplatform.ks.bbcode.core.ExtendedBBCodeProvider;
+import org.exoplatform.ks.common.TransformHTML;
 import org.exoplatform.ks.common.webui.BaseEventListener;
 import org.exoplatform.ks.common.webui.UIPopupAction;
 import org.exoplatform.ks.common.webui.UIPopupContainer;
@@ -80,7 +78,7 @@ public class UIPageListPostByIP extends BaseForumForm implements UIPopupComponen
     return hasEnableIPLogging;
   }
 
-  public UserProfile getUserProfile() throws Exception {
+  public UserProfile getUserProfile() {
     if (this.userProfile == null) {
       UIForumPortlet forumPortlet = this.getAncestorOfType(UIForumPortlet.class);
       this.userProfile = forumPortlet.getUserProfile();
@@ -97,9 +95,8 @@ public class UIPageListPostByIP extends BaseForumForm implements UIPopupComponen
     this.userName = userId;
   }
 
-  @SuppressWarnings("unused")
-  private String getTitleInHTMLCode(String s) {
-    return ForumTransformHTML.getTitleInHTMLCode(s, new ArrayList<String>((new ExtendedBBCodeProvider()).getSupportedBBCodes()));
+  protected String getTitleInHTMLCode(String s) {
+    return TransformHTML.getTitleInHTMLCode(s, new ArrayList<String>((new ExtendedBBCodeProvider()).getSupportedBBCodes()));
   }
 
   public void setIp(String ip) {
@@ -107,8 +104,8 @@ public class UIPageListPostByIP extends BaseForumForm implements UIPopupComponen
     strOrderBy = "createdDate descending";
   }
 
-  @SuppressWarnings( { "unchecked", "unused" })
-  private List<Post> getPostsByUser() throws Exception {
+  @SuppressWarnings("unchecked")
+  protected List<Post> getPostsByUser() throws Exception {
     UIForumPageIterator forumPageIterator = this.getChild(UIForumPageIterator.class);
     List<Post> posts = null;
     try {
@@ -122,6 +119,9 @@ public class UIPageListPostByIP extends BaseForumForm implements UIPopupComponen
       posts = pageList.getPage(forumPageIterator.getPageSelected());
       forumPageIterator.setSelectPage(pageList.getCurrentPage());
     } catch (Exception e) {
+      if (log.isDebugEnabled()) {
+        log.debug(String.format("Failed to get posts of user %s", userProfile.getFullName()), e);
+      }
     }
     if (posts == null)
       posts = new ArrayList<Post>();
@@ -140,6 +140,9 @@ public class UIPageListPostByIP extends BaseForumForm implements UIPopupComponen
   static public class OpenPostLinkActionListener extends BaseEventListener<UIPageListPostByIP> {
     public void onEvent(Event<UIPageListPostByIP> event, UIPageListPostByIP uiForm, final String postId) throws Exception {
       Post post = uiForm.getPostById(postId);
+      if (post != null) {
+        post = uiForm.getForumService().getPost(ForumUtils.EMPTY_STR, ForumUtils.EMPTY_STR, ForumUtils.EMPTY_STR, post.getPath());
+      }
       if (post == null) {
         warning("UIShowBookMarkForm.msg.link-not-found");
         return;
@@ -150,58 +153,11 @@ public class UIPageListPostByIP extends BaseForumForm implements UIPopupComponen
         int leng = ids.length;
         String categoryId = ids[leng - 4];
         String forumId = ids[leng - 3];
-        String topicId = ids[leng - 2];
         try {
           Category category = uiForm.getForumService().getCategory(categoryId);
-          if (category == null) {
-            warning("UIShowBookMarkForm.msg.link-not-found");
-            return;
-          }
-          String[] privateUser = category.getUserPrivate();
-          if (privateUser != null && privateUser.length > 0) {
-            if (privateUser.length == 1 && privateUser[0].equals(" ")) {
-              isRead = true;
-            } else {
-              isRead = ForumServiceUtils.hasPermission(privateUser, uiForm.userProfile.getUserId());
-            }
-          }
-          if (isRead) {
-            String path_ = ForumUtils.EMPTY_STR;
-            Forum forum = uiForm.getForumService().getForum(categoryId, forumId);
-            if (forum != null)
-              path_ = forum.getPath() + ForumUtils.SLASH + topicId;
-            Topic topic = uiForm.getForumService().getTopicByPath(path_, false);
-            if (forum == null || topic == null) {
-              warning("UIForumPortlet.msg.do-not-permission");
-              return;
-            }
-            if (uiForm.userProfile.getUserRole() == 1 && (forum.getModerators() != null && forum.getModerators().length > 0 && ForumServiceUtils.hasPermission(forum.getModerators(), uiForm.userProfile.getUserId())))
-              isRead = true;
-            else
-              isRead = false;
-
-            if (!isRead && !forum.getIsClosed()) {
-              List<String> listUserPermission = new ArrayList<String>();
-              if (forum.getCreateTopicRole() != null && forum.getCreateTopicRole().length > 0)
-                listUserPermission.addAll(Arrays.asList(forum.getCreateTopicRole()));
-
-              if (forum.getViewer() != null && forum.getViewer().length > 0)
-                listUserPermission.addAll(Arrays.asList(forum.getViewer()));
-
-              if (ForumServiceUtils.hasPermission(listUserPermission.toArray(new String[] {}), uiForm.userProfile.getUserId()))
-                isRead = true;
-
-              // check for topic:
-              if (!isRead && post.getIsActiveByTopic() && post.getIsApproved() && !post.getIsHidden() && topic.getIsActive() && topic.getIsActiveByForum() && topic.getIsApproved() && !topic.getIsClosed() && !topic.getIsWaiting()) {
-                if ((topic.getCanPost().length == 1 && topic.getCanPost()[0].equals(" ")) || ForumServiceUtils.hasPermission(topic.getCanPost(), uiForm.userProfile.getUserId()) || (topic.getCanView().length == 1 && topic.getCanView()[0].equals(" ")) || ForumServiceUtils.hasPermission(topic.getCanView(), uiForm.userProfile.getUserId()))
-                  isRead = true;
-                else
-                  isRead = false;
-              } else {
-                isRead = false;
-              }
-            }
-          }
+          Forum forum = uiForm.getForumService().getForum(categoryId, forumId);
+          Topic topic = uiForm.getForumService().getTopicSummary(post.getPath().replace(ForumUtils.SLASH + post.getId(), ForumUtils.EMPTY_STR));
+          isRead = uiForm.getAncestorOfType(UIForumPortlet.class).checkCanView(category, forum, topic);
         } catch (Exception e) {
           warning("UIShowBookMarkForm.msg.link-not-found");
         }
@@ -230,15 +186,9 @@ public class UIPageListPostByIP extends BaseForumForm implements UIPopupComponen
       String forumId = path[length - 3];
       String categoryId = path[length - 4];
       if (topicId.replaceFirst(Utils.TOPIC, Utils.POST).equals(postId)) {
-        try {
-          uiForm.getForumService().removeTopic(categoryId, forumId, topicId);
-        } catch (Exception e) {
-        }
+        uiForm.getForumService().removeTopic(categoryId, forumId, topicId);
       } else {
-        try {
-          uiForm.getForumService().removePost(categoryId, forumId, topicId, postId);
-        } catch (Exception e) {
-        }
+        uiForm.getForumService().removePost(categoryId, forumId, topicId, postId);
       }
       event.getRequestContext().addUIComponentToUpdateByAjax(uiForm);
     }
@@ -254,11 +204,11 @@ public class UIPageListPostByIP extends BaseForumForm implements UIPopupComponen
   static public class CancelActionListener extends EventListener<UIPageListPostByIP> {
     public void execute(Event<UIPageListPostByIP> event) throws Exception {
       UIPageListPostByIP listPostByIP = event.getSource();
-      listPostByIP.cancelChildPopupAction();
       UIBanIPForumManagerForm form = listPostByIP.getAncestorOfType(UIForumPortlet.class).findFirstComponentOfType(UIBanIPForumManagerForm.class);
       if (form != null) {
         event.getRequestContext().addUIComponentToUpdateByAjax(form);
       }
+      listPostByIP.cancelChildPopupAction();
     }
   }
 

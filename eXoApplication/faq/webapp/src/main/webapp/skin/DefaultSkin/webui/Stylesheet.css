@@ -1,4 +1,6 @@
-@import url('UIMoveCategoryForm/Stylesheet.css') ;
+@import url('UIMoveCategoryForm/Stylesheet.css');
+@import url('popup/Stylesheet.css');
+
 
 .UIWindow .UIAnswersPortlet {
 	min-width: 900px;
@@ -6,9 +8,40 @@
 }
 
 .UIAnswersPortlet {
+	background: white;
 	padding: 5px;
 	min-width: 600px;
 	border: none;
+}
+
+.UIAnswersPortlet h1 {
+	font-size: 22px;
+}
+
+.UIAnswersPortlet h2 {
+	font-size: 18px;
+}
+
+.UIAnswersPortlet h3 {
+	font-size: 16px;
+}
+
+.UIAnswersPortlet h4 {
+	font-size: 14px;
+}
+
+.UIAnswersPortlet h5 {
+	font-size: 12px;
+}
+
+.UIAnswersPortlet h6 {
+	font-size: 11px;
+}
+
+.UIAnswersPortlet ul,li {
+	margin: 0px;
+	padding: 0px;
+	list-style-type: none;
 }
 
 /******************************************** UIRightClickPopupMenu ****************************************/
@@ -36,13 +69,13 @@
 	border-top: solid 1px #7b7b7b;
 }
 
-.UIAnswersPortlet .UIRightClickPopupMenu .MenuItem {
-	padding: 0px;
+.UIAnswersPortlet .UIRightClickPopupMenu .MenuItem a {
+	padding: 4px 10px 4px 25px;
 }
 
-.UIAnswersPortlet .UIRightClickPopupMenu .MenuItem a {
-	display: block;
-	padding: 1px 10px 1px 34px;
+.UIAnswersPortlet .QuestionContainer .UIRightClickPopupMenu .MenuItem .ItemIcon {
+	float: none;
+	height: auto;
 }
 
 .UIAnswersPortlet .UIRightClickPopupMenu .IconItem {
@@ -56,45 +89,42 @@
 /******************************************** UIBreadcumbs ****************************************/
 
 .UIAnswersPortlet .UIBreadcumbs {
-	border: 1px solid #b7b7b7;
-	height: 25px;
+	border: 1px solid #e2e2e2;
+	background: #f6f6f6;
+	height: 30px;
 	padding: 0px;
 }
 
-.UIAnswersPortlet .UIBreadcumbs .BreadcumbsInfoBar {
-	background: #EEF0F2;
-	padding: 0px;
-}
-
-.UIAnswersPortlet .UIBreadcumbs .BreadcumbsInfoBar .OpenIcon {
+.UIAnswersPortlet .UIBreadcumbs .OpenIcon {
 	float: left;
 	background: url('background/FAQPortlet.gif') no-repeat left -243px;
 	width: 16px; height: 14px;
 	margin: 5px 8px 0px 8px;
 }
 
-.UIAnswersPortlet .UIBreadcumbs .BreadcumbsInfoBar a.Selected {
+.UIAnswersPortlet .UIBreadcumbs a.Selected {
 	float: left;
 	color: #1e1f21;
 	font-weight: bold;
 	padding: 0px 5px;
-	line-height: 25px;
+	line-height: 30px;
 }
 
-.UIAnswersPortlet .UIBreadcumbs .BreadcumbsInfoBar .Selected {
+.UIAnswersPortlet .UIBreadcumbs .Selected {
 	float: left;
-	color: #1e1f21;	
+	color: #4c4c4c;	
 	padding: 0px 5px;
-	line-height: 25px;
+	line-height: 30px;
+	font-size: 14px;
 }
 
-.UIAnswersPortlet .UIBreadcumbs .BreadcumbsInfoBar .RightArrowIcon {
+.UIAnswersPortlet .UIBreadcumbs .RightArrowIcon {
 	float: left;
 	/*background: url('background/IconBreadcumbs15x12.gif') no-repeat ;*/
 	background: url('/eXoResources/skin/DefaultSkin/skinIcons/16x16/icons/BlueNextArrow.gif') no-repeat ;
 	width: 16px; 
 	height: 16px;	
-	margin: 6px 0px 0px 0px;
+	margin: 9px 0px 0px 0px;
 }
 
 .UIAnswersPortlet .UICategoriesSummary {
@@ -115,9 +145,29 @@
 	height: 100%;
 }
 
+.UIAnswersPortlet .UIQuestions div {
+	font-family: Verdana,Lucida,Tahoma,Arial,Helvetica,sans-serif;
+}
+
+.UIAnswersPortlet .UIQuestions .AnswerToolbar {
+	background: #fff;
+}
+
+.UIAnswersPortlet .UIQuestions .PrintAction {
+	display: none;
+}
+
 .UIAnswersPortlet .AnswerToolbar {
-	height: 28px;
-	_width: 99.7%;
+	height: 30px;
+	line-height: 30px;
+	background: #f8f8f8;
+	border: 1px solid #e6e6e6;
+	padding-left: 10px;
+	font-size: 14px;
+}
+
+.UIAnswersPortlet .AnswerToolbar .TextTitle {
+	font-size: 14px;
 }
 
 .UIAnswersPortlet a {
@@ -135,40 +185,33 @@
 }
 
 .UIAnswersPortlet .AnswerToolbar .SeparatorLine {
-	background: url(background/FAQPortlet.gif) no-repeat right -188px;
-	padding-right: 2px;
-	margin: 0px 3px;
-}
-
-.UIAnswersPortlet .AnswerToolbar .LeftBar {
-	background: url('background/FAQPortlet.gif') no-repeat left -29px;
-	padding-left: 3px;
-}
-
-.UIAnswersPortlet .AnswerToolbar .RightBar {
-	background: url('background/FAQPortlet.gif') no-repeat right -29px;
-	padding-right: 3px;
-}
-
-.UIAnswersPortlet .AnswerToolbar .CenterBar {
-	background: url('background/FAQPortlet.gif') repeat-x top;
-	height: 28px;
-}
-
-.UIAnswersPortlet .AnswerToolbar .ControlbarCotainer {
+	border-right: 1px solid #d5d5d5;
+	margin: 4px 8px 0px 0px;
+	padding-right: 8px;
 	float: left;
+}
+
+.UIAnswersPortlet .AnswerToolbar .DownArrow1Icon {
+	background: url('background/DownIcon.gif') no-repeat 93% 10px;
+	padding-right: 20px;
 }
 
 .UIAnswersPortlet .UIBreadcumbs .SearchForm {
 	float: right;
-	padding-right: 6px;
+	padding: 2px 6px 0px 0px;
+	width: 280px;
+}
+
+.UIAnswersPortlet .UIBreadcumbs .SearchForm label {
+	color: #4c4c4c;
+	margin-right: 5px;
 }
 
 .UIAnswersPortlet .UIBreadcumbs .SearchForm .SearchIcon {
 	background: url('background/FAQPortlet.gif') no-repeat left -210px;
 	float: right;
 	height:16px;
-	margin:6px 3px 0px 3px;
+	margin:5px 3px 0px 3px;
 	width:16px;
 	cursor: pointer;
 }
@@ -177,16 +220,15 @@
 	background: url('background/FAQPortlet.gif') no-repeat left -226px;
 	float:right;
 	height:16px;
-	margin:6px 3px 0px 3px;
+	margin:5px 3px 0px 3px;
 	width:16px;
 	cursor: pointer;
 }
 
 .UIAnswersPortlet .UISearchForm input {
-	float:right;
-	margin:4px 5px 0px 5px;
-	width:150px;
-	height: 13px;
+	margin: 0px 4px;
+	width: 150px;
+	height: 17px;
 }
 
 .UIAnswersPortlet .UIGroupMembershipSelector .UIBreadcumbs .BreadcumbsInfoBar {
@@ -201,49 +243,32 @@
 }
 
 /******************************	OverButton	***************************************/
-.UIAnswersPortlet .DefaultStyle {
-	background: none;
-	float: left;
-	margin: 3px 0px 0px 0px;
-}
 
-.UIAnswersPortlet .DefaultStyle .LeftOverButton {
-	padding-left: 5px;
-}
-
-.UIAnswersPortlet .DefaultStyle .RightOverButton {
-	padding-right: 5px;
-}
-
-.UIAnswersPortlet .DefaultStyle .CenterOverButton {
-	padding-left: 3px;
-}
-/*FAQAction*/
-.UIAnswersPortlet .FAQBar {
-	background: none;
-	height: 22px;
-}
-
-.UIAnswersPortlet .FAQBarAction .LeftOverButton {
-	background: url('background/FAQPortlet.gif') no-repeat left -440px;
-}
-
-.UIAnswersPortlet .FAQBarAction .RightOverButton {
-	background: url('background/FAQPortlet.gif') no-repeat right -440px;
-}
-
-.UIAnswersPortlet .FAQBarAction .CenterOverButton {
-	background: url('background/FAQPortlet.gif') repeat-x center -417px;
-	line-height: 22px;
-}
 
 /******************************	FAQContent	***************************************/
 
 .UIAnswersPortlet .AnswersContainer {
 	background: white;
-	border: 1px solid #c7c7c7;
+	border: 1px solid #e6e6e6;
 	border-top: 0px;
-	_width: 99.5%;
+	height: auto; 
+	padding: 8px 0px 8px 10px; 
+	margin-bottom: 5px; 
+	line-height: 18px;
+}
+
+.UIAnswersPortlet .AnswersContainer a {
+	color: #4c4c4c;
+	cursor: pointer;
+}
+
+.UIAnswersPortlet .AnswersContainer a:hover {
+	color: #115eb2;
+}
+
+.UIAnswersPortlet .CategoriesContainer {
+	min-height:339px;
+	overflow: auto;
 }
 
 .UIAnswersPortlet .HorizontalLayout {
@@ -259,7 +284,7 @@
 
 .UIAnswersPortlet .LockFunction {
 	filter: alpha(opacity=50);
-	-moz-opacity: 0.5;
+	opacity: 0.5;
 }
 
 .UIAnswersPortlet .AnswersContainer .FAQContent .FAQCategory {
@@ -271,10 +296,14 @@
 	white-space: nowrap;
 }
 
-.UIAnswersPortlet .UICategories{
-		padding-left: 5px;
-		white-space: nowrap;
-		overflow: hidden;
+.UIAnswersPortlet .UICategories {
+	white-space: nowrap;
+	overflow: hidden;
+	user-select: none;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	-o-user-select: none;
 }
 
 .UIAnswersPortlet .UICategories .FAQCategoryRoot {
@@ -295,17 +324,20 @@
 }
 
 .UIAnswersPortlet .UICategories .FAQCategoryRight {
-	background: url('background/BlackBorderRightArrow.gif') no-repeat left;
-	padding: 0px 0px 4px 28px;
-	height: 16px;
+	background: url('background/BlackBorderRightArrow.gif') no-repeat left center;
+	padding: 0px 0px 0px 20px;
 	line-height: 16px;
 	white-space: nowrap;
-	-moz-user-select:none;
 	cursor:pointer;
+	margin-bottom: 5px;
 }
 
-.UIAnswersPortlet .UICategories .FAQCategoryRight a{
-	-moz-user-select:none;
+.UIAnswersPortlet .UICategories .FAQCategoryRight a {
+	color: #4c4c4c;
+}
+
+.UIAnswersPortlet .UICategories .FAQCategoryRight a:hover {
+	color: #115eb2;
 }
 
 .UIAnswersPortlet .UICategories .FAQCategoryRightBlack {
@@ -315,7 +347,7 @@
 	line-height: 16px;
 	white-space: nowrap;
 	font-weight: bold;
-	-moz-user-select:none;
+	user-select:none;
 }
 
 .UIAnswersPortlet .UICategories .FAQTmpCategory {
@@ -333,7 +365,7 @@
 	height:14px;
 	border: solid 1px #333333;
 	background: #cccccc url('background/BlackBorderRightArrow.gif') no-repeat left;
-	-moz-opacity:0.5;
+	opacity:0.5;
 	filter: Alpha(Opacity=50);
 }
 
@@ -342,15 +374,23 @@
 	padding-left: 28px;
 	height: 18px;
 	line-height: 18px;
-	margin: 8px 0px;
+	margin: 0px 0px 8px 0px;
 	white-space: nowrap;
 	font-weight: bold;
 }
 
+.UIAnswersPortlet .UIQuestions .AnswerToolbar .UIRightClickPopupMenu {
+	min-width: 150px;
+	width: 150px;
+}
+
+.UIAnswersPortlet .UIQuestions .UIRightClickPopupMenu {
+	display: block;
+}
+
 .UIAnswersPortlet .UIQuestions .AnswersContainer {
 	min-height: 400px;
-	width: 99.7% !importan;
-	_height: 380px;
+	border: none;
 }
 
 .UIAnswersPortlet .UIQuestions .AnswersContainer .UIFAQPopupCategory {
@@ -393,22 +433,29 @@
 
 /******************************	Question Select	***************************************/
 
-.UIAnswersPortlet .QuestionSelect{
-	margin: 5px 0px;
+.UIAnswersPortlet .QuestionSelect {
+	padding: 15px 20px;
+	border-top: 1px solid #d9d9d9;
 }
 
 .UIAnswersPortlet .QuestionSelect .QuestionContainer {
-	padding: 0px 0px 15px 8px;
+	padding: 0px 0px 15px 0px;
 	margin: 0px;
-	background: #ebf2fb;
+	overflow: hidden;
 }
 
-.UIAnswersPortlet .QuestionSelect .QuestionContainer .LeftQuestionContainer {
+.UIAnswersPortlet .QuestionSelect .QuestionContainer .QuestionContent {
+	margin: 0px 360px 0px 100px;
 }
 
-.UIAnswersPortlet .QuestionSelect .QuestionContainer .RightQuestionContainer {
+.UIAnswersPortlet .QuestionSelect .QuestionContent .QuestionName {
+	color: #115eb2;
+	font-weight: bold;
+}
+
+.UIAnswersPortlet .QuestionSelect .QuestionContainer .ActionQuestion {
 	float: right;
-	width: 30%;
+	width: 350px;
 }
 
 .UIAnswersPortlet .QuestionSelect .QuestionContainer .SendToFriend {
@@ -480,9 +527,11 @@
 }
 
 .UIAnswersPortlet .QuestionSelect .SortAnswer {
-	background: url('background/SortByVote.gif') no-repeat center;
-	width: 20px; height: 20px;
+	background: url('background/DownIcon.gif') no-repeat right 7px;
 	cursor: pointer;
+	display: block;
+	color: #4c4c4c;
+	padding-right: 16px;
 }
 
 .UIAnswersPortlet .QuestionSelect .QuestionContainer .LockSendToFriend {
@@ -502,12 +551,41 @@
 	padding: 5px 0px 5px 20px;
 }
 
+.UIAnswersPortlet .QuestionSelect .QuestionContainer .LanguageContainer {
+	text-align: right;
+	line-height: 20px;
+	color: #115eb2;
+	padding: 3px 0px;
+	font-size: 11px;
+}
+
+.UIAnswersPortlet .QuestionSelect .QuestionContainer .LanguageContainer a {
+	color: #115eb2;
+}
+
+.UIAnswersPortlet .QuestionSelect .QuestionContainer .LanguageContainer a:hover {
+	text-decoration: underline;
+}
+
+.UIAnswersPortlet .QuestionSelect .QuestionContainer .IconColumn {
+	width: 25px;
+	float: right;
+}
+
 .UIAnswersPortlet .QuestionSelect .QuestionContainer .PrintScrintFAQ {
 	float: right;
 	background: url('background/PrintScrintFAQ.gif') no-repeat left center;
 	width: 21px; height: 20px;
 	cursor: pointer;
-	margin: 0px 4px;
+}
+
+.UIAnswersPortlet .QuestionSelect .QuestionContainer .IconContainer .Edit,
+.UIAnswersPortlet .QuestionSelect .QuestionContainer .IconContainer .Delete,
+.UIAnswersPortlet .QuestionSelect .QuestionContainer .IconContainer .MoveQuestion {
+	float: right;
+	width: 17px; height: 20px;
+	cursor: pointer;
+	margin-left: 3px;
 }
 
 .UIAnswersPortlet .QuestionSelect .QuestionContainer .BackPageFAq {
@@ -515,61 +593,15 @@
 	background: url('background/BackPageIcon.gif') no-repeat left center;
 	width: 21px; height: 20px;
 	cursor: pointer;
-	margin: 0px 4px;
 }
 
 .UIAnswersPortlet .QuestionSelect .QuestionContainer .LanguageSetting {
 	line-height: 20px;
 	font-weight: bold;
 	color: #1e1f21;
-	margin: 0px 4px;
 	float: right;
 }
 
-
-.UIAnswersPortlet .QuestionSelect .DecoratorTL{
-	background: url('background/DecoratorTL.gif') no-repeat left;
-	padding-left: 11px;
-}
-
-.UIAnswersPortlet .QuestionSelect .DecoratorTR{
-	background: url('background/DecoratorTR.gif') no-repeat right;
-	padding-right: 11px;
-}
-
-.UIAnswersPortlet .QuestionSelect .DecoratorTC{
-	background: url('background/DecoratorTC.gif') repeat-x;
-	height: 11px;
-}
-
-.UIAnswersPortlet .QuestionSelect .DecoratorML{
-	background: url('background/DecoratorML.gif') repeat-y left;
-	padding-left: 5px;
-}
-
-.UIAnswersPortlet .QuestionSelect .DecoratorMR{
-	background: url('background/DecoratorMR.gif') repeat-y right;
-	padding-right: 5px;
-}
-
-.UIAnswersPortlet .QuestionSelect .DecoratorMC {
-	width:100%;
-}
-
-.UIAnswersPortlet .QuestionSelect .DecoratorBL{
-	background: url('background/DecoratorBL.gif') no-repeat left ;
-	padding-left: 10px;
-}
-
-.UIAnswersPortlet .QuestionSelect .DecoratorBR{
-	background: url('background/DecoratorBR.gif') no-repeat right;
-	padding-right: 10px;
-}
-
-.UIAnswersPortlet .QuestionSelect .DecoratorBC{
-	background: url('background/DecoratorBC.gif') repeat-x;
-	height: 10px;
-}
 
 
 
@@ -624,13 +656,6 @@
 	
 }
 
-
-.UIAnswersPortlet .ViewQuestionNotApproved {
-	display:table-cell;
-	line-height:12px;
-	padding-right: 5px ;
-}
-
 .UIAnswersPortlet .ViewQuestionNotApproved .QuestionName {
 	font-weight: bold;
 	font-size: 16px;
@@ -639,11 +664,41 @@
 
 .UIAnswersPortlet .QuestionDateTime {
 	white-space: nowrap; 
-	color:#721d95 ;
+	color:#808080;
+	float: left;
+	margin: 0px 5px 0px 0px;
 }
 
 .UIAnswersPortlet .LeftQuestionContainer .UIDetailContainer {
-	padding: 5px 0px;
+	padding: 5px 0px 8px 0px;
+}
+
+.UIAnswersPortlet .LeftQuestionContainer .UIDetailContainer p {
+	margin: 0px;
+	font-style: italic;
+	color: #4c4c4c;
+}
+
+.UIAnswersPortlet .LeftQuestionContainer .QuestionAction {
+	float: left;
+	color: #115eb2;
+}
+ 
+.UIAnswersPortlet .LeftQuestionContainer .QuestionAction a {
+	color: #115eb2;
+	background: none;
+}
+ 
+.UIAnswersPortlet .LeftQuestionContainer .QuestionAction a:hover {
+	text-decoration: underline;
+}
+ 
+.UIAnswersPortlet .LeftQuestionContainer .UIDetailContainer ul li {
+	list-style: disc;
+}
+
+.UIAnswersPortlet .LeftQuestionContainer .UIDetailContainer ol li {
+	list-style-type: inherit;
 }
 
 .UIAnswersPortlet .ProfileContainer .AuthorInfor {
@@ -658,13 +713,36 @@
 }
 
 .UIAnswersPortlet .ProfileContainer .AvatarContainer {
-	margin: 20px auto 0px auto;
-	width: 66px;
+	margin: 0px auto;
+	width: 80px;
+}
+
+.UIAnswersPortlet .QuestionContainer .ImgProfile {
+	width: 100px;
+	float: left;
+	text-align: center;
+}
+
+.UIAnswersPortlet .QuestionContainer .DisablePrint a {
+	cursor: pointer;
+}
+
+.UIAnswersPortlet .QuestionContainer .VoteResult {
+	width: 145px;
+	float: right;
+	line-height: 22px;
+}
+
+.UIAnswersPortlet .QuestionContainer .VoteResult .RatingInfoContainer {
+	float: left;
+}
+
+.UIAnswersPortlet .QuestionContainer .VoteResult .Result {
+	float: right;
+	margin: 0px;
 }
 
 .UIAnswersPortlet .ImgAvatarBorder {
-	-moz-border-radius: 3px;
-	-webkit-border-radius: 3px;
 	border-radius: 3px;
 	border: 1px solid #B7B7B7;
 	border-bottom: 1px solid #8D8D8D;
@@ -730,53 +808,88 @@
 }
 
 .UIAnswersPortlet .AnswersContainer .ResponseContent .ResponseContainer{
-	border: solid 1px #b7b7b7;
-	width: 99.5%;
-	margin:auto;
+	padding: 0px 0px 0px 100px;
 }
 
-.UIAnswersPortlet .AnswersContainer .ResponseContainer .TitleResponseContent{
-	background: url('background/TitleResponseContent.gif') repeat-x top left;
-	border: solid 1px #ffffff;
-	height: 37px;
+.UIAnswersPortlet .AnswersContainer .ResponseContainer .TitleResponseContent {
+	border-bottom: solid 1px #e6e6e6;
 }
 
-.UIAnswersPortlet .AnswersContainer .TitleResponseContent .IconResponse {
-	background: url('background/TitleResponseContent.gif') repeat-x top left;
-	color: #5c5c5c; font-size: 18px;
-	line-height: 26px; padding-left: 20px;
+.UIAnswersPortlet .AnswersContainer .ResponseContainer .TitleResponseContent .TxtTitle {
+	float: left;
+	margin: 0px;
+	color: #4c4c4c;
+	font-weight: bold;
+	line-height: 26px;
 }
+
+.UIAnswersPortlet .AnswersContainer .ResponseContainer .TitleResponseContent .IconTitle {
+	width: 100px;
+	float: right;
+	margin: 0px;
+	text-align: right;
+}
+
 
 .UIAnswersPortlet .AnswersContainer .FAQContent .ResponseExternal {
 	padding: 5px 10px 10px 0px; 
-	background: url('background/BottomResponseContent.gif') repeat-x bottom left;
 }
 
-.UIAnswersPortlet .AnswersContainer .ResponseContainer .TitleCommentContent{
-	background: url('background/TitleResponseContent.gif') repeat-x top left;
-	border-top: solid 1px #ffffff;
-	border-bottom: solid 1px #ffffff;
-	height: 28px;
-}
-
-.UIAnswersPortlet .AnswersContainer .TitleCommentContent .IconComment {
-	background: url('background/TitleResponseContent.gif') repeat-x top left;
-	color: #5c5c5c; font-size: 18px;
-	line-height: 26px; padding-left: 20px;
+.UIAnswersPortlet .AnswersContainer .ResponseContainer .TitleCommentContent {
+	border-bottom: solid 1px #e6e6e6;
+	margin: 0px;
+	color: #4c4c4c;
+	font-weight: bold;
+	line-height: 26px;
 }
 
 .UIAnswersPortlet .AnswersContainer .FAQContent .CommentExternal {
 	padding: 0px; 
 }
 
-.UIAnswersPortlet .AnswersContainer .FAQContent .Response {
-	_width: 100%;
+.UIAnswersPortlet .AnswersContainer .FAQContent .ResponseItemContainer {
+	padding: 10px 0px; 
+}
+
+.UIAnswersPortlet .AnswersContainer .FAQContent .ResponseItemContainer .IconContainer {
+	width: 100px;
+	float: right;
+}
+
+.UIAnswersPortlet .AnswersContainer .FAQContent .ResponseItemContainer .IconContainer .ItemIcon {
+	float: right;
+	cursor: pointer;
+	height: 20px;
+	margin: 0 0 0 4px;
+	width: 16px;
+}
+
+.UIAnswersPortlet .AnswersContainer .FAQContent .Response .NotResponse {
+	font-weight: bold;
+	margin: auto;
+	padding: 0px 0px 10px 20px;
+	text-align: left;
+	width: 300px;
 }
 
 .UIAnswersPortlet .AnswersContainer .FAQContent .RelationContent {
 	padding-bottom: 4px;
 	padding-left: 10px ;
-	_width: 90%;
+}
+
+.UIAnswersPortlet .AnswersContainer .RelationContent h4 {
+	font-weight: bold; 
+	font-size: 13px; 
+	margin: 5px 0px 3px;
+}
+
+.UIAnswersPortlet .AnswersContainer .RelationContent p {
+	padding:0px 0px 5px 10px;
+	margin: 0px;
+}
+
+.UIAnswersPortlet .AnswersContainer .RelationContent p a {
+	color: #1555B5;
 }
 
 .UIAnswersPortlet .EditQuestionContent {
@@ -789,6 +902,13 @@
 .UIAnswersPortlet .ResponseContent .AttachmentContent {
 	padding-bottom: 4px;
 	padding-left: 10px ;
+}
+
+.UIAnswersPortlet .ResponseContent .AttachmentContent .FileAttachment {
+	float: left;
+	width: auto;
+	padding: 0px;
+	margin-right: 5px;
 }
 
 .UIAnswersPortlet .ResponseContent .RelatedQuestions {
@@ -807,19 +927,16 @@
 }
 
 .UIAnswersPortlet .ResponseContent .AttachmentContent .LabelBox {
-	float: left;
+	line-height: 20px; 
+	white-space: nowrap;
 }
 
 .UIAnswersPortlet .ResponseContent .AttachmentContent .Image {
-	float: left;
-	margin: 0px 10px 0px 0px;
 	width: 100px; height: 100px;
 }
 
 .UIAnswersPortlet .ResponseContent .AttachmentContent .AttachmentIcon {
-	float:left;
-	height:20px;
-	width:20px;
+	float: left;
 }
 
 .UIAnswersPortlet .ResponseContent .AttachmentContent .AttachmentLabel {
@@ -827,6 +944,12 @@
 	float:left;
 	font-weight:bold;
 	line-height:20px;
+}
+
+.UIAnswersPortlet .ResponseContent .AttachmentContent .SizeLabel {
+	color: gray; 
+	float: left;
+	font-size: 11px;
 }
 
 .UIAnswersPortlet .ResponseContent .AttachmentContent .Action {
@@ -869,24 +992,76 @@
 	padding-left: 20px;
 }
 
-.UIAnswersPortlet .ResponseItemContainer {
-
-}
-
-.UIAnswersPortlet .ResponseItemContainer .ResponseItemContainerLeft {
+.UIAnswersPortlet .ResponseItemContainer .ImgItemContainer {
 	float: left;
-	width: 130px;
+	width: 70px;
 }
 
-.UIAnswersPortlet .ResponseItemContainer .ResponseItemContainerRight{
-	margin-left: 130px;
+.UIAnswersPortlet .ResponseItemContainer .ImgItemContainer img {
+	width: 50px;
+	height: 50px;
+}
+
+.UIAnswersPortlet .ResponseItemContainer .ResponseItemContainerRight {
+	margin: 0px 150px 0px 70px;
 	padding-bottom: 5px;
 }
 
-.UIAnswersPortlet .ResponseItemContainer .ResponseItemContainerRight .AnswerContent{
-	padding:3px;
-	overflow: auto;
-	width: 98%;
+.UIAnswersPortlet .ResponseItemContainer .ResponseItemContainerRight .AuthorInfor {
+	float: left;
+	font-weight: bold;
+	line-height: 22px;
+	margin-right: 10px;
+	color: #115eb2;
+}
+
+.UIAnswersPortlet .ResponseItemContainer .ResponseItemContainerRight .AnswerContent {
+	color: #4c4c4c;
+	line-height: 22px;
+	overflow: hidden;
+	padding-bottom: 5px;
+}
+
+.UIAnswersPortlet .ResponseItemContainer .ResponseItemContainerRight .AnswerContent p {
+	margin: 0px;
+}
+
+.UIAnswersPortlet .ResponseItemContainer .ResponseItemContainerRight .CommentContent {
+	color: #4c4c4c;
+	line-height: 22px;
+	overflow: hidden;
+	padding-bottom: 5px;
+}
+
+.UIAnswersPortlet .ResponseItemContainer .ResponseItemContainerRight .CommentContent p {
+	margin: 0px;
+}
+
+.UIAnswersPortlet .ResponseItemContainer .ResponseItemContainerRight .Date {
+	color: #808080;
+	background: none;
+	float: left;
+}
+
+.UIAnswersPortlet .ResponseItemContainer .ResponseItemContainerRight .VoteAnswerContainer {
+	overflow: hidden; 
+	padding-left: 10px;
+}
+
+.UIAnswersPortlet .ResponseItemContainer .ResponseItemContainerRight .VoteAnswerUp {
+	float: left;
+	display: block;
+}
+
+.UIAnswersPortlet .ResponseItemContainer .ResponseItemContainerRight .VoteAnswerDown {
+	float: left;
+	display: block;
+}
+
+.UIAnswersPortlet .ResponseItemContainer .ResponseItemContainerRight .TextVoteAnswer {
+	float: left;
+	line-height: 18px; 
+	margin-left: 4px;
 }
 
 .UIAnswersPortlet .UIResponse #QuestionRespone___Frame{
@@ -933,7 +1108,6 @@
 	padding-left: 8px;
 	margin-top: 4px;
 	width: 394px;
-	_width: 396px;
 }
 
 .UIAnswersPortlet .AddLanguage .LanguageTitle {
@@ -969,7 +1143,6 @@
 .UIAnswersPortlet .FAQChildNodeContainer {
 	display:none;
 	padding-left:30px;
-	margin-top:10px;
 }
 
 .UIResultContainer .PopupContent {
@@ -979,35 +1152,10 @@
 .UIAnswersPortlet .UIPopupViewQuestion {
 	padding: 8px;
 	background-color: #EFEFEF;
-	max-height: 
 }
 
 .UIAnswersPortlet .UIPopupViewQuestion .ViewQuestion {
 	padding-left: 20px;
-}
-
-.UIAnswersPortlet .ResultSearchCategory {
-	padding: 2px;
-}
-
-.UIAnswersPortlet .ResultSearchCategory .TitleMoveThreads {
-	line-height: 30px;
-	padding-left: 1px;
-	font-weight:bold;
-}
-
-.UIAnswersPortlet .ResultSearchQuestion {
-	padding: 2px;
-}
-
-.UIAnswersPortlet .ResultSearchQuestion .TitleMoveThreads {
-	line-height: 30px;
-	padding-left: 1px;
-	font-weight:bold;
-}
-
-.UIAnswersPortlet .ResultQuickSearch {
-	padding: 2px;
 }
 
 .UIAnswersPortlet .UIResultContainer .UIGrid {
@@ -1015,13 +1163,6 @@
 	margin: auto;
 }
 
-.UIAnswersPortlet .ResultQuickSearch .TitleMoveThreads {
-	line-height: 30px;
-	padding-left: 1px;
-	font-weight:bold;
-}
-
-#xEditingArea(height: 200px;)
 
 .UIAnswersPortlet .UIWatchManager {
 	padding: 2px;
@@ -1217,7 +1358,6 @@
 	padding-bottom: 5px;
 	max-height: 400px;
 	overflow: auto;
-	_height: 400px;
 }
 
 /******************************	UIQuestinoManager	***************************************/
@@ -1228,21 +1368,24 @@
 }
 
 /******************************	UIQuestionsInfo	***************************************/
-.UITabPane .UITabContentContainer .UIIETabContent {
-	_padding: 15px 7px 30px;
-}
 
 /******************************	Icon	***************************************/
 
 .UIAnswersPortlet .AnswerToolbar .Icon {
-	padding:0px 2px 0px 26px;
+	padding-left: 26px;
 	line-height: 22px;
+	display: block;
+	cursor: pointer;
+	color: #4c4c4c;
+}
+
+.UIAnswersPortlet .AnswerToolbar .Icon:hover {
+	color: #115eb2;
 }
 
 .UIAnswersPortlet .AnswerToolbar .FAQCustomView {
-	background: url('background/CustomViewIconLeft.GIF') no-repeat left;
-	height:auto;
-	padding: 10px 12px;
+	background: url('background/CustomViewIconLeft.GIF') no-repeat left -2px;
+	height: 20px;
 }
 
 .UIAnswersPortlet .AnswerToolbar .FAQCustomViewRight {
@@ -1270,7 +1413,7 @@
 }
 
 .UIAnswersPortlet .MenuItem .FAQRSS {
-	background: url('background/FAQPortlet.gif') no-repeat 10px -143px;
+	background: url('background/FAQPortlet.gif') no-repeat left -143px;
 }
 
 .UIAnswersPortlet .CategoryManager {
@@ -1296,7 +1439,7 @@
 }
 
 .UIAnswersPortlet .MenuItem .AddCategory {
-	background: url('background/FAQPortlet.gif') no-repeat 10px -57px;
+	background: url('background/FAQPortlet.gif') no-repeat left -57px;
 }
 
 .UIAnswersPortlet .ActionsPrint {
@@ -1320,7 +1463,7 @@
 }
 
 .UIAnswersPortlet .MenuItem .EditCategory {
-	background: url('background/FAQPortlet.gif') no-repeat 10px -260px;
+	background: url('background/FAQPortlet.gif') no-repeat left -260px;
 }
 
 .UIAnswersPortlet .DeleteCategory {
@@ -1328,7 +1471,7 @@
 }
 
 .UIAnswersPortlet .MenuItem .DeleteCategory {
-	background: url('background/FAQPortlet.gif') no-repeat 10px -282px;
+	background: url('background/FAQPortlet.gif') no-repeat left -282px;
 }
 
 .UIAnswersPortlet .MoveCategory {
@@ -1336,7 +1479,7 @@
 }
 
 .UIAnswersPortlet .MenuItem .MoveCategory {
-	background: url('background/FAQPortlet.gif') no-repeat 10px -305px;
+	background: url('background/FAQPortlet.gif') no-repeat left -305px;
 }
 
 .UIAnswersPortlet .AddNewQuestion {
@@ -1344,7 +1487,7 @@
 }
 
 .UIAnswersPortlet .MenuItem .AddNewQuestion {
-	background: url('background/FAQPortlet.gif') no-repeat 10px -508px;
+	background: url('background/FAQPortlet.gif') no-repeat left -508px;
 }
 
 .UIAnswersPortlet .MoveDown {
@@ -1368,7 +1511,7 @@
 }
 
 .UIAnswersPortlet .MenuItem .Watch {
-	background: url('background/FAQPortlet.gif') no-repeat 10px -393px;
+	background: url('background/FAQPortlet.gif') no-repeat left -393px;
 }
 
 .UIAnswersPortlet .EditSubCategory {
@@ -1376,7 +1519,7 @@
 }
 
 .UIAnswersPortlet .MenuItem .EditSubCategory {
-	background: url('background/FAQPortlet.gif') no-repeat 10px -258px;
+	background: url('background/FAQPortlet.gif') no-repeat left -258px;
 }
 
 .UIAnswersPortlet .DeleteSupCategory {
@@ -1384,7 +1527,7 @@
 }
 
 .UIAnswersPortlet .MenuItem .DeleteSupCategory {
-	background: url('background/FAQPortlet.gif') no-repeat 10px -551px;
+	background: url('background/FAQPortlet.gif') no-repeat left -551px;
 }
 
 .UIAnswersPortlet .MoveSupCategory {
@@ -1392,19 +1535,19 @@
 }
 
 .UIAnswersPortlet .MenuItem .MoveSupCategory {
-	background: url('background/FAQPortlet.gif') no-repeat 10px -572px;
+	background: url('background/FAQPortlet.gif') no-repeat left -572px;
 }
 
 .UIAnswersPortlet .MenuItem .Comment {
-	background: url(/eXoResources/skin/DefaultSkin/skinIcons/16x16/icons/UserIcons/Comment.gif) no-repeat 10px center;
+	background: url(/eXoResources/skin/DefaultSkin/skinIcons/16x16/icons/UserIcons/Comment.gif) no-repeat left center;
 }
 
-.UIAnswersPortlet .ResponseQuestion {
+.UIAnswersPortlet .UIAnswersPopupAction .ResponseQuestion {
 	background: url('background/FAQPortlet.gif') no-repeat left -597px;
 }
 
 .UIAnswersPortlet .MenuItem .ResponseQuestion {
-	background: url('background/FAQPortlet.gif') no-repeat 10px -597px;
+	background: url('background/FAQPortlet.gif') no-repeat left -597px;
 }
 
 .UIAnswersPortlet .MoveQuestion {
@@ -1412,7 +1555,7 @@
 }
 
 .UIAnswersPortlet .MenuItem .MoveQuestion {
-	background: url('background/FAQPortlet.gif') no-repeat 10px -663px;
+	background: url('background/FAQPortlet.gif') no-repeat left -663px;
 }
 
 .UIAnswersPortlet .CommentToAnswer {
@@ -1424,7 +1567,7 @@
 }
 
 .UIAnswersPortlet .MenuItem .Edit {
-	background: url('background/FAQPortlet.gif') no-repeat 10px -619px;
+	background: url('background/FAQPortlet.gif') no-repeat left -619px;
 }
 
 .UIAnswersPortlet .Delete {
@@ -1432,7 +1575,7 @@
 }
 
 .UIAnswersPortlet .MenuItem .Delete {
-	background: url('background/FAQPortlet.gif') no-repeat 10px -641px;
+	background: url('background/FAQPortlet.gif') no-repeat left -641px;
 }
 
 .UIAnswersPortlet .Print {
@@ -1452,7 +1595,7 @@
 }
 
 .UIAnswersPortlet .MenuItem .Export {
-	background: url('background/Export.gif') no-repeat 10px center;
+	background: url('background/Export.gif') no-repeat left center;
 }
 
 .UIAnswersPortlet .Import {
@@ -1460,7 +1603,7 @@
 }
 
 .UIAnswersPortlet .MenuItem .Import {
-	background: url('background/Import.gif') no-repeat 10px center;
+	background: url('background/Import.gif') no-repeat left center;
 }
 
 .UIAnswersPortlet .QuestionIcon {
@@ -1514,7 +1657,7 @@
 }
 
 .UIAnswersPortlet .MenuItem .Send {
-	background: url('background/FAQPortlet.gif') no-repeat 10px -706px;
+	background: url('background/FAQPortlet.gif') no-repeat left -706px;
 }
 
 .UIAnswersPortlet .AddRelation {
@@ -1542,6 +1685,13 @@
 	background: url('background/icon.png') no-repeat left;
 	height:16px;
 	width:16px;
+}
+
+.UIAnswersPortlet .FAQViewIcon {
+	background: url('background/FAQYey.gif') no-repeat left;
+	height:16px;
+	width:16px;
+	margin: 0px auto;
 }
 
 .UIAnswersPortlet .TrueIcon {
@@ -1576,7 +1726,7 @@
 	height: 16px;	width: 16px;
 	cursor: pointer;
 	filter: alpha(opacity: 70); 
-	-moz-opacity: 0.7;
+	opacity: 0.7;
 }
 
 .UIAnswersPortlet .VoteAnswerDown {
@@ -1585,7 +1735,7 @@
 	cursor: pointer;
 	margin: 0px 5px;
 	filter: alpha(opacity: 70); 
-	-moz-opacity: 0.7;
+	opacity: 0.7;
 }
 
 .UIAnswersPortlet .RatedVote {
@@ -1683,7 +1833,7 @@
 }
 
 .UIAnswersPortlet .UnWatch {
-	background: url('background/DeleteWatch.gif') no-repeat 10px center;
+	background: url('background/DeleteWatch.gif') no-repeat left center;
 	padding: 10px 14px 9px 4px;
 }
 
@@ -1807,12 +1957,6 @@
 
 .UIMaskWorkspace .UIAnswersPortlet	{
 	min-width: 600px;
-}
-
-.UIAnswersPortlet .ScrollButtons {
-	display:none;
-	float:right;
-	padding:5px 1px 5px 1px;
 }
 
 .UIAnswersPortlet .DisableScrollLeftButton {
@@ -1988,15 +2132,14 @@
 	display:block;
 	line-height:16px;
 	white-space:nowrap;
-	cursor: none;
+	cursor: auto;
 	margin: 0px 0px 0px 7px;
 	filter: alpha(opacity: 50);
-	-moz-opacity: 0.5;
+	opacity: 0.5;
 }
 
-.UIAnswersPortlet .DisableMenuItem {
-	*color: #b7b7b7;
-	_color: #b7b7b7;
+*+html .UIAnswersPortlet .DisableMenuItem {
+	color: #b7b7b7;
 }
 
 .UIAnswersPortlet .ForumIcon {
@@ -2035,7 +2178,7 @@
 	max-width: 530px;
 }
 
-*html .UIAnswersPortlet .ClassCode {
+*+html .UIAnswersPortlet .ClassCode {
 	width: 530px;
 }
 
@@ -2114,196 +2257,7 @@
 	display: block;
 }
 
-
-
-
-/*********************FAQ Viewer Portlet***************************/
-.UIViewerSettingForm {
-	padding: 6px;
-	margin: 4px;
-	border: 1px solid #d7d7d7;
-	background: white;
-}
-
-.UIViewerSettingForm .CategoryIcon {
-	background: url('background/CategoryIcon.png') no-repeat right center;
-	float: left;
-	height: 20px;
-	margin: 0px;
-	width: 40px;
-	padding-top: 2px;
-}
-
-.UIViewerSettingForm .CategoryIcon .checkbox {
-	height: 16px;
-}
-
-.UIViewerSettingForm .LabelNameCategory {
-	float: left;
-	padding-left: 4px;
-	line-height: 18px;
-}
-
-.UIViewerSettingForm .TextAreContent {
-	width: 100%;
-	margin: auto;
-}
-
-.UIViewerSettingForm .ViewQuestionsAtMove {
-	 margin:5px 0px ;
-	 padding:10px 0px;
-	 border: 3px double #b7b7b7;
-}
-
-.UIViewerSettingForm .TabContentContainer {
-	 border: 1px solid white;
-	 border-top: none;
-}
-
-.UIViewerSettingForm .UIAction {
-	 background: #F7F7F7;
-	 padding: 6px 0px 10px 0px;
-}
-
-.UIViewerSettingForm .UITabPane .UITabContentContainer .UITabContent {
-	 border: none;
-	 height: auto;
-}
-
-.UIViewerSettingForm #FAQRootChildren {
-	 padding-left:30px; 
-	 margin:10px 0px;
-}
-
-.UIViewerSettingForm #ContentTemplate {
-	width: 99.5%;
-	height: 650px;
-	margin: auto;
-}
-
-
 /*******************************************UI Page Interrator***************************/
-
-.UIAnswersPortlet .UIInsertAddress .UIPageIterator {		
-	margin: 0px ;
-	padding: 3px 0px 0px 0px ;
-}
-
-.UIAnswersPortlet .UIInsertAddress .UIPageIterator .PageIteratorContainer {		
-	float: right ;
-	overflow: hidden; 
-}
-
-.UIAnswersPortlet .UIInsertAddress .UIPageIterator .PageIteratorContainer .LeftPageIteratorBlock{		
-	line-height: 18px ; 
-	float: right ;
-	margin-right: 15px;
-}
-
-.UIAnswersPortlet .UIInsertAddress .UIPageIterator .PageIteratorContainer .RightPageIteratorBlock{		
-	float: right ;
-}
-
-.UIAnswersPortlet .UIInsertAddress .UIPageIterator .Icon {
-	float: left ;
-	margin: 0px 2px 0px 0px ;
-	width: 18px ; height: 17px ;
-}
-
-.UIAnswersPortlet .UIInsertAddress .UIPageIterator .TotalPages {
-	float: left ;
-	line-height: 16px ; 
-}
-
-.UIAnswersPortlet .UIInsertAddress .UIPageIterator .PagesTotalNumber {
-	float: left ;
-	line-height: 17px ; 
-	color: #0183f1;
-	margin-left: 5px;
-}
-
-.UIAnswersPortlet .UIInsertAddress .UIPageIterator .LastTopPageIcon {
-	vertical-align: middle ;
-	background: url('background/ScrollDoubleBackArrows.gif') no-repeat ;
-	cursor: pointer ;
-}
-
-.UIAnswersPortlet .UIInsertAddress .UIPageIterator .NextTopPageIcon {
-	background: url('background/ScrollDoubleNextArrows.gif') no-repeat ;
-	cursor: pointer ;
-}
-
-.UIAnswersPortlet .UIInsertAddress .UIPageIterator .LastPageIcon {
-	background: url('background/ScrollSingleBackArrow.gif') no-repeat ;
-	cursor: pointer ; 
-}
-
-.UIAnswersPortlet .UIInsertAddress .UIPageIterator .NextPageIcon {
-	background: url('background/ScrollSingleNextArrow.gif') no-repeat ;
-	cursor: pointer ;
-}
-
-.UIAnswersPortlet .UIInsertAddress .UIPageIterator .DisableLastTopPageIcon {
-	vertical-align: middle ;
-	background: url('background/DoubleBackArrows.gif') no-repeat ;
-}
-
-.UIAnswersPortlet .UIInsertAddress .UIPageIterator .DisableNextTopPageIcon {
-	background: url('background/DoubleNextArrows.gif') no-repeat ;
-}
-
-.UIAnswersPortlet .UIInsertAddress .UIPageIterator .DisableLastPageIcon {
-	background: url('background/SingleBackArrow.gif') no-repeat ;
-}
-
-.UIAnswersPortlet .UIInsertAddress .UIPageIterator .DisableNextPageIcon {
-	background: url('background/SingleNextArrow.gif') no-repeat ;
-}
-
-.UIAnswersPortlet .UIInsertAddress .UIPageIterator .Number {
-	float: left ;
-	text-align: center;
-	margin: 0px 2px 0px 0px;
-	line-height: 17px;
-	border: none;
-}
-
-.UIAnswersPortlet .UIInsertAddress .UIPageIterator .PageSelected {
-	line-height: 15px;
-	height: 15px ;
-	border: 1px solid #dfdfdf;
-	color: #f16701;
-	font-weight: bold;
-	padding: 0px 6px;
-	cursor: default;
-}
-
-.UIAnswersPortlet .UIInsertAddress .UIPageIterator .PageNormal {
-	margin: 0px 0px 0px 0px ;
-	padding: 1px 7px;
-	border: 1px solid #dfdfdf;
-	color: #333333 ;
-	background: white;
-}
-
-.UIAnswersPortlet .UIInsertAddress .UIPageIterator .Number a{
-	float: left;
-	border:1px solid #DFDFDF;
-	height:15px;
-	line-height:15px;
-	padding:0 6px;
-	margin-left: 1px;
-}
-
-
-.UIAnswersPortlet .UIInsertAddress .UIPageIterator .Number a:hover {
-	color: #058ee6 ;
-	border: 1px solid #777777;
-}
-
-.UIAnswersPortlet .UIInsertAddress input {
-	height: 14px;
-}
 
 .UIAnswersPortlet .UIAction .LightBlueStyle .ButtonMiddleIcon {
 	padding: 0px 10px 0px 2px;
@@ -2330,11 +2284,8 @@
 	visibility:visible;
 	background:url('background/Point1x1.png') no-repeat top center ;
 	user-select: none;
-	-moz-user-select: none;
-	-khtml-user-select: none;
-	-webkit-user-select: none;
-	-o-user-select: none;
 }
+
 
 /* Fix KS-2244*/
 .UIAnswersPortlet .ResizeButton {
@@ -2357,43 +2308,47 @@
 .QuestionContainer .NormalQuest .LeftCon {
 	width: 150px;
 	float: left;
-	font-family: arial;
 }
 
 .QuestionContainer .NormalQuest .LeftCon .BoxNum {
-	width: 72px;
-	height: 50px;
+	width: 66px;
+	height: 46px;
 	float: left;
-	background: #eeeeee;
+	background: #ebebeb;
+	padding: 10px 0px;
+	border-radius: 3px;
 	color: #363636;
 	text-align: center;
 	font-weight: bold;
-	margin-right: 2px;
+	margin-right: 4px;
 }
 
 .QuestionContainer .NormalQuest .LeftCon .BoxNum p {
-	font-size: 30px;
+	font-size: 18px;
 	margin: 0px;
 	line-height: 34px;
+	font-weight: bold;
+	color: #4c4c4c;
 }
 
 .QuestionContainer .NormalQuest .LeftCon .BoxNum h4 {
-	font-size: 10px;
+	font-size: 11px;
 	font-weight: normal;
 	margin: 0px;
-	color: #636363;
+	color: #4c4c4c;
 }
 
 .QuestionContainer .NormalQuest .RightCon {
 	float: left;
-	font-family: arial;
+}
+
+.QuestionContainer .NormalQuest .RightCon h5 {
+	margin: 0px 0px 5px 0px;
 }
 
 .QuestionContainer .NormalQuest .RightCon .Questions {
-	font-size: 18px;
 	font-weight: bold;
-	margin: 0px 0px 5px 0px;
-	color: #222222;
+	color: #333333;
 }
 
 .QuestionContainer .NormalQuest .RightCon .WarningCon {
@@ -2413,15 +2368,19 @@
 }
 
 .QuestionContainer .NormalQuest .RightCon .Name {
-	color: #a7a7a7;
+	color: #808080;
 	float: left;
 	margin: 0px;
 }
 
-.QuestionContainer .NormalQuest .RightCon .Name  a {
-	color: #3151a2;
+.QuestionContainer .NormalQuest .RightCon .Name a {
+	color: #115eb2;
+}
+
+.QuestionContainer .NormalQuest .RightCon .Name a:hover {
 	text-decoration: underline;
 }
+
 /************ HighlightQuestions *******************/
 
 .QuestionContainer .HighlightQuest {
@@ -2498,4 +2457,58 @@
 	color: #3151a2;
 	text-decoration: underline;
 }
+
+.UIQuestions .FAQContent .UIAction {
+	padding:0px 0px 10px 0px; 
+}
 /******************************	END new style for Questions ***************************************/
+
+
+
+/*********************FAQ UICategories***************************/
+
+.UIAnswersPortlet .UICategoriesContainer {
+	padding: 0px 5px 2px 5px;
+	font-family: verdana, arial, tahoma;
+}
+
+.UIAnswersPortlet .UICategoriesContainer .AnswerToolbar .CenterBar {
+	padding-left: 10px;
+	font-size: 12px; 
+	text-align: center;
+}
+
+/*********************FAQ UIAnswersContainer***************************/
+
+.UIAnswersPortlet .UIAnswersContainer .FAQViewCategoriesColumn {
+	width:200px;
+}
+
+.UIAnswersPortlet .UIAnswersContainer .MessageNoPermission {
+	font-size: 20px; 
+	text-align: center;
+	width: 90%;
+}
+
+/*********************FAQ UIBreadcumbs***************************/
+
+.UIAnswersPortlet .UIBreadcumbs .ControlButtonContainer {
+	padding-left: 5px;
+	float: left;
+}
+
+/*********************FAQ UIQuickSeach***************************/
+
+.UIAnswersPortlet .UIQuickSeach .UISearchForm .Input {
+	!width: 165px;
+}
+
+
+
+
+
+
+
+
+
+

@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.exoplatform.container.ExoContainerContext;
-import org.exoplatform.forum.ForumTransformHTML;
 import org.exoplatform.forum.ForumUtils;
 import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.JCRPageList;
@@ -30,6 +29,7 @@ import org.exoplatform.forum.service.Utils;
 import org.exoplatform.forum.webui.UIForumPageIterator;
 import org.exoplatform.forum.webui.UIForumPortlet;
 import org.exoplatform.ks.bbcode.core.ExtendedBBCodeProvider;
+import org.exoplatform.ks.common.TransformHTML;
 import org.exoplatform.ks.common.webui.UIPopupAction;
 import org.exoplatform.ks.common.webui.UIPopupContainer;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
@@ -80,13 +80,11 @@ public class UIListTopicOld extends UIContainer {
     this.date = date;
   }
 
-  @SuppressWarnings("unused")
-  private String getTitleInHTMLCode(String s) {
-    return ForumTransformHTML.getTitleInHTMLCode(s, new ArrayList<String>((new ExtendedBBCodeProvider()).getSupportedBBCodes()));
+  protected String getTitleInHTMLCode(String s) {
+    return TransformHTML.getTitleInHTMLCode(s, new ArrayList<String>((new ExtendedBBCodeProvider()).getSupportedBBCodes()));
   }
 
-  @SuppressWarnings("unused")
-  private UserProfile getUserProfile() throws Exception {
+  protected UserProfile getUserProfile() throws Exception {
     if (userProfile == null) {
       this.userProfile = this.getAncestorOfType(UIForumPortlet.class).getUserProfile();
     }
@@ -97,8 +95,8 @@ public class UIListTopicOld extends UIContainer {
     this.isUpdate = isUpdate;
   }
 
-  @SuppressWarnings( { "unused", "unchecked" })
-  private List<Topic> getTopicsOld() throws Exception {
+  @SuppressWarnings("unchecked")
+  protected List<Topic> getTopicsOld() throws Exception {
     if (topics == null || topics.size() == 0 || isUpdate) {
       JCRPageList pageList = forumService.getPageTopicOld(date, ForumUtils.EMPTY_STR);
       if (pageList != null) {

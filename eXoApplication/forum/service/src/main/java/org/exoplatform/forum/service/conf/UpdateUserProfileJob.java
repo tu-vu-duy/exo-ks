@@ -19,7 +19,9 @@ package org.exoplatform.forum.service.conf;
 import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.forum.service.ForumService;
-import org.exoplatform.ks.common.Utils;
+import org.exoplatform.forum.service.Utils;
+import org.exoplatform.ks.common.CommonUtils;
+import org.exoplatform.services.jcr.RepositoryService;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.scheduler.JobInfo;
@@ -37,12 +39,14 @@ public class UpdateUserProfileJob implements Job {
   public void execute(JobExecutionContext context) throws JobExecutionException {
     ExoContainer oldContainer = ExoContainerContext.getCurrentContainer();
     try {
-      ExoContainer exoContainer = Utils.getExoContainer(context);
+      ExoContainer exoContainer = CommonUtils.getExoContainer(context);
       ForumService forumService = (ForumService) exoContainer.getComponentInstanceOfType(ForumService.class);
       ExoContainerContext.setCurrentContainer(exoContainer);
       String name = context.getJobDetail().getName();
       JobSchedulerService schedulerService = (JobSchedulerService) exoContainer.getComponentInstanceOfType(JobSchedulerService.class);
       JobInfo info = new JobInfo(name, "KnowledgeSuite-forum", context.getJobDetail().getJobClass());
+      RepositoryService repositoryService = (RepositoryService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(RepositoryService.class);
+      repositoryService.setCurrentRepositoryName(context.getJobDetail().getJobDataMap().getString(Utils.CACHE_REPO_NAME));
       forumService.updateUserProfileInfo(name);
       if (log_.isDebugEnabled()) {
         log_.debug("\n\nNumber of deleted posts, topics updated to Forum statistics and user's profile");

@@ -17,7 +17,6 @@
 package org.exoplatform.faq.webui.popup;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +39,7 @@ import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.MessageBuilder;
 import org.exoplatform.forum.service.Post;
 import org.exoplatform.forum.service.Topic;
-import org.exoplatform.ks.common.Utils;
+import org.exoplatform.ks.common.CommonUtils;
 import org.exoplatform.ks.common.webui.UIPopupAction;
 import org.exoplatform.ks.common.webui.UIPopupContainer;
 import org.exoplatform.ks.common.webui.WebUIUtils;
@@ -51,8 +50,8 @@ import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.core.model.SelectItemOption;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
-import org.exoplatform.webui.form.UIFormCheckBoxInput;
 import org.exoplatform.webui.form.UIFormSelectBox;
+import org.exoplatform.webui.form.input.UICheckBoxInput;
 import org.exoplatform.webui.form.wysiwyg.UIFormWYSIWYGInput;
 
 /**
@@ -99,9 +98,9 @@ public class UIResponseForm extends BaseUIFAQForm implements UIPopupComponent {
 
   private UIFormWYSIWYGInput             inputResponseQuestion_;
 
-  private UIFormCheckBoxInput<Boolean>   checkShowAnswer_;
+  private UICheckBoxInput   checkShowAnswer_;
 
-  private UIFormCheckBoxInput<Boolean>   isApproved_;
+  private UICheckBoxInput   isApproved_;
 
   // question infor :
   public String                          questionId_           = "";
@@ -119,8 +118,6 @@ public class UIResponseForm extends BaseUIFAQForm implements UIPopupComponent {
 
   private String                         currentLanguage       = "";
 
-  private String                         link_                 = "";
-
   private boolean                        isChildOfQuestionManager_;
 
   private FAQSetting                     faqSetting_;
@@ -135,13 +132,6 @@ public class UIResponseForm extends BaseUIFAQForm implements UIPopupComponent {
 
   private RenderHelper renderHelper = new RenderHelper();
 
-  public String getLink() {
-    return link_;
-  }
-
-  public void setLink(String link) {
-    this.link_ = link;
-  }
 
   public void setFAQSetting(FAQSetting faqSetting) {
     this.faqSetting_ = faqSetting;
@@ -152,8 +142,8 @@ public class UIResponseForm extends BaseUIFAQForm implements UIPopupComponent {
     inputResponseQuestion_ = new UIFormWYSIWYGInput(RESPONSE_CONTENT, RESPONSE_CONTENT, "");
     inputResponseQuestion_.setFCKConfig(WebUIUtils.getFCKConfig());
     inputResponseQuestion_.setToolBarName("Basic");
-    checkShowAnswer_ = new UIFormCheckBoxInput<Boolean>(SHOW_ANSWER, SHOW_ANSWER, false);
-    isApproved_ = new UIFormCheckBoxInput<Boolean>(IS_APPROVED, IS_APPROVED, false);
+    checkShowAnswer_ = new UICheckBoxInput(SHOW_ANSWER, SHOW_ANSWER, false);
+    isApproved_ = new UICheckBoxInput(IS_APPROVED, IS_APPROVED, false);
     this.setActions(new String[] { "Save", "Cancel" });
   }
 
@@ -171,8 +161,8 @@ public class UIResponseForm extends BaseUIFAQForm implements UIPopupComponent {
     questionLanguages_ = new UIFormSelectBox(QUESTION_LANGUAGE, QUESTION_LANGUAGE, listLanguageToReponse);
     questionLanguages_.setValue(answer.getLanguage());
     questionLanguages_.setSelectedValues(new String[] { answer.getLanguage() });
-    getUIFormCheckBoxInput(SHOW_ANSWER).setChecked(answer.getActivateAnswers());
-    getUIFormCheckBoxInput(IS_APPROVED).setChecked(answer.getApprovedAnswers());
+    getUICheckBoxInput(SHOW_ANSWER).setChecked(answer.getActivateAnswers());
+    getUICheckBoxInput(IS_APPROVED).setChecked(answer.getApprovedAnswers());
   }
 
   public void setQuestionId(Question question, String languageViewed, boolean isAnswerApp) {
@@ -232,32 +222,28 @@ public class UIResponseForm extends BaseUIFAQForm implements UIPopupComponent {
     addChild(checkShowAnswer_);
   }
 
-  @SuppressWarnings("unused")
-  private String render(String s) {
+  protected String render(String s) {
     Question question = new Question();
     question.setDetail(s);
     return renderHelper.renderQuestion(question);
   }
 
-  @SuppressWarnings("unused")
-  private String getValue(String id) {
+  protected String getValue(String id) {
     if (id.equals("QuestionTitle"))
       return questionContent;
     else
       return questionDetail;
   }
 
-  @SuppressWarnings("unused")
-  private String getLanguageIsResponse() {
-    return this.currentLanguage;
-  }
-
   private void setListRelation() throws Exception {
     String[] relations = question_.getRelations();
-    this.setListIdQuesRela(Arrays.asList(relations));
     if (relations != null && relations.length > 0)
       for (String relation : relations) {
-        listRelationQuestion.add(getFAQService().getQuestionById(relation).getQuestion());
+        Question ques = getFAQService().getQuestionById(relation);
+        if(ques != null && ques.isActivated() && ques.isApproved()){
+          listQuestIdRela.add(relation);
+          listRelationQuestion.add(ques.getQuestion());
+        }
       }
   }
 
@@ -279,8 +265,7 @@ public class UIResponseForm extends BaseUIFAQForm implements UIPopupComponent {
     this.listRelationQuestion.addAll(listQuestionContent);
   }
 
-  @SuppressWarnings("unused")
-  private List<String> getListRelationQuestion() {
+  protected List<String> getListRelationQuestion() {
     return this.listRelationQuestion;
   }
 
@@ -354,12 +339,11 @@ public class UIResponseForm extends BaseUIFAQForm implements UIPopupComponent {
   }
 
   static public class SaveActionListener extends EventListener<UIResponseForm> {
-    @SuppressWarnings("unchecked")
     public void execute(Event<UIResponseForm> event) throws Exception {
       UIResponseForm responseForm = event.getSource();
       String language = responseForm.questionLanguages_.getValue();
       String responseQuestionContent = responseForm.inputResponseQuestion_.getValue();
-      responseQuestionContent = Utils.encodeSpecialCharInContent(responseQuestionContent);
+      responseQuestionContent = CommonUtils.encodeSpecialCharInContent(responseQuestionContent);
       Answer answer;
       if (ValidatorDataInput.fckContentIsNotEmpty(responseQuestionContent)) {
         if (responseForm.mapAnswers.containsKey(language)) {
@@ -368,17 +352,16 @@ public class UIResponseForm extends BaseUIFAQForm implements UIPopupComponent {
           answer.setNew(true);
         } else {
           answer = new Answer();
-          answer.setDateResponse(org.exoplatform.faq.service.Utils.getInstanceTempCalendar().getTime());
-          String currentUser = FAQUtils.getCurrentUser();
+          String currentUser = FAQUtils.getCurrentUser() ;
           answer.setResponseBy(currentUser);
-          answer.setFullName(FAQUtils.getFullName(currentUser));
+          answer.setFullName(FAQUtils.getFullName(null)) ;
           answer.setNew(true);
           answer.setResponses(responseQuestionContent);
           answer.setLanguage(language);
         }
         // author: Vu Duy Tu. set show answer
-        answer.setApprovedAnswers(((UIFormCheckBoxInput<Boolean>) responseForm.getChildById(IS_APPROVED)).isChecked());
-        answer.setActivateAnswers(((UIFormCheckBoxInput<Boolean>) responseForm.getChildById(SHOW_ANSWER)).isChecked());
+        answer.setApprovedAnswers(((UICheckBoxInput) responseForm.getChildById(IS_APPROVED)).isChecked());
+        answer.setActivateAnswers(((UICheckBoxInput) responseForm.getChildById(SHOW_ANSWER)).isChecked());
         responseForm.mapAnswers.put(language, answer);
       } else {
         if (responseForm.mapAnswers.containsKey(language)) {
@@ -401,9 +384,9 @@ public class UIResponseForm extends BaseUIFAQForm implements UIPopupComponent {
       UIAnswersPortlet portlet = responseForm.getAncestorOfType(UIAnswersPortlet.class);
       UIQuestions uiQuestions = portlet.getChild(UIAnswersContainer.class).getChild(UIQuestions.class);
       // Link Question to send mail
-      String link = FAQUtils.getLink(responseForm.getLink(), responseForm.getId(), "UIQuestions", "AddRelation", "ViewQuestion", "OBJECTID");
-      link = link.replaceFirst("OBJECTID", question.getPath()).replace("private", "public");
-      question.setLink(link);
+       if(FAQUtils.isFieldEmpty(question.getLink())) {
+         question.setLink(FAQUtils.getQuestionURI(question.getId(), false));
+       }
 
       // set answer to question for discuss forum function
       if (responseForm.mapAnswers.containsKey(question.getLanguage())) {
@@ -421,11 +404,12 @@ public class UIResponseForm extends BaseUIFAQForm implements UIPopupComponent {
         }
         responseForm.getFAQService().saveAnswer(question.getPath(), answers);
         responseForm.getFAQService().updateQuestionRelatives(question.getPath(), responseForm.listQuestIdRela.toArray(new String[responseForm.listQuestIdRela.size()]));
-        if (!responseForm.isModerator && !responseForm.isAnswerApproved)
-          responseForm.info("UIResponseForm.msg.pending-for-moderation");
+        if (!responseForm.isModerator && !responseForm.isAnswerApproved){
+          responseForm.info("UIResponseForm.msg.pending-for-moderation", false);
+        }
       } catch (PathNotFoundException e) {
         responseForm.log.error("Can not save Question, this question is deleted, exception: " + e.getMessage());
-        responseForm.warning("UIQuestions.msg.question-id-deleted");
+        responseForm.warning("UIQuestions.msg.question-id-deleted", false);
       } catch (Exception e) {
         responseForm.log.error("Can not save Question, exception: " + e.getMessage());
       }
@@ -517,7 +501,6 @@ public class UIResponseForm extends BaseUIFAQForm implements UIPopupComponent {
           answer.setNew(true);
           answer.setActivateAnswers(true);
           answer.setApprovedAnswers(responseForm.isAnswerApproved);
-          answer.setDateResponse(org.exoplatform.faq.service.Utils.getInstanceTempCalendar().getTime());
           answer.setResponseBy(user);
           answer.setResponses(responseContent);
           answer.setLanguage(responseForm.currentLanguage);

@@ -19,13 +19,13 @@ package org.exoplatform.faq.service;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.jcr.Node;
 
 import org.exoplatform.container.component.ComponentPlugin;
 import org.exoplatform.faq.service.impl.AnswerEventListener;
 import org.exoplatform.ks.common.NotifyInfo;
-import org.exoplatform.services.mail.Message;
 
 import com.arjuna.ats.internal.jdbc.drivers.modifiers.list;
 
@@ -70,9 +70,8 @@ public interface FAQService extends FAQServiceLegacy {
    * @param    isAddNew is true when add new category else update category
    * @return  List parent category or list sub category
    * @see     list category
-   * @throws Exception the exception
    */
-  public void saveCategory(String parentId, Category cat, boolean isAddNew) throws Exception;
+  public void saveCategory(String parentId, Category cat, boolean isAddNew);
 
   /**
    * This method should change view of category
@@ -286,10 +285,8 @@ public interface FAQService extends FAQServiceLegacy {
    * @param questionId  the id of question
    * 
    * @return list languages are support by the question
-   * 
-   * @throws Exception  when question not found
    */
-  public List<QuestionLanguage> getQuestionLanguages(String questionId) throws Exception;
+  public List<QuestionLanguage> getQuestionLanguages(String questionId);
 
   /**
    * This method should lookup languageNode of question
@@ -450,18 +447,9 @@ public interface FAQService extends FAQServiceLegacy {
   public List<String> getCategoryPath(String categoryId) throws Exception;
 
   /**
-   * This method will send message to address but you want send
-   * 
-   * @param   message is object save content with user want send to one or many address email
-   * @throws Exception the exception
-   */
-  public void sendMessage(Message message) throws Exception;
-
-  /**
    * This method will get messages to send notify
-   * @throws Exception the exception
    */
-  public Iterator<NotifyInfo> getPendingMessages() throws Exception;
+  public Iterator<NotifyInfo> getPendingMessages();
 
   /**
    * Add language for question node, this function only use for Question node, 
@@ -503,7 +491,7 @@ public interface FAQService extends FAQServiceLegacy {
   /**
    * Check permission of user
    * @param userName  id or user name of user who is checked permission
-   * @return  return <code>true</code> if user is addmin and <code>false</code> if opposite
+   * @return  return <code>true</code> if user is admin. The current user is implied if userName is null.
    * @throws Exception
    */
   public boolean isAdminRole(String userName) throws Exception;
@@ -742,6 +730,14 @@ public interface FAQService extends FAQServiceLegacy {
   public String getCategoryPathOf(String id) throws Exception;
 
   /**
+   * Get titles of questions active
+   * @param paths  path of questions
+   * @return list titles of questions 
+   * @throws Exception
+   */
+  public Map<String, String> getRelationQuestion(List<String> paths) throws Exception;
+  
+  /**
    * Get titles of questions
    * @param paths  path of questions
    * @return list titles of questions 
@@ -785,7 +781,7 @@ public interface FAQService extends FAQServiceLegacy {
    * Check user is moderator or not
    * @param categoryId id of category
    * @param user username
-   * @return user is moderator or not 
+   * @return user is moderator or not. The current user is implied if user is null.
    * @throws Exception
    */
   public boolean isCategoryModerator(String categoryId, String user) throws Exception;
@@ -916,10 +912,9 @@ public interface FAQService extends FAQServiceLegacy {
   /**
    * Check view author information or not
    * @param id id of question
-   * @return is view author information or not 
-   * @throws Exception
+   * @return is view author information or not
    */
-  public boolean isViewAuthorInfo(String id) throws Exception;
+  public boolean isViewAuthorInfo(String id);
 
   /**
    * Get number of categories
@@ -1047,5 +1042,25 @@ public interface FAQService extends FAQServiceLegacy {
   public Comment[] getComments(String questionId) throws Exception;
 
   public void calculateDeletedUser(String userName) throws Exception;
-
+  
+  /**
+   * read property of the category by its name
+   * @param categoryId id of the category
+   * @param propertyName name of the property
+   * @param returnType expected return-type. The supported class are String[], String, Long, Boolean, Double and Date .  
+   * @return 
+   * @throws Exception
+   */
+  public Object readCategoryProperty(String categoryId, String propertyName, Class returnType) throws Exception;
+  
+  /**
+   * read property of the question by its name
+   * @param questionId id of the question
+   * @param propertyName name of the property
+   * @param returnType expected return-type. The supported class are String[], String, Long, Boolean, Double and Date.
+   * @return
+   * @throws Exception
+   */
+  public Object readQuestionProperty(String questionId, String propertyName, Class returnType) throws Exception;
+  
 }

@@ -17,7 +17,6 @@
 package org.exoplatform.faq.webui.popup;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -38,6 +37,7 @@ import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.MessageBuilder;
 import org.exoplatform.forum.service.Topic;
 import org.exoplatform.forum.service.Utils;
+import org.exoplatform.ks.common.CommonUtils;
 import org.exoplatform.ks.common.UserHelper;
 import org.exoplatform.ks.common.webui.BaseEventListener;
 import org.exoplatform.ks.common.webui.UIPopupAction;
@@ -54,12 +54,12 @@ import org.exoplatform.webui.core.model.SelectItemOption;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.form.UIForm;
-import org.exoplatform.webui.form.UIFormCheckBoxInput;
 import org.exoplatform.webui.form.UIFormInputInfo;
 import org.exoplatform.webui.form.UIFormInputWithActions;
 import org.exoplatform.webui.form.UIFormSelectBox;
 import org.exoplatform.webui.form.UIFormStringInput;
 import org.exoplatform.webui.form.UIFormInputWithActions.ActionData;
+import org.exoplatform.webui.form.input.UICheckBoxInput;
 import org.exoplatform.webui.form.wysiwyg.UIFormWYSIWYGInput;
 
 /**
@@ -69,38 +69,35 @@ import org.exoplatform.webui.form.wysiwyg.UIFormWYSIWYGInput;
  * Aus 01, 2007 2:48:18 PM
  */
 
-@ComponentConfig(
-    lifecycle = UIFormLifecycle.class, 
-    template = "app:/templates/faq/webui/popup/UIQuestionForm.gtmpl", 
-    events = {
-        @EventConfig(listeners = UIQuestionForm.SelectLanguageActionListener.class), 
-        @EventConfig(listeners = UIQuestionForm.DeleteLanguageActionListener.class, confirm = "UIQuestionForm.msg.DeleteQuestionInLanguage"), 
-        @EventConfig(listeners = UIQuestionForm.AttachmentActionListener.class), 
-        @EventConfig(listeners = UIQuestionForm.SaveActionListener.class), 
-        @EventConfig(listeners = UIQuestionForm.CancelActionListener.class), 
-        @EventConfig(listeners = UIQuestionForm.RemoveAttachmentActionListener.class) 
-    }
-)
+@ComponentConfig(lifecycle = UIFormLifecycle.class, template = "app:/templates/faq/webui/popup/UIQuestionForm.gtmpl", events = {
+    @EventConfig(listeners = UIQuestionForm.SelectLanguageActionListener.class),
+    @EventConfig(listeners = UIQuestionForm.DeleteLanguageActionListener.class, confirm = "UIQuestionForm.msg.DeleteQuestionInLanguage"),
+    @EventConfig(listeners = UIQuestionForm.AttachmentActionListener.class),
+    @EventConfig(listeners = UIQuestionForm.SaveActionListener.class),
+    @EventConfig(listeners = UIQuestionForm.CancelActionListener.class),
+    @EventConfig(listeners = UIQuestionForm.RemoveAttachmentActionListener.class) })
 public class UIQuestionForm extends BaseUIFAQForm implements UIPopupComponent {
-  public static final String             AUTHOR               = "Author";
+  public static final String             AUTHOR                 = "Author";
 
-  public static final String             EMAIL_ADDRESS        = "EmailAddress";
+  public static final String             EMAIL_ADDRESS          = "EmailAddress";
 
-  public static final String             QUESTION_CONTENT     = "QuestionTitle";
+  public static final String             QUESTION_CONTENT       = "QuestionTitle";
 
-  public static final String             ALL_LANGUAGES        = "AllLanguages";
+  public static final String             ALL_LANGUAGES          = "AllLanguages";
 
-  public static final String             QUESTION_DETAIL      = "Question";
+  public static final String             QUESTION_DETAIL        = "Question";
 
-  public static final String             ATTACHMENTS          = "Attachment";
+  public static final String             ATTACHMENTS            = "Attachment";
 
-  public static final String             FILE_ATTACHMENTS     = "FileAttach";
+  public static final String             FILE_ATTACHMENTS       = "FileAttach";
 
-  public static final String             REMOVE_FILE_ATTACH   = "RemoveFile";
+  public static final String             REMOVE_FILE_ATTACH     = "RemoveFile";
 
-  public static final String             IS_APPROVED          = "IsApproved";
+  public static final String             IS_APPROVED            = "IsApproved";
 
-  public static final String             IS_ACTIVATED         = "IsActivated";
+  public static final String             IS_ACTIVATED           = "IsActivated";
+
+  public static final String             DELETE_LANGUAGE_ACTION = "DeleteLanguage";
 
   private UIFormStringInput              inputAuthor          = null;
 
@@ -112,9 +109,9 @@ public class UIQuestionForm extends BaseUIFAQForm implements UIPopupComponent {
 
   private UIFormSelectBox                selectLanguage       = null;
 
-  private UIFormCheckBoxInput<Boolean>   inputIsApproved      = null;
+  private UICheckBoxInput   inputIsApproved      = null;
 
-  private UIFormCheckBoxInput<Boolean>   inputIsActivated     = null;
+  private UICheckBoxInput   inputIsActivated     = null;
 
   private UIFormInputWithActions         inputAttachcment     = null;
 
@@ -136,8 +133,6 @@ public class UIQuestionForm extends BaseUIFAQForm implements UIPopupComponent {
 
   private String                         lastLanguage_        = "";
 
-  private String                         link_                = "";
-
   private String                         author_              = "";
 
   private String                         email_               = "";
@@ -157,27 +152,29 @@ public class UIQuestionForm extends BaseUIFAQForm implements UIPopupComponent {
   private boolean                        isAddCheckBox        = false;
 
   private Locale                         currentLocale        = null;
+  
+  private String                         editLanguage         = null;
 
-  private boolean                        isRenderSelectLang   = false;
+  protected boolean                      isRenderSelectLang   = false;
 
   private FAQSetting                     faqSetting_;
-
+  
   public void activate() throws Exception {
   }
 
   public void deActivate() throws Exception {
   }
 
-  public String getLink() {
-    return link_;
-  }
-
-  public void setLink(String link) {
-    this.link_ = link;
-  }
-
   public void setFAQSetting(FAQSetting faqSetting) {
     this.faqSetting_ = faqSetting;
+  }
+  
+  public String getEditLanguage() {
+    return editLanguage;
+  }
+
+  public void setEditLanguage(String editLanguage) {
+    this.editLanguage = editLanguage;
   }
 
   public UIQuestionForm() throws Exception {
@@ -218,25 +215,22 @@ public class UIQuestionForm extends BaseUIFAQForm implements UIPopupComponent {
     }
   }
 
-  private void setListSystemLanguages() throws Exception {
+  private void setListSystemLanguages() {
     listSystemLanguages.clear();
     List<String> languages = FAQUtils.getAllLanguages(this);
     if (languages.size() <= 1)
       isRenderSelectLang = false;
     else
       isRenderSelectLang = true;
-    try {
-      LocaleConfigService localeConfigService = getApplicationComponent(LocaleConfigService.class);
-      String displyByLocal, lang;
-      for (LocaleConfig localeConfig : localeConfigService.getLocalConfigs()) {
-        lang = localeConfig.getLocale().getDisplayLanguage();
-        displyByLocal = capitalizeFirstLetter(localeConfig.getLocale().getDisplayLanguage(currentLocale));
-        if (lang.equals(defaultLanguage_))
-          listSystemLanguages.add(new SelectItemOption<String>(displyByLocal + " (" + getLabel("default") + ") ", lang));
-        else
-          listSystemLanguages.add(new SelectItemOption<String>(displyByLocal, lang));
-      }
-    } catch (Exception e) {
+    LocaleConfigService localeConfigService = getApplicationComponent(LocaleConfigService.class);
+    String displyByLocal, lang;
+    for (LocaleConfig localeConfig : localeConfigService.getLocalConfigs()) {
+      lang = localeConfig.getLocale().getDisplayLanguage();
+      displyByLocal = capitalizeFirstLetter(localeConfig.getLocale().getDisplayLanguage(currentLocale));
+      if (lang.equals(defaultLanguage_))
+        listSystemLanguages.add(new SelectItemOption<String>(displyByLocal + " (" + getLabel("default") + ") ", lang));
+      else
+        listSystemLanguages.add(new SelectItemOption<String>(displyByLocal, lang));
     }
   }
 
@@ -244,17 +238,20 @@ public class UIQuestionForm extends BaseUIFAQForm implements UIPopupComponent {
     setLanguages();
     inputAuthor = new UIFormStringInput(AUTHOR, AUTHOR, author_);
     if (author_.trim().length() > 0)
-      inputAuthor.setEditable(false);
+      inputAuthor.setReadOnly(true);
     inputEmailAddress = new UIFormStringInput(EMAIL_ADDRESS, EMAIL_ADDRESS, email_);
     inputQuestionContent = new UIFormStringInput(QUESTION_CONTENT, QUESTION_CONTENT, null);
     selectLanguage = new UIFormSelectBox(ALL_LANGUAGES, ALL_LANGUAGES, listSystemLanguages);
-    if (!FAQUtils.isFieldEmpty(defaultLanguage_)) {
+    if (!FAQUtils.isFieldEmpty(getEditLanguage())) {
+      selectLanguage.setValue(getEditLanguage());
+      selectLanguage.setSelectedValues(new String[] { getEditLanguage() });
+    } else if (!FAQUtils.isFieldEmpty(defaultLanguage_)) {
       selectLanguage.setValue(defaultLanguage_);
       selectLanguage.setSelectedValues(new String[] { defaultLanguage_ });
     }
     selectLanguage.setOnChange("SelectLanguage");
-    inputIsApproved = new UIFormCheckBoxInput<Boolean>(IS_APPROVED, IS_APPROVED, false);
-    inputIsActivated = new UIFormCheckBoxInput<Boolean>(IS_ACTIVATED, IS_ACTIVATED, false);
+    inputIsApproved = new UICheckBoxInput(IS_APPROVED, IS_APPROVED, false);
+    inputIsActivated = new UICheckBoxInput(IS_ACTIVATED, IS_ACTIVATED, false);
     inputAttachcment = new UIFormInputWithActions(ATTACHMENTS);
     inputAttachcment.addUIFormInput(new UIFormInputInfo(FILE_ATTACHMENTS, FILE_ATTACHMENTS, null));
     try {
@@ -310,7 +307,7 @@ public class UIQuestionForm extends BaseUIFAQForm implements UIPopupComponent {
       if (faqSetting_.isAdmin() || isMode) {
         isMode = true;
       } else
-        isMode = getFAQService().isCategoryModerator(categoryId_, FAQUtils.getCurrentUser());
+        isMode = getFAQService().isCategoryModerator(categoryId_, null);
     } catch (Exception e) {
       log.debug("Failed to get isModerator.", e);
     }
@@ -350,8 +347,14 @@ public class UIQuestionForm extends BaseUIFAQForm implements UIPopupComponent {
       authorQ.setValue(question_.getAuthor());
       UIFormStringInput emailQ = this.getChildById(EMAIL_ADDRESS);
       emailQ.setValue(question_.getEmail());
-      inputQuestionContent.setValue(question.getQuestion());
-      inputQuestionDetail.setValue(question_.getDetail());
+      
+      if(mapLanguage.containsKey(this.editLanguage)){
+        inputQuestionDetail.setValue(mapLanguage.get(this.editLanguage).getDetail());
+        inputQuestionContent.setValue(CommonUtils.decodeSpecialCharToHTMLnumber(mapLanguage.get(this.editLanguage).getQuestion()));        
+      }else{
+        inputQuestionContent.setValue(CommonUtils.decodeSpecialCharToHTMLnumber(question_.getQuestion()));
+        inputQuestionDetail.setValue(question_.getDetail());
+      }
     } catch (Exception e) {
       log.error("Set question is fall, exception: " + e.getMessage());
       initPage(false);
@@ -369,7 +372,7 @@ public class UIQuestionForm extends BaseUIFAQForm implements UIPopupComponent {
   public String getQuestionId() {
     return questionId_;
   }
-
+  
   public void setDefaultLanguage(String defaultLanguage) {
     this.defaultLanguage_ = defaultLanguage;
   }
@@ -378,8 +381,7 @@ public class UIQuestionForm extends BaseUIFAQForm implements UIPopupComponent {
     return this.defaultLanguage_;
   }
 
-  @SuppressWarnings("unused")
-  private String getAuthor() {
+  protected String getAuthor() {
     return this.author_;
   }
 
@@ -387,8 +389,7 @@ public class UIQuestionForm extends BaseUIFAQForm implements UIPopupComponent {
     this.author_ = author;
   }
 
-  @SuppressWarnings("unused")
-  private String getEmail() {
+  protected String getEmail() {
     return this.email_;
   }
 
@@ -442,8 +443,7 @@ public class UIQuestionForm extends BaseUIFAQForm implements UIPopupComponent {
     listFileAttach_.add(fileAttachment);
   }
 
-  @SuppressWarnings("unused")
-  private List<FileAttachment> getListFile() {
+  protected List<FileAttachment> getListFile() {
     return listFileAttach_;
   }
 
@@ -464,8 +464,9 @@ public class UIQuestionForm extends BaseUIFAQForm implements UIPopupComponent {
       String language = questionForm.selectLanguage.getValue();
       String detail = questionForm.inputQuestionDetail.getValue();
       String question = questionForm.inputQuestionContent.getValue();
-      if (!ValidatorDataInput.fckContentIsNotEmpty(detail))
+      if (!ValidatorDataInput.fckContentIsNotEmpty(detail)){
         detail = " ";
+      }
       if (!ValidatorDataInput.fckContentIsNotEmpty(question)) {
         if (questionForm.mapLanguage.containsKey(questionForm.lastLanguage_)) {
           questionForm.mapLanguage.get(questionForm.lastLanguage_).setState(QuestionLanguage.DELETE);
@@ -506,7 +507,6 @@ public class UIQuestionForm extends BaseUIFAQForm implements UIPopupComponent {
     public void onEvent(Event<UIQuestionForm> event, UIQuestionForm questionForm, String objectId) throws Exception {
       try {
         boolean isNew = true;
-        Date date = org.exoplatform.faq.service.Utils.getInstanceTempCalendar().getTime();
         String author = questionForm.inputAuthor.getValue();
         String emailAddress = questionForm.inputEmailAddress.getValue();
         String questionContent = questionForm.inputQuestionContent.getValue();
@@ -534,48 +534,44 @@ public class UIQuestionForm extends BaseUIFAQForm implements UIPopupComponent {
         }
 
         if (!language.equals(questionForm.defaultLanguage_)) {
-          if(questionForm.mapLanguage.isEmpty() || questionForm.mapLanguage.get(questionForm.getDefaultLanguage()) == null) {
-            warning("UIQuestionForm.msg.default-question-null") ;
-            return ;
+          if (questionForm.mapLanguage.isEmpty() || questionForm.mapLanguage.get(questionForm.getDefaultLanguage()) == null) {
+            warning("UIQuestionForm.msg.default-question-null");
+            return;
           }
         }
 
         String questionDetail = questionForm.inputQuestionDetail.getValue();
-        if(!ValidatorDataInput.fckContentIsNotEmpty(questionDetail)) questionDetail = " ";
-        if(!ValidatorDataInput.fckContentIsNotEmpty(questionContent)){
-          if( questionForm.mapLanguage.containsKey(language)){
-            questionForm.mapLanguage.get(language).setState(QuestionLanguage.DELETE) ;
+        if (!ValidatorDataInput.fckContentIsNotEmpty(questionDetail))
+          questionDetail = " ";
+        if (!ValidatorDataInput.fckContentIsNotEmpty(questionContent)) {
+          if (questionForm.mapLanguage.containsKey(language)) {
+            questionForm.mapLanguage.get(language).setState(QuestionLanguage.DELETE);
           }
         }
-        questionDetail = org.exoplatform.ks.common.Utils.encodeSpecialCharInContent(questionDetail);
-        questionContent = org.exoplatform.ks.common.Utils.encodeSpecialCharInTitle(questionContent);
+        questionDetail = CommonUtils.encodeSpecialCharInContent(questionDetail);
+        questionContent = CommonUtils.encodeSpecialCharInTitle(questionContent);
 
         Question question = questionForm.getQuestion();
-
-        if (questionForm.questionId_ == null || questionForm.questionId_.trim().length() < 1) { // Add new question
-          question = new Question();
-          question.setCategoryId(questionForm.getCategoryId());
-          question.setRelations(new String[] {});
-          question.setCreatedDate(date);
+        if(questionForm.questionId_ == null || questionForm.questionId_.trim().length() < 1) { //Add new question
+          question = new Question() ;
+          String catId = questionForm.getCategoryId();
+          question.setCategoryId((catId.indexOf("/") > 0) ? catId.substring(catId.lastIndexOf("/") + 1) : catId);
+          question.setCategoryPath(catId);
+          question.setRelations(new String[] {""});
+          questionForm.isModerate = questionForm.getFAQService().isModerateQuestion(catId);
         } else { // Edit question
-          isNew = false;
+          isNew = false ;
+          String questionPath = question.getPath();
+          String categorySubPath = questionPath.substring(0, questionPath.indexOf("/" + org.exoplatform.faq.service.Utils.QUESTION_HOME));
+          questionForm.isModerate = questionForm.getFAQService().isModerateQuestion(categorySubPath);
         }
 
-        if (questionForm.isModerate) {
-          if (questionForm.isAddCheckBox) {
-            question.setApproved(questionForm.getUIFormCheckBoxInput(IS_APPROVED).isChecked());
-            question.setActivated(questionForm.getUIFormCheckBoxInput(IS_ACTIVATED).isChecked());
-          } else if (isNew) {
-            question.setApproved(false);
-          }
-        } else {
-          if (questionForm.isAddCheckBox) {
-            question.setApproved(questionForm.getUIFormCheckBoxInput(IS_APPROVED).isChecked());
-            question.setActivated(questionForm.getUIFormCheckBoxInput(IS_ACTIVATED).isChecked());
-          } else if (isNew) {
-            question.setApproved(true);
-          }
+        question.setApproved(!questionForm.isModerate || (questionForm.isMode && isNew)) ;
+        if(questionForm.isAddCheckBox){
+          question.setApproved(questionForm.getUICheckBoxInput(IS_APPROVED).isChecked()) ;
+          question.setActivated(questionForm.getUICheckBoxInput(IS_ACTIVATED).isChecked()) ;
         }
+
         question.setLanguage(questionForm.getDefaultLanguage());
         question.setAuthor(author);
         question.setEmail(emailAddress);
@@ -601,10 +597,8 @@ public class UIQuestionForm extends BaseUIFAQForm implements UIPopupComponent {
         UIAnswersPortlet portlet = questionForm.getAncestorOfType(UIAnswersPortlet.class);
         UIQuestions questions = portlet.getChild(UIAnswersContainer.class).getChild(UIQuestions.class);
         // Create link by Vu Duy Tu.
-        if (isNew) {
-          StringBuilder qsId = new StringBuilder().append(question.getCategoryId()).append("/").append(org.exoplatform.faq.service.Utils.QUESTION_HOME).append("/").append(question.getId());
-          String link = FAQUtils.getLink(questionForm.getLink(), questionForm.getId(), "UIQuestions", "Attachment", "ViewQuestion", qsId.toString()).replace("private", "public");
-          question.setLink(link);
+        if (FAQUtils.isFieldEmpty(question.getLink())) {
+          question.setLink(FAQUtils.getQuestionURI(question.getId(), false));
         }
 
         // For discuss in forum
@@ -634,24 +628,21 @@ public class UIQuestionForm extends BaseUIFAQForm implements UIPopupComponent {
           }
           // end discuss
           if (questionForm.getFAQService().saveQuestion(question, isNew, questionForm.faqSetting_) == null) {
-            warning("UIQuestions.msg.question-deleted");
-            isNew = false;
-          }
-          if (isNew) {
-            if (!questionForm.isModerate || questionForm.isMode) {
-              info("UIQuestionForm.msg.add-new-question-successful");
-            } else {
-              info("UIQuestionForm.msg.question-not-is-approved");
-            }
+            warning("UIQuestions.msg.question-deleted", false);
+            portlet.cancelAction();
+            return;
           }
         } catch (Exception e) {
-          questionForm.log.error("Can not run discuss question in to forum portlet");
+          questionForm.log.error("Can not run discuss question in to forum portlet", false);
+        }
+        if(!questionForm.isModerate || questionForm.isMode) {
+          if(isNew) info("UIQuestionForm.msg.add-new-question-successful", false) ;
+        } else {
+          info("UIQuestionForm.msg.question-not-is-approved", false) ;
         }
 
         if (!questionForm.isChildOfManager) {
-          UIPopupAction popupAction = portlet.getChild(UIPopupAction.class);
-          popupAction.deActivate();
-          event.getRequestContext().addUIComponentToUpdateByAjax(popupAction);
+          portlet.cancelAction();
         } else {
           UIQuestionManagerForm questionManagerForm = questionForm.getParent();
           UIResponseForm responseForm = questionManagerForm.getChild(UIResponseForm.class);

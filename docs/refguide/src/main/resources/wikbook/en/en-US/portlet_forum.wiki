@@ -1,7 +1,7 @@
 h1. Overview {anchor:id=KSref.ForumPortlet.Overview}
 
 || Portlet name || War name || Description ||
-| *ForumPortlet* | {{forum.war}} | The Forum portlet is the application for users to post and read messages on different topics. |
+| *ForumPortlet* | forum.war | The Forum portlet is the application for users to post and read messages on different topics. |
 	
 * Declaration template	
 
@@ -36,28 +36,27 @@ h1. Preferences {anchor:id=KSref.ForumPortlet.ForumPortletPreferences}
 | *isShowRules* | {{true}}, {{false}} | {{true}} | Specify if the forum rules panel is shown or not. |
 | *isShowStatistics* | {{true}}, {{false}} | {{true}} | Specify if the statistics panel is shown or not. |
 
-
 h1. Events {anchor:id=KSref.ForumPortlet.Event}
 
 || Name || Description ||
-| *ForumLinkEvent* | Set the render for _UIForumLinkPortlet_ and set values for _UIForumLinks_. |
-| *ReLoadPortletEvent* | Reload _UIForumPortlet_. |
-| *OpenLink* | Update values for _UIForumLinks_. |
-| *ForumPollEvent* | Set the render for _UIForumPollPortlet_. |
-| *ForumModerateEvent* | Set the render for _UIForumModeratorPortlet_. |
-| *ForumRuleEvent* | Set the render for _UIForumRulePortlet_. |
-| *QuickReplyEvent* | Set the render for _UIForumQuickReplyPortlet_. |
+| *ForumLinkEvent* | Set the render for UIForumLinkPortlet and set values for UIForumLinks. |
+| *ReLoadPortletEvent* | Reload UIForumPortlet. |
+| *OpenLink* | Update values for UIForumLinks. |
+| *ForumPollEvent* | Set the render for UIForumPollPortlet. |
+| *ForumModerateEvent* | Set the render for UIForumModeratorPortlet. |
+| *ForumRuleEvent* | Set the render for UIForumRulePortlet. |
+| *QuickReplyEvent* | Set the render for UIForumQuickReplyPortlet. |
 
 h2. ForumLinkEvent {anchor:id=KSref.ForumPortlet.ForumLinkEvent}
-This event is fired through _UIForumLinkPortlet_. 
+This event is fired through UIForumLinkPortlet. 
 
 To receive ForumLinkEvent, you must use the _ForumParameter_ class with two properties:
 
 || Name || Type || Possible value || Description ||
 | *isRenderForumLink* | {{boolean}} | true/false | If the value is set to true or false, the Forum link is rendered or not respectively. |
-| *path* | {{string}} | The absolute path of the class node (including types: category, forum, topic) defined by JCR. | Set data for the _UIForumLinkPortlet_.|
+| *path* | {{string}} | The absolute path of the class node (including types: category, forum, topic) defined by JCR. | Set data for the UIForumLinkPortlet.|
 
-* *Example:*
+For example:
 
 {code:java}
 PortletRequestContext pcontext = (PortletRequestContext) WebuiRequestContext.getCurrentInstance();
@@ -74,11 +73,11 @@ actionRes.setEvent(new QName("ForumLinkEvent"), param) ;
 {code}
 
 h2. ReLoadPortletEvent {anchor:id=KSref.ForumPortlet.ReLoadPortletEvent}
-This event is fired through _UIForumPortlet_. 
+This event is fired through UIForumPortlet. 
 
 To receive ReLoadPortletEvent, you must use the _ForumParameter_ class with two properties:
 || Name || Type || Possible value || Description ||
-| *topicId* | {{string}} | Id of topic. | Return the id of topic for _UIForumPortlet_. |
+| *topicId* | {{string}} | Id of topic. | Return the id of topic for UIForumPortlet |
 | *isRenderPoll* | {{boolean}} | true/false | If the value is set to true or false, the _UITopicPoll_ component is rendered or not respectively. |
 
 For example:
@@ -94,11 +93,11 @@ actionRes.setEvent(new QName("ReLoadPortletEvent"), param) ;
 {code}
 
 h2. OpenLink {anchor:id=KSref.ForumPortlet.OpenLink}
-This event is fired through _UIForumPortlet_. 
+This event is fired through UIForumPortlet. 
 
 To receive OpenLink, you must use the _ForumParameter_ class with one property:
 || Name || Type || Possible value || Description ||
-| *path* | {{string}} | The absolute path of the node defined by JCR. | Set data for the _UIForumPortlet_. |
+| *path* | {{string}} | The absolute path of the node defined by JCR. | Set data for the UIForumPortlet. |
 
 For example:
 
@@ -117,9 +116,9 @@ This event is fired through UIForumPollPortlet.
 To receive ForumPollEvent, you must use the _ForumParameter_ class with four properties:
 || Name || Type || Possible value || Description ||
 | *isRenderPoll* | {{boolean}} | True/false | If the value is set to true or false, the _UIForumPollPortlet_ portlet is rendered or not respectively. |
-| *categoryId* | {{string}} | Id of category | Return  the Id of category for _UIForumPollPortlet_. |
-| *forumId* | {{string}} | Id of forum | Return the Id of forum for _UIForumPollPortlet_. |
-| *topicId* | {{string}} | Id of topic | Return the Id of topic for _UIForumPollPortlet_. |
+| *categoryId* | {{string}} | Id of category | Return  the Id of category for UIForumPollPortlet. |
+| *forumId* | {{string}} | Id of forum | Return the Id of forum for UIForumPollPortlet. |
+| *topicId* | {{string}} | Id of topic | Return the Id of topic for UIForumPollPortlet. |
 
 For example:
 
@@ -136,9 +135,9 @@ actionRes.setEvent(new QName("ForumPollEvent"), param);
 {code}
 
 h2. ForumModerateEvent {anchor:id=KSref.ForumPortlet.ForumModerateEvent}
-This event is fired through_UIForumModeratePortlet_.
+This event is fired through UIForumModeratePortlet.
 
-To receive _ForumModerateEvent_, you must use the _ForumParameter_ class with two properties:
+To receive ForumModerateEvent, you must use the _ForumParameter_ class with two properties:
 || Name || Type || Possible value || Description ||
 | *isRenderModerator* | {{boolean}} | True/false | If the value is set to true or false, the _UIForumModeratePortlet_ portlet is rendered or not respectively. |
 | *moderator* | {{list of strings}} | List of user name | Set data for UIForumModeratePortlet. |
@@ -157,12 +156,12 @@ actionRes.setEvent(new QName("ForumPollEvent"), param);
 {code}
 
 h2. ForumRuleEvent {anchor:id=KSref.ForumPortlet.ForumRuleEvent}
-This event is fired through _UIForumRulePortlet_.
+This event is fired through UIForumRulePortlet.
 
 To receive ForumRuleEvent, you must use the _ForumParameter_ class with two properties:
 || Name || Type || Possible value || Description ||
-| *isRenderRule* | {{boolean}} | {{True/false}} | If the value is set to true or false, the _UIForumRulePortlet_ portlet is rendered or not respectively. |
-| *infoRules* | {{list of strings}} | The list of states: *can create topic*, *can add post* and *topic has lock*. | Set permissions for users in _UIForumRulePortlet_. |
+| *isRenderRule* | {{boolean}} | True/false | If the value is set to true or false, the _UIForumRulePortlet_ portlet is rendered or not respectively. |
+| *infoRules* | {{list of strings}} | The list of states: *can create topic*, *can add post* and *topic has lock*. | Set permissions for users in UIForumRulePortlet. |
 
 For example:
 
@@ -189,11 +188,11 @@ This event is fired through UIQuickReplyPortlet.
 
 To receive QuickReplyEvent, you must use the _ForumParameter_ class with five properties:
 || Name || Type || Possible value || Description ||
-| *isRenderQuickReply* | {{boolean}} | {{True/false}} | If the value is set to true or false, the _UIQuickReplyPortlet_ portlet is rendered or not respectively. |
-| *isModerator* | {{boolean}} | {{True/false}}} | Specify if the user is moderator of forum containing the topic with quick reply or not. |
-| *categoryId* | {{string}} | Id of category | Return the Id of category for _UIQuickReplyPortlet_. |
-| *forumId* | {{string}} | Id of forum | Return the Id of forum for _UIQuickReplyPortlet_. |
-| *topicId* | {{string}} | Id of topic | Return the Id of topic for _UIQuickReplyPortlet_. |
+| *isRenderQuickReply* | {{boolean}} | True/false | If the value is set to true or false, the _UIQuickReplyPortlet_ portlet is rendered or not respectively. |
+| *isModerator* | {{boolean}} | True/false | Specify if the user is moderator of forum containing the topic with quick reply or not. |
+| *categoryId* | {{string}} | Id of category | Return the Id of category for UIQuickReplyPortlet. |
+| *forumId* | {{string}} | Id of forum | Return the Id of forum for UIQuickReplyPortlet. |
+| *topicId* | {{string}} | Id of topic | Return the Id of topic for UIQuickReplyPortlet. |
 
 For example:
 

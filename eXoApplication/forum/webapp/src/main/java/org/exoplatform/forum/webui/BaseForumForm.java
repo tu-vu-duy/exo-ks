@@ -16,6 +16,7 @@
  */
 package org.exoplatform.forum.webui;
 
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,6 +58,21 @@ public class BaseForumForm extends BaseUIForm {
     }
     return forumService;
   }
+  @Override
+  public void processRender(WebuiRequestContext context) throws Exception {
+    getAncestorOfType(UIForumPortlet.class).updateCurrentUserProfile();
+    if (getTemplate() != null)
+    {
+       super.processRender(context);
+       return;
+    }
+    Writer writer = context.getWriter();
+    writer.append("<div class='UIForm ").append(getId()).append("'>");
+    begin();
+    renderChildren(context);
+    end();
+    writer.append("</div>");
+  }
 
   /**
    * Set forum service (used by unit tests)
@@ -66,19 +82,13 @@ public class BaseForumForm extends BaseUIForm {
     this.forumService = forumService;
   }
 
-  public UserProfile getUserProfile() throws Exception {
-    if (this.userProfile == null) {
-      setUserProfile(null);
-    }
-    return this.userProfile;
+  public UISliderControl getUISliderControl(String name) {
+     return findComponentById(name);
   }
-
-  public void setUserProfile(UserProfile userProfile) throws Exception {
-    if (userProfile == null) {
-      this.userProfile = this.getAncestorOfType(UIForumPortlet.class).getUserProfile();
-    } else {
-      this.userProfile = userProfile;
-    }
+  
+  public UserProfile getUserProfile() {
+    userProfile = getAncestorOfType(UIForumPortlet.class).getUserProfile();
+    return userProfile;
   }
 
   protected void setListWatches() throws Exception {
@@ -145,10 +155,10 @@ public class BaseForumForm extends BaseUIForm {
       values.add(userProfile.getEmail());
       getForumService().addWatch(1, path, values, userProfile.getUserId());
       setListWatches();
-      info("UIAddWatchingForm.msg.successfully");
+      info("UIAddWatchingForm.msg.successfully", false);
       return true;
     } catch (Exception e) {
-      warning("UIAddWatchingForm.msg.fall");
+      warning("UIAddWatchingForm.msg.fall", false);
       return false;
     }
   }
@@ -157,10 +167,10 @@ public class BaseForumForm extends BaseUIForm {
     try {
       getForumService().removeWatch(1, path, userProfile.getUserId() + ForumUtils.SLASH + getEmailWatching(path));
       setListWatches();
-      info("UIAddWatchingForm.msg.UnWatchSuccessfully");
+      info("UIAddWatchingForm.msg.UnWatchSuccessfully", false);
       return true;
     } catch (Exception e) {
-      warning("UIAddWatchingForm.msg.UnWatchfall");
+      warning("UIAddWatchingForm.msg.UnWatchfall", false);
       log.debug("Failed to add watch.");
       return false;
     }

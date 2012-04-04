@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Created-By: Apache Maven
+Built-By: exo
+Build-Jdk: 1.6.0_23
+Implementation-Vendor-Id: org.exoplatform.ks
+Implementation-Title: eXo KS Forum application
+Implementation-URL: http://wiki.exoplatform.org/xwiki/bin/view/KS/exo.
+ ks.eXoApplication/exo.ks.eXoApplication.forum/exo.ks.eXoApplication.f
+ orum.webapp/
+Implementation-Vendor: eXo Platform SAS
+Implementation-Version: 2.2.8-SNAPSHOT
+SCM-URL: scm:svn:http://svn.exoplatform.org/projects/ks/branches/2.2.x
+ /exo.ks.eXoApplication/exo.ks.eXoApplication.forum/exo.ks.eXoApplicat
+ ion.forum.webapp
+Specification-Title: eXo Platform
+Specification-Vendor: eXo Platform SAS
+Specification-Version: N/A
+

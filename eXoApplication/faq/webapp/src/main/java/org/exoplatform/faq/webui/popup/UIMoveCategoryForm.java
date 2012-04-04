@@ -112,9 +112,14 @@ public class UIMoveCategoryForm extends BaseUIForm implements UIPopupComponent {
       try {
         boolean canMove = moveCategory.faqSetting_.isAdmin();
         if (!canMove)
-          canMove = faqService_.isCategoryModerator(destCategoryId, FAQUtils.getCurrentUser());
+          canMove = faqService_.isCategoryModerator(destCategoryId, null);
         if (canMove) {
-          faqService_.moveCategory(categoryId, destCategoryId);
+          if (!faqService_.isCategoryExist(faqService_.getCategoryNameOf(categoryId), destCategoryId)) {
+            faqService_.moveCategory(categoryId, destCategoryId);
+          } else {
+            warning("UIQuestions.msg.can-not-move-category-same-name");
+            return;
+          }
         } else {
           warning("UIQuestions.msg.can-not-move-category");
           return;
@@ -137,16 +142,19 @@ public class UIMoveCategoryForm extends BaseUIForm implements UIPopupComponent {
             questions.viewingQuestionId_ = "";
             questions.updateCurrentLanguage();
           } catch (Exception e) {
+            if (moveCategory.log.isDebugEnabled()) {
+              moveCategory.log.debug("Failed to update question form", e);
+            }
           }
           UIBreadcumbs breadcumbs = answerPortlet.findFirstComponentOfType(UIBreadcumbs.class);
           breadcumbs.setUpdataPath(tmp);
         }
         moveCategory.isCateSelect = false;
       } catch (ItemExistsException ie) {
-        warning("UIQuestions.msg.already-in-destination");
+        warning("UIQuestions.msg.already-in-destination", false);
       } catch (Exception e) {
         moveCategory.log.warn("Can not move this category. Exception: " + e.getMessage());
-        warning("UIQuestions.msg.category-id-deleted");
+        warning("UIQuestions.msg.category-id-deleted", false);
       }
       event.getRequestContext().addUIComponentToUpdateByAjax(answerPortlet);
       answerPortlet.cancelAction();

@@ -19,14 +19,12 @@ package org.exoplatform.faq.webui.popup;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
+import org.exoplatform.commons.utils.ListAccess;
 import org.exoplatform.commons.utils.ObjectPageList;
 import org.exoplatform.commons.utils.PageList;
-import org.exoplatform.container.PortalContainer;
 import org.exoplatform.faq.webui.SelectItem;
 import org.exoplatform.faq.webui.SelectOption;
 import org.exoplatform.faq.webui.UIAnswersPortlet;
@@ -37,7 +35,6 @@ import org.exoplatform.ks.common.webui.UIPopupContainer;
 import org.exoplatform.services.organization.OrganizationService;
 import org.exoplatform.services.organization.Query;
 import org.exoplatform.services.organization.User;
-import org.exoplatform.services.organization.idm.ExtGroup;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIPageIterator;
@@ -46,8 +43,8 @@ import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.event.Event.Phase;
-import org.exoplatform.webui.form.UIFormCheckBoxInput;
 import org.exoplatform.webui.form.UIFormStringInput;
+import org.exoplatform.webui.form.input.UICheckBoxInput;
 
 /**
  * Created by The eXo Platform SARL
@@ -123,36 +120,41 @@ public class UIAddressEmailsForm extends BaseUIForm implements UIPopupComponent 
 
   private void searchUserProfileByKey(String keyWord) throws Exception {
     try {
-      Set<User> users = new HashSet<User>();
+      Map<String, Object> mapObject = new HashMap<String, Object>();
       OrganizationService service = this.getApplicationComponent(OrganizationService.class);
       keyWord = "*" + keyWord + "*";
       Query q;
       // search by user name
       q = new Query();
       q.setUserName(keyWord);
-      for (Object obj : service.getUserHandler().findUsers(q).getAll()) {
-        users.add((User) obj);
+      ListAccess<User> listAcess = service.getUserHandler().findUsersByQuery(q);
+      for (User user : listAcess.load(0, listAcess.getSize())) {
+        mapObject.put(user.getUserName(), user);
       }
+      
       // search by last name
-      q = new Query();
-      q.setLastName(keyWord);
-      for (Object obj : service.getUserHandler().findUsers(q).getAll()) {
-        users.add((User) obj);
+      listAcess = service.getUserHandler().findUsersByQuery(q);
+      for (User user : listAcess.load(0, listAcess.getSize())) {
+        mapObject.put(user.getUserName(), user);
       }
+      
       // search by firstname
       q = new Query();
       q.setFirstName(keyWord);
-      for (Object obj : service.getUserHandler().findUsers(q).getAll()) {
-        users.add((User) obj);
+      listAcess = service.getUserHandler().findUsersByQuery(q);
+      for (User user : listAcess.load(0, listAcess.getSize())) {
+        mapObject.put(user.getUserName(), user);
       }
+      
       // search by email
       q = new Query();
       q.setEmail(keyWord);
-      for (Object obj : service.getUserHandler().findUsers(q).getAll()) {
-        users.add((User) obj);
+      listAcess = service.getUserHandler().findUsersByQuery(q);
+      for (User user : listAcess.load(0, listAcess.getSize())) {
+        mapObject.put(user.getUserName(), user);
       }
 
-      ObjectPageList<User> objPageList = new ObjectPageList<User>((new ArrayList<User>(users)), 10);
+      ObjectPageList<User> objPageList = new ObjectPageList(Arrays.asList(mapObject.values().toArray()), 10);
       uiPageList_.setPageList(objPageList);
     } catch (Exception e) {
       log.error("Can not search user by key, exception: " + e.getMessage());
@@ -162,15 +164,18 @@ public class UIAddressEmailsForm extends BaseUIForm implements UIPopupComponent 
   @SuppressWarnings("unchecked")
   public List<User> getUsers() throws Exception {
     List<User> users = new ArrayList<User>(uiPageList_.getCurrentPageData());
+    String userName;
     for (User c : users) {
-      UIFormCheckBoxInput uiInput = getUIFormCheckBoxInput(c.getUserName());
-      if (uiInput == null)
-        addUIFormInput(new UIFormCheckBoxInput<Boolean>(c.getUserName(), c.getUserName(), null));
-    }
-    for (User c : checkedList_.values()) {
-      UIFormCheckBoxInput uiInput = getUIFormCheckBoxInput(c.getUserName());
-      if (uiInput != null)
+      userName = c.getUserName();
+      UICheckBoxInput uiInput = getUICheckBoxInput(userName);
+      if (uiInput == null){
+        uiInput = new UICheckBoxInput(userName, userName, null);
+        addUIFormInput(uiInput);
+      }
+      if(checkedList_.containsKey(userName)) {
         uiInput.setChecked(true);
+      }
+      uiInput.setHTMLAttribute("title", c.getFullName());
     }
     return users;
   }
@@ -215,7 +220,7 @@ public class UIAddressEmailsForm extends BaseUIForm implements UIPopupComponent 
   public List<User> getCheckedUser() throws Exception {
     List<User> userList = new ArrayList<User>();
     for (User user : new ArrayList<User>(uiPageList_.getCurrentPageData())) {
-      UIFormCheckBoxInput<Boolean> uiCheckbox = getChildById(user.getUserName());
+      UICheckBoxInput uiCheckbox = getChildById(user.getUserName());
       if (uiCheckbox != null && uiCheckbox.isChecked()) {
         userList.add(user);
       }
@@ -232,14 +237,14 @@ public class UIAddressEmailsForm extends BaseUIForm implements UIPopupComponent 
         return;
       }
       UIAnswersPortlet uiPortlet = uiAddressForm.getAncestorOfType(UIAnswersPortlet.class);
-      String toAddress = "";
       StringBuffer sb = new StringBuffer();
+      StringBuffer toAddress = new StringBuffer();
       for (User ct : checkedUser) {
         uiAddressForm.newCheckedList_.put(ct.getUserName(), ct);
       }
       for (User user : uiAddressForm.newCheckedList_.values()) {
         if (user.getEmail() != null)
-          toAddress += user.getFullName() + "<" + user.getEmail() + "> ,";
+          toAddress.append(user.getFullName()).append("<").append(user.getEmail()).append("> ,");
       }
       List<String> listMail = Arrays.asList(sb.toString().split(","));
       String email = null;
@@ -254,13 +259,13 @@ public class UIAddressEmailsForm extends BaseUIForm implements UIPopupComponent 
       }
       UISendMailForm uiSendMailForm = uiPortlet.findFirstComponentOfType(UISendMailForm.class);
       if (uiAddressForm.getRecipientType().equals("To")) {
-        uiSendMailForm.setFieldToValue(toAddress);
+        uiSendMailForm.setFieldToValue(toAddress.toString());
         uiSendMailForm.setToUsers(new ArrayList<User>(uiAddressForm.newCheckedList_.values()));
       } else if (uiAddressForm.getRecipientType().equals("AddCc")) {
-        uiSendMailForm.setFieldCCValue(toAddress);
+        uiSendMailForm.setFieldCCValue(toAddress.toString());
         uiSendMailForm.setAddCCUsers(new ArrayList<User>(uiAddressForm.newCheckedList_.values()));
       } else if (uiAddressForm.getRecipientType().equals("AddBcc")) {
-        uiSendMailForm.setFieldBCCValue(toAddress);
+        uiSendMailForm.setFieldBCCValue(toAddress.toString());
         uiSendMailForm.setAddBCCUsers(new ArrayList<User>(uiAddressForm.newCheckedList_.values()));
       }
       uiAddressForm.checkedList_ = uiAddressForm.newCheckedList_;
@@ -278,17 +283,16 @@ public class UIAddressEmailsForm extends BaseUIForm implements UIPopupComponent 
         return;
       }
       UIPopupContainer uiPopupContainer = uiAddressForm.getAncestorOfType(UIPopupContainer.class);
-      // UISendEmailsContainer uiPopupContainer = uiAddressForm.getAncestorOfType(UISendEmailsContainer.class) ;
       uiAddressForm.checkedList_.clear();
       uiAddressForm.newCheckedList_.clear();
-      String toAddress = "";
       StringBuffer sb = new StringBuffer();
+      StringBuffer toAddress = new StringBuffer();
       for (User ct : checkedUser) {
         uiAddressForm.newCheckedList_.put(ct.getUserName(), ct);
       }
       for (User user : uiAddressForm.newCheckedList_.values()) {
         if (user.getEmail() != null) {
-          toAddress += user.getFullName() + "<" + user.getEmail() + "> ,";
+          toAddress.append(user.getFullName()).append("<").append(user.getEmail()).append("> ,");
           if (sb.length() > 0)
             sb.append(",");
           sb.append(user.getEmail());
@@ -296,15 +300,15 @@ public class UIAddressEmailsForm extends BaseUIForm implements UIPopupComponent 
       }
       UISendMailForm uiSendMailForm = uiPopupContainer.getChild(UISendMailForm.class);
       if (uiAddressForm.getRecipientType().equals("to")) {
-        uiSendMailForm.setFieldToValue(toAddress);
+        uiSendMailForm.setFieldToValue(toAddress.toString());
         uiSendMailForm.setToUsers(checkedUser);
       }
       if (uiAddressForm.getRecipientType().equals("AddCc")) {
-        uiSendMailForm.setFieldCCValue(toAddress);
+        uiSendMailForm.setFieldCCValue(toAddress.toString());
         uiSendMailForm.setAddCCUsers(checkedUser);
       }
       if (uiAddressForm.getRecipientType().equals("AddBcc")) {
-        uiSendMailForm.setFieldBCCValue(toAddress);
+        uiSendMailForm.setFieldBCCValue(toAddress.toString());
         uiSendMailForm.setAddBCCUsers(checkedUser);
       }
       uiAddressForm.checkedList_ = uiAddressForm.newCheckedList_;

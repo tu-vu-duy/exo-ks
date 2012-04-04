@@ -45,12 +45,5 @@
       <visibility>SYSTEM</visibility>
       <page-reference>portal::classic::tour</page-reference>
     </node>    
-    <node>
-      <uri>wiki</uri>
-      <name>wiki</name>
-      <label>Wiki</label>
-      <visibility>SYSTEM</visibility>
-      <page-reference>portal::classic::wiki</page-reference>
-    </node>
   </page-nodes>
 </node-navigation>

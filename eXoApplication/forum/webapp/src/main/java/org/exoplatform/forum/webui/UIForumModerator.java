@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.exoplatform.container.ExoContainerContext;
-import org.exoplatform.forum.ForumUtils;
 import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
@@ -47,14 +46,11 @@ public class UIForumModerator extends UIContainer {
 
   private long         role         = 3;
 
-  private String       linkUserInfo = ForumUtils.EMPTY_STR;
-
   public UIForumModerator() throws Exception {
     forumService = (ForumService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(ForumService.class);
   }
 
-  @SuppressWarnings("unused")
-  private long getUserRole() {
+  protected long getUserRole() {
     return role;
   }
 
@@ -62,24 +58,19 @@ public class UIForumModerator extends UIContainer {
     this.role = role;
   }
 
-  @SuppressWarnings("unused")
-  private List<String> getModeratorsForum() throws Exception {
+  protected List<String> getModeratorsForum() throws Exception {
     return moderators;
   }
 
-  public void setModeratorsForum(List<String> moderators) throws Exception {
+  public void setModeratorsForum(List<String> moderators) {
     this.moderators = moderators;
-    this.linkUserInfo = this.getAncestorOfType(UIForumPortlet.class).getPortletLink();
   }
 
-  @SuppressWarnings("unused")
-  private String getActionViewInfoUser(String linkType, String userName) {
-    String link = linkUserInfo.replace("ViewPublicUserInfo", linkType).replace("userName", userName);
-    return link;
+  protected String getActionViewInfoUser(String linkType, String userName) {
+    return getAncestorOfType(UIForumPortlet.class).getPortletLink(linkType, userName);
   }
 
-  @SuppressWarnings("unused")
-  private String getScreenName(String userId) throws Exception {
+  protected String getScreenName(String userId) throws Exception {
     return forumService.getScreenName(userId);
   }
 

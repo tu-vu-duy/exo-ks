@@ -2,23 +2,17 @@
 	import org.exoplatform.forum.ForumUtils;
 	List moderators =	uicomponent.getModeratorsForum() ;
 	int total = moderators.size();
+	String[] menuViewInfos = ["ViewPublicUserInfo","PrivateMessage","ViewPostedByUser", "ViewThreadByUser"] ;
 %>
 <div class="UIForumModerator" id="uicomponent.id">
 	<div class="ForumCategory">
-		<div class="ForumToolbar">
-			<div class="LeftBar">
-				<div class="RightBar">
-					<div class="CenterBar">
-						<div class="Title"><%=_ctx.appRes("UIForumForm.label.Moderator");%><% if(total > 0) { %>($total)<% } %></div>
-						<div class="CollapseButton" collapse="<%=_ctx.appRes("UIForumPortlet.label.Collapse");%>" expand="<%=_ctx.appRes("UIForumPortlet.label.Expand");%>" title="<%=_ctx.appRes("UIForumPortlet.label.Collapse");%>" onclick="eXo.forum.UIForumPortlet.expandCollapse(this) ;"><span></span></div>
-						<div style="clear:both;"><span></span></div>
-					</div>
-				</div>
-			</div>
+		<div class="ForumToolbar ClearFix">
+			<span class="CollapseButton" collapse="<%=_ctx.appRes("UIForumPortlet.label.Collapse");%>" expand="<%=_ctx.appRes("UIForumPortlet.label.Expand");%>" title="<%=_ctx.appRes("UIForumPortlet.label.Collapse");%>" onclick="eXo.forum.UIForumPortlet.expandCollapse(this) ;"></span>
+			<h6 class="Title"><%=_ctx.appRes("UIForumForm.label.Moderator");%><% if(total > 0) { %>($total)<% } %></h6>
 		</div>
 		<div class="ContentContainer">
 			<div class="ForumList">
-				<div class="text">
+				<div class="text ClearFix">
 				<% boolean isMod = false ;
 				int i = 1;
 				String userView;
@@ -30,51 +24,40 @@
 				<%
 					if(i == moderators.size()) {
 				%>
-						<span>&nbsp;</span><a href="javaScript:void(0)" onclick="eXo.webui.UIPopupSelectCategory.show(this.parentNode, event);">${userView}</a>
+						<span>&nbsp;</span><a href="javaScript:void(0)" onclick="eXo.ks.KSUtils.showUserMenu(this.parentNode, event);">${userView}</a>
 				<%}else {%> 
-					<span>&nbsp;</span><a href="javaScript:void(0)" onclick="eXo.webui.UIPopupSelectCategory.show(this.parentNode, event);">${userView}</a><span>,</span>
+					<span>&nbsp;</span><a href="javaScript:void(0)" onclick="eXo.ks.KSUtils.showUserMenu(this.parentNode, event);">${userView}</a><span>,</span>
 				<%}%>
 				
-						<div style="position:relative;">
-							<div class="UIPopupCategory" style="display:none; left:2px; top:2px; ">
-								<ul class="UIRightClickPopupMenu" style="display:block;">
-								
-									<%
-										String linkProf = uicomponent.getActionViewInfoUser("ViewPublicUserInfo", moderator);
-									%>
-									<li class="MenuItem" onclick="$linkProf">
-										<a class="ItemIcon IconsView ViewPublicUserInfo" href="javaScript:void(0)"><%=_ctx.appRes("UITopicDetail.action.ViewPublicUserInfo")%></a>
-									</li>
-									<%
-									  if(uicomponent.getUserRole() < 3){
-											String sendPrSms = uicomponent.getActionViewInfoUser("PrivateMessage", moderator);
-									%>
-									<li class="MenuItem" onclick="$sendPrSms">
-										<a class="ItemIcon IconsView PrivateMessage" href="javaScript:void(0)"><%=_ctx.appRes("UITopicDetail.action.PrivateMessage")%></a>
-									</li>
-									<%
-										}
-										String viewPosted = uicomponent.getActionViewInfoUser("ViewPostedByUser", moderator);
-									%>
-									<li class="MenuItem" onclick="$viewPosted">
-										<a class="ItemIcon IconsView ViewPostedByUser" href="javaScript:void(0)"><%=_ctx.appRes("UITopicDetail.action.ViewPostedByUser")%> $userView</a>
-									</li>
-									<%
-										String viewThread = uicomponent.getActionViewInfoUser("ViewThreadByUser", moderator);
-									%>
-									<li class="MenuItem" onclick="$viewThread">
-											<a class="ItemIcon IconsView ViewThreadByUser" href="javaScript:void(0)"><%=_ctx.appRes("UITopicDetail.action.ViewThreadByUser")%> $userView</a>
-									</li>
-								</ul>
-							</div>
-						</div>
+						<div class="UIPopupInfoMenu">
+              <div class="UIPopupInfoContent">
+                <div class="Arrow"><span></span></div>
+                <ul>
+                  <%
+                    for(viewAction in menuViewInfos) {
+                      if((uicomponent.getUserRole() >= 3) && viewAction.equals("PrivateMessage")) continue;
+                      String linkView = uicomponent.getActionViewInfoUser(viewAction, moderator) ;
+                      String itemLabelView = _ctx.appRes("UITopicDetail.action." + viewAction);
+                      if(!viewAction.equals("ViewPublicUserInfo") && !viewAction.equals("PrivateMessage")) {
+                        itemLabelView = itemLabelView + " " + userView ;
+                      }
+                  %>
+                        <li class="MenuItem" onclick="$linkView">
+                          <a class="ItemIcon IconsView $viewAction" href="javaScript:void(0)">$itemLabelView</a>
+                        </li>
+                  <%
+                    }
+                  %>
+                </ul>
+              </div>
+            </div>
 									
 					</div>
 				<%
 				 ++i;
 				}	
 				%>
-				<div style="clear:left;"><span></span></div>
+		
 				<%if(!isMod){%>
 				<div><%=_ctx.appRes("UIForumPortlet.label.NotModerator");%></div>
 				<% } %>

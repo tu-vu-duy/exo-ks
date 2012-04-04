@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.exoplatform.container.ExoContainerContext;
-import org.exoplatform.forum.ForumTransformHTML;
 import org.exoplatform.forum.ForumUtils;
 import org.exoplatform.forum.service.Category;
 import org.exoplatform.forum.service.Forum;
@@ -39,6 +38,7 @@ import org.exoplatform.forum.webui.UITopicDetail;
 import org.exoplatform.forum.webui.UITopicDetailContainer;
 import org.exoplatform.forum.webui.UITopicPoll;
 import org.exoplatform.ks.bbcode.core.ExtendedBBCodeProvider;
+import org.exoplatform.ks.common.TransformHTML;
 import org.exoplatform.ks.common.webui.UIPopupAction;
 import org.exoplatform.ks.common.webui.UIPopupContainer;
 import org.exoplatform.services.log.ExoLogger;
@@ -46,7 +46,6 @@ import org.exoplatform.services.log.Log;
 import org.exoplatform.web.application.ApplicationMessage;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
-import org.exoplatform.webui.core.UIApplication;
 import org.exoplatform.webui.core.UIContainer;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
@@ -73,7 +72,7 @@ public class UIPageListPostByUser extends UIContainer {
 
   private String       userName           = ForumUtils.EMPTY_STR;
 
-  private String       strOrderBy         = "createdDate descending";
+  private String       strOrderBy         = Utils.EXO_CREATED_DATE.concat(Utils.DESCENDING);
 
   private boolean      hasEnableIPLogging = true;
 
@@ -91,8 +90,7 @@ public class UIPageListPostByUser extends UIContainer {
     return hasEnableIPLogging;
   }
 
-  @SuppressWarnings("unused")
-  private UserProfile getUserProfile() throws Exception {
+  protected UserProfile getUserProfile() throws Exception {
     if (this.userProfile == null) {
       UIForumPortlet forumPortlet = this.getAncestorOfType(UIForumPortlet.class);
       this.userProfile = forumPortlet.getUserProfile();
@@ -103,16 +101,15 @@ public class UIPageListPostByUser extends UIContainer {
 
   public void setUserName(String userId) {
     this.userName = userId;
-    strOrderBy = "createdDate descending";
+    strOrderBy = Utils.EXO_CREATED_DATE.concat(Utils.DESCENDING);
   }
 
-  @SuppressWarnings("unused")
-  private String getTitleInHTMLCode(String s) {
-    return ForumTransformHTML.getTitleInHTMLCode(s, new ArrayList<String>((new ExtendedBBCodeProvider()).getSupportedBBCodes()));
+  protected String getTitleInHTMLCode(String s) {
+    return TransformHTML.getTitleInHTMLCode(s, new ArrayList<String>((new ExtendedBBCodeProvider()).getSupportedBBCodes()));
   }
 
-  @SuppressWarnings( { "unchecked", "unused" })
-  private List<Post> getPostsByUser() throws Exception {
+  @SuppressWarnings("unchecked")
+  protected List<Post> getPostsByUser() throws Exception {
     UIForumPageIterator forumPageIterator = this.getChild(UIForumPageIterator.class);
     List<Post> posts = null;
     try {
@@ -122,7 +119,7 @@ public class UIPageListPostByUser extends UIContainer {
       JCRPageList pageList = forumService.getPagePostByUser(this.userName, this.userProfile.getUserId(), isMod, strOrderBy);
       forumPageIterator.updatePageList(pageList);
       if (pageList != null)
-        pageList.setPageSize(6);
+        pageList.setPageSize(10);
       posts = pageList.getPage(forumPageIterator.getPageSelected());
       forumPageIterator.setSelectPage(pageList.getCurrentPage());
     } catch (Exception e) {
@@ -148,9 +145,10 @@ public class UIPageListPostByUser extends UIContainer {
       UIPageListPostByUser uiForm = event.getSource();
       String postId = event.getRequestContext().getRequestParameter(OBJECTID);
       Post post = uiForm.getPostById(postId);
-      UIApplication uiApp = uiForm.getAncestorOfType(UIApplication.class);
       if (post == null) {
-        uiApp.addMessage(new ApplicationMessage("UIShowBookMarkForm.msg.link-not-found", null, ApplicationMessage.WARNING));
+        event.getRequestContext().getUIApplication().addMessage(new ApplicationMessage("UIShowBookMarkForm.msg.link-not-found",
+                                                                                       null,
+                                                                                       ApplicationMessage.WARNING));
         return;
       }
       boolean isRead = true;
@@ -173,8 +171,9 @@ public class UIPageListPostByUser extends UIContainer {
         viewPost.setActionForm(new String[] { "Close", "OpenTopicLink" });
         event.getRequestContext().addUIComponentToUpdateByAjax(popupAction);
       } else {
-        String[] s = new String[] {};
-        uiApp.addMessage(new ApplicationMessage("UIForumPortlet.msg.do-not-permission", s, ApplicationMessage.WARNING));
+        event.getRequestContext().getUIApplication().addMessage(new ApplicationMessage("UIForumPortlet.msg.do-not-permission",
+                                                                                       null,
+                                                                                       ApplicationMessage.WARNING));
         return;
       }
     }
@@ -185,9 +184,10 @@ public class UIPageListPostByUser extends UIContainer {
       UIPageListPostByUser uiForm = event.getSource();
       String postId = event.getRequestContext().getRequestParameter(OBJECTID);
       Post post = uiForm.getPostById(postId);
-      UIApplication uiApp = uiForm.getAncestorOfType(UIApplication.class);
       if (post == null) {
-        uiApp.addMessage(new ApplicationMessage("UIShowBookMarkForm.msg.link-not-found", null, ApplicationMessage.WARNING));
+        event.getRequestContext().getUIApplication().addMessage(new ApplicationMessage("UIShowBookMarkForm.msg.link-not-found",
+                                                                                       null,
+                                                                                       ApplicationMessage.WARNING));
         return;
       }
       boolean isRead = true;
@@ -218,7 +218,9 @@ public class UIPageListPostByUser extends UIContainer {
         event.getRequestContext().addUIComponentToUpdateByAjax(forumPortlet);
       } else {
         String[] s = new String[] {};
-        uiApp.addMessage(new ApplicationMessage("UIForumPortlet.msg.do-not-permission", s, ApplicationMessage.WARNING));
+        event.getRequestContext().getUIApplication().addMessage(new ApplicationMessage("UIForumPortlet.msg.do-not-permission",
+                                                                                       s,
+                                                                                       ApplicationMessage.WARNING));
         return;
       }
     }

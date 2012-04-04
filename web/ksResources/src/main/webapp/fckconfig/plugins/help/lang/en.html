@@ -81,6 +81,10 @@
 				<td class="alt2"><a href="#html">[html]</a></td>
 				<td class="alt1">HTML Code</td>
 			</tr>
+      <tr align="center">
+        <td class="alt2"><a href="#wiki">[wiki]</a></td>
+        <td class="alt1">Wiki Markup</td>
+      </tr>
 			<tr align="center">
 				<td class="alt2"><a href="#quote">[quote]</a></td>
 				<td class="alt1">Quote</td>
@@ -95,7 +99,7 @@
 			</tr>
 			<tr>
 				<td class="alt1" colspan="2">
-					<b>Incorrect BB Code Usage:</b>
+					<strong>Incorrect BB Code Usage:</strong>
 					<ul>
 					  <li><span class="highlight">[url]</span> www.example.com <span class="highlight">[/url]</span> - don't put spaces between the bracketed code and the text you are applying the code to.</li>
 					  <li><span class="highlight">[email]</span>myname@domain.com<span class="highlight">[email]</span> - the end brackets must include a forward slash (<span class="highlight">[/email]</span>)</li>
@@ -134,7 +138,7 @@
 			<tr valign="top">
 				<td class="alt1" width="20%"><strong>Example Output</strong></td>
 				<td class="alt1">
-					<b>this text is bold</b><br/>
+					<strong>this text is bold</strong><br/>
 					<i>this text is italic</i><br/>
 					<u>this text is underlined</u>
 				</td>
@@ -442,14 +446,46 @@
 			<tr valign="top">
 				<td class="alt1" width="20%"><strong>Example Output</strong></td>
 				<td class="alt1">
-					<img class="inlineimg" src="http://groups.google.com.vn/groups/img/3nb/groups_medium_vi.gif" alt="" border="0"> (Not linked)<br/>
+					<img class="inlineimg" src="http://groups.google.com.vn/groups/img/3nb/groups_medium_vi.gif" alt="Google group" border="0"> (Not linked)<br/>
 					<br/>
-					<a href="http://www.google.com.vn" target="_blank"><img class="inlineimg" src="http://groups.google.com.vn/groups/img/3nb/groups_medium_vi.gif" alt="" border="0"></a> (Linked)
+					<a href="http://www.google.com.vn" target="_blank"><img class="inlineimg" src="http://groups.google.com.vn/groups/img/3nb/groups_medium_vi.gif" alt="Google group" border="0"></a> (Linked)
 				</td>
 			</tr>
 		</tbody>
 	</table>
 	</br>
+  <table class="UIGrid" width="100%" align="center" border="0" cellpadding="1" cellspacing="1">
+    <tbody>
+      <tr>
+        <td class="tcat" colspan="2">Wiki<a name="wiki"/></td>
+      </tr>
+      <tr>
+        <td class="thead" colspan="2" style="font-weight: normal;">The [wiki] tag allows you to input wiki markup. Following syntaxes are supported: Confluence, XWiki, Creole, MediaWiki.</td>
+      </tr>
+      <tr valign="top">
+        <td class="alt1" width="20%"><strong>Usage</strong></td>
+        <td class="alt1">
+          [wiki=<span class="highlight">syntax</span>]<span class="highlight">Wiki Markup</span>[/wiki]
+        </td>
+      </tr>
+      <tr valign="top">
+        <td class="alt2" width="20%"><strong>Example Usage</strong></td>
+        <td class="alt2">
+          [wiki=confluence]Makes text *strong*[/wiki]<br/>
+          [wiki=xwiki]Makes text **strong**[/wiki]<br/>
+          [wiki=creole]Makes text **strong**[/wiki]<br/>
+          [wiki=mediawiki]Makes text '''strong'''[/wiki]<br/>
+        </td>
+      </tr>
+      <tr valign="top">
+        <td class="alt1" width="20%"><strong>Example Output</strong></td>
+        <td class="alt1">
+          Makes text <strong>strong</strong>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  </br>
 	<table class="UIGrid" width="100%" align="center" border="0" cellpadding="1" cellspacing="1">
 		<tbody>
 			<tr>

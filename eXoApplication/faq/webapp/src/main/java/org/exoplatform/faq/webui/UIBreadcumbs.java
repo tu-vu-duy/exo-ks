@@ -23,7 +23,6 @@ import org.exoplatform.faq.service.Utils;
 import org.exoplatform.web.application.ApplicationMessage;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
-import org.exoplatform.webui.core.UIApplication;
 import org.exoplatform.webui.core.UIContainer;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
@@ -47,7 +46,7 @@ public class UIBreadcumbs extends UIContainer {
 
   public static final String  FIELD_FAQHOME_BREADCUMBS = "faqHome";
 
-  private static final String QUICK_SEARCH             = "QuickSearch";
+  private static final String QUICK_SEARCH             = "QuickSearchForm";
 
   public UIBreadcumbs() throws Exception {
     addChild(UIQuickSearch.class, null, QUICK_SEARCH);
@@ -88,8 +87,7 @@ public class UIBreadcumbs extends UIContainer {
     return this.currentPath_;
   }
 
-  @SuppressWarnings("unused")
-  private int getMaxPath() {
+  protected int getMaxPath() {
     return breadcumbs_.size();
   }
 
@@ -105,24 +103,19 @@ public class UIBreadcumbs extends UIContainer {
       UIQuestions uiQuestions = answerPortlet.findFirstComponentOfType(UIQuestions.class);
       UICategories categories = answerPortlet.findFirstComponentOfType(UICategories.class);
       try {
-        // System.out.println("paths ===>" + paths);
-        // uiQuestions.setPath(paths) ;
-        // categoryId = paths.substring(paths.lastIndexOf("/")+1, paths.length()) ;
         uiQuestions.backPath_ = "";
         uiQuestions.setLanguage(FAQUtils.getDefaultLanguage());
-        // uiQuestions.viewAuthorInfor = FAQUtils.getFAQService().isViewAuthorInfo(paths);
         uiBreadcums.setUpdataPath(paths);
         categories.setPathCategory(paths);
         uiQuestions.setCategoryId(paths);
         uiQuestions.updateCurrentQuestionList();
       } catch (Exception e) {
-        FAQUtils.findCateExist(FAQUtils.getFAQService(), uiQuestions.getAncestorOfType(UIAnswersContainer.class));
-        UIApplication uiApplication = uiBreadcums.getAncestorOfType(UIApplication.class);
-        uiApplication.addMessage(new ApplicationMessage("UIQuestions.msg.category-id-deleted", null, ApplicationMessage.WARNING));
-        event.getRequestContext().addUIComponentToUpdateByAjax(uiApplication.getUIPopupMessages());
+        FAQUtils.findCateExist(FAQUtils.getFAQService(), uiQuestions.getAncestorOfType(UIAnswersContainer.class));        
+        event.getRequestContext().getUIApplication().addMessage(new ApplicationMessage("UIQuestions.msg.category-id-deleted",
+                                                                                       null,
+                                                                                       ApplicationMessage.WARNING));        
       }
       event.getRequestContext().addUIComponentToUpdateByAjax(answerPortlet);
     }
   }
-
 }

@@ -17,9 +17,7 @@
 	String classIcon = post.getIcon() ;
 	UserProfile userProfile = uicomponent.getUserProfile();
 	long timeZone = (long)(userProfile.getTimeZone()*3600000) ;
-	Date dateView = new Date();
-	dateView.setTime(post.getCreatedDate().getTime() - timeZone);
-	String postCreatedDate = TimeConvertUtils.getFormatDate((userProfile.getLongDateFormat() + ", " + userProfile.getTimeFormat()), dateView);	
+	String postCreatedDate = TimeConvertUtils.convertXTimeAgo(post.getCreatedDate(), (userProfile.getLongDateFormat() + ", " + userProfile.getTimeFormat()), timeZone);	
 	List attachments = post.getAttachments() ;
 %>
 <div class="UIViewPost" id="SizeImage">
@@ -64,7 +62,7 @@
 								<% if(typeFile.indexOf("image") >= 0) {
 									String attLink = uicomponent.getImageUrl(attachment.getPath());
 								%>
-									<a class="Image"><img onclick="eXo.forum.UIForumPortlet.showPicture('$attLink');" class="AttachImage" src="$attLink" height="100px;" alt=""/></a>
+									<a class="Image"><img onclick="eXo.forum.UIForumPortlet.showPicture('$attLink');" class="AttachImage" src="$attLink" height="100px;" alt="$titleFile"/></a>
 									<div class="LabelBox">
 										<a class="AttachmentIcon JPGIcon" onclick="if(eXo.core.Browser.browserType == 'ie') {<%=uicomponent.event("DownloadAttach");%>; } ajaxRedirect('$urlFile'); return false;" href="javaScript: void(0)" class="AttachmentLabel" title="$titleFile">$fileName</a>
 										<div class="Size"><%=_ctx.appRes("UITopicDetail.label.Size");%>: ${size}</div>
@@ -85,28 +83,14 @@
 			}
 		} %>
 	</div>
-	<div class="UIAction"> 
-		<table class="ActionContainer">
-			<tr>
-				<td>
-				<% for(action in uicomponent.getActions()) { 
+	 <div class="UIAction">
+  <% for(action in uicomponent.getActions()) { 
 					 String actionLabel = _ctx.appRes(uicomponent.getName() + ".action." + action); 
 					 String link = uicomponent.event(action) ;
 				%>
-						<div onclick="$link" class="ActionButton LightBlueStyle">
-							<div class="ButtonLeft">
-								<div class="ButtonRight">
-									<div class="ButtonMiddle">
-										<a href="javascript:void(0);">$actionLabel</a>
-									</div>
-								</div>
-							</div>
-						</div>
-					<%}%>
-				</td>
-			</tr>
- 		</table> 
-	</div>
+      <a href="javascript:void(0);" onclick="$link" class="ActionButton LightBlueStyle">$actionLabel</a>
+      <%}%>
+    </div>
 	<%uiform.end();
 		jsmanager.importJavascript('Scripts.shLoadConfig', '/ksResources/syntaxhighlighter/');
 	%>

@@ -25,8 +25,6 @@
 							<td class="FieldComponent" style="width:85%; white-space:normal;"><%=uicomponent.render(uicomponent.questionDetail)%></td>
 						</tr>
 					<% 
-					String url = uicomponent.url("AddRelation", "OBJECTID") ;
-					uicomponent.setLink(url);
 					for(field in uiform.getChildren()) { 
 						if(field.isRendered()) {
 					%>
@@ -34,7 +32,7 @@
 							<%fieldName = uicomponent.getLabel(field.getName());
 								if(!fieldName.equals(uicomponent.getId())) { %>												
 								<td class="FieldLabel" style="white-space:nowrap; width:15%">
-									<%=uicomponent.getLabel(field.getName()) %> :
+									<label for="<%=field.getId()%>"><%=uicomponent.getLabel(field.getName()) %> :</label>
 								</td>
 								<td class="FieldComponent" style="width:85%">
 									<%if(field.getName().equals("QuestionRelation")){ 
@@ -93,28 +91,14 @@
 				</table>
 			</div>
 			
-			<div class="UIAction"> 
-				<table class="ActionContainer" style="text-align:center">
-					<tr>
-						<td>
-		        <% for(action in uicomponent.getActions()) { 
+			<div class="UIAction">
+      <% for(action in uicomponent.getActions()) { 
 		        	 String actionLabel = _ctx.appRes("UIResponseForm.action." + action); 
 		           String link = uicomponent.event(action) ;
 		        %>
-		        		<div onclick="$link" class="ActionButton LightBlueStyle">
-			      	  	<div class="ButtonLeft">
-			        	  	<div class="ButtonRight">
-			          	  	<div class="ButtonMiddle">
-			          	  		<a href="javascript:void(0);">$actionLabel</a>
-			          	  	</div>
-			            	</div>
-			          	</div>
-			        	</div>
-		          <%}%>
-		      	</td>
-					</tr>
-			  </table> 
-			</div>
+      <a href="javascript:void(0);" onclick="$link" class="ActionButton LightBlueStyle">$actionLabel</a>
+      <%}%>
+    </div>
 		</div>
 	<%uiform.end()%>
 </div>

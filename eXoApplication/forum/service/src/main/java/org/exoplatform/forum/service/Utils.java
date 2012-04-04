@@ -35,7 +35,7 @@ import org.exoplatform.services.organization.User;
  *          tu.duy@exoplatform.com
  * Jun 2, 2008 - 3:33:33 AM  
  */
-public class Utils {
+public class Utils implements ForumNodeTypes {
 
   public final static String TYPE_CATEGORY         = "exo:forumCategory".intern();
 
@@ -64,6 +64,8 @@ public class Utils {
   public final static String TOPIC                 = "topic".intern();
 
   public final static String POST                  = "post".intern();
+  
+  public final static String ATTACHMENT            = "attachment";
 
   public final static String POLL                  = "poll".intern();
 
@@ -86,6 +88,8 @@ public class Utils {
   public static final String GUEST                 = "Guest".intern();
 
   public static final String DELETED               = "_deleted".intern();
+
+  public static final String CACHE_REPO_NAME               = "repositoryName".intern();
 
   // Type Modify
   public static final int    CLOSE                 = 1;
@@ -115,8 +119,8 @@ public class Utils {
 
   public static final String ADMIN_ROLE            = "ADMIN".intern();
 
-  public static final String DEFAULT_EMAIL_CONTENT = "Hi,</br> You receive this email because you registered for eXo Forum and Topic Watching notification." + "<br/>We would like to inform you that there is a new $ADD_TYPE in the $OBJECT_WATCH_TYPE <b>$OBJECT_NAME</b> with the following content: "
-                                                       + "<div>_______________<br/>$POST_CONTENT<br/>_______________</div><div>At $TIME on $DATE, posted by <b>$POSTER</b> .</div><div>Go directly to the post: " + "<a target=\"_blank\" href=\"$VIEWPOST_LINK\">Click here.</a> <br/>Or go to reply to the post: <a target=\"_blank\" href=\"$REPLYPOST_LINK\">Click here." + "</a></div>".intern();
+  public static final String DEFAULT_EMAIL_CONTENT = "Hi,</br> You receive this email because you registered for eXo Forum and Topic Watching notification." + "<br/>We would like to inform you that there is a new $ADD_TYPE in the $OBJECT_WATCH_TYPE <strong>$OBJECT_NAME</strong> with the following content: "
+                                                       + "<div>_______________<br/>$POST_CONTENT<br/>_______________</div><div>At $TIME on $DATE, posted by <strong>$POSTER</strong> .</div><div>Go directly to the post: " + "<a target=\"_blank\" href=\"$VIEWPOST_LINK\">Click here.</a> <br/>Or go to reply to the post: <a target=\"_blank\" href=\"$REPLYPOST_LINK\">Click here." + "</a></div>".intern();
 
   /**
    * Clear characters that have a codepoint < 31 (non printable) from a string
@@ -269,9 +273,8 @@ public class Utils {
    * A blank entry is the 'space' value (aka " ").
    * @param list List of Strings to transform
    * @return String array cleared of blanks
-   * @throws Exception
    */
-  public static String[] getStringsInList(List<String> list) throws Exception {
+  public static String[] getStringsInList(List<String> list){
     if (list.size() > 1) {
       while (list.contains(" ")) {
         list.remove(" ");
@@ -386,45 +389,63 @@ public class Utils {
     }
     return true;
   }
+  
+  /**
+   * get Xpath query by one property. 
+   * @param String typeAdd
+   * @param String property
+   * @param String value
+   * @return String
+   */  
+  public static String getQueryByProperty(String typeAdd, String property, String value) {
+    StringBuilder strBuilder = new StringBuilder();
+    if (!isEmpty(value) && !isEmpty(property)) {
+      if (!isEmpty(typeAdd)) {
+        strBuilder.append(SPACE).append(typeAdd).append(SPACE);
+      }
+      strBuilder.append("(@").append(property).append("='").append(value).append("')");
+    } 
+    return strBuilder.toString();
+  }
 
   /**
    * get Xpath query when get list post. 
    * @param String isApproved
    * @param String isHidden
+   * @param String isWaiting
    * @param String userLogin
    * @return StringBuilder
    */
-  public static StringBuilder getPathQuery(String isApproved, String isHidden, String userLogin) throws Exception {
+  public static StringBuilder getPathQuery(String isApproved, String isHidden, String isWaiting, String userLogin) throws Exception {
     StringBuilder strBuilder = new StringBuilder();
-    boolean isAnd = false;
-    if (userLogin != null && userLogin.length() > 0) {
-      isAnd = true;
-      strBuilder.append("[((@exo:userPrivate='").append(userLogin).append("') or (@exo:userPrivate='exoUserPri'))");
+    String typeAdd = null;
+    String str = getQueryByProperty(typeAdd, EXO_USER_PRIVATE, userLogin);
+    if (!isEmpty(str)) {
+      strBuilder.append("(").append(str);
+      typeAdd = "or";
     }
-    if (isApproved != null && isApproved.length() > 0) {
-      if (isAnd) {
-        strBuilder.append(" and (@exo:isApproved='").append(isApproved).append("')");
-      } else {
-        strBuilder.append("[(@exo:isApproved='").append(isApproved).append("')");
-      }
-      if (isHidden.equals("false")) {
-        strBuilder.append(" and (@exo:isHidden='false')");
-      }
-      strBuilder.append("]");
-    } else {
-      if (!isEmpty(isHidden)) {
-        if (isAnd) {
-          strBuilder.append(" and (@exo:isHidden='" + isHidden + "')]");
-        } else {
-          strBuilder.append("[@exo:isHidden='" + isHidden + "']");
-        }
-      } else {
-        if (isAnd) {
-          strBuilder.append("]");
-        }
-      }
+    if ("or".equals(typeAdd)) {
+      strBuilder.append(getQueryByProperty(typeAdd, EXO_USER_PRIVATE, EXO_USER_PRI)).append(")");
+      typeAdd = "and";
     }
-    return strBuilder;
+    str = getQueryByProperty(typeAdd, EXO_IS_APPROVED, isApproved);
+    if (!isEmpty(str)) {
+      strBuilder.append(str);
+      typeAdd = "and";
+    }
+    str = getQueryByProperty(typeAdd, EXO_IS_HIDDEN, isHidden);
+    if (!isEmpty(str)) {
+      strBuilder.append(str);
+      typeAdd = "and";
+    }
+    str = getQueryByProperty(typeAdd, EXO_IS_WAITING, isWaiting);
+    if (!isEmpty(str)) {
+      strBuilder.append(str);
+    }
+    if (strBuilder.length() > 0) {
+      return new StringBuilder("[").append(strBuilder).append("]");
+    }
+    return new StringBuilder();
   }
 
   /**

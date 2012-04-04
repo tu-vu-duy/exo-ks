@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.exoplatform.container.ExoContainerContext;
-import org.exoplatform.forum.ForumTransformHTML;
 import org.exoplatform.forum.ForumUtils;
 import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.Post;
@@ -29,6 +28,7 @@ import org.exoplatform.forum.webui.UIForumKeepStickPageIterator;
 import org.exoplatform.forum.webui.UIForumPortlet;
 import org.exoplatform.forum.webui.UITopicDetail;
 import org.exoplatform.ks.bbcode.core.ExtendedBBCodeProvider;
+import org.exoplatform.ks.common.TransformHTML;
 import org.exoplatform.ks.common.webui.BaseEventListener;
 import org.exoplatform.ks.common.webui.UIPopupAction;
 import org.exoplatform.ks.common.webui.UIPopupContainer;
@@ -39,7 +39,7 @@ import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.event.Event.Phase;
-import org.exoplatform.webui.form.UIFormCheckBoxInput;
+import org.exoplatform.webui.form.input.UICheckBoxInput;
 /**
  * Created by The eXo Platform SAS
  * Author : Vu Duy Tu
@@ -74,9 +74,8 @@ public class UIPageListPostHidden extends UIForumKeepStickPageIterator implement
   public void deActivate() throws Exception {
   }
 
-  @SuppressWarnings("unused")
-  private String getTitleInHTMLCode(String s) {
-    return ForumTransformHTML.getTitleInHTMLCode(s, new ArrayList<String>((new ExtendedBBCodeProvider()).getSupportedBBCodes()));
+  protected String getTitleInHTMLCode(String s) {
+    return TransformHTML.getTitleInHTMLCode(s, new ArrayList<String>((new ExtendedBBCodeProvider()).getSupportedBBCodes()));
   }
 
   public void setUpdateContainer(String categoryId, String forumId, String topicId) {
@@ -85,9 +84,9 @@ public class UIPageListPostHidden extends UIForumKeepStickPageIterator implement
     this.topicId = topicId;
   }
 
-  @SuppressWarnings( { "unchecked", "unused" })
-  private List<Post> getPosts() throws Exception {
-    pageList = forumService.getPosts(this.categoryId, this.forumId, this.topicId, ForumUtils.EMPTY_STR, "true", ForumUtils.EMPTY_STR, ForumUtils.EMPTY_STR);
+  @SuppressWarnings("unchecked")
+  protected List<Post> getPosts() throws Exception {
+    pageList = forumService.getPosts(this.categoryId, this.forumId, this.topicId, "true", "true", ForumUtils.EMPTY_STR, ForumUtils.EMPTY_STR);
     pageList.setPageSize(6);
     maxPage = pageList.getAvailablePage();
     listPost = pageList.getPage(pageSelect);
@@ -96,10 +95,10 @@ public class UIPageListPostHidden extends UIForumKeepStickPageIterator implement
       listPost = new ArrayList<Post>();
     if (!listPost.isEmpty()) {
       for (Post post : listPost) {
-        if (getUIFormCheckBoxInput(post.getId()) != null) {
-          getUIFormCheckBoxInput(post.getId()).setChecked(false);
+        if (getUICheckBoxInput(post.getId()) != null) {
+          getUICheckBoxInput(post.getId()).setChecked(false);
         } else {
-          addUIFormInput(new UIFormCheckBoxInput(post.getId(), post.getId(), false));
+          addUIFormInput(new UICheckBoxInput(post.getId(), post.getId(), false));
         }
       }
     }
@@ -141,12 +140,9 @@ public class UIPageListPostHidden extends UIForumKeepStickPageIterator implement
         }
       }
       if (!haveCheck) {
-        warning("UIPageListPostUnApprove.sms.notCheck");
+        warning("UIPageListPostUnApprove.sms.notCheck", false);
       } else {
-        try {
-          postHidden.forumService.modifyPost(posts, Utils.HIDDEN);
-        } catch (Exception e) {
-        }
+        postHidden.forumService.modifyPost(posts, Utils.HIDDEN);
       }
       if (posts.size() == postHidden.listPost.size()) {
         UIForumPortlet forumPortlet = postHidden.getAncestorOfType(UIForumPortlet.class);

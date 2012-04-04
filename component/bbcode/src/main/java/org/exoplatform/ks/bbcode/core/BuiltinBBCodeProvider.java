@@ -37,7 +37,7 @@ public class BuiltinBBCodeProvider extends HashMap<String, BBCode> implements BB
 
   public BuiltinBBCodeProvider() {
     addBBCode("I", "<i>{param}</i>", false);
-    addBBCode("B", "<b>{param}</b>", false);
+    addBBCode("B", "<strong>{param}</strong>", false);
     addBBCode("U", "<u>{param}</u>", false);
     addBBCode("COLOR", "<font color='{option}'>{param}</font>", true);
     addBBCode("SIZE", "<font size='{option}'>{param}</font>", true);
@@ -58,7 +58,7 @@ public class BuiltinBBCodeProvider extends HashMap<String, BBCode> implements BB
     addBBCode("GOTO", "<a href='{option}'>{param}</a>", true);
     addBBCode("LIST", "", false);
     addBBCode("LIST", "", true);
-    addBBCode("IMG", "<img border='0' alt='' src='{param}' class='inlineimg'/>", false);
+    addBBCode("IMG", "<img border='0' alt='{param}' src='{param}' class='inlineimg'/>", false);
     addBBCode("QUOTE", "<blockquote>{param}</blockquote>", false);
     addBBCode("QUOTE", "<blockquote cite='{option}'>param</blockquote>", true);
     addBBCode("CSS", "<span class='{option}'>{param}</span>", true);

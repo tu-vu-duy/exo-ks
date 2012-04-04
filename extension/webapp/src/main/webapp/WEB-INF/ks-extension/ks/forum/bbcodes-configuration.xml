@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
-<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.exoplaform.org/xml/ns/kernel_1_0.xsd http://www.exoplaform.org/xml/ns/kernel_1_0.xsd"
-  xmlns="http://www.exoplaform.org/xml/ns/kernel_1_0.xsd">
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd http://www.exoplatform.org/xml/ns/kernel_1_2.xsd"
+  xmlns="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd">
   <component>
     <key>org.exoplatform.ks.bbcode.api.BBCodeService</key>
     <type>org.exoplatform.ks.bbcode.core.BBCodeServiceImpl</type>
@@ -86,7 +86,7 @@
               <string>B</string>
             </field>
             <field name="replacement">
-              <string><![CDATA[<b>{param}</b>]]></string>
+              <string><![CDATA[<strong>{param}</strong>]]></string>
             </field>
             <field name="description">
               <string>Set text in bold</string>
@@ -512,7 +512,7 @@
               <string>IMG</string>
             </field>
             <field name="replacement">
-              <string><![CDATA[<img border="0" alt="" src="{param}" class="inlineimg"/>]]></string>
+              <string><![CDATA[<img border="0" alt="image" src="{param}" class="inlineimg"/>]]></string>
             </field>
             <field name="description">
               <string>The [img] tag allows you to shows the image indicated by {url}</string>
@@ -522,6 +522,56 @@
             </field>
             <field name="isOption">
               <string>false</string>
+            </field>
+            <field name="isActive">
+              <string>true</string>
+            </field>
+          </object>
+        </object-param>
+        
+        <object-param>
+          <name>WIKI</name>
+          <description></description>
+          <object type="org.exoplatform.ks.bbcode.spi.BBCodeData">
+            <field name="tagName">
+              <string>WIKI</string>
+            </field>
+            <field name="replacement">
+              <string>You can not define this bbcode tag. It is defined by the developer.</string>
+            </field>
+            <field name="description">
+              <string>The [wiki] tag allows you to input Confluence markup.</string>
+            </field>
+            <field name="example">
+              <string>[wiki]Makes text *strong*[/wiki]</string>
+            </field>
+            <field name="isOption">
+              <string>false</string>
+            </field>
+            <field name="isActive">
+              <string>true</string>
+            </field>
+          </object>
+        </object-param>
+        
+        <object-param>
+          <name>WIKI-OPT</name>
+          <description></description>
+          <object type="org.exoplatform.ks.bbcode.spi.BBCodeData">
+            <field name="tagName">
+              <string>WIKI</string>
+            </field>
+            <field name="replacement">
+              <string>You can not define this bbcode tag. It is defined by the developer.</string>
+            </field>
+            <field name="description">
+              <string>The [wiki] tag allows you to input wiki markup. Following syntaxes are supported: Confluence, XWiki, Creole, MediaWiki.</string>
+            </field>
+            <field name="example">
+              <string>[wiki=confluence]Makes text *strong*[/wiki]</string>
+            </field>
+            <field name="isOption">
+              <string>true</string>
             </field>
             <field name="isActive">
               <string>true</string>
@@ -686,7 +736,7 @@ public class MainTest {
                        width="425" height="355">
                 </embed>
               </object>
-              <b>{param}</b></div>]]>
+              <strong>{param}</strong></div>]]>
               </string>
             </field>
             <field name="description">

@@ -1,9 +1,10 @@
-<% 
-	import org.exoplatform.forum.webui.UIForumPageIterator ;
+<%
+	import org.exoplatform.forum.service.Utils;
 	import org.exoplatform.forum.service.Post ; 
 	import org.exoplatform.forum.ForumUtils;
 	import org.exoplatform.forum.TimeConvertUtils;
 	import org.exoplatform.forum.service.UserProfile ;
+	import org.exoplatform.forum.webui.UIForumPageIterator ;
 	UserProfile userProfile = uicomponent.getUserProfile() ;
 	List posts = uicomponent.getPostsByUser() ;
 	boolean isAdmin = false;
@@ -18,23 +19,22 @@
 	 	<div class="UIForumContainer">
 			<div class="ContentContainer">
 				<div class="UITopicList">
-					<div style="overflow:auto; margin:2px 0px;">
+					<div style="overflow:auto; margin:2px 0px;" class="ClearFix">
 						<% uicomponent.renderChild(UIForumPageIterator.class) ; %>
-						<div style="clear:right; height:0px;"><span></span></div>
 					</div>
 					<table cellspacing="0" cellpadding="0" border="0" class="UIGrid">
 						<thead>
 							<tr>
 								<th style="width:40px"></th>
 								<th style="width:100%;">
-									<div onclick="<%=uicomponent.event("SetOrderBy","name");%>">
+									<div onclick="<%=uicomponent.event("SetOrderBy", Utils.EXO_NAME);%>">
 										<div class="DownArrow1Icon"  style="cursor:pointer">
 											<%=_ctx.appRes("UIPageListPostByUser.label.PostName");%>
 									</div>
 									</div>
 								</th>
 								<th style="width:130px">
-									<div onclick="<%=uicomponent.event("SetOrderBy","createdDate");%>">
+									<div onclick="<%=uicomponent.event("SetOrderBy", Utils.EXO_CREATED_DATE);%>">
 										<div class="DownArrow1Icon" style="cursor:pointer">
 											<%=_ctx.appRes("UIPageListPostByUser.label.CreateDate");%>
 										</div>
@@ -54,7 +54,6 @@
 							if(!posts.isEmpty()) {
 								String classRow = "whileRow";
 								int i = 0;
-								Date postDate = new Date();
 								for(post in posts){
 									if(i%2 == 0) classRow = "whileRow";
 									else classRow = "OddRow";
@@ -62,8 +61,7 @@
 									String message = uicomponent.getTitleInHTMLCode(post.getMessage()) ;
 									String titlePost = ForumUtils.getSubString(message, 100);
 									String iconPost = post.getIcon() ;
-									postDate.setTime(post.getCreatedDate().getTime() - setTime) ;
-									String createdDate = TimeConvertUtils.getFormatDate(formatDate,postDate) ;
+									String createdDate = TimeConvertUtils.convertXTimeAgo(post.getCreatedDate(), formatDate, setTime) ;
 									String remoteAddr = post.getRemoteAddr();
 									if(ForumUtils.isEmpty(remoteAddr)) remoteAddr = "";
 							%>
@@ -87,10 +85,10 @@
 									String link_ =  uicomponent.event("DeletePostLink", post.getId());
 									%>
 										<td class="Tdbox">
-											<div style="margin:0 auto; width:48px">
+											<div style="margin:0 auto; width:48px" class="ClearFix">
 												<div class="ItemIcon SetDeleteIcon" onclick="$link_" title="<%=_ctx.appRes("UIViewPost.action.DeletePost");%>" style="width:20px; height:24px; cursor:pointer; float:left"><span></span></div>
 												<a style="display:block; width:24px;float: left;" title="<%=_ctx.appRes("UIViewPost.action.OpenTopicLink");%>" class="HotThreadNoNewPost" href="<%=uicomponent.event("OpenTopicLink", post.getId());%>">&nbsp; &nbsp; &nbsp;</a>
-												<div style="clear:left;"><span></span></div>
+
 											</div>
 										</td>
 									<%} else {%>
@@ -106,7 +104,7 @@
 						 		%>
 						 			<tr>
 						 				<td colspan="5" align="center">
-						 					<div style="margin:5px 0px 10px 0px"><b><%=_ctx.appRes("UICategory.label.noPost");%></b></div>
+						 					<div style="margin:5px 0px 10px 0px"><strong><%=_ctx.appRes("UICategory.label.noPost");%></strong></div>
 						 				</td>
 						 			</tr>
 						 		<%
@@ -114,9 +112,8 @@
 						 	 %>
 						</tbody>
 					</table>
-					<div style="overflow:auto;">
+					<div style="overflow:auto;" class="ClearFix">
 						<% uicomponent.renderChild(UIForumPageIterator.class) ; %>
-						<div style="clear:right; height:0px;"><span></span></div>
 					</div>						
 				</div>
 			</div>

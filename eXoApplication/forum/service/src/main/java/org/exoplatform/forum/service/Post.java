@@ -63,13 +63,15 @@ public class Post {
   private boolean               isActiveByTopic = true;
 
   private boolean               isHidden        = false;
+  
+  private boolean               isWaiting           = false;
 
   private long                  numberAttach    = 0;
 
   private List<ForumAttachment> attachments     = null;
 
   public Post() {
-    userPrivate = new String[] { "exoUserPri" };
+    userPrivate = new String[] { ForumNodeTypes.EXO_USER_PRI };
   }
 
   public String getId() {
@@ -92,6 +94,10 @@ public class Post {
    * @return
    */
   public String getTopicId() {
+    if (path != null && path.length() > 0) {
+      String[] arr = path.split("/");
+      return arr[arr.length - 2];
+    }
     return null;
   }
 
@@ -100,6 +106,10 @@ public class Post {
    * @return
    */
   public String getForumId() {
+    if (path != null && path.length() > 0) {
+      String[] arr = path.split("/");
+      return arr[arr.length - 3];
+    }
     return null;
   }
 
@@ -197,6 +207,14 @@ public class Post {
 
   public void setIsHidden(boolean isHidden) {
     this.isHidden = isHidden;
+  }
+
+  public boolean getIsWaiting() {
+    return isWaiting;
+  }
+
+  public void setIsWaiting(boolean isWaiting) {
+    this.isWaiting = isWaiting;
   }
 
   public boolean getIsActiveByTopic() {

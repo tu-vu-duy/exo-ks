@@ -36,7 +36,7 @@ import org.exoplatform.webui.core.UIPopupComponent;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
-import org.exoplatform.webui.form.UIFormCheckBoxInput;
+import org.exoplatform.webui.form.input.UICheckBoxInput;
 
 /**
  * Created by The eXo Platform SARL
@@ -52,9 +52,8 @@ import org.exoplatform.webui.form.UIFormCheckBoxInput;
         @EventConfig(listeners = UIAddRelationForm.CancelActionListener.class) 
     }
 )
-@SuppressWarnings("unused")
 public class UIAddRelationForm extends BaseUIForm implements UIPopupComponent {
-  private String              homeCategoryName = "";
+  protected String            homeCategoryName = "";
 
   private List<Question>      listQuestion     = new ArrayList<Question>();
 
@@ -72,7 +71,7 @@ public class UIAddRelationForm extends BaseUIForm implements UIPopupComponent {
   public void deActivate() throws Exception {
   }
 
-  private List<String> listCateSelected = new ArrayList<String>();
+  protected List<String> listCateSelected = new ArrayList<String>();
 
   private List<Cate>   listCategory_    = new ArrayList<Cate>();
 
@@ -81,7 +80,7 @@ public class UIAddRelationForm extends BaseUIForm implements UIPopupComponent {
 
   }
 
-  private List<Cate> getListCate() {
+  protected List<Cate> getListCate() {
     return this.listCategory_;
   }
 
@@ -111,7 +110,6 @@ public class UIAddRelationForm extends BaseUIForm implements UIPopupComponent {
     this.questionId_ = questionId;
   }
 
-  @SuppressWarnings("unchecked")
   private void initPage() throws Exception {
     List<String> listIds = new ArrayList<String>();
     listIds.add(Utils.CATEGORY_HOME);
@@ -119,28 +117,23 @@ public class UIAddRelationForm extends BaseUIForm implements UIPopupComponent {
       listIds.add(cate.getCategory().getId());
     }
     listQuestion.addAll(getFAQService().getQuickQuestionsByListCatetory(listIds, false));
-    UIFormCheckBoxInput<Boolean> checkQuestion;
-
+    UICheckBoxInput checkQuestion;
     for (Question question : listQuestion) {
-      if (!question.isApproved()) { continue ; }
+      if (!question.isApproved() || !question.isActivated()) { continue ; }
       mapQuestion_.get(question.getCategoryId()).add(question);
       if (quesIdsSelect.contains(question.getId())) {
-        checkQuestion = new UIFormCheckBoxInput<Boolean>(question.getId(), question.getId(), true).setChecked(true);
+        checkQuestion = new UICheckBoxInput(question.getId(), question.getId(), true).setChecked(true);
       } else {
-        checkQuestion = new UIFormCheckBoxInput<Boolean>(question.getId(), question.getId(), false);
+        checkQuestion = new UICheckBoxInput(question.getId(), question.getId(), false);
       }
-      if (question.getPath().equals(questionId_))
-        checkQuestion.setEnable(false);
+      if (question.getPath().equals(questionId_)){
+        checkQuestion.setDisabled(true);
+      }
       addChild(checkQuestion);
     }
   }
 
   private void setListCate(String path) throws Exception {
-    // List<Cate> listCate = new ArrayList<Cate>();
-    // String userName = FAQUtils.getCurrentUser();
-    /*
-     * List<String>userPrivates = null; if(userName != null){ userPrivates = FAQServiceUtils.getAllGroupAndMembershipOfUser(userName); }
-     */
     this.listCategory_.clear();
     this.listCategory_.addAll(getFAQService().listingCategoryTree());
     mapQuestion_.put(Utils.CATEGORY_HOME, new ArrayList<Question>());
@@ -150,7 +143,7 @@ public class UIAddRelationForm extends BaseUIForm implements UIPopupComponent {
 
   }
 
-  private List<Question> getQuestions(String cateId) {
+  protected List<Question> getQuestions(String cateId) {
     return mapQuestion_.get(cateId);
   }
 
@@ -161,7 +154,8 @@ public class UIAddRelationForm extends BaseUIForm implements UIPopupComponent {
       List<String> listQuestionPath = new ArrayList<String>();
       List<String> listQuestionId = new ArrayList<String>();
       for (Question question : addRelationForm.listQuestion) {
-        if (addRelationForm.getUIFormCheckBoxInput(question.getId()).isChecked()) {
+        UICheckBoxInput chkRelated = addRelationForm.getUICheckBoxInput(question.getId());
+        if (chkRelated != null &&  chkRelated.isChecked()) {
           listQuestionPath.add(question.getPath());
           listQuestionId.add(question.getId());
         }

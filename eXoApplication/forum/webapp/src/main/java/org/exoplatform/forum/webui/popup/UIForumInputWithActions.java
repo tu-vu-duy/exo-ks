@@ -33,6 +33,7 @@ import org.exoplatform.webui.form.UIFormDateTimeInput;
 import org.exoplatform.webui.form.UIFormInputBase;
 import org.exoplatform.webui.form.UIFormInputSet;
 import org.exoplatform.webui.form.UIFormRadioBoxInput;
+import org.exoplatform.webui.form.input.UICheckBoxInput;
 
 /**
  * Created by The eXo Platform SAS
@@ -93,7 +94,6 @@ public class UIForumInputWithActions extends UIFormInputSet {
     actionField.put(fieldName, actions);
   }
 
-  @SuppressWarnings("rawtypes")
   public void processRender(WebuiRequestContext context) throws Exception {
     if (getComponentConfig() != null) {
       super.processRender(context);
@@ -164,8 +164,9 @@ public class UIForumInputWithActions extends UIFormInputSet {
               type = actionLabel.substring(dot);
               actionLabel = actionLabel.substring(0, dot);
             }
+            String alt = actionLabel;
             actionLabel = ForumUtils.getSubString(actionLabel, 30) + type + size;
-            w.write("<img src=\"/eXoResources/skin/DefaultSkin/background/Blank.gif\" class=\"" + action.getCssIconClass() + "\"/>");
+            w.write("<img alt=\"" + alt + "\" src=\"/eXoResources/skin/DefaultSkin/background/Blank.gif\" class=\"" + action.getCssIconClass() + "\"/>");
             if (action.isShowLabel)
               w.write(actionLabel);
           }
@@ -191,6 +192,10 @@ public class UIForumInputWithActions extends UIFormInputSet {
 
   public UIFormRadioBoxInput getUIFormRadioBoxInput(String name) {
     return (UIFormRadioBoxInput) findComponentById(name);
+  }
+
+  public UICheckBoxInput getUICheckBoxInput(String name) {
+    return (UICheckBoxInput) findComponentById(name);
   }
 
   static public class ActionData {

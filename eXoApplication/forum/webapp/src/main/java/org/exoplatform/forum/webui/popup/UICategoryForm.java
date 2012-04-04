@@ -20,28 +20,24 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.exoplatform.container.ExoContainerContext;
-import org.exoplatform.forum.ForumTransformHTML;
 import org.exoplatform.forum.ForumUtils;
 import org.exoplatform.forum.service.Category;
-import org.exoplatform.forum.service.ForumService;
+import org.exoplatform.forum.service.Utils;
 import org.exoplatform.forum.webui.BaseForumForm;
 import org.exoplatform.forum.webui.UIBreadcumbs;
 import org.exoplatform.forum.webui.UICategory;
 import org.exoplatform.forum.webui.UICategoryContainer;
 import org.exoplatform.forum.webui.UIForumLinks;
 import org.exoplatform.forum.webui.UIForumPortlet;
+import org.exoplatform.ks.common.CommonUtils;
 import org.exoplatform.ks.common.UserHelper;
-import org.exoplatform.ks.common.Utils;
 import org.exoplatform.ks.common.webui.BaseEventListener;
 import org.exoplatform.ks.common.webui.UIPopupContainer;
 import org.exoplatform.ks.common.webui.UISelector;
 import org.exoplatform.ks.common.webui.UIUserSelect;
-import org.exoplatform.web.application.ApplicationMessage;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.ComponentConfigs;
 import org.exoplatform.webui.config.annotation.EventConfig;
-import org.exoplatform.webui.core.UIApplication;
 import org.exoplatform.webui.core.UIPopupComponent;
 import org.exoplatform.webui.core.UIPopupWindow;
 import org.exoplatform.webui.core.UITree;
@@ -189,8 +185,7 @@ public class UICategoryForm extends BaseForumForm implements UIPopupComponent, U
     this.setActions(new String[] { "Save", "Cancel" });
   }
 
-  @SuppressWarnings("unused")
-  private boolean getIsSelected(int id) {
+  protected boolean getIsSelected(int id) {
     if (this.id == id)
       return true;
     return false;
@@ -209,9 +204,9 @@ public class UICategoryForm extends BaseForumForm implements UIPopupComponent, U
   public void setCategoryValue(Category category, boolean isUpdate) throws Exception {
     if (isUpdate) {
       this.categoryId = category.getId();
-      getUIStringInput(FIELD_CATEGORYTITLE_INPUT).setValue(category.getCategoryName());
+      getUIStringInput(FIELD_CATEGORYTITLE_INPUT).setValue(CommonUtils.decodeSpecialCharToHTMLnumber(category.getCategoryName()));
       getUIStringInput(FIELD_CATEGORYORDER_INPUT).setValue(Long.toString(category.getCategoryOrder()));
-      getUIFormTextAreaInput(FIELD_DESCRIPTION_INPUT).setDefaultValue(category.getDescription());
+      getUIFormTextAreaInput(FIELD_DESCRIPTION_INPUT).setDefaultValue(CommonUtils.decodeSpecialCharToHTMLnumber(category.getDescription()));
       String userPrivate = ForumUtils.unSplitForForum(category.getUserPrivate());
       String moderator = ForumUtils.unSplitForForum(category.getModerators());
       String topicAble = ForumUtils.unSplitForForum(category.getCreateTopicRole());
@@ -241,13 +236,13 @@ public class UICategoryForm extends BaseForumForm implements UIPopupComponent, U
         warning("NameValidator.msg.warning-long-text", new String[] { uiForm.getLabel(FIELD_CATEGORYTITLE_INPUT), String.valueOf(maxText) });
         return;
       }
-      categoryTitle = Utils.encodeSpecialCharInTitle(categoryTitle);
+      categoryTitle = CommonUtils.encodeSpecialCharInTitle(categoryTitle);
       String description = uiForm.getUIFormTextAreaInput(FIELD_DESCRIPTION_INPUT).getValue();
       if (!ForumUtils.isEmpty(description) && description.length() > maxText) {
         warning("NameValidator.msg.warning-long-text", new String[] { uiForm.getLabel(FIELD_DESCRIPTION_INPUT), String.valueOf(maxText) });
         return;
       }
-      description = Utils.encodeSpecialCharInTitle(description);
+      description = CommonUtils.encodeSpecialCharInTitle(description);
       String categoryOrder = uiForm.getUIStringInput(FIELD_CATEGORYORDER_INPUT).getValue();
       if (ForumUtils.isEmpty(categoryOrder))
         categoryOrder = "0";
@@ -317,8 +312,21 @@ public class UICategoryForm extends BaseForumForm implements UIPopupComponent, U
       String[] setPostable = ForumUtils.splitForForum(postable);
       String[] setViewer = ForumUtils.splitForForum(viewer);
 
-      String userName = UserHelper.getCurrentUser();
+      String userName = uiForm.getUserProfile().getUserId();
+      UIForumPortlet forumPortlet = uiForm.getAncestorOfType(UIForumPortlet.class);
+      boolean isNew = true;
       Category cat = new Category();
+      if (!ForumUtils.isEmpty(uiForm.categoryId)) {
+        cat = uiForm.getForumService().getCategory(uiForm.categoryId);
+        if(cat == null) {
+          warning("UIForumPortlet.msg.catagory-deleted", false);
+          forumPortlet.cancelAction();
+          forumPortlet.renderForumHome();
+          event.getRequestContext().addUIComponentToUpdateByAjax(forumPortlet);
+          return;
+        }
+        isNew = false;
+      }
       cat.setOwner(userName);
       cat.setCategoryName(categoryTitle.trim());
       cat.setCategoryOrder(Long.parseLong(categoryOrder));
@@ -332,33 +340,18 @@ public class UICategoryForm extends BaseForumForm implements UIPopupComponent, U
       cat.setPoster(setPostable);
       cat.setViewer(setViewer);
 
-      UIForumPortlet forumPortlet = uiForm.getAncestorOfType(UIForumPortlet.class);
       UICategoryContainer categoryContainer = forumPortlet.getChild(UICategoryContainer.class);
-      ForumService forumService = (ForumService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(ForumService.class);
       try {
-        if (!ForumUtils.isEmpty(uiForm.categoryId)) {
-          cat.setId(uiForm.categoryId);
-          forumService.saveCategory(cat, false);
-        } else {
-          forumService.saveCategory(cat, true);
-          List<String> invisibleCategories = forumPortlet.getInvisibleCategories();
-          if (!invisibleCategories.isEmpty()) {
-            List<String> invisibleForums = forumPortlet.getInvisibleForums();
-            invisibleCategories.add(cat.getId());
-            String listForumId = invisibleForums.toString().replace('[' + ForumUtils.EMPTY_STR, ForumUtils.EMPTY_STR).replace(']' + ForumUtils.EMPTY_STR, ForumUtils.EMPTY_STR).replaceAll(" ", ForumUtils.EMPTY_STR);
-            String listCategoryId = invisibleCategories.toString().replace('[' + ForumUtils.EMPTY_STR, ForumUtils.EMPTY_STR).replace(']' + ForumUtils.EMPTY_STR, ForumUtils.EMPTY_STR).replaceAll(" ", ForumUtils.EMPTY_STR);
-            ForumUtils.savePortletPreference(listCategoryId, listForumId);
-            forumPortlet.loadPreferences();
-          }
+        uiForm.getForumService().saveCategory(cat, isNew);
+        List<String> invisibleCategories = forumPortlet.getInvisibleCategories();
+        if (!invisibleCategories.isEmpty()) {
+          List<String> invisibleForums = forumPortlet.getInvisibleForums();
+          invisibleCategories.add(cat.getId());
+          String listForumId = UICategoryForm.listToString(invisibleForums);
+          String listCategoryId = UICategoryForm.listToString(invisibleCategories);
+          ForumUtils.savePortletPreference(listCategoryId, listForumId);
+          forumPortlet.loadPreferences();
         }
-      } catch (Exception e) {
-        warning("UIForumPortlet.msg.catagory-deleted");
-        forumPortlet.rederForumHome();
-      }
-      forumPortlet.cancelAction();
-      uiForm.isDoubleClickSubmit = true;
-
-      try {
         UICategory uiCategory = categoryContainer.getChild(UICategory.class);
         uiCategory.setIsEditForum(true);
         uiCategory.updateByBreadcumbs(cat.getId());
@@ -369,15 +362,21 @@ public class UICategoryForm extends BaseForumForm implements UIPopupComponent, U
         forumLinks.setUpdateForumLinks();
         forumLinks.setValueOption(cat.getId());
       } catch (Exception e) {
-        Object[] args = { ForumUtils.EMPTY_STR };
-        UIApplication uiApp = (UIApplication) forumPortlet;
-        uiApp.addMessage(new ApplicationMessage("UIForumPortlet.msg.catagory-deleted", args, ApplicationMessage.WARNING));
-        event.getRequestContext().addUIComponentToUpdateByAjax(uiApp.getUIPopupMessages());
+        warning("UIForumPortlet.msg.catagory-deleted", false);
+        forumPortlet.renderForumHome();
       }
+      forumPortlet.cancelAction();
+      uiForm.isDoubleClickSubmit = true;
       event.getRequestContext().addUIComponentToUpdateByAjax(forumPortlet);
     }
   }
 
+  static public String listToString(List<String> list) {
+    if (list == null) return ForumUtils.EMPTY_STR;
+    String s = list.toString().substring(1);
+    return s.substring(0, s.length() - 1).replaceAll(Utils.SPACE, ForumUtils.EMPTY_STR);
+  }
+  
   static public class SelectTabActionListener extends BaseEventListener<UICategoryForm> {
     public void onEvent(Event<UICategoryForm> event, UICategoryForm uiForm, String id) throws Exception {
       uiForm.id = Integer.parseInt(id);
@@ -387,7 +386,7 @@ public class UICategoryForm extends BaseForumForm implements UIPopupComponent, U
       } else {
         popupWindow.setWindowSize(550, 380);
       }
-      event.getRequestContext().addUIComponentToUpdateByAjax(popupWindow);
+      event.getRequestContext().addUIComponentToUpdateByAjax(uiForm);
     }
   }
 

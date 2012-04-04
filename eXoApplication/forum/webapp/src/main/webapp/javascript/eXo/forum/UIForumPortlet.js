@@ -2,25 +2,17 @@ function UIForumPortlet() {
 	this.obj = null;
 	this.event = null;
 	this.wait = false;
+	this.id = "UIForumPortlet";
 };
 
-UIForumPortlet.prototype.mouseOnUserMenu = function(obj, event, wait) {
-	this.wait = wait;
-	if(this.wait){
-		this.obj = obj;
-		this.event = event;
-		setTimeout('eXo.forum.UIForumPortlet.viewUserMenu()', 300);
-	}
-};
-
-UIForumPortlet.prototype.viewUserMenu = function(){
-	if(this.wait){
-		try{
-			var evObj = document.createEvent('MouseEvents');
-			evObj.initEvent( 'click', true, true );
-			eXo.webui.UIPopupSelectCategory.show(this.obj, this.obj.dispatchEvent(evObj));
-		} catch(e){
-			eXo.webui.UIPopupSelectCategory.show(this.obj, this.obj.fireEvent("onclick"));
+UIForumPortlet.prototype.init = function(id) {
+	eXo.forum.UIForumPortlet.id = id;
+	var portlet = document.getElementById(id);
+	if (portlet) {
+		var KSUtils = eXo.ks.KSUtils;
+		var oncontextmenus = KSUtils.findDescendantsByClass(portlet, "oncontextmenu");
+		for ( var i = 0; i < oncontextmenus.length; i++) {
+			KSUtils.addEv(oncontextmenus[i], "oncontextmenu", KSUtils.returnFalse);
 		}
 	}
 };
@@ -56,15 +48,18 @@ UIForumPortlet.prototype.selectItem = function(obj) {
 		var firstItem = modMenu.getElementsByTagName("a")[0] ;
 		if(j >= 2) {
 			if(!firstItem.getAttribute("oldClass")) {
-				firstItem.setAttribute("oldClass", firstItem.className) ;
 				firstItem.setAttribute("oldHref", firstItem.href) ;
-				firstItem.className = "DisableMenuItem" ;
 				firstItem.href = "javascript:void(0);" ;
+				var parentIt = DOMUtil.findAncestorByClass(firstItem, "MenuItem");
+				firstItem.setAttribute("oldClass", parentIt.className) ;
+				parentIt.className = "DisableMenuItem" ;
 			}
 		} else {
 			if(firstItem.getAttribute("oldClass")) {
-				firstItem.className = firstItem.getAttribute("oldClass") ;
 				firstItem.href = firstItem.getAttribute("oldHref") ;
+				var parentIt = DOMUtil.findAncestorByClass(firstItem, "DisableMenuItem");
+				parentIt.className = firstItem.getAttribute("oldClass") ;
+				firstItem.setAttribute("oldClass", "") ;
 			}
 		}
 	}
@@ -76,19 +71,16 @@ UIForumPortlet.prototype.numberIsCheckedForum = function(formName, checkAllName,
 	if(form) {
 		var checkboxs = form.elements;
 		for(var i = 0; i < checkboxs.length; i ++){
-			if(checkboxs[i].checked){
+			if(checkboxs[i].type == "checkbox" && checkboxs[i].checked && checkboxs[i].name != "checkAll"){
 				total = total + 1;
 			}
 		}
 	}
-	if(document.getElementById(checkAllName) != null && document.getElementById(checkAllName).checked){
-		total = total - 1;
-	}
 	if(total > 1){
-		var text = String(multiAns);
-		return confirm(text.replace('{0}', total));
+		var text = String(multiAns).replace("?", "").replace('{0}', total) + " ?";
+		return confirm(text);
 	} else if(total == 1) {
-		return confirm(onlyAns);
+		return confirm(String(onlyAns).replace("?", "") + " ?");
 	} else {
 		alert(notChecked);
 		return false;
@@ -159,51 +151,49 @@ UIForumPortlet.prototype.checkAll = function(obj) {
 
 //DungJs
 UIForumPortlet.prototype.checkAction = function(obj, evt) {
-	eXo.forum.UIForumPortlet.showPopup(obj, evt) ;
-	var uiCategory = document.getElementById("UICategory") ;
-	var uiRightClickPopupMenu = eXo.core.DOMUtil.findFirstDescendantByClass(uiCategory, "div", "UIRightClickPopupMenu") ;
-	var checkboxes = eXo.core.DOMUtil.findDescendantsByClass(uiCategory, "input", "checkbox") ;
-	var clen = checkboxes.length ;
-	var menuItems = uiRightClickPopupMenu.getElementsByTagName("a") ;
-	var mlen = menuItems.length ;
-	var alen = arguments.length ;
-	var j = 0 ;
-	for(var i = 1 ; i < clen ; i ++) {
-		if (checkboxes[i].checked) j++ ;
-		if (j > 1) break ;
+	eXo.forum.UIForumPortlet.showPopup(obj, evt);
+	var uiCategory = document.getElementById("UICategory");
+	var DOMUtil = eXo.core.DOMUtil;
+	var checkboxes = DOMUtil.findDescendantsByClass(uiCategory, "input", "checkbox");
+	var uiRightClickPopupMenu = eXo.core.DOMUtil.findFirstDescendantByClass(obj, "ul", "UIRightClickPopupMenu");
+	if (uiRightClickPopupMenu == null) {
+		uiRightClickPopupMenu = eXo.core.DOMUtil.findFirstDescendantByClass(obj, "div", "UIRightClickPopupMenu");
 	}
-	if (alen > 2) {	
-		if (j < 1) {
-			for(var n = arguments[alen-1] ; n < mlen ; n++) {
-				if(!menuItems[n].getAttribute("tmpClass")) {
-					menuItems[n].setAttribute("tmpClass",menuItems[n].className) ;
-					menuItems[n].setAttribute("tmpHref",menuItems[n].href) ;
-					menuItems[n].className = "DisableMenuItem" ;
-					menuItems[n].href = "javascript:void(0);" ;
-				}			
+	var clen = checkboxes.length;
+	var menuItems = uiRightClickPopupMenu.getElementsByTagName("a");
+	var mlen = menuItems.length;
+	var checked = false;
+	for ( var i = 1; i < clen; i++) {
+		if (checkboxes[i].checked && checkboxes[i].name.indexOf("forum") == 0) {
+			checked = true;
+			break;
+		}
+	}
+	var j = 0;
+	for ( var i = 0; i < mlen; i++) {
+		if (String(menuItems[i].className).indexOf("AddForumIcon") > 0) {
+			j = i + 1;
+			break;
+		}
+	}
+	for ( var n = j; n < mlen; n++) {
+		if (!checked) {
+			if (!menuItems[n].getAttribute("tmpHref")) {
+				menuItems[n].setAttribute("tmpHref", menuItems[n].href);
+				menuItems[n].href = "javascript:void(0);";
+				menuItems[n].setAttribute("tmpClass", menuItems[n].parentNode.className);
+				menuItems[n].parentNode.className = "DisableMenuItem";
 			}
-		} else {		
-			for(var n = arguments[alen-1] ; n < mlen ; n++) {
-				if(menuItems[n].getAttribute("tmpClass")) {
-					menuItems[n].className = menuItems[n].getAttribute("tmpClass") ;
-					menuItems[n].href = menuItems[n].getAttribute("tmpHref") ;
-					menuItems[n].removeAttribute("tmpClass") ;
-					menuItems[n].removeAttribute("tmpHref") ;
-				}			
-			}
-			if (j > 1) {
-				for(var k = 2; k < alen; k ++) {
-					if(!menuItems[arguments[k]].getAttribute("tmpClass")) {
-						menuItems[arguments[k]].setAttribute("tmpClass",menuItems[arguments[k]].className) ;
-						menuItems[arguments[k]].setAttribute("tmpHref",menuItems[arguments[k]].href) ;
-						menuItems[arguments[k]].className = "DisableMenuItem" ;
-						menuItems[arguments[k]].href = "javascript:void(0);" ;
-					}
-				}
+		} else {
+			if (menuItems[n].getAttribute("tmpHref")) {
+				menuItems[n].href = menuItems[n].getAttribute("tmpHref");
+				menuItems[n].parentNode.className = menuItems[n].getAttribute("tmpClass");
+				menuItems[n].removeAttribute("tmpHref");
+				menuItems[n].removeAttribute("tmpClass");
 			}
 		}
 	}
-} ;
+};
 
 UIForumPortlet.prototype.visibleAction = function(id) {
 	var parent = document.getElementById(id);
@@ -253,19 +243,21 @@ UIForumPortlet.prototype.checkActionTopic = function(obj, evt) {
 	}
 	if(j === 0) {
 		for(var k = 0; k < mlen; k ++) {
-			if(DOMUtil.findAncestorByClass(menuItems[k], "SetUnWaiting") != null) break;
+			if(menuItems[k].className === "ItemIcon SetUnWaiting") break;
 			if(!menuItems[k].getAttribute("tmpClass")) {
-				menuItems[k].setAttribute("tmpClass",menuItems[k].className) ;
 				menuItems[k].setAttribute("tmpHref",menuItems[k].href) ;
-				menuItems[k].className = "DisableMenuItem" ;
 				menuItems[k].href = "javascript:void(0);" ;
-				DOMUtil.findAncestorByClass(menuItems[k], "ItemIcon").onclick = eXo.forum.UIForumPortlet.cancel;
+				var parentIt = DOMUtil.findAncestorByClass(menuItems[k],"MenuItem");
+				menuItems[k].setAttribute("tmpClass", parentIt.className) ;
+				parentIt.className = "DisableMenuItem";
+				parentIt.onclick = eXo.forum.UIForumPortlet.cancel;
 			}	
 		}	
 	} else {
 		for(var n = 0 ; n < mlen ; n++) {
 			if(menuItems[n].getAttribute("tmpClass")) {
-				menuItems[n].className = menuItems[n].getAttribute("tmpClass") ;
+			    var parent = DOMUtil.findAncestorByClass(menuItems[n],"DisableMenuItem");
+				if(parent) parent.className = menuItems[n].getAttribute("tmpClass") ;
 				menuItems[n].href = menuItems[n].getAttribute("tmpHref") ;
 				menuItems[n].removeAttribute("tmpClass") ;
 				menuItems[n].removeAttribute("tmpHref") ;
@@ -348,21 +340,23 @@ UIForumPortlet.prototype.initVote = function(voteId, rate) {
 	var optsContainer = DOMUtil.findFirstDescendantByClass(vote, "div", "OptionsContainer") ;
 	var options = DOMUtil.getChildrenByTagName(optsContainer, "div") ;
 	for(var i = 0; i < options.length-1; i++) {
-		options[i].onmouseover = this.overVote ;
+		options[i].onmouseover = eXo.forum.UIForumPortlet.overVote ;
+		options[i].onblur = eXo.forum.UIForumPortlet.overVote ;
 		if(i < rate) options[i].className = "RatedVote" ;
 	}
-	vote.onmouseover = function() {
-		var optsCon= DOMUtil.findFirstDescendantByClass(this, "div", "OptionsContainer") ;
-		var opts = DOMUtil.getChildrenByTagName(optsCon, "div") ;
+	vote.onmouseover = eXo.forum.UIForumPortlet.parentOverVote;
+	vote.onblur = eXo.forum.UIForumPortlet.parentOverVote;
+	optsContainer.onmouseover = eXo.forum.UIForumPortlet.cancel;
+  optsContainer.onblur = eXo.forum.UIForumPortlet.cancel;
+};
+
+UIForumPortlet.prototype.parentOverVote = function(event) {
+		var optsCon= eXo.core.DOMUtil.findFirstDescendantByClass(this, "div", "OptionsContainer") ;
+		var opts = eXo.core.DOMUtil.getChildrenByTagName(optsCon, "div") ;
 		for(var j = 0; j < opts.length-1; j++) {
 			if(j < this.rate) opts[j].className = "RatedVote" ;
 			else opts[j].className = "NormalVote" ;
 		}
-	}
-	optsContainer.onmouseover = function(e) {
-		if(!e) e = window.event ;
-		e.cancelBubble = true ;
-	}
 };
 
 UIForumPortlet.prototype.overVote = function(event) {
@@ -378,7 +372,6 @@ UIForumPortlet.prototype.overVote = function(event) {
 		opts[i].className = "OverVote" ;
 	}
 };
-
 
 UIForumPortlet.prototype.showPopup = function(elevent,e) {
 	var strs = ["AddTagId","goPageTop","goPageBottom","SearchForm"];
@@ -657,22 +650,28 @@ UIForumPortlet.prototype.RightClickBookMark = function(elmId) {
 	if(popupContents == null) return;
 	var popupContainer = document.getElementById('RightClickContainer') ;
 	if(popupContainer == null) return;
-	var itemmenuBookMark = DOMUtil.findFirstDescendantByClass(popupContainer, "a", "AddBookmark") ;
-	var itemmenuWatching = DOMUtil.findFirstDescendantByClass(popupContainer, "a", "AddWatching") ;
-	var itemmenuRSS = DOMUtil.findFirstDescendantByClass(popupContainer, "a", "AddRSS") ;
+	var itemmenuBookMark = DOMUtil.findFirstDescendantByClass(popupContainer, "a", "AddLinkToBookIcon") ;
+	var itemmenuWatching = DOMUtil.findFirstDescendantByClass(popupContainer, "a", "AddWatchingIcon") ;
+	var itemmenuRSS = DOMUtil.findFirstDescendantByClass(popupContainer, "a", "ForumRSSFeed") ;
 	if(itemmenuWatching == null || itemmenuBookMark == null) return;
 	var labelWatchings = String(itemmenuWatching.innerHTML).split(";");
 	for(var i = 0; i < popupContents.length; i++){
-		var action = popupContents[i].getAttribute('action');
+		var action = popupContents[i].getAttribute('title');
 		if(action.indexOf(";") < 0){
 			itemmenuBookMark.href= action ;
 			itemmenuWatching.parentNode.style.display ="none";
 		} else {
 			var actions = action.split(";");
 			itemmenuBookMark.href= actions[0] ;
+			if(actions[1].toLowerCase().indexOf("unwatch") >= 0){
+				if(actions[1].indexOf("unwatch,") >= 0) {
+					actions[1] = actions[1].replace('unwatch,', '');
+				}
+				itemmenuWatching.innerHTML = labelWatchings[1];
+			}	else {
+				itemmenuWatching.innerHTML = labelWatchings[0];
+			}
 			itemmenuWatching.href= actions[1] ;
-			if(actions[1].indexOf("UnWatch") >= 0) itemmenuWatching.innerHTML = labelWatchings[1];
-			else itemmenuWatching.innerHTML = labelWatchings[0];
 			if(itemmenuRSS){
 				if(actions.length == 3) {
 					var link = actions[2].substring(0, actions[2].indexOf(','));
@@ -685,6 +684,7 @@ UIForumPortlet.prototype.RightClickBookMark = function(elmId) {
 			}
 			itemmenuWatching.parentNode.style.display ="block";
 		}
+		popupContents[i].removeAttribute('title');
 		popupContents[i].innerHTML = popupContainer.innerHTML;
 	}
 };
@@ -796,7 +796,9 @@ UIForumPortlet.prototype.initTagScroll = function() {
 	 
 	removeChildren(menu);
 	uiNav.tagScrollMgr.arrowsContainer.onmouseover = over;
+	uiNav.tagScrollMgr.arrowsContainer.onfocus = over;
 	uiNav.tagScrollMgr.arrowsContainer.onmouseout = out;
+	uiNav.tagScrollMgr.arrowsContainer.onblur = out;
 	for (var i = 0; i < elements.length; i++) {
 		if (elements[i].isVisible) {
 			elements[i].style.display = "block";
@@ -867,7 +869,7 @@ UIForumPortlet.prototype.setTagContainerWidth = function(container){
 };
 
 UIForumPortlet.prototype.executeLink = function(evt) {
-  var onclickAction = String(this.getAttribute("actions")) ;
+  var onclickAction = String(this.getAttribute("rel")) ;
 	eval(onclickAction) ;
 	eXo.core.EventManager.cancelEvent(evt);
 	return false;
@@ -914,6 +916,11 @@ UIForumPortlet.prototype.setAutoScrollTable = function(idroot, idParent, idChild
 			rootEl.style.margin = "auto";
 		}
 	}
+	if(grid.offsetHeight > 260){
+		tableContent.style.height = "260px";
+	} else {
+		tableContent.style.height = "auto";
+	}
 };
 
 UIForumPortlet.prototype.initContextMenu = function(id){
@@ -925,17 +932,10 @@ UIForumPortlet.prototype.initContextMenu = function(id){
 	uiContextMenu.setup();
 };
 
-UIForumPortlet.prototype.showBBCodeHelp = function(id, isIn){
+UIForumPortlet.prototype.showBBCodeHelp = function(id, isIn){ 
 	var parentElm = document.getElementById(id);
 	var popupHelp = document.getElementById(id+"ID");
 	if(parentElm){
-    parentElm.onmouseover = function() {
-      popupHelp.style.display = "block";
-    };
-    parentElm.onmouseout = function() {
-      popupHelp.style.display = 'none';
-    };
-
 		if(isIn == "true"){
 			popupHelp.style.display = "block";
 			var contentHelp = eXo.core.DOMUtil.findFirstDescendantByClass(popupHelp,"div","ContentHelp");
@@ -962,9 +962,9 @@ UIForumPortlet.prototype.showBBCodeHelp = function(id, isIn){
       } else {
         worksPaceW = (document.getElementById('UIPortalApplication').offsetWidth)*1;
       }
-			left = (parPopup.offsetLeft)*1 + (parPopup2.offsetLeft)*1 + parentElm.offsetLeft;
+			left = (parPopup.offsetLeft)*1 + (parPopup2.offsetLeft)*1 + parentElm.offsetLeft + parentElm.parentNode.offsetLeft;
 			if(left+popupHelp.offsetWidth > worksPaceW) {
-				popupHelp.style.left = "-"  + (contentHelp.offsetWidth+22) + "px";
+				popupHelp.style.left = "-"  + (contentHelp.offsetWidth+18) + "px";
 				popupHelp.className = "RightBBCodeHelpPopup";
 			} else {
 				popupHelp.className = "LeftBBCodeHelpPopup";
@@ -1001,112 +1001,47 @@ UIForumPortlet.prototype.submitOnKey = function(event){
 eXo.forum.UIForumPortlet = new UIForumPortlet() ;
 
 eXo.forum.CheckBox = {
-	init : function(cont){
-		if(typeof(cont) == "string") cont = document.getElementById(cont) ;
-		if(cont){
-			var checkboxes = eXo.core.DOMUtil.findDescendantsByClass(cont, "input", "checkbox") ;
-			if(checkboxes.length <=0) return ;
-			checkboxes[0].onclick = this.checkAll ;
-			var len = checkboxes.length ;
-			for(var i = 1 ; i < len ; i ++) {
-				checkboxes[i].onclick = this.check ;
-				//if(checkboxes[i].getAttribute("checked") != "checked")checkboxes[i].checked = false;
-				eXo.ks.CheckBox.checkItem(checkboxes[i]);
+		init : function(cont){
+			if(typeof(cont) == "string") cont = document.getElementById(cont) ;
+			if(cont){
+				var checkboxes = eXo.core.DOMUtil.findDescendantsByClass(cont, "input", "checkbox") ;
+				if(checkboxes.length <=0) return ;
+				checkboxes[0].onclick = this.checkAll ;
+				var len = checkboxes.length ;
+				for(var i = 1 ; i < len ; i ++) {
+					checkboxes[i].onclick = this.check ;
+					//if(checkboxes[i].getAttribute("checked") != "checked")checkboxes[i].checked = false;
+					eXo.ks.CheckBox.checkItem(checkboxes[i]);
+				}
+			}
+		},
+		
+		check : function(){
+			eXo.ks.CheckBox.checkItem(this);
+			var row = eXo.core.DOMUtil.findAncestorByTagName(this,"tr");
+			if(this.checked) {
+				eXo.core.DOMUtil.addClass(row,"SelectedItem");
+				eXo.forum.UIForumPortlet.setChecked(true);
+			}else{
+				eXo.forum.UIForumPortlet.setChecked(false);
+				eXo.core.DOMUtil.replaceClass(row,"SelectedItem","");
+			}
+		},
+		
+		checkAll : function(){
+			eXo.forum.UIForumPortlet.checkAll(this);
+			var table = eXo.core.DOMUtil.findAncestorByTagName(this,"table");
+			table = eXo.core.DOMUtil.getChildrenByTagName(table,"tbody")[0];
+			var rows = eXo.core.DOMUtil.findDescendantsByTagName(table,"tr");
+			var i = rows.length ;
+			if(this.checked){
+				while(i--) {
+					eXo.core.DOMUtil.addClass(rows[i],"SelectedItem");
+				}
+			} else{
+				while(i--){
+					eXo.core.DOMUtil.replaceClass(rows[i],"SelectedItem","");
+				}
 			}
 		}
-	},
-	
-	check : function(){
-		eXo.ks.CheckBox.checkItem(this);
-		var row = eXo.core.DOMUtil.findAncestorByTagName(this,"tr");
-		if(this.checked) {
-			eXo.core.DOMUtil.addClass(row,"SelectedItem");
-			eXo.forum.UIForumPortlet.setChecked(true);
-		}else{
-			eXo.forum.UIForumPortlet.setChecked(false);
-			eXo.core.DOMUtil.replaceClass(row,"SelectedItem","");
-		}
-	},
-	
-	checkAll : function(){
-		eXo.forum.UIForumPortlet.checkAll(this);
-		var table = eXo.core.DOMUtil.findAncestorByTagName(this,"table");
-		table = eXo.core.DOMUtil.getChildrenByTagName(table,"tbody")[0];
-		var rows = eXo.core.DOMUtil.findDescendantsByTagName(table,"tr");
-		var i = rows.length ;
-		if(this.checked){
-			while(i--) {
-				eXo.core.DOMUtil.addClass(rows[i],"SelectedItem");
-			}
-		} else{
-			while(i--){
-				eXo.core.DOMUtil.replaceClass(rows[i],"SelectedItem","");
-			}
-		}
-	}
-} ;
-//if(!eXo.ks) eXo.ks = {};
-//eXo.ks.UIContextMenu = {
-//	menus : [],
-//	init: function(id){
-//		var cont = document.getElementById(id);
-//		this.classNames = new Array("Title","whileRow","OddRow");
-//		this.container = cont;
-//		eXo.core.EventManager.addEvent(cont,"contextmenu",this.show);
-//	},
-//	getMenu : function(evt) {
-//		var element = this.getMenuElement(evt);
-//		if(!element) return;
-//		var menuId = element.getAttribute("ctxMenuId");
-//		var menu = eXo.core.DOMUtil.findDescendantById(this.container,menuId);
-//		if(!menu) return;
-//		if(element.tagName != "TR") element.parentNode.appendChild(menu);
-//		return menu;
-//	},
-//	getMenuElement : function(evt) {
-//		var target = eXo.core.EventManager.getEventTarget(evt);
-//		while(target){
-//			var className = target.className;
-//			if(!className) {
-//				target = target.parentNode;
-//				continue;
-//			}
-//			className = className.replace(/^\s+/g, "").replace(/\s+$/g, "");
-//			var classArray = className.split(/[ ]+/g);
-//			for (i = 0; i < classArray.length; i++) {
-//				if (this.classNames.contains(classArray[i])) {
-//					return target;
-//				}
-//			}
-//			target = target.parentNode;
-//		}
-//		return null;
-//	},
-//	hideElement: function(){
-//		var ln = eXo.core.DOMUtil.hideElementList.length ;
-//		if (ln > 0) {
-//			for (var i = 0; i < ln; i++) {
-//				eXo.core.DOMUtil.hideElementList[i].style.display = "none" ;
-//			}
-//			eXo.core.DOMUtil.hideElementList.clear() ;
-//		}
-//	},
-//	setPosition : function(obj,evt){		
-//		var x  = eXo.core.Browser.getBrowserWidth() - eXo.core.Browser.findMouseXInPage(evt) - obj.offsetWidth;
-//		var y = eXo.core.Browser.findMouseYInPage(evt);
-//		obj.style.position = "absolute";
-//		obj.style.display = "block";
-//		obj.style.top =  y + "px";
-//		obj.style.right = x + "px";
-//	},
-//	show: function(evt){
-//		eXo.core.EventManager.cancelEvent(evt);
-//		var ctx = eXo.ks.UIContextMenu;
-//		var menu = ctx.getMenu(evt);
-//		ctx.hideElement();
-//		if(!menu) return;
-//		ctx.setPosition(menu,evt);
-//		eXo.core.DOMUtil.listHideElements(menu);
-//		return false;
-//	}
-//};
+	} ;

@@ -42,7 +42,7 @@ public class BufferAttachment extends ForumAttachment {
     Session session = getSesison();
     try {
       attachment = (Node) session.getItem(getPathNode());
-      return attachment.getNode("jcr:content").getProperty("jcr:data").getStream();
+      return attachment.getNode(ForumNodeTypes.JCR_CONTENT).getProperty(ForumNodeTypes.JCR_DATA).getStream();
     } catch (Exception e) {
       return null;
     } finally {
@@ -52,7 +52,7 @@ public class BufferAttachment extends ForumAttachment {
 
   private Session getSesison() throws Exception {
     RepositoryService repoService = (RepositoryService) PortalContainer.getInstance().getComponentInstanceOfType(RepositoryService.class);
-    return repoService.getDefaultRepository().getSystemSession(getWorkspace());
+    return repoService.getCurrentRepository().getSystemSession(getWorkspace());
   }
 
   public void setInputStream(InputStream input) throws Exception {

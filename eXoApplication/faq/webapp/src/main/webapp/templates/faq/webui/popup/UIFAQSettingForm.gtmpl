@@ -1,12 +1,13 @@
 <% 
 	import org.exoplatform.faq.service.Category;
+	uiform.initSettingForm();
 %>
-<div class="UIViewerSettingForm">
+<div class="UIFAQSettingForm">
 	<% uiform.begin() %>
 		
 	<div class="UIFormTabPane">
 		<div class="UITabPane">
-			<div class="TabPaneContent" style="padding:0px;">
+			<div class="TabPaneContent">
 				
 				<div class="WorkingArea">
 					 <div class="UIHorizontalTabs">
@@ -60,7 +61,7 @@
 
 											<div class="TitleMoveThreads"><%=uiform.getLabel("SelectCategory")%>: </div>
 											<!-- View interface -->
-											<div class="HorizontalLayout ViewQuestionsToSelect" style="overflow:auto;">
+											<div class="HorizontalLayout">
 												<%
 												List listCate = uicomponent.listCate;
 												Stack<String> stackCateid = new Stack<String>() ;
@@ -72,28 +73,18 @@
 											   <!-- ===================================== view all subcategories of root category ==================================== -->
 											   <%
 											   if(uicomponent.listCate != null && !uicomponent.listCate.isEmpty()){
-										   		String checked = "";
-										   		List checkeds = uicomponent.getCategoriesId();
 											   	for(cate in uicomponent.listCate) {
 											   		String cateId = cate.getCategory().getId();
-														if(checkeds.isEmpty() || checkeds.contains(cateId)){
-												    	checked = "checked=\"checked\"";
-												    } else {
-												    	checked = "";
-												    }
 											   		stackCateid.push(cateId) ;
 											    	id ++ ;
 											    	i ++ ;
 											      if(i == 1) {%>
-												      <div class="FAQDomNode" style="padding-left:30px">
-																<div style="margin:6px 0px;line-height:22px;" id="FAQCate$i">
+												      <div class="FAQDomNode">
+																<div id="FAQCate$i" class="FAQCate ClearFix">
 																	<div class="Icon CategoryIcon" onclick="eXo.faq.UIAnswersPortlet.checkedNode(this);">
-																		<input type="checkbox" class="checkbox" value="false" name="$cateId" $checked/>
+																		<%tabconten.renderChild(cateId);%>
 																 	</div>
-																	<div class="LabelNameCategory">
-																		<%= cate.getCategory().getName();%>
-																	</div>
-																	<div style="clear:left;"><span></span></div>
+																	<label for="$cateId" class="LabelNameCategory" onclick="eXo.faq.UIAnswersPortlet.treeView('FAQViewChild$id')"><%= cate.getCategory().getName();%></label>
 																</div>
 																<div class="FAQChildNodeContainer" id="FAQViewChild$i">
 											  	<%
@@ -102,31 +93,25 @@
 											        if(sub == 0) {%>
 											        		</div>
 											        	</div>
-												      <div class="FAQDomNode" style="padding-left:30px">
-											        	<div style="margin:6px 0px;line-height:22px;">
+												      <div class="FAQDomNode">
+											        	<div class="FAQCate ClearFix">
 											        			<div class="Icon CategoryIcon" onclick="eXo.faq.UIAnswersPortlet.checkedNode(this);">
-																			<input type="checkbox" class="checkbox" value="false" name="$cateId" $checked/>
+																			<%tabconten.renderChild(cateId);%>
 																		</div>
-																		<div class="LabelNameCategory">
-																			<%= cate.getCategory().getName();%>
-																		</div>
-																		<div style="clear:left;"><span></span></div>
+																		<label for="$cateId" class="LabelNameCategory" onclick="eXo.faq.UIAnswersPortlet.treeView('FAQViewChild$id')"><%= cate.getCategory().getName();%></label>
 																</div>
 																<div class="FAQChildNodeContainer" id="FAQViewChild$i">
 																
 											    <%
 											        } else if(sub > 0) {%>
-													      <div class="FAQDomNode" style="padding-left:30px">
-																	<div style="margin:6px 0px;line-height:22px;">
+													      <div class="FAQDomNode">
+																	<div class="FAQCate ClearFix">
 															    	<div id="FAQCate$i">
 															    		<div class="Icon CategoryIcon" onclick="eXo.faq.UIAnswersPortlet.checkedNode(this);">
-																				<input type="checkbox" class="checkbox" value="false" name="$cateId" $checked/>
+																				<%tabconten.renderChild(cateId);%>
 																			</div>
-															    		<div class="LabelNameCategory">
-															    			<%= cate.getCategory().getName();%>s
-															    		</div>
+															    		<label for="$cateId" class="LabelNameCategory" onclick="eXo.faq.UIAnswersPortlet.treeView('FAQViewChild$id')"> <%= cate.getCategory().getName();%></label>
 															    	</div>
-															    	<div style="clear:left;"><span></span></div>
 															    </div>
 																  <div class="FAQChildNodeContainer" id="FAQViewChild$i">
 											    <%
@@ -135,15 +120,12 @@
 												    				</div>
 												    			</div>
 											     		<%}%>
-												      <div class="FAQDomNode" style="padding-left:30px">
-															 <div style="margin:6px 0px;line-height:22px;">
+												      <div class="FAQDomNode">
+															 <div class="FAQCate ClearFix">
 															 	 <div class="Icon CategoryIcon" onclick="eXo.faq.UIAnswersPortlet.checkedNode(this);">
-																		<input type="checkbox" class="checkbox" value="false" name="$cateId" $checked/>
+																		<%tabconten.renderChild(cateId);%>
 																 </div>
-																 <div class="LabelNameCategory">
-																 	<%= cate.getCategory().getName();%>
-																 </div>
-																 <div style="clear:left;"><span></span></div>
+																 <label for="$cateId" class="LabelNameCategory" onclick="eXo.faq.UIAnswersPortlet.treeView('FAQViewChild$id')"><%= cate.getCategory().getName();%></label>
 															 </div>
 															 <div class="FAQChildNodeContainer" id="FAQViewChild$i">
 											     <%
@@ -164,23 +146,18 @@
 
 									<% } else if(tabconten.id.equals(uiform.EDIT_TEMPLATE_TAB)) {%>
 											<div class="EditTempLateContent">
-												<div class="LabelContent"><%=uiform.getLabel(uiform.FIELD_TEMPLATE_TEXTARE);%>:</div>
+												<div class="LabelContent"><label for="<%=uiform.FIELD_TEMPLATE_TEXTARE%>"><%=uiform.getLabel(uiform.FIELD_TEMPLATE_TEXTARE);%>:</label></div>
 												<div class="TextAreContent">
 													<%uiform.renderField(tabconten.getChildById(uiform.FIELD_TEMPLATE_TEXTARE)) ;%>
 												</div>
 											</div>
 									<% } else {%>
-										<%
-											 String checkedBox = "";
-											 if(uiform.useAjax) checkedBox = "checked=\"checked\"";
-										%>
 											<div class="EditTempLateContent">
-												<div style="width:200px; margin:30px auto;line-height:20px;">
-													<div class="FloatLeft"><%=uiform.getLabel(uiform.FIELD_USEAJAX_CHECKBOX);%>:&nbsp; &nbsp;</div>
+												<div class="TextContent ClearFix">
+													<div class="FloatLeft"><label for="<%=uiform.FIELD_USEAJAX_CHECKBOX;%>"><%=uiform.getLabel(uiform.FIELD_USEAJAX_CHECKBOX);%>:&nbsp; &nbsp;</label></div>
 													<div class="FloatLeft" style="padding-top:3px">
-														<input type="checkbox" class="checkbox" value="false" $checkedBox name="<%=uiform.FIELD_USEAJAX_CHECKBOX;%>"/>
+                            <%tabconten.renderChild(uiform.FIELD_USEAJAX_CHECKBOX);%>
 													</div>
-													<div style="clear:left;"><span></span></div>
 												</div>
 											</div>
 									<% } %>
@@ -188,30 +165,14 @@
 							<% ++j_;} %>
 
 									<div id="viewerSettingMsg" style="display:none;"><%=_ctx.appRes("UIViewerSettingForm.label.NotCheckParentInput"); %></div>
-									<div class="UIAction"> 
-										<table class="ActionContainer">
-											<tr>
-												<td align="center">
-											<%for(action in uicomponent.getActions()) { 
+									 <div class="UIAction">
+                  <%for(action in uicomponent.getActions()) { 
 													String actionLabel = _ctx.appRes(uicomponent.getName() + ".action." + action); 
 													String link = uicomponent.event(action) ;
 											%>
-													<div onclick="$link" class="ActionButton LightBlueStyle">
-														<div class="ButtonLeft">
-															<div class="ButtonRight">
-																<div class="ButtonMiddle">
-																	<a href="javascript:void(0);">
-																		$actionLabel
-																	</a>
-																</div>
-															</div>
-														</div>
-													</div>
-												<%}%>
-												</td>
-											</tr>
-								 		</table> 
-									</div>
+                    <a href="javascript:void(0);" onclick="$link" class="ActionButton LightBlueStyle">$actionLabel</a>
+                     <%}%>
+                 </div>
 									
 								</div>
 							</div>

@@ -16,15 +16,19 @@
  ***************************************************************************/
 package org.exoplatform.forum.info;
 
+import javax.portlet.PortletSession;
+
+import org.exoplatform.forum.ForumUtils;
+import org.exoplatform.forum.webui.UIForumPortlet;
 import org.exoplatform.forum.webui.popup.UIQuickReplyForm;
 import org.exoplatform.ks.common.webui.UIPopupAction;
 import org.exoplatform.web.application.RequestContext;
 import org.exoplatform.webui.application.WebuiApplication;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.application.portlet.PortletApplication;
+import org.exoplatform.webui.application.portlet.PortletRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
-import org.exoplatform.webui.core.UIPopupMessages;
 import org.exoplatform.webui.core.UIPortletApplication;
 import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
 import org.exoplatform.webui.event.Event;
@@ -52,15 +56,12 @@ public class UIForumQuickReplyPortlet extends UIPortletApplication {
   }
 
   public void processRender(WebuiApplication app, WebuiRequestContext context) throws Exception {
+    if (!ForumUtils.isAjaxRequest()) {
+      PortletSession portletSession = ((PortletRequestContext) context).getRequest().getPortletSession();
+      ForumParameter params = (ForumParameter) portletSession.getAttribute(UIForumPortlet.QUICK_REPLY_EVENT_PARAMS, PortletSession.APPLICATION_SCOPE);
+      this.quickReplyFormInit(params);
+    }
     super.processRender(app, context);
-  }
-
-  public void renderPopupMessages() throws Exception {
-    UIPopupMessages popupMess = getUIPopupMessages();
-    if (popupMess == null)
-      return;
-    WebuiRequestContext context = RequestContext.getCurrentInstance();
-    popupMess.processRender(context);
   }
 
   public void cancelAction() throws Exception {
@@ -69,19 +70,23 @@ public class UIForumQuickReplyPortlet extends UIPortletApplication {
     popupAction.deActivate();
     context.addUIComponentToUpdateByAjax(popupAction);
   }
+  
+  public void quickReplyFormInit(ForumParameter params) {
+    this.isRenderChild = params.isRenderQuickReply();
+    if (this.isRenderChild && params.getCategoryId() == null)
+      this.isRenderChild = false;
+    UIQuickReplyForm quickReplyForm = this.getChild(UIQuickReplyForm.class);
+    if (this.isRenderChild) {
+      quickReplyForm.setInitForm(params.getCategoryId(), params.getForumId(), params.getTopicId(), params.isModerator());
+    }
+    quickReplyForm.setRendered(this.isRenderChild);
+  }
 
   static public class QuickReplyEventActionListener extends EventListener<UIForumQuickReplyPortlet> {
     public void execute(Event<UIForumQuickReplyPortlet> event) throws Exception {
       UIForumQuickReplyPortlet quickReplyPortlet = event.getSource();
       ForumParameter params = (ForumParameter) event.getRequestContext().getAttribute(PortletApplication.PORTLET_EVENT_VALUE);
-      quickReplyPortlet.isRenderChild = params.isRenderQuickReply();
-      if (quickReplyPortlet.isRenderChild && params.getCategoryId() == null)
-        quickReplyPortlet.isRenderChild = false;
-      UIQuickReplyForm quickReplyForm = quickReplyPortlet.getChild(UIQuickReplyForm.class);
-      if (quickReplyPortlet.isRenderChild) {
-        quickReplyForm.setInitForm(params.getCategoryId(), params.getForumId(), params.getTopicId(), params.isModerator());
-      }
-      quickReplyForm.setRendered(quickReplyPortlet.isRenderChild);
+      quickReplyPortlet.quickReplyFormInit(params);
       event.getRequestContext().addUIComponentToUpdateByAjax(quickReplyPortlet);
     }
   }

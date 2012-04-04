@@ -44,34 +44,21 @@ import org.exoplatform.webui.event.Event.Phase;
       @EventConfig(listeners = UIViewUserProfile.CloseActionListener.class,phase = Phase.DECODE)
     }
 )
-@SuppressWarnings("unused")
 public class UIViewUserProfile extends BaseForumForm implements UIPopupComponent {
   private UserProfile   userProfileViewer;
 
-  private CommonContact contact      = null;
-
-  private boolean       isGetContact = true;
-
   public CommonContact getContact(String userId) throws Exception {
-    if (contact == null || isGetContact) {
-      contact = getPersonalContact(userId);
-    }
-    return contact;
-  }
-
-  public void setContact(CommonContact contact) {
-    isGetContact = false;
-    this.contact = contact;
+    return ForumSessionUtils.getPersonalContact(userId);
   }
 
   public UIViewUserProfile() {
   }
 
-  private boolean isAdmin(String userId) throws Exception {
+  protected boolean isAdmin(String userId) throws Exception {
     return getForumService().isAdminRole(userId);
   }
 
-  private boolean isOnline(String userId) throws Exception {
+  protected boolean isOnline(String userId) throws Exception {
     return getForumService().isOnline(userId);
   }
 
@@ -83,20 +70,13 @@ public class UIViewUserProfile extends BaseForumForm implements UIPopupComponent
     return this.userProfileViewer;
   }
 
-  private CommonContact getPersonalContact(String userId) throws Exception {
-    CommonContact contact = ForumSessionUtils.getPersonalContact(userId);
-    if (contact == null) {
-      contact = new CommonContact();
-    }
-    return contact;
-  }
-
-  private String getAvatarUrl() throws Exception {
+  protected String getAvatarUrl() throws Exception {
     return ForumSessionUtils.getUserAvatarURL(userProfileViewer.getUserId(), getForumService());
   }
 
-  private String[] getLabelProfile() {
-    return new String[] { "userName", "firstName", "lastName", "birthDay", "gender", "email", "jobTitle", "location", "workPhone", "mobilePhone", "website" };
+  protected String[] getLabelProfile() {
+    return new String[] { getLabel("userName"), getLabel("firstName"), getLabel("lastName"), getLabel("birthDay"), getLabel("gender"), 
+        getLabel("email"), getLabel("jobTitle"), getLabel("location"), getLabel("homePhone"), getLabel("workPhone"), getLabel("website")};
   }
 
   public void activate() throws Exception {

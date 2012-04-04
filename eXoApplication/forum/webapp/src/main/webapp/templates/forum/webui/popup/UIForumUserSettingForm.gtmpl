@@ -62,7 +62,7 @@
 														    </td>
 														    <td class="FieldComponent" style="padding:2px 0px 3px 0px;" align="left;">
 																	<div style="text-align:center; color:blue; float:left; text-align:center;">
-																		<img class="SmallImgAvatar ImgAvatarBorder" src="<%=uicomponent.getAvatarUrl()%>" alt=""/>
+																		<img class="SmallImgAvatar ImgAvatarBorder" src="<%=uicomponent.getAvatarUrl()%>" alt="<%=_ctx.appRes("UIForumUserSettingForm.label.Avatar")%>"/>
 																		<br>
 																		<a href="javaScript:void(0);" onclick="<%=uiform.event("Attachment")%>" style="color:blue;">
 																			<%=_ctx.appRes("UIForumUserSettingForm.label.ChangeAvatar")%>
@@ -83,7 +83,7 @@
 														}%>
 														<tr>
 															<td class="FieldLabel" align="right" style="padding:2px 0px 3px 4px;">
-													      <%=uicomponent.getLabel(tabChildConten.getName()) %> :
+													      <label for="<%=tabChildConten.getId()%>"><%=uicomponent.getLabel(tabChildConten.getId()) %> :</label>
 													    </td>
 													    <td class="FieldComponent" style="padding:2px 0px 3px 4px;">
 																<% uiform.renderField(tabChildConten) %>
@@ -127,16 +127,18 @@
 																	}%>
 																</td>
 																<td class="text" style="text-align:left">
-																	<a href="javaScript:void(0);" onclick="<%=uiform.event("OpentContent",watch.getNodePath())%>" title="<%=watch.getPath()%>">
-																		<%=watch.getPath().substring(watch.getPath().lastIndexOf(">") + 1)%>
-																	</a>
+																	<label for="<%=(uicomponent.RSS + watch.getId())%>">
+																		<a href="javaScript:void(0);" onclick="<%=uiform.event("OpentContent",watch.getNodePath())%>" title="<%=watch.getPath()%>">
+																			<%=watch.getPath().substring(watch.getPath().lastIndexOf(">") + 1)%>
+																		</a>
+																	</label>
 																</td>
 																<td  class="text" style="text-align:left" width="32px">
 																	<div style="width:17px; margin:auto;"><%uicomponent.renderUIComponent(tabconten.getChildById(uicomponent.RSS + watch.getId()))%></div>
 																</td>
 																<td width="32" class="text" style="text-align:left">
 																	<%uicomponent.renderUIComponent(tabconten.getChildById(uicomponent.EMAIL + watch.getId()))%>
-																	<%=watch.getEmail()%>
+																	<label for="<%=(uicomponent.EMAIL + watch.getId())%>"><%=watch.getEmail()%></label>
 																</td>
 																<td class="text" style="text-align:left">
 																	<div class="DeleteIcon" style="cursor:pointer;" onclick="javaScript:if(confirm('<%=_ctx.appRes("UIForumUserSettingForm.msg.confirm-delete-emailwatch")%>')){<%=uiform.event("DeleteEmailWatch", watch.getUserId() + "/" + watch.getNodePath() + "/" + watch.getEmail())%>}">
@@ -155,7 +157,7 @@
 													<tr>
 														<td align="left" style="padding-top:8px;">
 															<div class="Icon ForumRSS" style="height:24px; line-height:16px; text-algin:left;padding-left:32px;">
-																<span><%=_ctx.appRes("UIForumUserSettingForm.title.RSSURL")%> :</span>
+																<label for="<%=uicomponent.RSS_LINK%>"><%=_ctx.appRes("UIForumUserSettingForm.title.RSSURL")%> :</label>
 															</div>
 														</td>
 														<td align="left" style="padding-top:8px;">
@@ -166,38 +168,22 @@
 													<tr>
 														<td align="left" style="padding-top:6px;">
 															<div class="Icon HotThreadNoNewPost" style="height:24px; line-height:22px; text-algin:left;padding-left:32px;">
-																<span><%=_ctx.appRes("UIForumUserSettingForm.title.EmailAddress")%> :</span>
+																<label for="<%=uicomponent.EMAIL_ADD%>"><%=_ctx.appRes("UIForumUserSettingForm.title.EmailAddress")%> :</label>
 															</div>
 														</td>
 														<td align="left" style="padding-top:8px;">
 															<%uicomponent.renderUIComponent(tabconten.getChildById(uicomponent.EMAIL_ADD))%>
 														</td>
-														<td align="left">
-															<div class="UIAction" style="padding-top:6px;"> 
-																<table class="ActionContainer">
-																	<tr>
-																		<td align="center">
-																			<div onclick="javaScript:void(0);" class="ActionButton LightBlueStyle">
-																				<div class="ButtonLeft">
-																					<div class="ButtonRight">
-																						<div class="ButtonMiddle">
-																							<a href="<%=uiform.event("UpdateEmail")%>">
-																								<%=_ctx.appRes("UIForumUserSettingForm.action.Update")%>
-																							</a>
-																						</div>
-																					</div>
-																				</div>
-																			</div>
-																		</td>
-																	</tr>
-																</table>
-															</div>
+														<td>
+															<div class="UIAction">
+                                <a href="<%=uiform.event("UpdateEmail")%>" onclick="javaScript:void(0);" class="ActionButton LightBlueStyle"><%=_ctx.appRes("UIForumUserSettingForm.action.Update")%></a>
+                              </div>
 														</td>
 													</tr>
 												</table>
 											<%
 											} else if(!tabconten.id.equals("WatchChesPageIterator")){%>
-												<% uiform.renderChild(tabconten.id) ; %>
+												<% uiform.renderChild(tabconten) ; %>
 											<%
 											}
 											%>
@@ -213,29 +199,13 @@
 	</div>
 	
 	<!-- =============================================== Action of this form ====================================================== -->
-	<div class="UIAction"> 
-		<table class="ActionContainer">
-			<tr>
-				<td align="center">
-				<% for(action in uiform.getActions()) { 
+	<div class="UIAction">
+  <% for(action in uiform.getActions()) { 
 					 String actionLabel = _ctx.appRes(uiform.getName() + ".action." + action); 
 					 String link = uiform.event(action) ;
 				%>
-						<div onclick="$link" class="ActionButton LightBlueStyle">
-							<div class="ButtonLeft">
-								<div class="ButtonRight">
-									<div class="ButtonMiddle">
-										<a href="javascript:void(0);">
-											$actionLabel
-										</a>
-									</div>
-								</div>
-							</div>
-						</div>
-					<%}%>
-					</td>
-				</tr>
-	 		</table> 
-		</div>		
+      <a href="javascript:void(0);" onclick="$link" class="ActionButton LightBlueStyle">$actionLabel</a>
+      <%}%>
+    </div>
 	<%uiform.end()%>
 </div>

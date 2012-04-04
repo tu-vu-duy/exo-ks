@@ -24,7 +24,7 @@
 .UIBannerPortlet {
 	zoom: 100%;
 	background: #20263f;
-  padding: 8px 58px 6px;
+	padding: 8px 58px 6px;
 }
 
 .UIBannerPortlet .LeftBanner {
@@ -109,21 +109,6 @@
 	display: block;
 	line-height: 35px;
 	color: #a8acab;
-}
-
-.UIPageBody .BLPagebody {
-	background: none;
-	height:0px;
-	padding-left:0px;
-}
-.UIPageBody .BRPagebody {
-	background: none;
-	height:16px;
-	padding-right:6px;
-}
-.UIPageBody .BMPagebody {
-	background: none;
-	height:16px;
 }
 
 

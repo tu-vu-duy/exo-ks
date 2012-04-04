@@ -23,7 +23,6 @@ import java.util.Map;
 
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
-import org.exoplatform.forum.ForumTransformHTML;
 import org.exoplatform.forum.ForumUtils;
 import org.exoplatform.forum.service.Category;
 import org.exoplatform.forum.service.Forum;
@@ -34,13 +33,15 @@ import org.exoplatform.forum.service.Topic;
 import org.exoplatform.forum.service.UserProfile;
 import org.exoplatform.forum.service.Utils;
 import org.exoplatform.ks.bbcode.core.ExtendedBBCodeProvider;
+import org.exoplatform.ks.common.CommonUtils;
+import org.exoplatform.ks.common.TransformHTML;
 import org.exoplatform.ks.common.webui.BaseEventListener;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
-import org.exoplatform.webui.form.UIFormCheckBoxInput;
+import org.exoplatform.webui.form.input.UICheckBoxInput;
 
 
 /**
@@ -75,8 +76,6 @@ public class UITopicsTag extends UIForumKeepStickPageIterator {
 
   private String            userIdAndtagId;
 
-  private String            linkUserInfo      = ForumUtils.EMPTY_STR;
-
   private List<Topic>       topics            = new ArrayList<Topic>();
 
   private Map<String, Long> mapNumberPagePost = new HashMap<String, Long>();
@@ -90,17 +89,14 @@ public class UITopicsTag extends UIForumKeepStickPageIterator {
     this.mapNumberPagePost.clear();
     UIForumPortlet forumPortlet = this.getAncestorOfType(UIForumPortlet.class);
     this.userProfile = forumPortlet.getUserProfile();
-    linkUserInfo = forumPortlet.getPortletLink();
     if (!userProfile.getUserId().equals(UserProfile.USER_GUEST)) {
       this.userIdAndtagId = userProfile.getUserId() + ":" + tagId;
     } else
       this.userIdAndtagId = tagId;
   }
 
-  @SuppressWarnings("unused")
-  private String getActionViewInfoUser(String linkType, String userName) {
-    String link = linkUserInfo.replace("ViewPublicUserInfo", linkType).replace("userName", userName);
-    return link;
+  protected String getActionViewInfoUser(String linkType, String userName) {
+    return getAncestorOfType(UIForumPortlet.class).getPortletLink(linkType, userName);
   }
 
   public void setTag(Tag tag, String userIdAndtagId) throws Exception {
@@ -111,21 +107,18 @@ public class UITopicsTag extends UIForumKeepStickPageIterator {
     this.userIdAndtagId = userIdAndtagId;
     UIForumPortlet forumPortlet = this.getAncestorOfType(UIForumPortlet.class);
     this.userProfile = forumPortlet.getUserProfile();
-    linkUserInfo = forumPortlet.getPortletLink();
   }
 
   public String getRSSLink(String cateId) {
     PortalContainer pcontainer = PortalContainer.getInstance();
-    return org.exoplatform.ks.common.Utils.getRSSLink("forum", pcontainer.getPortalContainerInfo().getContainerName(), cateId);
+    return CommonUtils.getRSSLink("forum", pcontainer.getPortalContainerInfo().getContainerName(), cateId);
   }
 
-  @SuppressWarnings("unused")
-  private String getTitleInHTMLCode(String s) {
-    return ForumTransformHTML.getTitleInHTMLCode(s, new ArrayList<String>((new ExtendedBBCodeProvider()).getSupportedBBCodes()));
+  protected String getTitleInHTMLCode(String s) {
+    return TransformHTML.getTitleInHTMLCode(s, new ArrayList<String>((new ExtendedBBCodeProvider()).getSupportedBBCodes()));
   }
 
-  @SuppressWarnings("unused")
-  private long getSizePost(String Id) throws Exception {
+  protected long getSizePost(String Id) throws Exception {
     if (mapNumberPagePost.containsKey(Id))
       return mapNumberPagePost.get(Id);
     String Ids[] = Id.split(ForumUtils.SLASH);
@@ -163,10 +156,10 @@ public class UITopicsTag extends UIForumKeepStickPageIterator {
     }
   }
 
-  @SuppressWarnings( { "unchecked", "unused" })
-  private List<Topic> getTopicsTag() throws Exception {
+  @SuppressWarnings("unchecked")
+  protected List<Topic> getTopicsTag() throws Exception {
     this.pageList = getForumService().getTopicByMyTag(userIdAndtagId, strOrderBy);
-    int maxTopic = this.userProfile.getMaxTopicInPage().intValue();
+    int maxTopic = (int)this.userProfile.getMaxTopicInPage();
     if (maxTopic <= 0)
       maxTopic = 10;
     this.pageList.setPageSize(maxTopic);
@@ -176,10 +169,10 @@ public class UITopicsTag extends UIForumKeepStickPageIterator {
     if (topics == null)
       topics = new ArrayList<Topic>();
     for (Topic topic : topics) {
-      if (getUIFormCheckBoxInput(topic.getId()) != null) {
-        getUIFormCheckBoxInput(topic.getId()).setChecked(false);
+      if (getUICheckBoxInput(topic.getId()) != null) {
+        getUICheckBoxInput(topic.getId()).setChecked(false);
       } else {
-        addUIFormInput(new UIFormCheckBoxInput(topic.getId(), topic.getId(), false));
+        addUIFormInput(new UICheckBoxInput(topic.getId(), topic.getId(), false));
       }
     }
     if(topics.size() > 0) {
@@ -200,8 +193,7 @@ public class UITopicsTag extends UIForumKeepStickPageIterator {
     return this.tag;
   }
 
-  @SuppressWarnings("unused")
-  private String[] getStarNumber(Topic topic) throws Exception {
+  protected String[] getStarNumber(Topic topic) throws Exception {
     double voteRating = topic.getVoteRating();
     return ForumUtils.getStarNumber(voteRating);
   }
@@ -276,21 +268,19 @@ public class UITopicsTag extends UIForumKeepStickPageIterator {
         String userId = topicsTag.getUserProfile().getUserId();
         for (String topicId : (List<String>) topicsTag.getIdSelected()) {
           topicPath = topicsTag.getTopic(topicId).getPath();
-          try {
-            topicsTag.getForumService().unTag(topicsTag.tagId, userId, topicPath);
-          } catch (Exception e) {
-          }
+          topicsTag.getForumService().unTag(topicsTag.tagId, userId, topicPath);
           hasCheck = true;
         }
       } catch (Exception e) {
+        topicsTag.log.warn("Failed to untag topics", e);
       }
       if (!hasCheck) {
-        warning("UITopicContainer.sms.notCheckMove");
+        warning("UITopicContainer.sms.notCheckMove", false);
       } else {
         topicsTag.isUpdateTag = true;
         Tag tag = topicsTag.getTagById();
         if (tag == null || tag.getUserTag() == null || tag.getUserTag().length == 0) {
-          forumPortlet.rederForumHome();
+          forumPortlet.renderForumHome();
         }
         topicsTag.isUpdateTag = false;
       }
@@ -309,8 +299,6 @@ public class UITopicsTag extends UIForumKeepStickPageIterator {
         buffer.append("ThreadNoNewPost//").append(topic.getTopicName()).append("//").append(path);
         String userName = topicTag.userProfile.getUserId();
         topicTag.getForumService().saveUserBookmark(userName, buffer.toString(), true);
-        UIForumPortlet forumPortlet = topicTag.getAncestorOfType(UIForumPortlet.class);
-        forumPortlet.updateUserProfileInfo();
       }
     }
   }
@@ -334,9 +322,9 @@ public class UITopicsTag extends UIForumKeepStickPageIterator {
           values.add(topicTag.userProfile.getEmail());
           topicTag.getForumService().addWatch(1, path, values, topicTag.userProfile.getUserId());
           topicTag.setListWatches();
-          info("UIAddWatchingForm.msg.successfully");
+          info("UIAddWatchingForm.msg.successfully", false);
         } catch (Exception e) {
-          warning("UIAddWatchingForm.msg.fall");
+          warning("UIAddWatchingForm.msg.fall", false);
         }
         event.getRequestContext().addUIComponentToUpdateByAjax(topicTag);
       }
@@ -347,9 +335,9 @@ public class UITopicsTag extends UIForumKeepStickPageIterator {
     public void onEvent(Event<UITopicsTag> event, UITopicsTag topicTag, final String path) throws Exception {
       try {
         topicTag.getForumService().removeWatch(1, path, topicTag.userProfile.getUserId() + ForumUtils.SLASH + topicTag.getEmailWatching(path));
-        info("UIAddWatchingForm.msg.UnWatchSuccessfully");
+        info("UIAddWatchingForm.msg.UnWatchSuccessfully", false);
       } catch (Exception e) {
-        warning("UIAddWatchingForm.msg.UnWatchfall");
+        warning("UIAddWatchingForm.msg.UnWatchfall", false);
       }
       event.getRequestContext().addUIComponentToUpdateByAjax(topicTag);
     }

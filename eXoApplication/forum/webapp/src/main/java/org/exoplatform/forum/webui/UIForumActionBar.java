@@ -38,12 +38,9 @@ import org.exoplatform.forum.webui.popup.UISortSettingForm;
 import org.exoplatform.forum.webui.popup.UITopicTypeManagerForm;
 import org.exoplatform.ks.common.webui.UIPopupAction;
 import org.exoplatform.ks.common.webui.UIPopupContainer;
-import org.exoplatform.services.log.ExoLogger;
-import org.exoplatform.services.log.Log;
 import org.exoplatform.web.application.ApplicationMessage;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
-import org.exoplatform.webui.core.UIApplication;
 import org.exoplatform.webui.core.UIContainer;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
@@ -76,34 +73,41 @@ import org.exoplatform.webui.event.EventListener;
         @EventConfig(listeners = UIForumActionBar.OpenIPBanActionListener.class)
     }
 )
-@SuppressWarnings("unused")
 public class UIForumActionBar extends UIContainer {
   private UserProfile         userProfile;
 
   private ForumService        forumService;
 
-  private static final String RELOAD = "RELOAD".intern();
+  private boolean             isSpace = false;
 
-  private static final Log    log    = ExoLogger.getLogger(UIForumActionBar.class);
+  private static final String RELOAD = "RELOAD".intern();
 
   public UIForumActionBar() throws Exception {
     forumService = (ForumService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(ForumService.class);
   }
 
-  private UserProfile getUserProfile() throws Exception {
-    userProfile = ((UIForumPortlet) this.getParent()).getUserProfile();
+  private UserProfile getUserProfile() {
+    UIForumPortlet forumPortlet = (UIForumPortlet) getParent();
+    userProfile = forumPortlet.getUserProfile();
+    isSpace = !ForumUtils.isEmpty(forumPortlet.getForumIdOfSpace());
     return userProfile;
   }
-
-  private String[] getActionMenu() throws Exception {
-    return (ForumUtils.enableIPLogging()) ? (new String[] { "SortSetting", "CensorKeyword", "Notification", "BBCodeManager", "AutoPrune", "TopicTypeManager", "OpenIPBan", "ExportCategory", "ImportCategory" }) : (new String[] { "SortSetting", "CensorKeyword", "Notification", "BBCodeManager", "AutoPrune", "TopicTypeManager", "ExportCategory", "ImportCategory" });
+  
+  protected boolean isSpace() {
+    return isSpace;
   }
 
-  private int getTotalJobWattingForModerator() throws Exception {
+  protected String[] getActionMenu() {
+    return (ForumUtils.enableIPLogging()) ? 
+           (new String[] { "SortSetting", "CensorKeyword", "Notification", "BBCodeManager", "AutoPrune", "TopicTypeManager", "OpenIPBan", "ExportCategory", "ImportCategory" }) : 
+           (new String[] { "SortSetting", "CensorKeyword", "Notification", "BBCodeManager", "AutoPrune", "TopicTypeManager", "ExportCategory", "ImportCategory" });
+  }
+
+  protected int getTotalJobWattingForModerator() throws Exception {
     return forumService.getJobWattingForModeratorByUser(this.userProfile.getUserId());
   }
 
-  private long getNewMessage() throws Exception {
+  protected long getNewMessage() {
     try {
       String username = this.userProfile.getUserId();
       return forumService.getNewPrivateMessage(username);
@@ -130,10 +134,10 @@ public class UIForumActionBar extends UIContainer {
       messageForm.setUserProfile(uiActionBar.userProfile);
       messageForm.setFullMessage(true);
       popupContainer.setId("PrivateMessageForm");
-      popupAction.activate(popupContainer, 800, 480);
+      popupAction.activate(popupContainer, 820, 550);
       event.getRequestContext().addUIComponentToUpdateByAjax(popupAction);
       if (RELOAD.equals(event.getRequestContext().getRequestParameter(OBJECTID))) {
-        forumPortlet.updateUserProfileInfo();
+        forumPortlet.removeCacheUserProfile();
         uiActionBar.getUserProfile();
         event.getRequestContext().addUIComponentToUpdateByAjax(uiActionBar);
       }
@@ -215,9 +219,8 @@ public class UIForumActionBar extends UIContainer {
         popupAction.activate(popupContainer, 650, 480);
         event.getRequestContext().addUIComponentToUpdateByAjax(popupAction);
       } else {
-        UIApplication uiApp = uiActionBar.getAncestorOfType(UIApplication.class);
-        uiApp.addMessage(new ApplicationMessage("UIForumActionBar.msg.notCategory", null, ApplicationMessage.WARNING));
-        event.getRequestContext().addUIComponentToUpdateByAjax(uiApp.getUIPopupMessages());
+        event.getRequestContext().getUIApplication()
+             .addMessage(new ApplicationMessage("UIForumActionBar.msg.notCategory", null, ApplicationMessage.WARNING));        
         return;
       }
     }

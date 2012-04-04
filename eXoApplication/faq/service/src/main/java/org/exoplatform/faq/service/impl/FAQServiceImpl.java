@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
@@ -47,13 +48,13 @@ import org.exoplatform.faq.service.TemplatePlugin;
 import org.exoplatform.faq.service.Utils;
 import org.exoplatform.faq.service.Watch;
 import org.exoplatform.ks.bbcode.core.BBCodeServiceImpl;
+import org.exoplatform.ks.common.CommonUtils;
 import org.exoplatform.ks.common.NotifyInfo;
 import org.exoplatform.ks.common.jcr.KSDataLocation;
 import org.exoplatform.management.annotations.ManagedBy;
 import org.exoplatform.services.jcr.ext.common.SessionProvider;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
-import org.exoplatform.services.mail.Message;
 import org.picocontainer.Startable;
 
 import com.arjuna.ats.internal.jdbc.drivers.modifiers.list;
@@ -171,16 +172,13 @@ public class FAQServiceImpl implements FAQService, Startable {
       log.warn("No default template was configured for FAQ.");
       return;
     }
-    SessionProvider provider = SessionProvider.createSystemProvider();
-    try {
-      if (!locator.getSessionManager().getSession(provider).getRootNode().hasNode(locator.getFaqTemplatesLocation() + "/" + Utils.UI_FAQ_VIEWER)) {
-        InputStream in = configManager_.getInputStream(template_.getPath());
-        byte[] data = new byte[in.available()];
-        in.read(data);
-        saveTemplate(new String(data));
-      }
-    } finally {
-      provider.close();
+    SessionProvider provider = CommonUtils.createSystemProvider();
+    if (!locator.getSessionManager().getSession(provider).getRootNode()
+                .hasNode(locator.getFaqTemplatesLocation() + "/" + Utils.UI_FAQ_VIEWER)) {
+      InputStream in = configManager_.getInputStream(template_.getPath());
+      byte[] data = new byte[in.available()];
+      in.read(data);
+      saveTemplate(new String(data));
     }
     configManager_ = null;
     template_ = null;
@@ -235,9 +233,7 @@ public class FAQServiceImpl implements FAQService, Startable {
    */
   public QuestionPageList getQuestionsNotYetAnswer(SessionProvider sProvider, String categoryId, FAQSetting setting) throws Exception {
     sProvider.close();
-    if (setting.getDisplayMode().equals("Approved"))
-      return getQuestionsNotYetAnswer(categoryId, true);
-    return getQuestionsNotYetAnswer(categoryId, false);
+    return getQuestionsNotYetAnswer(categoryId, FAQSetting.DISPLAY_APPROVED.equals(setting.getDisplayMode()));
   }
 
   public QuestionPageList getQuestionsNotYetAnswer(String categoryId, boolean isApproved) throws Exception {
@@ -354,12 +350,12 @@ public class FAQServiceImpl implements FAQService, Startable {
   public QuestionPageList getQuestionsByListCatetory(List<String> listCategoryId, boolean isNotYetAnswer) throws Exception {
     return jcrData_.getQuestionsByListCatetory(listCategoryId, isNotYetAnswer);
   }
-
+  // NOTE: this function not use in ks-2.0 and more
   public String getCategoryPathOfQuestion(String questionPath, SessionProvider sProvider) throws Exception {
     sProvider.close();
     return getCategoryPathOfQuestion(questionPath);
   }
-
+  // NOTE: this function not use in ks-2.2.4 and more
   public String getCategoryPathOfQuestion(String questionPath) throws Exception {
     return jcrData_.getCategoryPathOfQuestion(questionPath);
   }
@@ -378,7 +374,7 @@ public class FAQServiceImpl implements FAQService, Startable {
     return getQuestionLanguages(questionId);
   }
 
-  public List<QuestionLanguage> getQuestionLanguages(String questionId) throws Exception {
+  public List<QuestionLanguage> getQuestionLanguages(String questionId) {
     return jcrData_.getQuestionLanguages(questionId);
   }
 
@@ -513,7 +509,7 @@ public class FAQServiceImpl implements FAQService, Startable {
     saveCategory(parentId, cat, isAddNew);
   }
 
-  public void saveCategory(String parentId, Category cat, boolean isAddNew) throws Exception {
+  public void saveCategory(String parentId, Category cat, boolean isAddNew) {
     jcrData_.saveCategory(parentId, cat, isAddNew);
   }
 
@@ -540,21 +536,17 @@ public class FAQServiceImpl implements FAQService, Startable {
 
   public Node saveQuestion(Question question, boolean isAddNew, FAQSetting faqSetting) throws Exception {
     Node questionNode = jcrData_.saveQuestion(question, isAddNew, faqSetting);
-    SessionProvider provider = SessionProvider.createSystemProvider();
-    try {
-      questionNode = (Node)locator.getSessionManager().getSession(provider).getItem(questionNode.getPath());
-      for (QuestionLanguage lang : question.getMultiLanguages()) {
-        if (lang.getState().equals(QuestionLanguage.ADD_NEW) || lang.getState().equals(QuestionLanguage.EDIT)) {
-          MultiLanguages.addLanguage(questionNode, lang);
-        } else if (lang.getState().equals(QuestionLanguage.DELETE)) {
-          MultiLanguages.removeLanguage(questionNode, lang);
-        }
+    SessionProvider provider = CommonUtils.createSystemProvider();
+    questionNode = (Node) locator.getSessionManager().getSession(provider).getItem(questionNode.getPath());
+    for (QuestionLanguage lang : question.getMultiLanguages()) {
+      if (lang.getState().equals(QuestionLanguage.ADD_NEW) || lang.getState().equals(QuestionLanguage.EDIT)) {
+        MultiLanguages.addLanguage(questionNode, lang);
+      } else if (lang.getState().equals(QuestionLanguage.DELETE)) {
+        MultiLanguages.removeLanguage(questionNode, lang);
       }
-      for (AnswerEventListener ae : listeners_) {
-        ae.saveQuestion(question, isAddNew);
-      }
-    } finally {
-      provider.close();
+    }
+    for (AnswerEventListener ae : listeners_) {
+      ae.saveQuestion(question, isAddNew);
     }
     return questionNode;
   }
@@ -757,22 +749,10 @@ public class FAQServiceImpl implements FAQService, Startable {
   }
 
   /**
-   * This function will send message to address but you want send
-   * 
-   * @param   message is object save content with user want send to one or many address email
-   * @throws Exception the exception
-   */
-  public void sendMessage(Message message) throws Exception {
-    jcrData_.sendMessage(message);
-  }
-
-  /**
    * This function will send all the pending notification message 
    * 
-   * @param  
-   * @throws Exception the exception
    */
-  public Iterator<NotifyInfo> getPendingMessages() throws Exception {
+  public Iterator<NotifyInfo> getPendingMessages() {
     return jcrData_.getPendingMessages();
   }
 
@@ -1051,6 +1031,10 @@ public class FAQServiceImpl implements FAQService, Startable {
   public List<String> getQuestionContents(List<String> paths) throws Exception {
     return jcrData_.getQuestionContents(paths);
   }
+  
+  public Map<String, String> getRelationQuestion(List<String> paths) throws Exception{
+    return jcrData_.getRelationQuestion(paths);
+  }
 
   public Node getQuestionNodeById(String path) throws Exception {
     return jcrData_.getQuestionNodeById(path);
@@ -1077,105 +1061,89 @@ public class FAQServiceImpl implements FAQService, Startable {
   }
 
   public void addLanguage(String questionPath, QuestionLanguage language) throws Exception {
-    SessionProvider sProvider = SessionProvider.createSystemProvider();
+    SessionProvider sProvider = CommonUtils.createSystemProvider();
     try {
       Node questionNode = jcrData_.getFAQServiceHome(sProvider).getNode(questionPath);
       MultiLanguages.addLanguage(questionNode, language);
     } catch (Exception e) {
       log.error("Fail to add language: ", e);
-    } finally {
-      sProvider.close();
     }
   }
 
   public void deleteAnswerQuestionLang(String questionPath, String answerId, String language) throws Exception {
-    SessionProvider sProvider = SessionProvider.createSystemProvider();
+    SessionProvider sProvider = CommonUtils.createSystemProvider();
     try {
       Node questionNode = jcrData_.getFAQServiceHome(sProvider).getNode(questionPath);
       MultiLanguages.deleteAnswerQuestionLang(questionNode, answerId, language);
     } catch (Exception e) {
       log.error("Fail to delete " + answerId + " :", e);
-    } finally {
-      sProvider.close();
     }
   }
 
   public void deleteCommentQuestionLang(String questionPath, String commentId, String language) throws Exception {
-    SessionProvider sProvider = SessionProvider.createSystemProvider();
+    SessionProvider sProvider = CommonUtils.createSystemProvider();
     try {
       Node questionNode = jcrData_.getFAQServiceHome(sProvider).getNode(questionPath);
       MultiLanguages.deleteCommentQuestionLang(questionNode, commentId, language);
     } catch (Exception e) {
       log.error("Fail to delete " + commentId + " comment question", e);
-    } finally {
-      sProvider.close();
     }
   }
 
   public QuestionLanguage getQuestionLanguageByLanguage(String questionPath, String language) throws Exception {
-    SessionProvider sProvider = SessionProvider.createSystemProvider();
+    SessionProvider sProvider = CommonUtils.createSystemProvider();
     try {
       Node questionNode = jcrData_.getFAQServiceHome(sProvider).getNode(questionPath);
       return MultiLanguages.getQuestionLanguageByLanguage(questionNode, language);
     } catch (Exception e) {
       throw e;
-    } finally {
-      sProvider.close();
     }
   }
 
   public Comment getCommentById(String questionPath, String commentId, String language) throws Exception {
-    SessionProvider sProvider = SessionProvider.createSystemProvider();
+    SessionProvider sProvider = CommonUtils.createSystemProvider();
     try {
       Node questionNode = jcrData_.getFAQServiceHome(sProvider).getNode(questionPath);
       return MultiLanguages.getCommentById(questionNode, commentId, language);
     } catch (Exception e) {
       log.error("Fail to get comment", e);
-    } finally {
-      sProvider.close();
     }
     return null;
   }
 
   public Answer getAnswerById(String questionPath, String answerid, String language) throws Exception {
-    SessionProvider sProvider = SessionProvider.createSystemProvider();
+    SessionProvider sProvider = CommonUtils.createSystemProvider();
     try {
       Node questionNode = jcrData_.getFAQServiceHome(sProvider).getNode(questionPath);
       return MultiLanguages.getAnswerById(questionNode, answerid, language);
     } catch (Exception e) {
       log.error("Fail to get answer: " + e.getMessage());
-    } finally {
-      sProvider.close();
     }
     return null;
   }
 
   public void saveAnswer(String questionPath, Answer answer, String language) throws Exception {
-    SessionProvider sProvider = SessionProvider.createSystemProvider();
+    SessionProvider sProvider = CommonUtils.createSystemProvider();
     try {
       Node questionNode = jcrData_.getFAQServiceHome(sProvider).getNode(questionPath);
       MultiLanguages.saveAnswer(questionNode, answer, language);
     } catch (Exception e) {
       log.error("Fail to save answer:", e);
-    } finally {
-      sProvider.close();
     }
   }
 
   public void saveAnswer(String questionPath, QuestionLanguage questionLanguage) throws Exception {
-    SessionProvider sProvider = SessionProvider.createSystemProvider();
+    SessionProvider sProvider = CommonUtils.createSystemProvider();
     try {
       Node questionNode = jcrData_.getFAQServiceHome(sProvider).getNode(questionPath);
       MultiLanguages.saveAnswer(questionNode, questionLanguage);
     } catch (Exception e) {
       log.error("Fail to save answer: ", e);
-    } finally {
-      sProvider.close();
     }
   }
 
   public void saveComment(String questionPath, Comment comment, String languge) throws Exception {
-    SessionProvider sProvider = SessionProvider.createSystemProvider();
+    SessionProvider sProvider = CommonUtils.createSystemProvider();
     try {
       Node questionNode = jcrData_.getFAQServiceHome(sProvider).getNode(questionPath);
       MultiLanguages.saveComment(questionNode, comment, languge);
@@ -1184,56 +1152,46 @@ public class FAQServiceImpl implements FAQService, Startable {
       }
     } catch (Exception e) {
       log.error("\nFail to save comment\n ", e);
-    } finally {
-      sProvider.close();
     }
   }
 
   public void removeLanguage(String questionPath, List<String> listLanguage) {
-    SessionProvider sProvider = SessionProvider.createSystemProvider();
+    SessionProvider sProvider = CommonUtils.createSystemProvider();
     try {
       Node questionNode = jcrData_.getFAQServiceHome(sProvider).getNode(questionPath);
       MultiLanguages.removeLanguage(questionNode, listLanguage);
     } catch (Exception e) {
       log.error("\nFail to remove language\n", e);
-    } finally {
-      sProvider.close();
     }
   }
 
   public void voteAnswer(String answerPath, String userName, boolean isUp) throws Exception {
-    SessionProvider sProvider = SessionProvider.createSystemProvider();
+    SessionProvider sProvider = CommonUtils.createSystemProvider();
     try {
       Node answerNode = jcrData_.getFAQServiceHome(sProvider).getNode(answerPath);
       MultiLanguages.voteAnswer(answerNode, userName, isUp);
     } catch (Exception e) {
       log.error("\nFail to vote answer\n", e);
-    } finally {
-      sProvider.close();
     }
   }
 
   public void voteQuestion(String questionPath, String userName, int number) throws Exception {
-    SessionProvider sProvider = SessionProvider.createSystemProvider();
+    SessionProvider sProvider = CommonUtils.createSystemProvider();
     try {
       Node questionNode = jcrData_.getFAQServiceHome(sProvider).getNode(questionPath);
       MultiLanguages.voteQuestion(questionNode, userName, number);
     } catch (Exception e) {
       log.error("\nFail to vote question\n", e);
-    } finally {
-      sProvider.close();
     }
   }
 
   public void unVoteQuestion(String questionPath, String userName) throws Exception {
-    SessionProvider sProvider = SessionProvider.createSystemProvider();
+    SessionProvider sProvider = CommonUtils.createSystemProvider();
     try {
       Node questionNode = jcrData_.getFAQServiceHome(sProvider).getNode(questionPath);
       MultiLanguages.unVoteQuestion(questionNode, userName);
     } catch (Exception e) {
       log.error("\nFail to unvote question\n", e);
-    } finally {
-      sProvider.close();
     }
   }
 
@@ -1241,7 +1199,7 @@ public class FAQServiceImpl implements FAQService, Startable {
     return jcrData_.getModeratorsOf(path);
   }
 
-  public boolean isViewAuthorInfo(String id) throws Exception {
+  public boolean isViewAuthorInfo(String id) {
     return jcrData_.isViewAuthorInfo(id);
   }
 
@@ -1303,5 +1261,15 @@ public class FAQServiceImpl implements FAQService, Startable {
 
   public void calculateDeletedUser(String userName) throws Exception {
     jcrData_.calculateDeletedUser(userName);
+  }
+
+  @Override
+  public Object readCategoryProperty(String categoryId, String propertyName, Class returnType) throws Exception {
+    return jcrData_.readCategoryProperty(categoryId, propertyName, returnType);
+  }
+
+  @Override
+  public Object readQuestionProperty(String questionId, String propertyName, Class returnType) throws Exception {
+    return jcrData_.readQuestionProperty(questionId, propertyName, returnType);
   }
 }

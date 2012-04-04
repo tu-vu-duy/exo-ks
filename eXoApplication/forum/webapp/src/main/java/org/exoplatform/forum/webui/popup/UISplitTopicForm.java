@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import org.exoplatform.forum.ForumTransformHTML;
 import org.exoplatform.forum.ForumUtils;
 import org.exoplatform.forum.service.JCRPageList;
 import org.exoplatform.forum.service.Post;
@@ -30,6 +29,7 @@ import org.exoplatform.forum.service.Utils;
 import org.exoplatform.forum.webui.UIForumKeepStickPageIterator;
 import org.exoplatform.forum.webui.UIForumPortlet;
 import org.exoplatform.forum.webui.UITopicDetail;
+import org.exoplatform.ks.common.CommonUtils;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
@@ -38,8 +38,8 @@ import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.event.Event.Phase;
-import org.exoplatform.webui.form.UIFormCheckBoxInput;
 import org.exoplatform.webui.form.UIFormStringInput;
+import org.exoplatform.webui.form.input.UICheckBoxInput;
 /**
  * Created by The eXo Platform SAS
  * Author : Vu Duy Tu
@@ -59,8 +59,6 @@ import org.exoplatform.webui.form.UIFormStringInput;
 public class UISplitTopicForm extends UIForumKeepStickPageIterator implements UIPopupComponent {
   private Topic              topic                   = new Topic();
 
-  private String             link;
-
   private boolean            isRender                = true;
 
   private boolean            isSetPage               = true;
@@ -78,20 +76,12 @@ public class UISplitTopicForm extends UIForumKeepStickPageIterator implements UI
   public void deActivate() throws Exception {
   }
 
-  public String getLink() {
-    return link;
-  }
-
-  public void setLink(String link) {
-    this.link = link;
-  }
-
   public boolean getIdRender() {
     return this.isRender;
   }
 
-  @SuppressWarnings( { "unchecked", "unused" })
-  private List<Post> getListPost() throws Exception {
+  @SuppressWarnings("unchecked")
+  protected List<Post> getListPost() throws Exception {
     String path = this.topic.getPath();
     path = path.substring(path.indexOf(Utils.CATEGORY));
     if (isSetPage) {
@@ -106,10 +96,10 @@ public class UISplitTopicForm extends UIForumKeepStickPageIterator implements UI
     String checkBoxId;
     for (Post post : posts) {
       checkBoxId = post.getCreatedDate().getTime() + ForumUtils.SLASH + post.getId();
-      if (getUIFormCheckBoxInput(checkBoxId) != null) {
-        getUIFormCheckBoxInput(checkBoxId).setChecked(false);
+      if (getUICheckBoxInput(checkBoxId) != null) {
+        getUICheckBoxInput(checkBoxId).setChecked(false);
       } else {
-        addUIFormInput(new UIFormCheckBoxInput(checkBoxId, checkBoxId, false));
+        addUIFormInput(new UICheckBoxInput(checkBoxId, checkBoxId, false));
       }
     }
     isSetPage = true;
@@ -121,8 +111,7 @@ public class UISplitTopicForm extends UIForumKeepStickPageIterator implements UI
     isSetPage = false;
   }
 
-  @SuppressWarnings("unused")
-  private Topic getTopic() {
+  protected Topic getTopic() {
     return this.topic;
   }
 
@@ -135,7 +124,7 @@ public class UISplitTopicForm extends UIForumKeepStickPageIterator implements UI
       UISplitTopicForm uiForm = event.getSource();
       String newTopicTitle = uiForm.getUIStringInput(FIELD_SPLITTHREAD_INPUT).getValue();
       if (!ForumUtils.isEmpty(newTopicTitle)) {
-        newTopicTitle = org.exoplatform.ks.common.Utils.encodeSpecialCharInTitle(newTopicTitle);
+        newTopicTitle = CommonUtils.encodeSpecialCharInTitle(newTopicTitle);
         // postIds number/id
         List<String> postIds = uiForm.getIdSelected();
         if (postIds.size() > 0) {
@@ -145,38 +134,49 @@ public class UISplitTopicForm extends UIForumKeepStickPageIterator implements UI
           for (String str : postIds) {
             postPaths.add(path + str.substring(str.indexOf(ForumUtils.SLASH)));
           }
+          // Create new topic split
           Topic topic = new Topic();
           Post post = uiForm.getForumService().getPost(ForumUtils.EMPTY_STR, ForumUtils.EMPTY_STR, ForumUtils.EMPTY_STR, postPaths.get(0));
-          String owner = uiForm.userProfile.getUserId();
+          String owner = uiForm.getUserProfile().getUserId();
           String topicId = post.getId().replaceFirst(Utils.POST, Utils.TOPIC);
           topic.setId(topicId);
           topic.setTopicName(newTopicTitle);
-          topic.setOwner(owner);
+          topic.setOwner(post.getOwner());
           topic.setModifiedBy(owner);
           topic.setDescription(post.getMessage());
           topic.setIcon(post.getIcon());
           topic.setAttachments(post.getAttachments());
+          topic.setIsWaiting(post.getIsWaiting());
           Post lastPost = uiForm.getForumService().getPost(ForumUtils.EMPTY_STR, ForumUtils.EMPTY_STR, ForumUtils.EMPTY_STR, postPaths.get(postPaths.size() - 1));
           topic.setLastPostBy(lastPost.getOwner());
           if (postPaths.size() > 1) {
             topic.setLastPostDate(lastPost.getCreatedDate());
           }
+          // edit fist post for topic split
+          post.setName(newTopicTitle);
+          post.setIsApproved(true);
+          post.setIsActiveByTopic(true);
+          post.setIsHidden(false);
+          post.setIsWaiting(false);
+          
           String[] string = path.split(ForumUtils.SLASH);
           String categoryId = string[string.length - 3];
           String forumId = string[string.length - 2];
           try {
             // set link
-            String link = ForumUtils.createdForumLink(ForumUtils.TOPIC, "pathId").replaceFirst("private", "public");
-            //
+            String link = ForumUtils.createdForumLink(ForumUtils.TOPIC, "pathId", false);
             WebuiRequestContext context = WebuiRequestContext.getCurrentInstance();
             ResourceBundle res = context.getApplicationResourceBundle();
-
+            // save new topic split.
             uiForm.getForumService().saveTopic(categoryId, forumId, topic, true, true, ForumUtils.getDefaultMail());
+            // save post is fist post of topic split.
+            uiForm.getForumService().savePost(categoryId, forumId, uiForm.topic.getId(), post, false, ForumUtils.getDefaultMail());
+            // move all post selected for topic split. 
             String destTopicPath = path.substring(0, path.lastIndexOf(ForumUtils.SLASH)) + ForumUtils.SLASH + topicId;
-            uiForm.getForumService().movePost(postPaths.toArray(new String[] {}), destTopicPath, true, res.getString("UINotificationForm.label.EmailToAuthorMoved"), link);
+            uiForm.getForumService().movePost(postPaths.toArray(new String[postPaths.size()]), destTopicPath, true, res.getString("UINotificationForm.label.EmailToAuthorMoved"), link);
           } catch (Exception e) {
             uiForm.log.error("Saving topic " + topic + " fail: " + e.getMessage(), e);
-            uiForm.warning("UISplitTopicForm.msg.forum-deleted");
+            uiForm.warning("UISplitTopicForm.msg.forum-deleted", false);
           }
           UIForumPortlet forumPortlet = uiForm.getAncestorOfType(UIForumPortlet.class);
           forumPortlet.cancelAction();

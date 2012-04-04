@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.exoplatform.container.ExoContainerContext;
-import org.exoplatform.forum.ForumTransformHTML;
 import org.exoplatform.forum.ForumUtils;
 import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.Post;
@@ -29,6 +28,7 @@ import org.exoplatform.forum.webui.UIForumKeepStickPageIterator;
 import org.exoplatform.forum.webui.UIForumPortlet;
 import org.exoplatform.forum.webui.UITopicDetail;
 import org.exoplatform.ks.bbcode.core.ExtendedBBCodeProvider;
+import org.exoplatform.ks.common.TransformHTML;
 import org.exoplatform.ks.common.webui.BaseEventListener;
 import org.exoplatform.ks.common.webui.UIPopupAction;
 import org.exoplatform.ks.common.webui.UIPopupContainer;
@@ -39,7 +39,7 @@ import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.event.Event.Phase;
-import org.exoplatform.webui.form.UIFormCheckBoxInput;
+import org.exoplatform.webui.form.input.UICheckBoxInput;
 /**
  * Created by The eXo Platform SAS
  * Author : Vu Duy Tu
@@ -62,6 +62,8 @@ public class UIPageListPostUnApprove extends UIForumKeepStickPageIterator implem
   private String       categoryId, forumId, topicId;
 
   private List<Post>   listAllPost = new ArrayList<Post>();
+  
+  private boolean isApprove = true;
 
   public UIPageListPostUnApprove() throws Exception {
     forumService = (ForumService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(ForumService.class);
@@ -74,20 +76,25 @@ public class UIPageListPostUnApprove extends UIForumKeepStickPageIterator implem
   public void deActivate() throws Exception {
   }
 
-  @SuppressWarnings("unused")
-  private String getTitleInHTMLCode(String s) {
-    return ForumTransformHTML.getTitleInHTMLCode(s, new ArrayList<String>((new ExtendedBBCodeProvider()).getSupportedBBCodes()));
+  protected String getTitleInHTMLCode(String s) {
+    return TransformHTML.getTitleInHTMLCode(s, new ArrayList<String>((new ExtendedBBCodeProvider()).getSupportedBBCodes()));
   }
 
-  public void setUpdateContainer(String categoryId, String forumId, String topicId) {
+  public void setUpdateContainer(String categoryId, String forumId, String topicId, boolean isApprove) {
     this.categoryId = categoryId;
     this.forumId = forumId;
     this.topicId = topicId;
+    this.isApprove = isApprove;
   }
 
-  @SuppressWarnings( { "unchecked", "unused" })
-  private List<Post> getPosts() throws Exception {
-    pageList = forumService.getPosts(this.categoryId, this.forumId, this.topicId, "false", ForumUtils.EMPTY_STR, ForumUtils.EMPTY_STR, ForumUtils.EMPTY_STR);
+  @SuppressWarnings("unchecked")
+  protected List<Post> getPosts() throws Exception {
+    String app = "", censer = "true";
+    if (isApprove) {
+      app = "false";
+      censer = "";
+    }
+    pageList = forumService.getPosts(this.categoryId, this.forumId, this.topicId, app, ForumUtils.EMPTY_STR, censer, ForumUtils.EMPTY_STR);
     pageList.setPageSize(6);
     maxPage = pageList.getAvailablePage();
     List<Post> posts = pageList.getPage(pageSelect);
@@ -96,10 +103,10 @@ public class UIPageListPostUnApprove extends UIForumKeepStickPageIterator implem
       posts = new ArrayList<Post>();
     if (!posts.isEmpty()) {
       for (Post post : posts) {
-        if (getUIFormCheckBoxInput(post.getId()) != null) {
-          getUIFormCheckBoxInput(post.getId()).setChecked(false);
+        if (getUICheckBoxInput(post.getId()) != null) {
+          getUICheckBoxInput(post.getId()).setChecked(false);
         } else {
-          addUIFormInput(new UIFormCheckBoxInput(post.getId(), post.getId(), false));
+          addUIFormInput(new UICheckBoxInput(post.getId(), post.getId(), false));
         }
       }
     }
@@ -138,16 +145,21 @@ public class UIPageListPostUnApprove extends UIForumKeepStickPageIterator implem
         haveCheck = true;
         post = postUnApprove.getPost(postId);
         if (post != null) {
-          post.setIsApproved(true);
+          if(postUnApprove.isApprove){
+            post.setIsApproved(true);
+          } else {
+            post.setIsWaiting(false);
+          }
           posts.add(post);
         }
       }
       if (!haveCheck) {
-        warning("UIPageListPostUnApprove.sms.notCheck");
+        warning("UIPageListPostUnApprove.sms.notCheck", false);
       } else {
-        try {
+        if (postUnApprove.isApprove) {
           postUnApprove.forumService.modifyPost(posts, Utils.APPROVE);
-        } catch (Exception e) {
+        } else {
+          postUnApprove.forumService.modifyPost(posts, Utils.WAITING);
         }
       }
       if (posts.size() == postUnApprove.listAllPost.size()) {

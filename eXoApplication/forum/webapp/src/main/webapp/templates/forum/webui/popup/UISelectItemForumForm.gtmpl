@@ -30,7 +30,7 @@
 			 	<div class="NodeLabel" onclick='eXo.forum.UIForumPortlet.showTreeNode(this,"$isShow");'>
 			 		<div class="NodeSelected"><a class="Cursor">$categoryName</a></div> 
 				</div> 			
-				<div style="clear:left;"><span></span></div>
+				
 				<div class="ChildNodeContainer ParentNode" style="$display">
 				<% 
 					for(forum in forums) {
@@ -42,13 +42,13 @@
 						if(forum.getIsLock()) classForumIcon = "MoveForumLockIcon";
 						if(forum.getIsClosed())classForumIcon = "SetCloseIcon"; 
 				%>
-					<div class="Node">
+					<div class="Node ClearFix">
 						<div style="float:left"><%uicomponent.renderChild(forum.getPath())%></div>
 						<div class="Icon $classForumIcon"><span></span></div>
 						<div class="NodeLabel"> 
-							<div>$forumName</div>
+							<label for="<%=forum.getPath()%>">$forumName</label>
 						</div>
-						<div style="clear:left;"><span></span></div>
+
 					</div>
 				<% } %>		
 				</div>
@@ -57,29 +57,13 @@
 			}%>	
 		 </div>
 	</div>
-	<div class="UIAction"> 
-		<table class="ActionContainer">
-			<tr>
-				<td align="center">
-			<% for(action in uicomponent.getActions()) { 
+	<div class="UIAction">
+  <% for(action in uicomponent.getActions()) { 
 				 String actionLabel = _ctx.appRes(uicomponent.getName() + ".action." + action); 
 				 String link = uicomponent.event(action) ;
 			%>
-					<div onclick="$link" class="ActionButton LightBlueStyle">
-						<div class="ButtonLeft">
-							<div class="ButtonRight">
-								<div class="ButtonMiddle">
-									<a href="javascript:void(0);">
-										$action
-									</a>
-								</div>
-							</div>
-						</div>
-					</div>
-				<%}%>
-				</td>
-			</tr>
- 		</table> 
-	</div>
+      <a href="javascript:void(0);" onclick="$link" class="ActionButton LightBlueStyle">$actionLabel</a>
+      <%}%>
+    </div>
 	<%uiform.end()%>
 </div>

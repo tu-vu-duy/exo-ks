@@ -6,25 +6,6 @@
 	height: auto;
 }
 
-.UIPollPortlet .UITopicPoll .MenuItem {
-	background-position: 6px 50%;
-	cursor: pointer;
-}
-
-.UIPollPortlet .UITopicPoll .MenuItem:hover {
-	background-color:#DEE4F2 ;
-	color: orange; 
-}
-
-.UIPollPortlet .UITopicPoll .MenuItem .ItemIcon {
-	line-height: 16px;
-	margin: 0px;
-	min-width: 60px;
-	padding: 5px 10px 5px 28px;
-	text-align: left;
-	white-space: nowrap;
-}
-
 .UIPollPortlet .UITopicPoll .UITabContentContainer {
 	border: none;
 	background: none;
@@ -60,8 +41,10 @@
 }
 
 .UIPollPortlet .UITopicPoll .ForumToolbar .ForumSeparatorLine {
+	line-height: 25px;
 	float: right;
-	margin: 4px 4px 0px 4px;
+	margin: 0 10px 0 0;
+    padding: 0 10px 0 0;
 }
 
 .UIPollPortlet .UITopicPoll .TopicPollContainer {
@@ -86,10 +69,10 @@
 	background: white;
 }
 /* Fix only IE7 */
-.UIPollPortlet .UITopicPoll .TopicPollContainer .TopicPollContent {
-	*min-width: 300px;
-	*overflow-y: hidden;
-	*overflow-x: auto;
+*+html .UIPollPortlet .UITopicPoll .TopicPollContainer .TopicPollContent {
+	min-width: 300px;
+	overflow-y: hidden;
+	overflow-x: auto;
 }
 
 .UIPollPortlet .UITopicPoll .TopicPollContainer .TopicPollContent .PollQuestion {
@@ -159,10 +142,6 @@
 	border: none;
 	width: 100%;
 	height: auto ;
-}
-
-.UIPollPortlet .ViewPollForm .UIAction {
-	padding: 0px;
 }
 
 .UIPollPortlet .UITopicPoll .UITabPane .UITabContentContainer .UITabContent{

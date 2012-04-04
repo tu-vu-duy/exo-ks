@@ -17,10 +17,8 @@
 package org.exoplatform.faq.service;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.exoplatform.ks.common.jcr.KSDataLocation;
@@ -53,6 +51,16 @@ public class Utils {
   final public static String UI_FAQ_VIEWER        = "UIFAQViewer".intern();
 
   final public static String DELETED              = ":deleted".intern();
+
+  final public static String HYPHEN               = "-".intern();
+
+  final public static String QUESTION_ID_PARAM    = "questionId";
+
+  final public static String ANSWER_NOW_PARAM     = "answer-now";
+
+  final public static String QUESTION_ID          = "?&".concat(QUESTION_ID_PARAM).concat("=");
+
+  final public static String ANSWER_NOW           = "&".concat(ANSWER_NOW_PARAM).concat("=");
 
   /**
    * This method sort list category is date ascending
@@ -118,8 +126,8 @@ public class Utils {
           return true;
       }
     }
-    for (String s : listPlugin) {
-      if (tem.contains(s))
+    for (String s : tem) {
+      if (listPlugin.contains(s))
         return true;
     }
     return false;
@@ -136,9 +144,10 @@ public class Utils {
   public static long getTimeOfLastActivity(String info) {
     if (info == null || info.length() == 0)
       return -1;
-    int dashIndex = info.lastIndexOf("-");
-    if (dashIndex < 0)
+    int dashIndex = info.lastIndexOf(HYPHEN);
+    if (dashIndex < 0) {
       return -1;
+    }
     try {
       return Long.parseLong(info.substring(dashIndex + 1));
     } catch (NumberFormatException nfe) {
@@ -149,9 +158,10 @@ public class Utils {
   public static String getAuthorOfLastActivity(String info) {
     if (info == null || info.length() == 0)
       return null;
-    int dashIndex = info.lastIndexOf("-");
-    if (dashIndex < 0)
+    int dashIndex = info.lastIndexOf(HYPHEN);
+    if (dashIndex < 0) {
       return null;
+    }
     return info.substring(0, dashIndex);
   }
 
@@ -173,13 +183,4 @@ public class Utils {
     }
     return queryString.toString();
   }
-  
-  public static Calendar getInstanceTempCalendar() {
-    Calendar calendar = GregorianCalendar.getInstance();
-    calendar.setLenient(false);
-    int gmtoffset = calendar.get(Calendar.DST_OFFSET) + calendar.get(Calendar.ZONE_OFFSET);
-    calendar.setTimeInMillis(System.currentTimeMillis() - gmtoffset);
-    return calendar;
-  }
-
 }

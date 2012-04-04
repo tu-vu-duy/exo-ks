@@ -127,7 +127,7 @@ public class UIFormSelectBoxForum extends UIFormStringInput {
   }
 
   public UIFormSelectBoxForum setDisabled(boolean disabled) {
-    setEnable(!disabled);
+    this.disabled = disabled;
     return this;
   }
 
@@ -169,7 +169,9 @@ public class UIFormSelectBoxForum extends UIFormStringInput {
       formId = uiForm.getId();
 
     Writer w = context.getWriter();
-    w.write("<select class=\"selectbox\" name=\"");
+    w.write("<select class=\"selectbox\" id=\"");
+    w.write(name);
+    w.write("\" name=\"");
     w.write(name);
     w.write("\"");
     if (onchange_ != null) {
@@ -181,17 +183,21 @@ public class UIFormSelectBoxForum extends UIFormStringInput {
     if (size_ > 1)
       w.write(" size=\"" + size_ + "\"");
 
-    if (!enable_)
+    if (isDisabled())
       w.write(" disabled ");
+    
+    renderHTMLAttributes(w);
 
     w.write(">\n");
 
     for (SelectItemOption<String> item : options_) {
       String labelAndCss = item.getLabel();
       String temp[] = labelAndCss.split(ForumUtils.SLASH);
+      String label;
       try {
-        temp[0] = res.getString(formId + ".label.option." + item.getValue());
+        label = res.getString(formId + ".label.option." + temp[0]);
       } catch (MissingResourceException ex) {
+        label = temp[0];
       }
       String classCss = "optionNormal";
       if (temp.length > 1)
@@ -209,7 +215,7 @@ public class UIFormSelectBoxForum extends UIFormStringInput {
         w.write(item.getValue());
         w.write("\">");
       }
-      w.write(temp[0]);
+      w.write(label);
       w.write("</option>\n");
     }
     w.write("</select>\n");

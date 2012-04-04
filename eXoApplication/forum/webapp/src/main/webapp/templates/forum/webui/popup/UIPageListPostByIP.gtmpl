@@ -20,8 +20,9 @@
 		 	<div class="UIForumContainer">
 				<div class="ContentContainer">
 					<div class="UITopicList">
+						<div style="overflow:auto;" class="ClearFix">
 							<% uicomponent.renderChild(UIForumPageIterator.class) ; %>
-							<div style="clear:right; height:0px;"><span></span></div>
+						</div>
 						<table cellspacing="0" cellpadding="0" border="0" class="UIGrid">
 							<thead>
 								<tr>
@@ -32,7 +33,7 @@
 											<div class="DownArrow1Icon"><%=_ctx.appRes("UIPageListPostByUser.label.PostName");%></div>
 										</div>
 									</th>
-									<th style="width:120px">
+									<th style="width:125px">
 										<div onclick="<%=uicomponent.event("SetOrderBy","createdDate");%>">
 										  <div class="DownArrow1Icon">
 										    <div class="THFixHidden" style="width: 114px;">
@@ -41,7 +42,7 @@
 										  </div>
 										</div>
 									</th>
-									<th style="width:40px"><%=_ctx.appRes("UIPageListPostByUser.label.Delete");%></th>
+									<th style="width:85px"><%=_ctx.appRes("UIPageListPostByUser.label.Delete");%></th>
 								</tr>
 							</thead>
 							<tbody>
@@ -49,7 +50,6 @@
 								if(!posts.isEmpty()) {
 									String classRow = "whileRow";
 									int i = 0;
-									Date postDate = new Date();
 									for(post in posts){
 										if(i%2 == 0) classRow = "whileRow";
 										else classRow = "OddRow";
@@ -57,8 +57,7 @@
 										String message = uicomponent.getTitleInHTMLCode(post.getMessage()) ;
 										String titlePost = ForumUtils.getSubString(message, 100);
 										String iconPost = post.getIcon() ;
-										postDate.setTime(post.getCreatedDate().getTime() - setTime) ;
-										String createdDate = TimeConvertUtils.getFormatDate(formatDate,postDate) ;
+										String createdDate = TimeConvertUtils.convertXTimeAgo(post.getCreatedDate(), formatDate, setTime) ;
 										String path = post.getPath();
 										String topicId = path.substring(path.indexOf(Utils.TOPIC), path.lastIndexOf("/"));
 								%>
@@ -100,7 +99,7 @@
 							 		%>
 							 			<tr>
 							 				<td colspan="5" align="center">
-							 					<div style="margin:5px 0px 10px 0px"><b><%=_ctx.appRes("UICategory.label.noPost");%></b></div>
+							 					<div style="margin:5px 0px 10px 0px"><strong><%=_ctx.appRes("UICategory.label.noPost");%></strong></div>
 							 				</td>
 							 			</tr>
 							 		<%
@@ -108,29 +107,16 @@
 							 	 %>
 							</tbody>
 						</table>
+						<div style="overflow:auto;" class="ClearFix">
 							<% uicomponent.renderChild(UIForumPageIterator.class) ; %>
-							<div style="clear:right; height:0px;"><span></span></div>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 		
-		<div class="UIAction"> 
-			<table class="ActionContainer">
-				<tr>
-					<td align="center">
-						<div onclick="<%=uicomponent.event("Cancel")%>" class="ActionButton LightBlueStyle">
-							<div class="ButtonLeft">
-								<div class="ButtonRight">
-									<div class="ButtonMiddle">
-										<a href="javascript:void(0);"><%=_ctx.appRes("UIForumPortlet.label.Close");%></a>
-									</div>
-								</div>
-							</div>
-						</div>
-					</td>
-				</tr>
-			</table> 
-		</div>
+		<div class="UIAction">
+      <a href="javascript:void(0);" onclick="<%=uicomponent.event("Cancel")%>" class="ActionButton LightBlueStyle"><%=_ctx.appRes("UIForumPortlet.label.Close");%></a>
+    </div>
 	<%uiform.end()%>
 </div>

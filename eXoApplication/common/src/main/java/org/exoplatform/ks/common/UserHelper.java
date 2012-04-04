@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.exoplatform.commons.utils.PageList;
-import org.exoplatform.container.PortalContainer;
+import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.portal.webui.util.Util;
 import org.exoplatform.services.organization.Group;
 import org.exoplatform.services.organization.GroupHandler;
@@ -30,6 +30,9 @@ import org.exoplatform.services.organization.OrganizationService;
 import org.exoplatform.services.organization.User;
 import org.exoplatform.services.organization.UserHandler;
 import org.exoplatform.services.organization.impl.GroupImpl;
+import org.exoplatform.services.security.ConversationState;
+import org.exoplatform.services.security.Identity;
+import org.exoplatform.services.security.MembershipEntry;
 
 /**
  * @author <a href="mailto:patrice.lamarque@exoplatform.com">Patrice Lamarque</a>
@@ -38,7 +41,8 @@ import org.exoplatform.services.organization.impl.GroupImpl;
 public class UserHelper {
   
   public static OrganizationService getOrganizationService() {
-    OrganizationService organizationService = (OrganizationService) PortalContainer.getComponent(OrganizationService.class);
+    OrganizationService organizationService = (OrganizationService) ExoContainerContext.getCurrentContainer()
+                                                                                       .getComponentInstanceOfType(OrganizationService.class);
     return organizationService;
   }
   
@@ -57,27 +61,27 @@ public class UserHelper {
   }
 
   public static String checkValueUser(String values) throws Exception {
-    String errorUser = null;
-    if(values != null && values.trim().length() > 0) {
+    StringBuilder errorUser = new StringBuilder();
+    if (values != null && values.trim().length() > 0) {
       String[] userIds = values.split(",");
       for (String str : userIds) {
-        str = str.trim() ;
-        if(str.indexOf("$") >= 0) str = str.replace("$", "&#36");
-          
-        if(str.indexOf("/") >= 0) {
-          if(!UserHelper.hasGroupIdAndMembershipId(str)){
-            if(errorUser == null) errorUser = str ;
-            else errorUser = errorUser + ", " + str;
+        str = str.trim();
+        if (str.indexOf("$") >= 0) str = str.replace("$", "&#36");
+
+        if (str.indexOf("/") >= 0) {
+          if (!UserHelper.hasGroupIdAndMembershipId(str)) {
+            if (errorUser.length() == 0) errorUser.append(str);
+            else errorUser.append(", ").append(str);
           }
-        }else {//user
-          if((getUserHandler().findUserByName(str) == null)) {
-            if(errorUser == null) errorUser = str ;
-            else errorUser = errorUser + ", " + str;
+        } else {// user
+          if ((getUserHandler().findUserByName(str) == null)) {
+            if (errorUser.length() == 0) errorUser.append(str);
+            else errorUser.append(", ").append(str);
           }
         }
       }
     }
-    return errorUser;
+    return errorUser.toString();
   }
 
   public static boolean hasGroupIdAndMembershipId(String str) throws Exception {
@@ -174,7 +178,7 @@ public class UserHelper {
     return getUserHandler().getUserPageList(10);
   }
 
-  public static boolean isAnonim() throws Exception {
+  public static boolean isAnonim() {
     String userId = UserHelper.getCurrentUser();
     if (userId == null)
       return true;
@@ -185,23 +189,35 @@ public class UserHelper {
     return getOrganizationService().getMembershipHandler().findMembershipsByUser(userId);
   }
 
+  /**
+   * 
+   * @param userId username
+   * @return list of groups an user belong, and memberships of the user in each group. If userId is null, groups and memberships of the current
+   * user will be returned.
+   * @throws Exception
+   */
   @SuppressWarnings("unchecked")
-  public static List<String> getAllGroupAndMembershipOfUser(String userId) throws Exception{
+  public static List<String> getAllGroupAndMembershipOfUser(String userId) throws Exception {
     List<String> listOfUser = new ArrayList<String>();
     if (userId == null) {
-      return listOfUser; // should we throw an IllegalArgumentException instead ?
+      ConversationState conversionState = ConversationState.getCurrent();
+      Identity identity = conversionState.getIdentity();
+      userId = identity.getUserId();
+      if (userId != null) {
+        listOfUser.add(userId);
+        for (MembershipEntry membership : identity.getMemberships()) {
+          listOfUser.add(membership.getGroup()); // its groups
+          listOfUser.add(membership.getMembershipType() + ":" + membership.getGroup()); // its memberships
+        }
+      }
+    } else {
+      listOfUser.add(userId); // himself
+      Collection<Membership> memberships = findMembershipsByUser(userId);
+      for (Membership membership : memberships) {
+        listOfUser.add(membership.getGroupId()); // its groups
+        listOfUser.add(membership.getMembershipType() + ":" + membership.getGroupId()); // its memberships
+      }
     }
-
-    listOfUser.add(userId); //himself
-    String value = "";
-    Collection<Membership> memberships = findMembershipsByUser(userId);
-    for (Membership membership : memberships) {
-       value = membership.getGroupId();
-        listOfUser.add(value); // its groups
-        value = membership.getMembershipType() + ":" + value;
-        listOfUser.add(value);  // its memberships
-    }
-    
     return listOfUser;
   }
 
@@ -211,7 +227,7 @@ public class UserHelper {
     return email;
   }
 
-  static public String getCurrentUser() throws Exception {
+  static public String getCurrentUser() {
     try {
       return Util.getPortalRequestContext().getRemoteUser();
     } catch (Exception e) {

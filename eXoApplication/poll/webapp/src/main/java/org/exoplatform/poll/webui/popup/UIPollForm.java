@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.ks.common.CommonUtils;
 import org.exoplatform.ks.common.UserHelper;
 import org.exoplatform.ks.common.webui.BaseEventListener;
 import org.exoplatform.ks.common.webui.UIFormMultiValueInputSet;
@@ -40,10 +41,10 @@ import org.exoplatform.webui.core.UIPopupComponent;
 import org.exoplatform.webui.core.UIPopupWindow;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.event.Event;
-import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.event.Event.Phase;
-import org.exoplatform.webui.form.UIFormCheckBoxInput;
+import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.form.UIFormStringInput;
+import org.exoplatform.webui.form.input.UICheckBoxInput;
 import org.exoplatform.webui.form.validator.PositiveNumberFormatValidator;
 
 /**
@@ -91,21 +92,20 @@ public class UIPollForm extends BasePollForm implements UIPopupComponent, UISele
 
   private boolean                  isUpdate                   = false;
 
-  private boolean                  isEditPath                 = true;
+  public boolean                   isEditPath                 = true;
 
   private boolean                  isPublic                   = true;
 
-  @SuppressWarnings("unchecked")
   public UIPollForm() throws Exception {
     UIFormStringInput question = new UIFormStringInput(FIELD_QUESTION_INPUT, FIELD_QUESTION_INPUT, "");
     UIFormStringInput timeOut = new UIFormStringInput(FIELD_TIMEOUT_INPUT, FIELD_TIMEOUT_INPUT, "");
     timeOut.addValidator(PositiveNumberFormatValidator.class);
-    UIFormCheckBoxInput VoteAgain = new UIFormCheckBoxInput<Boolean>(FIELD_AGAINVOTE_CHECKBOX, FIELD_AGAINVOTE_CHECKBOX, false);
-    UIFormCheckBoxInput MultiVote = new UIFormCheckBoxInput<Boolean>(FIELD_MULTIVOTE_CHECKBOX, FIELD_MULTIVOTE_CHECKBOX, false);
-    UIFormCheckBoxInput PublicData = new UIFormCheckBoxInput<Boolean>(FIELD_PUBLIC_DATA_CHECKBOX, FIELD_PUBLIC_DATA_CHECKBOX, true);
+    UICheckBoxInput VoteAgain = new UICheckBoxInput(FIELD_AGAINVOTE_CHECKBOX, FIELD_AGAINVOTE_CHECKBOX, false);
+    UICheckBoxInput MultiVote = new UICheckBoxInput(FIELD_MULTIVOTE_CHECKBOX, FIELD_MULTIVOTE_CHECKBOX, false);
+    UICheckBoxInput PublicData = new UICheckBoxInput(FIELD_PUBLIC_DATA_CHECKBOX, FIELD_PUBLIC_DATA_CHECKBOX, true);
     PublicData.setChecked(isPublic);
     UIFormStringInput GroupPrivate = new UIFormStringInput(FIELD_GROUP_PRIVATE_INPUT, FIELD_GROUP_PRIVATE_INPUT, "");
-    GroupPrivate.setEditable(false);
+    GroupPrivate.setReadOnly(true);
     addUIFormInput(question);
     addUIFormInput(timeOut);
     addUIFormInput(VoteAgain);
@@ -127,8 +127,7 @@ public class UIPollForm extends BasePollForm implements UIPopupComponent, UISele
     addUIFormInput(uiFormMultiValue);
   }
 
-  @SuppressWarnings("unused")
-  private String getDateAfter() throws Exception {
+  protected String getDateAfter() throws Exception {
     Date date = new Date();
     if (poll != null && poll.getTimeOut() > 0) {
       date = poll.getModifiedDate();
@@ -137,21 +136,20 @@ public class UIPollForm extends BasePollForm implements UIPopupComponent, UISele
     return Utils.getFormatDate(format, date);
   }
 
-  @SuppressWarnings("unchecked")
   public void setUpdatePoll(Poll poll, boolean isUpdate) throws Exception {
     if (isUpdate) {
       this.poll = poll;
-      getUIStringInput(FIELD_QUESTION_INPUT).setValue(poll.getQuestion());
+      getUIStringInput(FIELD_QUESTION_INPUT).setValue(CommonUtils.decodeSpecialCharToHTMLnumber(poll.getQuestion()));
       getUIStringInput(FIELD_TIMEOUT_INPUT).setValue(String.valueOf(poll.getTimeOut()));
-      getUIFormCheckBoxInput(FIELD_AGAINVOTE_CHECKBOX).setChecked(poll.getIsAgainVote());
-      UIFormCheckBoxInput multiVoteCheckInput = getUIFormCheckBoxInput(FIELD_MULTIVOTE_CHECKBOX);
+      getUICheckBoxInput(FIELD_AGAINVOTE_CHECKBOX).setChecked(poll.getIsAgainVote());
+      UICheckBoxInput multiVoteCheckInput = getUICheckBoxInput(FIELD_MULTIVOTE_CHECKBOX);
       multiVoteCheckInput.setChecked(poll.getIsMultiCheck());
-      multiVoteCheckInput.setEnable(false);
+      multiVoteCheckInput.setDisabled(true);
       String group = poll.getParentPath();
       poll.setOldParentPath(group);
       if (group.indexOf(PollNodeTypes.APPLICATION_DATA) > 0) {
         isPublic = false;
-        getUIFormCheckBoxInput(FIELD_PUBLIC_DATA_CHECKBOX).setChecked(isPublic);
+        getUICheckBoxInput(FIELD_PUBLIC_DATA_CHECKBOX).setChecked(isPublic);
         group = group.substring(group.indexOf("/", 2), group.indexOf(PollNodeTypes.APPLICATION_DATA) - 1);
         getUIStringInput(FIELD_GROUP_PRIVATE_INPUT).setValue(group);
       } else if (group.indexOf(PollNodeTypes.POLLS) < 0) {
@@ -166,7 +164,7 @@ public class UIPollForm extends BasePollForm implements UIPopupComponent, UISele
     List<String> list = new ArrayList<String>();
     if (isUpdate) {
       for (String string : this.poll.getOption()) {
-        list.add(string);
+        list.add(CommonUtils.decodeSpecialCharToHTMLnumber(string));
       }
     } else {
       list.add("");
@@ -187,24 +185,23 @@ public class UIPollForm extends BasePollForm implements UIPopupComponent, UISele
   }
 
   static public class SaveActionListener extends EventListener<UIPollForm> {
-    @SuppressWarnings("unchecked")
     public void execute(Event<UIPollForm> event) throws Exception {
       UIPollForm uiForm = event.getSource();
-      UIFormStringInput questionInput = uiForm.getUIStringInput(FIELD_QUESTION_INPUT);
-      String question = questionInput.getValue();
-      question = org.exoplatform.ks.common.Utils.encodeSpecialCharInTitle(question);
+      String question = uiForm.getUIStringInput(FIELD_QUESTION_INPUT).getValue();
+      question = CommonUtils.encodeSpecialCharInTitle(question);
       String timeOutStr = uiForm.getUIStringInput(FIELD_TIMEOUT_INPUT).getValue();
       timeOutStr = Utils.removeZeroFirstNumber(timeOutStr);
       long timeOut = 0;
       if (!Utils.isEmpty(timeOutStr)) {
         if (timeOutStr.length() > 4) {
-          uiForm.warning("UIPollForm.msg.longTimeOut", new String[] { uiForm.getLabel(FIELD_TIMEOUT_INPUT) });
+          uiForm.warning("UIPollForm.msg.longTimeOut", new String[] { uiForm.getLabel(FIELD_TIMEOUT_INPUT) }, false);
         }
         timeOut = Long.parseLong(timeOutStr);
       }
-      boolean isAgainVote = uiForm.getUIFormCheckBoxInput(FIELD_AGAINVOTE_CHECKBOX).isChecked();
-      boolean isMultiVote = uiForm.getUIFormCheckBoxInput(FIELD_MULTIVOTE_CHECKBOX).isChecked();
+      boolean isAgainVote = uiForm.getUICheckBoxInput(FIELD_AGAINVOTE_CHECKBOX).isChecked();
+      boolean isMultiVote = uiForm.getUICheckBoxInput(FIELD_MULTIVOTE_CHECKBOX).isChecked();
       String sms = "";
+      @SuppressWarnings("unchecked")
       List<String> values = (List<String>) uiForm.uiFormMultiValue.getValue();
       List<String> values_ = new ArrayList<String>();
       int i = 1;
@@ -212,10 +209,10 @@ public class UIPollForm extends BasePollForm implements UIPopupComponent, UISele
         if (!Utils.isEmpty(value)) {
           if (value.length() > MAX_TITLE) {
             String[] args = new String[] { uiForm.getLabel(FIELD_OPTIONS) + "(" + i + ")", String.valueOf(MAX_TITLE) };
-            uiForm.warning("NameValidator.msg.warning-long-text", args);
+            uiForm.warning("NameValidator.msg.warning-long-text", args, false);
             return;
           }
-          values_.add(question = org.exoplatform.ks.common.Utils.encodeSpecialCharInTitle(value));
+          values_.add(CommonUtils.encodeSpecialCharInTitle(value));
         }
         ++i;
       }
@@ -232,7 +229,7 @@ public class UIPollForm extends BasePollForm implements UIPopupComponent, UISele
       } else {
         if (question.length() > MAX_TITLE) {
           String[] args = { uiForm.getLabel(FIELD_QUESTION_INPUT), String.valueOf(MAX_TITLE) };
-          uiForm.warning("NameValidator.msg.warning-long-text", args);
+          uiForm.warning("NameValidator.msg.warning-long-text", args, false);
           return;
         }
       }
@@ -366,7 +363,7 @@ public class UIPollForm extends BasePollForm implements UIPopupComponent, UISele
         poll.setIsClosed(uiForm.poll.getIsClosed());
         try {
           if (Utils.isEmpty(poll.getParentPath()) || poll.getParentPath().contains(PollNodeTypes.POLLS) || poll.getParentPath().contains(PollNodeTypes.EXO_POLLS)) {
-            boolean isPublic = uiForm.getUIFormCheckBoxInput(FIELD_PUBLIC_DATA_CHECKBOX).isChecked();
+            boolean isPublic = uiForm.getUICheckBoxInput(FIELD_PUBLIC_DATA_CHECKBOX).isChecked();
             String parentPath = "";
             // if poll of topic : parentPath = topic.getPath();
             // if poll of Group : parentPath = $GROUP/${PollNodeTypes.APPLICATION_DATA}/${PollNodeTypes.EXO_POLLS}
@@ -394,6 +391,8 @@ public class UIPollForm extends BasePollForm implements UIPopupComponent, UISele
             uiForm.getPollService().savePoll(poll, true, false);
           }
         } catch (Exception e) {
+          uiForm.warning("UIPollForm.msg.fail-save");
+          return;
         }
         uiForm.isUpdate = false;
         UIPollPortlet pollPortlet = uiForm.getAncestorOfType(UIPollPortlet.class);
@@ -402,7 +401,7 @@ public class UIPollForm extends BasePollForm implements UIPopupComponent, UISele
         event.getRequestContext().addUIComponentToUpdateByAjax(pollPortlet);
       }
       if (!Utils.isEmpty(sms)) {
-        uiForm.warning("UIPollForm.msg." + sms);
+        uiForm.warning("UIPollForm.msg." + sms, false);
       }
     }
   }
@@ -410,14 +409,18 @@ public class UIPollForm extends BasePollForm implements UIPopupComponent, UISele
   static public class RefreshActionListener extends EventListener<UIPollForm> {
     public void execute(Event<UIPollForm> event) throws Exception {
       UIPollForm uiForm = event.getSource();
-      List<String> list = new ArrayList<String>();
-      list.add("");
-      list.add("");
-      uiForm.initMultiValuesField(list);
-      uiForm.getUIStringInput(FIELD_QUESTION_INPUT).setValue("");
-      uiForm.getUIStringInput(FIELD_TIMEOUT_INPUT).setValue("0");
-      uiForm.getUIFormCheckBoxInput(FIELD_AGAINVOTE_CHECKBOX).setChecked(false);
-      uiForm.getUIFormCheckBoxInput(FIELD_MULTIVOTE_CHECKBOX).setChecked(false);
+      if(uiForm.isUpdate) {
+        uiForm.setUpdatePoll(uiForm.poll, uiForm.isUpdate);
+      } else {
+        List<String> list = new ArrayList<String>();
+        list.add("");
+        list.add("");
+        uiForm.initMultiValuesField(list);
+        uiForm.getUIStringInput(FIELD_QUESTION_INPUT).setValue("");
+        uiForm.getUIStringInput(FIELD_TIMEOUT_INPUT).setValue("0");
+        uiForm.getUICheckBoxInput(FIELD_AGAINVOTE_CHECKBOX).setChecked(false);
+        uiForm.getUICheckBoxInput(FIELD_MULTIVOTE_CHECKBOX).setChecked(false);
+      }
       event.getRequestContext().addUIComponentToUpdateByAjax(uiForm);
     }
   }

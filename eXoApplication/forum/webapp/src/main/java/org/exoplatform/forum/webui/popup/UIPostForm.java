@@ -22,9 +22,8 @@ import java.util.List;
 
 import javax.jcr.PathNotFoundException;
 
-import org.exoplatform.forum.ForumTransformHTML;
 import org.exoplatform.forum.ForumUtils;
-import org.exoplatform.forum.TimeConvertUtils;
+import org.exoplatform.forum.service.BufferAttachment;
 import org.exoplatform.forum.service.ForumAttachment;
 import org.exoplatform.forum.service.MessageBuilder;
 import org.exoplatform.forum.service.Post;
@@ -36,8 +35,9 @@ import org.exoplatform.forum.webui.UITopicDetail;
 import org.exoplatform.forum.webui.UITopicDetailContainer;
 import org.exoplatform.forum.webui.popup.UIForumInputWithActions.ActionData;
 import org.exoplatform.ks.bbcode.core.ExtendedBBCodeProvider;
+import org.exoplatform.ks.common.CommonUtils;
+import org.exoplatform.ks.common.TransformHTML;
 import org.exoplatform.ks.common.UserHelper;
-import org.exoplatform.ks.common.Utils;
 import org.exoplatform.ks.common.webui.BaseEventListener;
 import org.exoplatform.ks.common.webui.UIPopupContainer;
 import org.exoplatform.ks.common.webui.WebUIUtils;
@@ -46,8 +46,8 @@ import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIPopupComponent;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.event.Event;
-import org.exoplatform.webui.event.Event.Phase;
 import org.exoplatform.webui.event.EventListener;
+import org.exoplatform.webui.event.Event.Phase;
 import org.exoplatform.webui.form.UIFormInputIconSelector;
 import org.exoplatform.webui.form.UIFormInputInfo;
 import org.exoplatform.webui.form.UIFormStringInput;
@@ -64,8 +64,8 @@ import org.exoplatform.webui.form.wysiwyg.UIFormWYSIWYGInput;
     lifecycle = UIFormLifecycle.class,
     template = "app:/templates/forum/webui/popup/UIPostForm.gtmpl",
     events = {
-      @EventConfig(listeners = UIPostForm.PreviewPostActionListener.class), 
-      @EventConfig(listeners = UIPostForm.SubmitPostActionListener.class), 
+      @EventConfig(listeners = UIPostForm.PreviewPostActionListener.class, phase = Phase.DECODE), 
+      @EventConfig(listeners = UIPostForm.SubmitPostActionListener.class, phase = Phase.DECODE), 
       @EventConfig(listeners = UIPostForm.AttachmentActionListener.class, phase = Phase.DECODE), 
       @EventConfig(listeners = UIPostForm.RemoveAttachmentActionListener.class, phase = Phase.DECODE), 
       @EventConfig(listeners = UIPostForm.SelectTabActionListener.class, phase = Phase.DECODE), 
@@ -94,6 +94,8 @@ public class UIPostForm extends BaseForumForm implements UIPopupComponent {
 
   public static final String    FIELD_THREADICON_TAB   = "IconAndSmiley";
 
+  public static String          STR_RE                 = "";
+
   private int                   tabId                  = 0;
 
   private List<ForumAttachment> attachments_           = new ArrayList<ForumAttachment>();
@@ -115,8 +117,6 @@ public class UIPostForm extends BaseForumForm implements UIPopupComponent {
   private boolean               isQuote                = false;
 
   private boolean               isMP                   = false;
-
-  private String                link                   = ForumUtils.EMPTY_STR;
 
   private boolean               isDoubleClickSubmit    = false;
 
@@ -150,24 +150,14 @@ public class UIPostForm extends BaseForumForm implements UIPopupComponent {
     this.setActions(new String[] { "PreviewPost", "SubmitPost", "Cancel" });
   }
 
-  public String getLink() {
-    return link;
-  }
-
-  public void setLink(String link) {
-    this.link = link;
-  }
-
-  @SuppressWarnings("unused")
-  private boolean tabIsSelected(int tabId) {
+  protected boolean tabIsSelected(int tabId) {
     if (this.tabId == tabId)
       return true;
     else
       return false;
   }
 
-  @SuppressWarnings("unused")
-  private String[] getTabName() {
+  protected String[] getTabName() {
     String[] tab = { "UIPostForm.tittle.threadContent", "UIPostForm.tittle.iconAndSmiley" };
     return tab;
   }
@@ -207,8 +197,12 @@ public class UIPostForm extends BaseForumForm implements UIPopupComponent {
     threadContent.setActionField(FIELD_ATTACHMENTS, getUploadFileList());
   }
 
-  public void addToUploadFileList(ForumAttachment attachfile) {
+  public void addUploadFile(ForumAttachment attachfile) {
     attachments_.add(attachfile);
+  }
+
+  public void addUploadFileList(List<BufferAttachment> attachfiles) {
+    attachments_.addAll(attachfiles);
   }
 
   public void removeFromUploadFileList(ForumAttachment attachfile) {
@@ -235,21 +229,16 @@ public class UIPostForm extends BaseForumForm implements UIPopupComponent {
     if (!ForumUtils.isEmpty(this.postId) && post != null) {
       String message = post.getMessage();
       if (isQuote) {// quote
-        String title = ForumUtils.EMPTY_STR;
-        if (post.getName().indexOf(": ") > 0)
-          title = post.getName();
-        else
-          title = getLabel(FIELD_LABEL_QUOTE) + ": " + post.getName();
-        threadContent.getUIStringInput(FIELD_POSTTITLE_INPUT).setValue(title);
+        threadContent.getUIStringInput(FIELD_POSTTITLE_INPUT).setValue(CommonUtils.decodeSpecialCharToHTMLnumber(getTitle(post.getName())));
         String value = "[QUOTE=" + post.getOwner() + "]" + message + "[/QUOTE]";
         threadContent.getChild(UIFormWYSIWYGInput.class).setValue(value);
         getChild(UIFormInputIconSelector.class).setSelectedIcon(this.topic.getIcon());
       } else if (isPP) {
-        threadContent.getUIStringInput(FIELD_POSTTITLE_INPUT).setValue(getLabel(FIELD_LABEL_QUOTE) + ": " + this.topic.getTopicName());
+        threadContent.getUIStringInput(FIELD_POSTTITLE_INPUT).setValue(CommonUtils.decodeSpecialCharToHTMLnumber(getTitle(topic.getTopicName())));
         getChild(UIFormInputIconSelector.class).setSelectedIcon(this.topic.getIcon());
       } else {// edit
         editReason.setRendered(true);
-        threadContent.getUIStringInput(FIELD_POSTTITLE_INPUT).setValue(post.getName());
+        threadContent.getUIStringInput(FIELD_POSTTITLE_INPUT).setValue(CommonUtils.decodeSpecialCharToHTMLnumber(post.getName()));
         if (post.getAttachments() != null && post.getAttachments().size() > 0) {
           this.attachments_ = post.getAttachments();
           this.refreshUploadFileList();
@@ -259,10 +248,20 @@ public class UIPostForm extends BaseForumForm implements UIPopupComponent {
       }
     } else {
       if (!isQuote) {// reply
-        threadContent.getUIStringInput(FIELD_POSTTITLE_INPUT).setValue(getLabel(FIELD_LABEL_QUOTE) + ": " + this.topic.getTopicName());
+        threadContent.getUIStringInput(FIELD_POSTTITLE_INPUT).setValue(CommonUtils.decodeSpecialCharToHTMLnumber(getTitle(topic.getTopicName())));
         getChild(UIFormInputIconSelector.class).setSelectedIcon(this.topic.getIcon());
       }
     }
+  }
+
+  private String getTitle(String title) {
+    if (ForumUtils.isEmpty(STR_RE)) {
+      STR_RE = getLabel(FIELD_LABEL_QUOTE) + ": ";
+    }
+    while (title.indexOf(STR_RE.trim()) == 0) {
+      title = title.replaceFirst(STR_RE.trim(), ForumUtils.EMPTY_STR).trim();
+    }
+    return STR_RE + title;
   }
 
   public void activate() throws Exception {
@@ -278,21 +277,21 @@ public class UIPostForm extends BaseForumForm implements UIPopupComponent {
       String postTitle = threadContent.getUIStringInput(FIELD_POSTTITLE_INPUT).getValue();
       String userName = UserHelper.getCurrentUser();
       String message = threadContent.getChild(UIFormWYSIWYGInput.class).getValue();
-      String checksms = ForumTransformHTML.cleanHtmlCode(message, new ArrayList<String>((new ExtendedBBCodeProvider()).getSupportedBBCodes()));
+      String checksms = TransformHTML.cleanHtmlCode(message, new ArrayList<String>((new ExtendedBBCodeProvider()).getSupportedBBCodes()));
       checksms = checksms.replaceAll("&nbsp;", " ");
       t = checksms.trim().length();
-      if (postTitle != null && postTitle.length() <= 3) {
+      if (ForumUtils.isEmpty(postTitle)) {
         k = 0;
       }
-      postTitle = Utils.encodeSpecialCharInTitle(postTitle);
       if (t > 0 && k != 0 && !checksms.equals("null")) {
+        postTitle = CommonUtils.encodeSpecialCharInTitle(postTitle);
         Post post = uiForm.post_;
         post.setName(postTitle);
         post.setMessage(message);
         post.setOwner(userName);
         if (ForumUtils.isEmpty(uiForm.postId)) {
-          post.setCreatedDate(TimeConvertUtils.getInstanceTempCalendar().getTime());
-          post.setModifiedDate(TimeConvertUtils.getInstanceTempCalendar().getTime());
+          post.setCreatedDate(CommonUtils.getGreenwichMeanTime().getTime());
+          post.setModifiedDate(CommonUtils.getGreenwichMeanTime().getTime());
         }
         post.setModifiedBy(userName);
         post.setRemoteAddr(ForumUtils.EMPTY_STR);
@@ -331,39 +330,41 @@ public class UIPostForm extends BaseForumForm implements UIPopupComponent {
         if (forumPortlet.checkForumHasAddPost(uiForm.categoryId, uiForm.forumId, uiForm.topicId)) {
           UIForumInputWithActions threadContent = uiForm.getChildById(FIELD_THREADCONTEN_TAB);
           int t = 0, k = 1;
-          String postTitle = " " + threadContent.getUIStringInput(FIELD_POSTTITLE_INPUT).getValue();
+          String postTitle = threadContent.getUIStringInput(FIELD_POSTTITLE_INPUT).getValue();
+          boolean isAddRe = false;
           int maxText = ForumUtils.MAXTITLE;
-          if (postTitle.length() > maxText) {
-            warning("NameValidator.msg.warning-long-text", new String[] { uiForm.getLabel(FIELD_POSTTITLE_INPUT), String.valueOf(maxText) });
-            uiForm.isDoubleClickSubmit = false;
-            return;
+          if(!ForumUtils.isEmpty(postTitle)) {
+            while (postTitle.indexOf(uiForm.getTitle("").trim()) == 0) {
+              postTitle = postTitle.replaceFirst(STR_RE.trim(), ForumUtils.EMPTY_STR).trim();
+              isAddRe = true;
+            }
+            if (postTitle.length() > maxText) {
+              warning("NameValidator.msg.warning-long-text", new String[] { uiForm.getLabel(FIELD_POSTTITLE_INPUT), String.valueOf(maxText) });
+              uiForm.isDoubleClickSubmit = false;
+              return;
+            }
           }
-          String editReason = threadContent.getUIStringInput(FIELD_EDITREASON_INPUT).getValue();
-          if (!ForumUtils.isEmpty(editReason) && editReason.length() > maxText) {
-            warning("NameValidator.msg.warning-long-text", new String[] { uiForm.getLabel(FIELD_EDITREASON_INPUT), String.valueOf(maxText) });
-            uiForm.isDoubleClickSubmit = false;
-            return;
-          }
-
-          editReason = Utils.encodeSpecialCharInTitle(editReason);
-          String userName = userProfile.getUserId();
           String message = threadContent.getChild(UIFormWYSIWYGInput.class).getValue();
-          String checksms = ForumTransformHTML.cleanHtmlCode(message, new ArrayList<String>((new ExtendedBBCodeProvider()).getSupportedBBCodes()));
-//          message = message.replaceAll("<script", "&lt;script").replaceAll("<link", "&lt;link").replaceAll("</script>", "&lt;/script>");
-//          message = StringUtils.replace(message, "'", "&apos;");
-          message = ForumTransformHTML.fixAddBBcodeAction(message);
-          message = Utils.encodeSpecialCharInContent(message);
-          
+          String checksms = TransformHTML.cleanHtmlCode(message, new ArrayList<String>((new ExtendedBBCodeProvider()).getSupportedBBCodes()));
           checksms = checksms.replaceAll("&nbsp;", " ");
           t = checksms.length();
-          postTitle = postTitle.trim();
-          if (postTitle.trim().length() <= 0) {
+          if (ForumUtils.isEmpty(postTitle)) {
             k = 0;
           }
-          postTitle = Utils.encodeSpecialCharInTitle(postTitle);
-          Post post = uiForm.post_;
-          boolean isPP = false;
           if (t > 0 && k != 0 && !checksms.equals("null")) {
+            String editReason = threadContent.getUIStringInput(FIELD_EDITREASON_INPUT).getValue();
+            if (!ForumUtils.isEmpty(editReason) && editReason.length() > maxText) {
+              warning("NameValidator.msg.warning-long-text", new String[] { uiForm.getLabel(FIELD_EDITREASON_INPUT), String.valueOf(maxText) });
+              uiForm.isDoubleClickSubmit = false;
+              return;
+            }
+            String userName = userProfile.getUserId();
+            editReason = CommonUtils.encodeSpecialCharInTitle(editReason);
+            message = TransformHTML.fixAddBBcodeAction(message);
+            message = CommonUtils.encodeSpecialCharInContent(message);
+            postTitle = CommonUtils.encodeSpecialCharInTitle(postTitle);
+            Post post = uiForm.post_;
+            boolean isPP = false;
             boolean isOffend = false;
             boolean hasTopicMod = false;
             if (!uiForm.isMod()) {
@@ -390,18 +391,18 @@ public class UIPostForm extends BaseForumForm implements UIPopupComponent {
               return;
             }
             // set link
-            String link = ForumUtils.createdForumLink(ForumUtils.TOPIC, uiForm.topicId).replaceFirst("private", "public");
+            String link = ForumUtils.createdForumLink(ForumUtils.TOPIC, uiForm.topicId, false);
             //
             if (uiForm.isQuote || uiForm.isMP)
               post = new Post();
-            post.setName(postTitle);
+            post.setName((isAddRe) ? uiForm.getTitle(postTitle) : postTitle);
             post.setMessage(message);
             post.setOwner(userName);
             post.setCreatedDate(new Date());
             UIFormInputIconSelector uiIconSelector = uiForm.getChild(UIFormInputIconSelector.class);
             post.setIcon(uiIconSelector.getSelectedIcon());
             post.setAttachments(uiForm.getAttachFileList());
-            post.setIsHidden(isOffend);
+            post.setIsWaiting(isOffend);
             post.setLink(link);
             String[] userPrivate = new String[] { "exoUserPri" };
             if (uiForm.isMP) {
@@ -448,6 +449,7 @@ public class UIPostForm extends BaseForumForm implements UIPopupComponent {
                 } catch (PathNotFoundException e) {
                   isParentDelete = true;
                 } catch (Exception ex) {
+                  uiForm.log.warn(String.format("Failed to save post %s", post.getName()), ex);
                 }
                 topicDetail.setIdPostView("lastpost");
               }
@@ -460,22 +462,23 @@ public class UIPostForm extends BaseForumForm implements UIPopupComponent {
                 }
               }
               uiForm.getForumService().updateTopicAccess(forumPortlet.getUserProfile().getUserId(), uiForm.topicId);
-              forumPortlet.getUserProfile().setLastTimeAccessTopic(uiForm.topicId, TimeConvertUtils.getInstanceTempCalendar().getTimeInMillis());
+              forumPortlet.getUserProfile().setLastTimeAccessTopic(uiForm.topicId, CommonUtils.getGreenwichMeanTime().getTimeInMillis());
             } catch (Exception e) {
+              uiForm.log.warn("Failed to save topic", e);
             }
             uiForm.isMP = uiForm.isQuote = false;
             if (isParentDelete) {
-              uiForm.warning("UIPostForm.msg.isParentDelete");
               forumPortlet.cancelAction();
+              uiForm.warning("UIPostForm.msg.isParentDelete");
               return;
             }
             forumPortlet.cancelAction();
             if (isOffend || hasTopicMod) {
               topicDetail.setIdPostView("normal");
               if (isOffend)
-                uiForm.warning("MessagePost.msg.isOffend");
+                uiForm.warning("MessagePost.msg.isOffend", false);
               else {
-                uiForm.warning("MessagePost.msg.isModerate");
+                uiForm.warning("MessagePost.msg.isModerate", false);
               }
             }
             event.getRequestContext().addUIComponentToUpdateByAjax(topicDetailContainer);
@@ -486,7 +489,7 @@ public class UIPostForm extends BaseForumForm implements UIPopupComponent {
               if (t == 0)
                 args = new String[] { uiForm.getLabel(FIELD_POSTTITLE_INPUT) + ", " + uiForm.getLabel(FIELD_MESSAGECONTENT) };
               uiForm.isDoubleClickSubmit = false;
-              uiForm.warning("NameValidator.msg.ShortText", args);
+              uiForm.warning("NameValidator.msg.ShortMessage", args);
             } else if (t == 0) {
               args = new String[] { uiForm.getLabel(FIELD_MESSAGECONTENT) };
               uiForm.isDoubleClickSubmit = false;
@@ -495,14 +498,15 @@ public class UIPostForm extends BaseForumForm implements UIPopupComponent {
           }
         } else {
           forumPortlet.cancelAction();
+          forumPortlet.removeCacheUserProfile();
           UITopicDetail topicDetail = forumPortlet.findFirstComponentOfType(UITopicDetail.class);
           topicDetail.initInfoTopic(uiForm.categoryId, uiForm.forumId, uiForm.topic, 0);
-          uiForm.warning("UIPostForm.msg.no-permission");
+          uiForm.warning("UIPostForm.msg.no-permission", false);
           event.getRequestContext().addUIComponentToUpdateByAjax(forumPortlet);
         }
       } catch (Exception e) {
         uiForm.log.error("Can not save post into this topic, exception: " + e.getMessage(), e);
-        uiForm.warning("UIPostForm.msg.isParentDelete");
+        uiForm.warning("UIPostForm.msg.isParentDelete", false);
         forumPortlet.cancelAction();
       }
     }

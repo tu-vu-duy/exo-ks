@@ -25,7 +25,6 @@ import javax.portlet.ActionResponse;
 import javax.xml.namespace.QName;
 
 import org.exoplatform.container.ExoContainerContext;
-import org.exoplatform.forum.ForumTransformHTML;
 import org.exoplatform.forum.ForumUtils;
 import org.exoplatform.forum.info.ForumParameter;
 import org.exoplatform.forum.info.UIForumQuickReplyPortlet;
@@ -33,6 +32,7 @@ import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.Post;
 import org.exoplatform.forum.service.Topic;
 import org.exoplatform.forum.service.UserProfile;
+import org.exoplatform.ks.common.TransformHTML;
 import org.exoplatform.ks.common.UserHelper;
 import org.exoplatform.ks.common.webui.UIPopupAction;
 import org.exoplatform.ks.common.webui.WebUIUtils;
@@ -41,7 +41,6 @@ import org.exoplatform.services.log.Log;
 import org.exoplatform.web.application.ApplicationMessage;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
-import org.exoplatform.webui.core.UIApplication;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
@@ -72,8 +71,6 @@ public class UIQuickReplyForm extends UIForm {
 
   private String             userName;
 
-  private String             links                  = ForumUtils.EMPTY_STR;
-
   private Topic              topic;
 
   private boolean            isModerator            = false;
@@ -84,11 +81,7 @@ public class UIQuickReplyForm extends UIForm {
     addUIFormInput(new UIFormTextAreaInput(FIELD_MESSAGE_TEXTAREA, FIELD_MESSAGE_TEXTAREA, null));
   }
 
-  private String getLink() {
-    return links;
-  }
-
-  public void setInitForm(String categoryId, String forumId, String topicId, boolean isModerator) throws Exception {
+  public void setInitForm(String categoryId, String forumId, String topicId, boolean isModerator) {
     this.categoryId = categoryId;
     this.forumId = forumId;
     this.topicId = topicId;
@@ -126,12 +119,11 @@ public class UIQuickReplyForm extends UIForm {
           if (quickReply.topic != null)
             hasTopicMod = quickReply.topic.getIsModeratePost();
         }
-        message = ForumTransformHTML.enCodeHTMLContent(message);
+        message = TransformHTML.enCodeHTMLContent(message);
         String remoteAddr = WebUIUtils.getRemoteIP();
         UserProfile userProfile = forumService.getDefaultUserProfile(quickReply.userName, remoteAddr);
         // set link
-        // String link = ForumSessionUtils.getBreadcumbUrl(quickReply.getLink(), quickReply.getId(), "QuickReply", quickReply.topicId).replaceFirst("private", "public");
-        String link = ForumUtils.createdForumLink(ForumUtils.TOPIC, quickReply.topicId).replaceFirst("private", "public");
+        String link = ForumUtils.createdForumLink(ForumUtils.TOPIC, quickReply.topicId, false);
         //
         Topic topic = quickReply.topic;
         Post post = new Post();
@@ -140,7 +132,7 @@ public class UIQuickReplyForm extends UIForm {
         post.setOwner(quickReply.userName);
         post.setRemoteAddr(remoteAddr);
         post.setIcon(topic.getIcon());
-        post.setIsHidden(isOffend);
+        post.setIsWaiting(isOffend);
         post.setIsApproved(!hasTopicMod);
         post.setLink(link);
         try {
@@ -153,20 +145,20 @@ public class UIQuickReplyForm extends UIForm {
             forumService.addWatch(1, path, values, quickReply.userName);
           }
         } catch (PathNotFoundException e) {
-          String[] args = new String[] {};
-          throw new MessageException(new ApplicationMessage("UIPostForm.msg.isParentDelete", args, ApplicationMessage.WARNING));
+          throw new MessageException(new ApplicationMessage("UIPostForm.msg.isParentDelete", null, ApplicationMessage.WARNING));
         }
         textAreaInput.setValue(ForumUtils.EMPTY_STR);
         if (isOffend || hasTopicMod) {
           Object[] args = { ForumUtils.EMPTY_STR };
-          UIApplication uiApp = quickReply.getAncestorOfType(UIApplication.class);
           if (isOffend)
-            uiApp.addMessage(new ApplicationMessage("MessagePost.msg.isOffend", args, ApplicationMessage.WARNING));
+            event.getRequestContext().getUIApplication().addMessage(new ApplicationMessage("MessagePost.msg.isOffend",
+                                                                                           args,
+                                                                                           ApplicationMessage.WARNING));
           else {
-            args = new Object[] {};
-            uiApp.addMessage(new ApplicationMessage("MessagePost.msg.isModerate", args, ApplicationMessage.WARNING));
+            event.getRequestContext().getUIApplication().addMessage(new ApplicationMessage("MessagePost.msg.isModerate",
+                                                                                           null,
+                                                                                           ApplicationMessage.WARNING));
           }
-          event.getRequestContext().addUIComponentToUpdateByAjax(uiApp.getUIPopupMessages());
         } else {
           try {
             ActionResponse actionRes = event.getRequestContext().getResponse();
@@ -191,7 +183,7 @@ public class UIQuickReplyForm extends UIForm {
       String message = quickReply.getUIStringInput(FIELD_MESSAGE_TEXTAREA).getValue();
       String checksms = (message);
       if (checksms != null && checksms.trim().length() > 3) {
-        message = ForumTransformHTML.enCodeHTMLContent(message);
+        message = TransformHTML.enCodeHTMLContent(message);
         Topic topic = quickReply.topic;
         Post post = new Post();
         post.setName(quickReply.getLabel("Re") + topic.getTopicName());

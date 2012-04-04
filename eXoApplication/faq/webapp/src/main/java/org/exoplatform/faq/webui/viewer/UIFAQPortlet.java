@@ -17,13 +17,20 @@
 package org.exoplatform.faq.webui.viewer;
 
 import javax.portlet.PortletMode;
+import javax.portlet.PortletPreferences;
 
+import org.apache.commons.lang.StringUtils;
+import org.exoplatform.faq.service.FAQService;
+import org.exoplatform.faq.service.Utils;
+import org.exoplatform.faq.webui.FAQUtils;
 import org.exoplatform.faq.webui.popup.UIFAQSettingForm;
+import org.exoplatform.social.core.space.SpaceUtils;
+import org.exoplatform.social.core.space.model.Space;
+import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.webui.application.WebuiApplication;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.application.portlet.PortletRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
-import org.exoplatform.webui.core.UIPopupMessages;
 import org.exoplatform.webui.core.UIPortletApplication;
 import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
 
@@ -39,6 +46,8 @@ import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
     template = "app:/templates/faq/webui/UIFAQPortlet.gtmpl"
 )
 public class UIFAQPortlet extends UIPortletApplication {
+  private final static String SLASH     = "/".intern();
+
   public UIFAQPortlet() throws Exception {
     addChild(UIViewer.class, null, null);
   }
@@ -46,35 +55,42 @@ public class UIFAQPortlet extends UIPortletApplication {
   public void processRender(WebuiApplication app, WebuiRequestContext context) throws Exception {
     PortletRequestContext portletReqContext = (PortletRequestContext) context;
     if (portletReqContext.getApplicationMode() == PortletMode.VIEW) {
-      if (getChild(UIViewer.class) == null) {
-        if (getChild(UIFAQSettingForm.class) != null) {
-          removeChild(UIFAQSettingForm.class);
-        }
-        if (getChild(UIViewer.class) == null) {
-          addChild(UIViewer.class, null, null);
-        }
+      removeChild(UIFAQSettingForm.class);
+      UIViewer uiViewer = getChild(UIViewer.class);
+      if (uiViewer == null) {
+        uiViewer = addChild(UIViewer.class, null, null).setRendered(true);
+      }
+      if (FAQUtils.isFieldEmpty(context.getRequestParameter(OBJECTID)) && 
+                       !context.getParentAppRequestContext().useAjax() && StringUtils.EMPTY.equals(uiViewer.getPath())) {
+        uiViewer.setPath(getPathOfCateSpace());
       }
     } else if (portletReqContext.getApplicationMode() == PortletMode.EDIT) {
-      try {
-        if (getChild(UIViewer.class) != null) {
-          removeChild(UIViewer.class);
-        }
-        if (getChild(UIFAQSettingForm.class) == null) {
-          addChild(UIFAQSettingForm.class, null, null);
-        }
-      } catch (Exception e) {
-        log.error("Child must exist:", e);
+      removeChild(UIViewer.class);
+      if (getChild(UIFAQSettingForm.class) == null) {
+        UIFAQSettingForm settingForm = addChild(UIFAQSettingForm.class, null, null);
+        settingForm.defaulValue();
       }
     }
     super.processRender(app, context);
   }
-
-  public void renderPopupMessages() throws Exception {
-    UIPopupMessages popupMess = getUIPopupMessages();
-    if (popupMess == null)
-      return;
-    WebuiRequestContext context = WebuiRequestContext.getCurrentInstance();
-    popupMess.processRender(context);
+  
+  public String getPathOfCateSpace() {
+    try {
+      PortletRequestContext pcontext = (PortletRequestContext) WebuiRequestContext.getCurrentInstance();
+      PortletPreferences pref = pcontext.getRequest().getPreferences();
+      String url;
+      if ((url = pref.getValue(SpaceUtils.SPACE_URL, null)) != null) {
+        SpaceService sService = (SpaceService) getApplicationComponent(SpaceService.class);
+        FAQService fService = (FAQService) getApplicationComponent(FAQService.class);
+        Space space = sService.getSpaceByUrl(url);
+        String pathOfCateSpace = Utils.CATEGORY_HOME + SLASH + Utils.CATE_SPACE_ID_PREFIX + space.getPrettyName();
+        if (fService.isExisting(pathOfCateSpace)) {
+          return pathOfCateSpace;
+        }
+      }
+      return Utils.CATEGORY_HOME;
+    } catch (Exception e) {
+      return Utils.CATEGORY_HOME;
+    }    
   }
-
 }

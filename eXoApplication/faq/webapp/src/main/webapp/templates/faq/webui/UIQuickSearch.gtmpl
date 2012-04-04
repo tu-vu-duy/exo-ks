@@ -1,22 +1,20 @@
 <% 
-	import org.exoplatform.web.application.JavascriptManager;
-	def rcontext = _ctx.getRequestContext() ;
-	JavascriptManager jsmanager = rcontext.getJavascriptManager();
-	jsmanager.addJavascript("eXo.faq.UIAnswersPortlet.submitSearch('"+uiform.id+"');") ;
+  import org.exoplatform.web.application.JavascriptManager;
+  def rcontext = _ctx.getRequestContext() ;
+  JavascriptManager jsmanager = rcontext.getJavascriptManager();
+  jsmanager.addJavascript("eXo.faq.UIAnswersPortlet.submitSearch('"+uiform.id+"');") ;
 %>
 
-<div class="UIQuickSeach">
+<div class="UIQuickSeach ClearFix">
   <% uiform.begin() %>  
-  <div class="UISearchForm">
-		<div style="float:left;"><%= _ctx.appRes("UIQuickSeach.label.search"); %></div>
-		<div class="Input" style="float:left; !width:165px;">
-			<%  
-				uiform.renderChildren() ;
-			%>
-		</div>
-		<a style="float:left;" class="SearchIcon ActionSearch" title="<%= _ctx.appRes("UIQuickSeach.title.search"); %>" href="<%=uicomponent.event("Search");%>"><span></span></a>
-		<a style="float:left;" class="AdvancedSearch" title="<%= _ctx.appRes("UIQuickSeach.title.advance-search"); %>" href="<%=uicomponent.event("AdvancedSearch");%>"><span></span></a>
-		<div style="clear:left;"><span></span></div>
-	</div>
+    <div class="AdvancedSearch" title="<%= _ctx.appRes("UIQuickSeach.title.advance-search"); %>" onclick="<%=uicomponent.event("AdvancedSearch");%>"><span></span></div>
+    <div class="SearchIcon ActionSearch" title="<%= _ctx.appRes("UIQuickSeach.title.search"); %>" onclick="<%=uicomponent.event("Search");%>"><span></span></div>
+    <div class="Input FR">
+      <%  
+        uiform.renderChild(uiform.FIELD_SEARCHVALUE) ;
+      %>
+    </div>
+    <div class="FR"><label for="<%=uiform.FIELD_SEARCHVALUE%>"><%= _ctx.appRes("UIQuickSeach.label.search"); %></label></div>
+
   <%uiform.end()%>
 </div>

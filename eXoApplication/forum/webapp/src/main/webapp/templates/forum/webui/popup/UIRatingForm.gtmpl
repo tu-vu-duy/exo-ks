@@ -6,7 +6,7 @@
 <div class="UIRatingForm">
 	<div class="VoteFormContainer">
 		<div class="RatingInfoContainer">
-			<div class="OptionsContainer">
+			<div class="OptionsContainer ClearFix">
 				<%	
 				int i = 0; 
 				while(i < 5) {
@@ -17,29 +17,13 @@
 				<div class="NormalVote" onclick="$onclick" title="$title"><span></span></div>
 			 <% i = i + 1;
 				 } %>
-				<div style="clear:left;"><span></span></div>
+				
 			</div>
 		</div>
 			
-		<div class="UIAction"> 								
-			<table class="ActionContainer">											 
-				<tr>
-					<td align="center">
-						<div onclick="<%=uicomponent.event("Cancel")%>" class="ActionButton LightBlueStyle">
-							<div class="ButtonLeft">
-								<div class="ButtonRight">
-									<div class="ButtonMiddle">
-										<a href="javascript:void(0);">
-											<%=_ctx.appRes("UIRatingForm.action.Cancel"); %>
-										</a>
-									</div>
-								</div>
-							</div>								
-						</div>
-					</td>
-				</tr>
-			</table>
-		</div>
+		<div class="UIAction">
+      <a href="javascript:void(0);" onclick="<%=uicomponent.event("Cancel")%>" class="ActionButton LightBlueStyle"><%=_ctx.appRes("UIRatingForm.action.Cancel"); %></a>
+    </div>	
 	</div>
 </div>
 <%uiform.end()%>

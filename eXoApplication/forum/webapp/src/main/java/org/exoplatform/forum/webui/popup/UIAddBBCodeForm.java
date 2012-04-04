@@ -35,9 +35,9 @@ import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.event.Event.Phase;
-import org.exoplatform.webui.form.UIFormCheckBoxInput;
 import org.exoplatform.webui.form.UIFormStringInput;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
+import org.exoplatform.webui.form.input.UICheckBoxInput;
 import org.exoplatform.webui.form.validator.MandatoryValidator;
 /**
  * Created by The eXo Platform SAS
@@ -92,13 +92,13 @@ public class UIAddBBCodeForm extends BaseForumForm implements UIPopupComponent {
     UIFormTextAreaInput description = new UIFormTextAreaInput(FIELD_DESCRIPTION_TEXTARE, FIELD_DESCRIPTION_TEXTARE, null);
     UIFormTextAreaInput example = new UIFormTextAreaInput(FIELD_EXAMPLE_TEXTARE, FIELD_EXAMPLE_TEXTARE, null);
     example.addValidator(MandatoryValidator.class);
-    UIFormCheckBoxInput<Boolean> isOption = new UIFormCheckBoxInput<Boolean>(FIELD_USEOPTION_CHECKBOX, FIELD_USEOPTION_CHECKBOX, false);
+    UICheckBoxInput isOption = new UICheckBoxInput(FIELD_USEOPTION_CHECKBOX, FIELD_USEOPTION_CHECKBOX, false);
     addUIFormInput(tagNameInput);
     addUIFormInput(replacementInput);
     addUIFormInput(description);
     addUIFormInput(example);
     addUIFormInput(isOption);
-    this.setActions(new String[] { "Save", "Cancel" });
+    this.setActions(new String[] { "Save", "ResetField", "Cancel" });
   }
 
   public void activate() throws Exception {
@@ -107,8 +107,7 @@ public class UIAddBBCodeForm extends BaseForumForm implements UIPopupComponent {
   public void deActivate() throws Exception {
   }
 
-  @SuppressWarnings("unused")
-  private boolean getPriview() {
+  protected boolean getPriview() {
     return isPriview;
   }
 
@@ -118,11 +117,11 @@ public class UIAddBBCodeForm extends BaseForumForm implements UIPopupComponent {
     UIFormTextAreaInput replacement = this.getUIFormTextAreaInput(FIELD_REPLACEMENT_TEXTARE);
     replacement.setValue(bbcode.getReplacement());
     if (bbcode.getTagName().equalsIgnoreCase("list")) {
-      replacement.setEditable(false);
+      replacement.setReadOnly(true);
     }
     this.getUIFormTextAreaInput(FIELD_DESCRIPTION_TEXTARE).setValue(bbcode.getDescription());
     this.getUIFormTextAreaInput(FIELD_EXAMPLE_TEXTARE).setValue(bbcode.getExample());
-    this.getUIFormCheckBoxInput(FIELD_USEOPTION_CHECKBOX).setChecked(bbcode.isOption());
+    this.getUICheckBoxInput(FIELD_USEOPTION_CHECKBOX).setChecked(bbcode.isOption());
   }
 
   private void setBBcode() throws Exception {
@@ -130,7 +129,7 @@ public class UIAddBBCodeForm extends BaseForumForm implements UIPopupComponent {
     String replacement = getUIFormTextAreaInput(FIELD_REPLACEMENT_TEXTARE).getValue();
     String description = getUIFormTextAreaInput(FIELD_DESCRIPTION_TEXTARE).getValue();
     String example = getUIFormTextAreaInput(FIELD_EXAMPLE_TEXTARE).getValue();
-    boolean isOption = (Boolean) getUIFormCheckBoxInput(FIELD_USEOPTION_CHECKBOX).getValue();
+    boolean isOption = (Boolean) getUICheckBoxInput(FIELD_USEOPTION_CHECKBOX).getValue();
     if (ForumUtils.isEmpty(description))
       description = " ";
     bbcode.setTagName(tagName.toUpperCase());
@@ -143,8 +142,7 @@ public class UIAddBBCodeForm extends BaseForumForm implements UIPopupComponent {
     this.example = example;
   }
   
-  @SuppressWarnings("unused")
-  private String getReplaceByBBCode() throws Exception {
+  protected String getReplaceByBBCode() throws Exception {
     return (new BBCodeRenderer()).renderExample(example, bbcode);
   }
 
@@ -156,6 +154,9 @@ public class UIAddBBCodeForm extends BaseForumForm implements UIPopupComponent {
       try {
         uiForm.listBBCode.addAll(uiForm.bbCodeService.getAll());
       } catch (Exception e) {
+        if (log.isDebugEnabled()){
+          log.debug("Failed to get all BB codes", e);
+        }
       }
       for (BBCode code : uiForm.listBBCode) {
         if (uiForm.bbcode.getTagName().equals(code.getTagName()) && (uiForm.bbcode.isOption() == code.isOption()) && !uiForm.bbcode.getId().equals(code.getId())) {
@@ -170,15 +171,14 @@ public class UIAddBBCodeForm extends BaseForumForm implements UIPopupComponent {
       } catch (Exception e) {
         log.error("Can not save BBCode has name: " + uiForm.bbcode.getTagName(), e);
       }
-      uiForm.cancelChildPopupAction();
       try {
         UIBBCodeManagerForm codeManagerForm = uiForm.getAncestorOfType(UIForumPortlet.class).findFirstComponentOfType(UIBBCodeManagerForm.class);
         codeManagerForm.loadBBCodes();
-        codeManagerForm.initCheckBoxActiveBBCode();
         event.getRequestContext().addUIComponentToUpdateByAjax(codeManagerForm);
       } catch (Exception e) {
-        log.error("Can not update from: UIBBCodeManagerForm");
+        log.error("Can not update from: UIBBCodeManagerForm", e);
       }
+      uiForm.cancelChildPopupAction();
     }
   }
 
@@ -195,7 +195,7 @@ public class UIAddBBCodeForm extends BaseForumForm implements UIPopupComponent {
         uiForm.getUIStringInput(FIELD_TAGNAME_INPUT).setValue(uiForm.bbcode.getTagName());
         uiForm.getUIFormTextAreaInput(FIELD_REPLACEMENT_TEXTARE).setValue(uiForm.bbcode.getReplacement());
         uiForm.getUIFormTextAreaInput(FIELD_DESCRIPTION_TEXTARE).setValue(uiForm.bbcode.getDescription());
-        uiForm.getUIFormCheckBoxInput(FIELD_USEOPTION_CHECKBOX).setChecked(uiForm.bbcode.isOption());
+        uiForm.getUICheckBoxInput(FIELD_USEOPTION_CHECKBOX).setChecked(uiForm.bbcode.isOption());
       }
       event.getRequestContext().addUIComponentToUpdateByAjax(uiForm);
     }

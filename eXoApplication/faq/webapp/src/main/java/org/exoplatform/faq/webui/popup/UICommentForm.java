@@ -32,7 +32,7 @@ import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.MessageBuilder;
 import org.exoplatform.forum.service.Post;
 import org.exoplatform.forum.service.Topic;
-import org.exoplatform.ks.common.Utils;
+import org.exoplatform.ks.common.CommonUtils;
 import org.exoplatform.ks.common.webui.BaseEventListener;
 import org.exoplatform.ks.common.webui.UIPopupAction;
 import org.exoplatform.ks.common.webui.WebUIUtils;
@@ -79,13 +79,11 @@ public class UICommentForm extends BaseUIFAQForm implements UIPopupComponent {
 
   private FAQSetting   faqSetting_;
 
-  private String       link_           = "";
-
   private RenderHelper renderHelper    = new RenderHelper();
 
   public UICommentForm() throws Exception {
     currentUser_ = FAQUtils.getCurrentUser();
-    this.addChild((new UIFormStringInput(TITLE_USERNAME, TITLE_USERNAME, currentUser_)).setEditable(false));
+    addUIFormInput((new UIFormStringInput(TITLE_USERNAME, TITLE_USERNAME, currentUser_)).setReadOnly(true));
     UIFormWYSIWYGInput commentContent = new UIFormWYSIWYGInput(COMMENT_CONTENT, COMMENT_CONTENT, "");
     commentContent.setFCKConfig(WebUIUtils.getFCKConfig());
     commentContent.setToolBarName("Basic");
@@ -96,8 +94,7 @@ public class UICommentForm extends BaseUIFAQForm implements UIPopupComponent {
     return questionContent;
   }
 
-  @SuppressWarnings("unused")
-  private String getQuestionDetail() {
+  protected String getQuestionDetail() {
     Question question = new Question();
     question.setDetail(questionDetail);
     return renderHelper.renderQuestion(question);
@@ -135,14 +132,6 @@ public class UICommentForm extends BaseUIFAQForm implements UIPopupComponent {
     }
   }
 
-  public void setLink(String link) {
-    this.link_ = link;
-  }
-
-  public String getLink() {
-    return link_;
-  }
-
   static public class CancelActionListener extends EventListener<UICommentForm> {
     public void execute(Event<UICommentForm> event) throws Exception {
       UICommentForm commentForm = event.getSource();
@@ -159,7 +148,7 @@ public class UICommentForm extends BaseUIFAQForm implements UIPopupComponent {
       UIAnswersPortlet portlet = commentForm.getAncestorOfType(UIAnswersPortlet.class);
       UIPopupAction popupAction = portlet.getChild(UIPopupAction.class);
       UIQuestions questions = portlet.getChild(UIAnswersContainer.class).getChild(UIQuestions.class);
-      if (Utils.isEmpty(comment) || !ValidatorDataInput.fckContentIsNotEmpty(comment)) {
+      if (CommonUtils.isEmpty(comment) || !ValidatorDataInput.fckContentIsNotEmpty(comment)) {
         warning("UICommentForm.msg.comment-is-null");
         return;
       }
@@ -167,12 +156,12 @@ public class UICommentForm extends BaseUIFAQForm implements UIPopupComponent {
         warning("UIQuestions.msg.comment-id-deleted");
         return;
       }
-      comment = Utils.encodeSpecialCharInContent(comment);
+      comment = CommonUtils.encodeSpecialCharInContent(comment);
       try {
         // Create link by Vu Duy Tu.
-        String link = FAQUtils.getLink(commentForm.getLink(), commentForm.getId(), "UICommentForm", "Cancel", "ViewQuestion", "OBJECTID");
-        link = link.replaceFirst("OBJECTID", commentForm.question_.getId()).replace("private", "public");
-        commentForm.question_.setLink(link);
+        if(FAQUtils.isFieldEmpty(commentForm.question_.getLink())) {
+          commentForm.question_.setLink(FAQUtils.getQuestionURI(commentForm.question_.getId(), false));
+        }
         if (commentForm.comment != null) {
           commentForm.comment.setNew(false);
         } else {
@@ -197,7 +186,7 @@ public class UICommentForm extends BaseUIFAQForm implements UIPopupComponent {
               post.setIcon("ViewIcon");
               post.setName("Re: " + commentForm.question_.getQuestion());
               post.setMessage(comment);
-              post.setLink(linkForum);
+              post.setLink(linkForum+"/"+postId);
               post.setIsApproved(!topic.getIsModeratePost());
               post.setRemoteAddr(remoteAddr);
               try {
@@ -217,7 +206,7 @@ public class UICommentForm extends BaseUIFAQForm implements UIPopupComponent {
                   post.setIcon("ViewIcon");
                   post.setName("Re: " + commentForm.question_.getQuestion());
                   commentForm.comment.setPostId(post.getId());
-                  post.setLink(linkForum);
+                  post.setLink(linkForum+"/"+postId);
                   post.setRemoteAddr(remoteAddr);
                 } else {
                   post.setModifiedBy(commentForm.currentUser_);
@@ -235,9 +224,9 @@ public class UICommentForm extends BaseUIFAQForm implements UIPopupComponent {
         String language = "";
         if (!commentForm.languageSelected.equals(commentForm.question_.getLanguage()))
           language = commentForm.languageSelected;
-        String currentUser = FAQUtils.getCurrentUser();
+        String currentUser = FAQUtils.getCurrentUser() ;
         commentForm.comment.setCommentBy(currentUser);
-        commentForm.comment.setFullName(FAQUtils.getFullName(currentUser));
+        commentForm.comment.setFullName(FAQUtils.getFullName(null)) ;
         commentForm.getFAQService().saveComment(commentForm.question_.getPath(), commentForm.comment, language);
         if (!commentForm.languageSelected.equals(commentForm.question_.getLanguage())) {
           try {
@@ -250,7 +239,7 @@ public class UICommentForm extends BaseUIFAQForm implements UIPopupComponent {
         }
       } catch (Exception e) {
         event.getSource().log.error("Fail to save action: ", e);
-        warning("UIQuestions.msg.category-id-deleted");
+        warning("UIQuestions.msg.category-id-deleted", false);
       }
       // questions.setDefaultLanguage() ;
       event.getRequestContext().addUIComponentToUpdateByAjax(questions);

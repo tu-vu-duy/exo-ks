@@ -42,6 +42,7 @@ function getProduct(version) {
   product.addDependencies(ks.webuiExt);
    
   // KS extension
+  product.addDependencies(ks.eXoApplication.upgrade);
   product.addDependencies(ks.component.common);
   product.addDependencies(ks.component.rendering);
   product.addDependencies(ks.component.bbcode);
@@ -52,11 +53,14 @@ function getProduct(version) {
   product.addDependencies(ks.eXoApplication.poll);
   product.addDependencies(ks.web.ksResources);  
   product.addDependencies(ks.extension.webapp);
+  product.addDependencies(ks.commons.extension);
 
   // KS demo
   product.addDependencies(ks.demo.portal);
   product.addDependencies(ks.demo.cometd);
   product.addDependencies(ks.demo.rest);
+  
+  product.addDependencies(new Project("org.exoplatform.commons", "exo.platform.commons.component", "jar", "${org.exoplatform.commons.version}"));
   
   product.addServerPatch("tomcat", ks.server.tomcat.patch) ;
   //product.addServerPatch("jboss",  ks.server.jboss.patch) ;

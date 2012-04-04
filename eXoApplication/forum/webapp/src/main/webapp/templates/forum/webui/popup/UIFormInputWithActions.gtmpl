@@ -49,7 +49,7 @@
 												    </td>
 												    <td class="FieldComponent" style="padding:2px 0px 3px 0px;">
 												    	<div>
-																<img src="<%=uicomponent.getAvatarUrl()%>" width="70px" style="margin:5px;" alt=""/>
+																<img src="<%=uicomponent.getAvatarUrl()%>" width="70px" style="margin:5px;" alt="<%=_ctx.appRes("UIForumUserSettingForm.label.Avatar")%>"/>
 															</div>
 															<div style="text-align:left">
 																<a href="<%=uiform.event("Attachment")%>" style="color:blue;">
@@ -90,29 +90,13 @@
 		</div>	
 	</div>
 	<!-- =============================================== Action of this form ====================================================== -->
-	<div class="UIAction"> 
-		<table class="ActionContainer">
-			<tr>
-				<td align="center">
-				<% for(action in uiform.getActions()) { 
+	<div class="UIAction">
+  <% for(action in uiform.getActions()) { 
 					 String actionLabel = _ctx.appRes(uiform.getName() + ".action." + action); 
 					 String link = uiform.event(action) ;
 				%>
-						<div onclick="$link" class="ActionButton LightBlueStyle">
-							<div class="ButtonLeft">
-								<div class="ButtonRight">
-									<div class="ButtonMiddle">
-										<a href="javascript:void(0);">
-											$actionLabel
-										</a>
-									</div>
-								</div>
-							</div>
-						</div>
-					<%}%>
-					</td>
-				</tr>
-	 		</table> 
-		</div>		
+      <a href="javascript:void(0);" onclick="$link" class="ActionButton LightBlueStyle">$actionLabel</a>
+      <%}%>
+    </div>
 	<%uiform.end()%>
 </div>

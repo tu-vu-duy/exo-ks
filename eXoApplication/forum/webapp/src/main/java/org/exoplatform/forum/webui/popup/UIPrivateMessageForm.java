@@ -25,8 +25,8 @@ import org.exoplatform.forum.service.ForumPrivateMessage;
 import org.exoplatform.forum.service.UserProfile;
 import org.exoplatform.forum.webui.BaseForumForm;
 import org.exoplatform.forum.webui.UIForumPortlet;
+import org.exoplatform.ks.common.CommonUtils;
 import org.exoplatform.ks.common.UserHelper;
-import org.exoplatform.ks.common.Utils;
 import org.exoplatform.ks.common.webui.UIPopupAction;
 import org.exoplatform.ks.common.webui.UIPopupContainer;
 import org.exoplatform.ks.common.webui.UISelector;
@@ -40,12 +40,12 @@ import org.exoplatform.webui.core.UIPopupWindow;
 import org.exoplatform.webui.core.UITree;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.event.Event;
-import org.exoplatform.webui.event.Event.Phase;
 import org.exoplatform.webui.event.EventListener;
+import org.exoplatform.webui.event.Event.Phase;
 import org.exoplatform.webui.form.UIFormInputWithActions;
-import org.exoplatform.webui.form.UIFormInputWithActions.ActionData;
 import org.exoplatform.webui.form.UIFormStringInput;
 import org.exoplatform.webui.form.UIFormTextAreaInput;
+import org.exoplatform.webui.form.UIFormInputWithActions.ActionData;
 import org.exoplatform.webui.form.validator.MandatoryValidator;
 import org.exoplatform.webui.form.wysiwyg.UIFormWYSIWYGInput;
 import org.exoplatform.webui.organization.account.UIUserSelector;
@@ -169,8 +169,7 @@ public class UIPrivateMessageForm extends BaseForumForm implements UIPopupCompon
     return s;
   }
 
-  @SuppressWarnings("unused")
-  private int getIsSelected() {
+  protected int getIsSelected() {
     return this.id;
   }
 
@@ -209,7 +208,7 @@ public class UIPrivateMessageForm extends BaseForumForm implements UIPopupCompon
         messageForm.warning("NameValidator.msg.warning-long-text", new String[] { messageForm.getLabel(FIELD_MAILTITLE_INPUT), String.valueOf(maxText) });
         return;
       }
-      mailTitle = Utils.encodeSpecialCharInTitle(mailTitle);
+      mailTitle = CommonUtils.encodeSpecialCharInTitle(mailTitle);
       UIFormWYSIWYGInput formWYSIWYGInput = MessageTab.getChild(UIFormWYSIWYGInput.class);
       String message = formWYSIWYGInput.getValue();
       if (!ForumUtils.isEmpty(message)) {
@@ -221,11 +220,12 @@ public class UIPrivateMessageForm extends BaseForumForm implements UIPopupCompon
         try {
           messageForm.getForumService().savePrivateMessage(privateMessage);
         } catch (Exception e) {
+          messageForm.log.warn("Failed to save private message", e);
         }
         areaInput.setValue(ForumUtils.EMPTY_STR);
         stringInput.setValue(ForumUtils.EMPTY_STR);
         formWYSIWYGInput.setValue(ForumUtils.EMPTY_STR);
-        messageForm.info("UIPrivateMessageForm.msg.sent-successfully");
+        messageForm.info("UIPrivateMessageForm.msg.sent-successfully", false);
         if (messageForm.fullMessage) {
           messageForm.id = 1;
           event.getRequestContext().addUIComponentToUpdateByAjax(messageForm.getParent());
@@ -272,21 +272,17 @@ public class UIPrivateMessageForm extends BaseForumForm implements UIPopupCompon
     UIFormWYSIWYGInput message = MessageTab.getChild(UIFormWYSIWYGInput.class);
     String content = privateMessage.getMessage();
     String label = this.getLabel(FIELD_REPLY_LABEL);
-    String title = privateMessage.getName();
+    String title = CommonUtils.decodeSpecialCharToHTMLnumber(privateMessage.getName());
+    if (title.indexOf(label) < 0) {
+      title = new StringBuffer(label).append(": ").append(title).toString();
+    }
     if (isReply) {
       UIFormTextAreaInput areaInput = this.getUIFormTextAreaInput(FIELD_SENDTO_TEXTAREA);
       areaInput.setValue(privateMessage.getFrom());
-      if (title.indexOf(label) < 0) {
-        title = label + ": " + title;
-      }
       stringInput.setValue(title);
-      content = "<br/><br/><br/><div style=\"padding: 5px; border-left:solid 2px blue;\">" + content + "</div>";
-      message.setValue(content);
+      content = new StringBuffer("<br/><br/><br/><div style=\"padding: 5px; border-left:solid 2px blue;\">").append(content).append("</div>").toString();
     } else {
       label = this.getLabel(FIELD_FORWARD_LABEL);
-      if (title.indexOf(label) < 0) {
-        title = label + ": " + title;
-      }
       stringInput.setValue(title);
     }
     message.setValue(content);

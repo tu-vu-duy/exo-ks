@@ -41,8 +41,8 @@ import org.exoplatform.services.log.Log;
  * A plugin to initialize FAQ data from xml export. By default the data will be imported to root category only if it does not already exist
  * <value-params> are : 
  * <ul>
- * <li><b>location</b> : configuration url for the data to import</li>
- * <li><b>forceXML</b> (optional) : indicates if  XML data should override existing data</li>
+ * <li><strong>location</strong> : configuration url for the data to import</li>
+ * <li><strong>forceXML</strong> (optional) : indicates if  XML data should override existing data</li>
  * </ul>
  */
 @Managed
@@ -133,7 +133,6 @@ public class InitialDataPlugin extends ManagedPlugin {
       log.error("The plugin " + getName() + " failed to initialize data " + e);
       throw new RuntimeException(e.getCause());
     }
-
   }
 
   private String readCategoryFromZipEntry(ConfigurationManager configurationService) throws Exception {
@@ -163,8 +162,10 @@ public class InitialDataPlugin extends ManagedPlugin {
     if (inputStream != null) {
       try {
         inputStream.close();
-      } catch (Throwable t) {
-        ;// ignore
+      } catch (IOException e) {
+        if (log.isDebugEnabled()) {
+          log.debug("Can not close input stream", e);
+        }
       }
     }
   }
@@ -174,7 +175,7 @@ public class InitialDataPlugin extends ManagedPlugin {
    * @param configurationService
    * @return
    */
-  private String readCategoryFromXml(ConfigurationManager configurationService) throws Exception, UnsupportedEncodingException, IOException {
+  protected String readCategoryFromXml(ConfigurationManager configurationService) throws Exception, UnsupportedEncodingException, IOException {
     InputStream inputStream = null;
     try {
       String importedCategoryId = null;
@@ -183,12 +184,11 @@ public class InitialDataPlugin extends ManagedPlugin {
       boolean keepReading = true;
       StringBuffer sbuf = new StringBuffer();
       byte[] buf = new byte[1024];
-      int len;
 
       String patternStr = "name=\"(\\S*)\""; // match stuf like sv:name="CategoryXYZ" and captures CategoryXYZ
       Pattern pattern = Pattern.compile(patternStr);
 
-      while (((len = inputStream.read(buf)) > 0) && keepReading) {
+      while ((inputStream.read(buf) > 0) && keepReading) {
         sbuf.append(new String(buf, "UTF-8"));
 
         String content = sbuf.substring(0);
@@ -201,18 +201,16 @@ public class InitialDataPlugin extends ManagedPlugin {
       return importedCategoryId;
     } finally {
       safeClose(inputStream);
-
     }
   }
 
-  private void createCategory(FAQService service, String categoryName) throws Exception {
+  protected void createCategory(FAQService service, String categoryName) throws Exception {
     Category categ = new Category();
     categ.setCreatedDate(new Date());
     categ.setName(categoryName);
     categ.setModerators(new String[0]);
     categ.setIndex(11L);
     service.saveCategory(Utils.CATEGORY_HOME, categ, true);
-
   }
 
   boolean isZip(String fileName) {
@@ -229,5 +227,4 @@ public class InitialDataPlugin extends ManagedPlugin {
   public String toString() {
     return getName() + " (forceXML=" + forceXML + ",location=" + location + ")";
   }
-
 }

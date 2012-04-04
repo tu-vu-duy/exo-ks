@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.exoplaform.org/xml/ns/kernel_1_0.xsd http://www.exoplaform.org/xml/ns/kernel_1_0.xsd"
-  xmlns="http://www.exoplaform.org/xml/ns/kernel_1_0.xsd">
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd http://www.exoplatform.org/xml/ns/kernel_1_2.xsd"
+  xmlns="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd">
   <external-component-plugins>
     <!-- The full qualified name of the PortalContainerConfig -->
     <target-component>org.exoplatform.container.definition.PortalContainerConfig</target-component>
@@ -62,9 +62,6 @@
                   No wsrp in beta02 <value> <string>wsrp-producer</string> </value>
                 -->
                 <value>
-                  <string>cometd-ksdemo</string>
-                </value>
-                <value>
                   <string>ksResources</string>
                 </value>
                 <value>
@@ -77,13 +74,16 @@
                   <string>poll</string>
                 </value>
                 <value>
-                  <string>wiki</string>
-                </value>
-                <value>
                   <string>ks</string>
                 </value>
                 <value>
                   <string>ksdemo</string>
+                </value>
+                <value>
+                  <string>commons-extension</string>
+                </value>
+                <value>
+                  <string>cometd-ksdemo</string>
                 </value>
                 <value>
                   <string>fck</string>

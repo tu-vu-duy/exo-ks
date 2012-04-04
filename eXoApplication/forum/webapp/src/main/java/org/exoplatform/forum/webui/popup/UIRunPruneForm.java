@@ -81,8 +81,8 @@ public class UIRunPruneForm extends BaseForumForm implements UIPopupComponent {
     public void execute(Event<UIRunPruneForm> event) throws Exception {
       UIRunPruneForm uiform = event.getSource();
       uiform.getForumService().runPrune(uiform.pruneSetting);
-      uiform.cancelChildPopupAction();
       event.getRequestContext().addUIComponentToUpdateByAjax(uiform.getAncestorOfType(UIForumPortlet.class));
+      uiform.cancelChildPopupAction();
     }
   }
 }

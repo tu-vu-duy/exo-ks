@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.exoplatform.ks</groupId>
     <artifactId>exo.ks.packaging</artifactId>
-    <version>2.3.0-SNAPSHOT</version>
+    <version>2.2.9-SNAPSHOT</version>
   </parent>
   <artifactId>exo.ks.packaging.assembly</artifactId>
   <packaging>pom</packaging>
@@ -160,6 +160,16 @@
     </dependency>
     <dependency>
       <groupId>org.exoplatform.commons</groupId>
+      <artifactId>exo.platform.commons.component.upgrade</artifactId>
+      <version>${org.exoplatform.commons.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.exoplatform.commons</groupId>
+      <artifactId>exo.platform.commons.component.product</artifactId>
+      <version>${org.exoplatform.commons.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.exoplatform.commons</groupId>
       <artifactId>exo.platform.commons.comet.service</artifactId>
       <version>${org.exoplatform.commons.version}</version>
     </dependency>
@@ -182,6 +192,12 @@
     <dependency>
       <groupId>org.exoplatform.commons</groupId>
       <artifactId>exo.platform.commons.fck</artifactId>
+      <version>${org.exoplatform.commons.version}</version>
+      <type>war</type>
+    </dependency>
+    <dependency>
+      <groupId>org.exoplatform.commons</groupId>
+      <artifactId>exo.platform.commons.extension.webapp</artifactId>
       <version>${org.exoplatform.commons.version}</version>
       <type>war</type>
     </dependency>
@@ -286,11 +302,6 @@
     </dependency>
     <dependency>
       <groupId>org.exoplatform.portal</groupId>
-      <artifactId>gatein.portal.component.wsrp</artifactId>
-      <version>${org.exoplatform.portal.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.exoplatform.portal</groupId>
       <artifactId>exo.portal.starter.war</artifactId>
       <version>${org.exoplatform.portal.version}</version>
       <type>war</type>
@@ -300,6 +311,26 @@
       <groupId>org.exoplatform.tool</groupId>
       <artifactId>exo.tool.framework.junit</artifactId>
       <version>${exo.tool.framework.junit.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jsecurity</groupId>
+      <artifactId>jsecurity</artifactId>
+      <version>${org.jsecurity.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.ehcache</groupId>
+      <artifactId>ehcache</artifactId>
+      <version>${ehcache.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>de.odysseus.juel</groupId>
+      <artifactId>juel-api</artifactId>
+      <version>${juel.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>de.odysseus.juel</groupId>
+      <artifactId>juel-impl</artifactId>
+      <version>${juel.version}</version>
     </dependency>
     <dependency>
       <groupId>commons-lang</groupId>
@@ -357,9 +388,9 @@
       <version>${xml-apis.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.quartz-scheduler</groupId>
+      <groupId>quartz</groupId>
       <artifactId>quartz</artifactId>
-      <version>${org.quartz-scheduler.version}</version>
+      <version>${quartz.version}</version>
     </dependency>
     <dependency>
       <groupId>picocontainer</groupId>
@@ -374,7 +405,7 @@
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
-      <version>${org.apache.httpcomponents.httpclient.version}</version>
+      <version>${org.apache.httpcomponents.version}</version>
     </dependency>
     <dependency>
       <groupId>com.google.guava</groupId>
@@ -437,7 +468,7 @@
     </dependency>
     <dependency>
       <groupId>org.gatein.wci</groupId>
-      <artifactId>wci-tomcat</artifactId>
+      <artifactId>wci-tomcat6</artifactId>
       <version>${org.gatein.wci.version}</version>
     </dependency>
 
@@ -537,6 +568,11 @@
       <version>${org.jboss.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.jboss</groupId>
+      <artifactId>jbossxb</artifactId>
+      <version>${org.jbossxb.version}</version>
+    </dependency>
+    <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
       <version>${commons-logging.version}</version>
@@ -601,11 +637,6 @@
       <version>${javax.validation.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-validator</artifactId>
-      <version>${hibernate-validator.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.python</groupId>
       <artifactId>jython-standalone</artifactId>
       <version>${jython-standalone.version}</version>
@@ -616,91 +647,111 @@
       <version>${pygments.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>${org.apache.commons.version}</version>
+    </dependency>
+    <dependency>
       <groupId>net.sourceforge.htmlcleaner</groupId>
       <artifactId>htmlcleaner</artifactId>
       <version>${net.sourceforge.htmlcleaner.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.xwiki.platform</groupId>
-      <artifactId>xwiki-web-gwt-wysiwyg-client</artifactId>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-configuration-api</artifactId>
+      <version>${org.xwiki.platform.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-context</artifactId>
+      <version>${org.xwiki.platform.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-component-api</artifactId>
+      <version>${org.xwiki.platform.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-component-default</artifactId>
+      <version>${org.xwiki.platform.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-properties</artifactId>
+      <version>${org.xwiki.platform.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-xml</artifactId>
+      <version>${org.xwiki.platform.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-script</artifactId>
+      <version>${org.xwiki.platform.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.commons</groupId>
+      <artifactId>xwiki-commons-legacy-component</artifactId>
+      <version>${org.xwiki.platform.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.rendering</groupId>
+      <artifactId>xwiki-rendering-api</artifactId>
+      <version>${org.xwiki.platform.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.rendering</groupId>
+      <artifactId>xwiki-rendering-syntax-wikimodel</artifactId>
+      <version>${org.xwiki.platform.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.rendering</groupId>
+      <artifactId>xwiki-rendering-syntax-xwiki2</artifactId>
+      <version>${org.xwiki.platform.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.rendering</groupId>
+      <artifactId>xwiki-rendering-syntax-xhtml</artifactId>
+      <version>${org.xwiki.platform.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.rendering</groupId>
+      <artifactId>xwiki-rendering-transformation-icon</artifactId>
+      <version>${org.xwiki.platform.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.rendering</groupId>
+      <artifactId>xwiki-rendering-macro-box</artifactId>
+      <version>${org.xwiki.platform.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.xwiki.rendering</groupId>
+      <artifactId>xwiki-rendering-macro-message</artifactId>
       <version>${org.xwiki.platform.version}</version>
     </dependency>
     <dependency>
       <groupId>org.xwiki.platform</groupId>
-      <artifactId>xwiki-core-configuration-api</artifactId>
+      <artifactId>xwiki-platform-rendering-macro-code</artifactId>
       <version>${org.xwiki.platform.version}</version>
     </dependency>
     <dependency>
       <groupId>org.xwiki.platform</groupId>
-      <artifactId>xwiki-core-model</artifactId>
+      <artifactId>xwiki-platform-model</artifactId>
       <version>${org.xwiki.platform.version}</version>
     </dependency>
-    <dependency>
+        <dependency>
       <groupId>org.xwiki.platform</groupId>
-      <artifactId>xwiki-core-context</artifactId>
+      <artifactId>xwiki-platform-wysiwyg-client</artifactId>
       <version>${org.xwiki.platform.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.xwiki.platform</groupId>
-      <artifactId>xwiki-core-component-api</artifactId>
-      <version>${org.xwiki.platform.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.xwiki.platform</groupId>
-      <artifactId>xwiki-core-component-default</artifactId>
-      <version>${org.xwiki.platform.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.xwiki.platform</groupId>
-      <artifactId>xwiki-core-properties</artifactId>
-      <version>${org.xwiki.platform.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.xwiki.platform</groupId>
-      <artifactId>xwiki-core-xml</artifactId>
-      <version>${org.xwiki.platform.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.xwiki.platform</groupId>
-      <artifactId>xwiki-core-script</artifactId>
-      <version>${org.xwiki.platform.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.xwiki.platform</groupId>
-      <artifactId>xwiki-core-rendering-api</artifactId>
-      <version>${org.xwiki.platform.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.xwiki.platform</groupId>
-      <artifactId>xwiki-core-rendering-syntax-wikimodel</artifactId>
-      <version>${org.xwiki.platform.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.xwiki.platform</groupId>
-      <artifactId>xwiki-core-rendering-macro-box</artifactId>
-      <version>${org.xwiki.platform.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.xwiki.platform</groupId>
-      <artifactId>xwiki-core-rendering-macro-message</artifactId>
-      <version>${org.xwiki.platform.version}</version>
-    </dependency>
-    <!-- don't upgrade version for code macro -->
-    <dependency>
-      <groupId>org.xwiki.platform</groupId>
-      <artifactId>xwiki-core-rendering-macro-code</artifactId>
-      <version>2.3.2</version>
-    </dependency>
-    <!--dependency>
-      <groupId>org.xwiki.contrib</groupId>
-      <artifactId>xwiki-macro-column</artifactId>
-      <version>${column-macro.version}</version>
-    </dependency-->
     <dependency>
       <groupId>org.wikimodel</groupId>
       <artifactId>org.wikimodel.wem</artifactId>
       <version>${org.wikimodel.version}</version>
     </dependency>
+
     <dependency>
       <groupId>org.suigeneris</groupId>
       <artifactId>jrcs.diff</artifactId>
@@ -716,6 +767,13 @@
       <artifactId>ecs</artifactId>
       <version>${ecs.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.exoplatform.ks</groupId>
+      <artifactId>exo.ks.component.upgrade</artifactId>
+      <version>${project.version}</version>
+      <type>jar</type>
+    </dependency>
+
     <dependency>
       <groupId>org.exoplatform.ks</groupId>
       <artifactId>exo.ks.server.tomcat.patch</artifactId>
@@ -758,9 +816,10 @@
       <version>${project.version}</version>
       <type>jar</type>
     </dependency><!-- 2.2.0-SNAPSHOT-->
+
     <dependency>
-      <groupId>org.xwiki.platform</groupId>
-      <artifactId>xwiki-core-rendering-macro-toc</artifactId>
+      <groupId>org.xwiki.rendering</groupId>
+      <artifactId>xwiki-rendering-macro-toc</artifactId>
       <version>${org.xwiki.platform.version}</version>
       <type>jar</type>
     </dependency><!-- 2.4-->
@@ -772,13 +831,19 @@
     </dependency><!-- 2.2.0-SNAPSHOT-->
     <dependency>
       <groupId>org.exoplatform.ks</groupId>
-      <artifactId>exo.ks.component.common</artifactId>
+      <artifactId>exo.ks.component.macro.iframe</artifactId>
       <version>${project.version}</version>
       <type>jar</type>
-    </dependency><!-- 2.2.0-SNAPSHOT-->
+    </dependency>
     <dependency>
       <groupId>org.exoplatform.ks</groupId>
-      <artifactId>exo.ks.eXoApplication.wiki.service</artifactId>
+      <artifactId>exo.ks.component.macro.jira</artifactId>
+      <version>${project.version}</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.exoplatform.ks</groupId>
+      <artifactId>exo.ks.component.common</artifactId>
       <version>${project.version}</version>
       <type>jar</type>
     </dependency><!-- 2.2.0-SNAPSHOT-->
@@ -826,16 +891,16 @@
     </dependency><!-- 2.2.0-SNAPSHOT-->
     <dependency>
       <groupId>org.exoplatform.ks</groupId>
-      <artifactId>exo.ks.eXoApplication.wiki.webapp</artifactId>
+      <artifactId>exo.ks.demo.webapp</artifactId>
       <version>${project.version}</version>
       <type>war</type>
     </dependency><!-- 2.2.0-SNAPSHOT-->
     <dependency>
       <groupId>org.exoplatform.ks</groupId>
-      <artifactId>exo.ks.demo.webapp</artifactId>
+      <artifactId>exo.ks.component.injector</artifactId>
       <version>${project.version}</version>
-      <type>war</type>
-    </dependency><!-- 2.2.0-SNAPSHOT-->
+      <type>jar</type>
+    </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
@@ -859,17 +924,11 @@
       <artifactId>xercesImpl</artifactId>
       <version>${xerces.version}</version>
       <type>jar</type>
-    </dependency><!-- 2.9.1-->
-    <dependency>
-      <groupId>bouncycastle</groupId>
-      <artifactId>bcmail-jdk14</artifactId>
-      <version>${bouncycastle.version}</version>
-      <type>jar</type>
-    </dependency>
-    <dependency>
-      <groupId>bouncycastle</groupId>
-      <artifactId>bcprov-jdk14</artifactId>
-      <version>${bouncycastle.version}</version>
+    </dependency><!-- 2.9.1-->    
+	<dependency>
+      <groupId>caja</groupId>
+      <artifactId>json_simple</artifactId>
+      <version>${caja.version}</version>
       <type>jar</type>
     </dependency>
   </dependencies>

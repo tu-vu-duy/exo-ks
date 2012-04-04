@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.exoplatform.container.ExoContainerContext;
-import org.exoplatform.forum.ForumTransformHTML;
 import org.exoplatform.forum.ForumUtils;
 import org.exoplatform.forum.TimeConvertUtils;
 import org.exoplatform.forum.info.UIForumPollPortlet;
@@ -33,6 +32,7 @@ import org.exoplatform.forum.webui.UIForumPortlet;
 import org.exoplatform.forum.webui.UITopicDetail;
 import org.exoplatform.forum.webui.UITopicDetailContainer;
 import org.exoplatform.forum.webui.UITopicPoll;
+import org.exoplatform.ks.common.CommonUtils;
 import org.exoplatform.ks.common.UserHelper;
 import org.exoplatform.ks.common.webui.UIFormMultiValueInputSet;
 import org.exoplatform.poll.service.Poll;
@@ -44,8 +44,8 @@ import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.event.Event.Phase;
-import org.exoplatform.webui.form.UIFormCheckBoxInput;
 import org.exoplatform.webui.form.UIFormStringInput;
+import org.exoplatform.webui.form.input.UICheckBoxInput;
 import org.exoplatform.webui.form.validator.PositiveNumberFormatValidator;
 
 /**
@@ -90,13 +90,12 @@ public class UIPollForm extends BaseForumForm implements UIPopupComponent {
 
   private boolean                  isUpdate                 = false;
 
-  @SuppressWarnings("unchecked")
   public UIPollForm() throws Exception {
     UIFormStringInput question = new UIFormStringInput(FIELD_QUESTION_INPUT, FIELD_QUESTION_INPUT, null);
     UIFormStringInput timeOut = new UIFormStringInput(FIELD_TIMEOUT_INPUT, FIELD_TIMEOUT_INPUT, null);
     timeOut.addValidator(PositiveNumberFormatValidator.class);
-    UIFormCheckBoxInput VoteAgain = new UIFormCheckBoxInput<Boolean>(FIELD_AGAINVOTE_CHECKBOX, FIELD_AGAINVOTE_CHECKBOX, false);
-    UIFormCheckBoxInput MultiVote = new UIFormCheckBoxInput<Boolean>(FIELD_MULTIVOTE_CHECKBOX, FIELD_MULTIVOTE_CHECKBOX, false);
+    UICheckBoxInput VoteAgain = new UICheckBoxInput(FIELD_AGAINVOTE_CHECKBOX, FIELD_AGAINVOTE_CHECKBOX, false);
+    UICheckBoxInput MultiVote = new UICheckBoxInput(FIELD_MULTIVOTE_CHECKBOX, FIELD_MULTIVOTE_CHECKBOX, false);
     addUIFormInput(question);
     addUIFormInput(timeOut);
     addUIFormInput(VoteAgain);
@@ -123,8 +122,7 @@ public class UIPollForm extends BaseForumForm implements UIPopupComponent {
     this.TopicPath = topicPath;
   }
 
-  @SuppressWarnings("unused")
-  private String getDateAfter() throws Exception {
+  protected String getDateAfter() throws Exception {
     Date date = new Date();
     if (poll != null && poll.getTimeOut() > 0) {
       date = poll.getModifiedDate();
@@ -138,16 +136,15 @@ public class UIPollForm extends BaseForumForm implements UIPopupComponent {
     return TimeConvertUtils.getFormatDate(format, date);
   }
 
-  @SuppressWarnings("unchecked")
   public void setUpdatePoll(Poll poll, boolean isUpdate) throws Exception {
     if (isUpdate) {
       this.poll = poll;
-      getUIStringInput(FIELD_QUESTION_INPUT).setValue(poll.getQuestion());
+      getUIStringInput(FIELD_QUESTION_INPUT).setValue(CommonUtils.decodeSpecialCharToHTMLnumber(poll.getQuestion()));
       getUIStringInput(FIELD_TIMEOUT_INPUT).setValue(String.valueOf(poll.getTimeOut()));
-      getUIFormCheckBoxInput(FIELD_AGAINVOTE_CHECKBOX).setChecked(poll.getIsAgainVote());
-      UIFormCheckBoxInput multiVoteCheckInput = getUIFormCheckBoxInput(FIELD_MULTIVOTE_CHECKBOX);
+      getUICheckBoxInput(FIELD_AGAINVOTE_CHECKBOX).setChecked(poll.getIsAgainVote());
+      UICheckBoxInput multiVoteCheckInput = getUICheckBoxInput(FIELD_MULTIVOTE_CHECKBOX);
       multiVoteCheckInput.setChecked(poll.getIsMultiCheck());
-      multiVoteCheckInput.setEnable(false);
+      multiVoteCheckInput.setDisabled(true);
       this.isUpdate = isUpdate;
       setDefaulFall();
     }
@@ -157,7 +154,7 @@ public class UIPollForm extends BaseForumForm implements UIPopupComponent {
     List<String> list = new ArrayList<String>();
     if (isUpdate) {
       for (String string : this.poll.getOption()) {
-        list.add(string);
+        list.add(CommonUtils.decodeSpecialCharToHTMLnumber(string));
       }
     } else {
       list.add(ForumUtils.EMPTY_STR);
@@ -178,18 +175,18 @@ public class UIPollForm extends BaseForumForm implements UIPopupComponent {
       UIPollForm uiForm = event.getSource();
       UIFormStringInput questionInput = uiForm.getUIStringInput(FIELD_QUESTION_INPUT);
       String question = questionInput.getValue();
-      question = org.exoplatform.ks.common.Utils.encodeSpecialCharInTitle(question);
+      question = CommonUtils.encodeSpecialCharInTitle(question);
       String timeOutStr = uiForm.getUIStringInput(FIELD_TIMEOUT_INPUT).getValue();
       timeOutStr = ForumUtils.removeZeroFirstNumber(timeOutStr);
       long timeOut = 0;
       if (!ForumUtils.isEmpty(timeOutStr)) {
         if (timeOutStr.length() > 4) {
-          uiForm.warning("UIPollForm.msg.longTimeOut", new String[] { uiForm.getLabel(FIELD_TIMEOUT_INPUT) });
+          uiForm.warning("UIPollForm.msg.longTimeOut", new String[] { uiForm.getLabel(FIELD_TIMEOUT_INPUT) }, false);
         }
         timeOut = Long.parseLong(timeOutStr);
       }
-      boolean isAgainVote = uiForm.getUIFormCheckBoxInput(FIELD_AGAINVOTE_CHECKBOX).isChecked();
-      boolean isMultiVote = uiForm.getUIFormCheckBoxInput(FIELD_MULTIVOTE_CHECKBOX).isChecked();
+      boolean isAgainVote = uiForm.getUICheckBoxInput(FIELD_AGAINVOTE_CHECKBOX).isChecked();
+      boolean isMultiVote = uiForm.getUICheckBoxInput(FIELD_MULTIVOTE_CHECKBOX).isChecked();
       String sms = ForumUtils.EMPTY_STR;
       List<String> values = (List<String>) uiForm.uiFormMultiValue.getValue();
       List<String> values_ = new ArrayList<String>();
@@ -201,7 +198,7 @@ public class UIPollForm extends BaseForumForm implements UIPopupComponent {
             uiForm.warning("NameValidator.msg.warning-long-text", args);
             return;
           }
-          values_.add(org.exoplatform.ks.common.Utils.encodeSpecialCharInTitle(value));
+          values_.add(CommonUtils.encodeSpecialCharInTitle(value));
         }
         ++i;
       }
@@ -394,14 +391,19 @@ public class UIPollForm extends BaseForumForm implements UIPopupComponent {
   static public class RefreshActionListener extends EventListener<UIPollForm> {
     public void execute(Event<UIPollForm> event) throws Exception {
       UIPollForm uiForm = event.getSource();
-      List<String> list = new ArrayList<String>();
-      list.add(ForumUtils.EMPTY_STR);
-      list.add(ForumUtils.EMPTY_STR);
-      uiForm.initMultiValuesField(list);
-      uiForm.getUIStringInput(FIELD_QUESTION_INPUT).setValue(ForumUtils.EMPTY_STR);
-      uiForm.getUIStringInput(FIELD_TIMEOUT_INPUT).setValue("0");
-      uiForm.getUIFormCheckBoxInput(FIELD_AGAINVOTE_CHECKBOX).setChecked(false);
-      uiForm.getUIFormCheckBoxInput(FIELD_MULTIVOTE_CHECKBOX).setChecked(false);
+      if(uiForm.isUpdate) {
+        uiForm.setUpdatePoll(uiForm.poll, uiForm.isUpdate);
+      } else {
+        List<String> list = new ArrayList<String>();
+        list.add(ForumUtils.EMPTY_STR);
+        list.add(ForumUtils.EMPTY_STR);
+        uiForm.initMultiValuesField(list);
+        uiForm.getUIStringInput(FIELD_QUESTION_INPUT).setValue(ForumUtils.EMPTY_STR);
+        uiForm.getUIStringInput(FIELD_TIMEOUT_INPUT).setValue("0");
+        uiForm.getUICheckBoxInput(FIELD_AGAINVOTE_CHECKBOX).setChecked(false);
+        uiForm.getUICheckBoxInput(FIELD_MULTIVOTE_CHECKBOX).setChecked(false);
+      }
+      event.getRequestContext().addUIComponentToUpdateByAjax(uiForm);
     }
   }
 

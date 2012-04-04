@@ -38,11 +38,10 @@
 		String longDateFormat = userProfile.getLongDateFormat() + ", " + userProfile.getTimeFormat() ;
 		String shortDateFormat = userProfile.getShortDateFormat() + ", " + userProfile.getTimeFormat() ;
 		long setTime = (long)(userProfile.getTimeZone()*3600000) ;
-		Date dateView = new Date();
 		String screenName ="";
 		for(post in posts) {
 			String owner = post.getOwner() ;
-			CommonContact contact = uiform.getPersonalContact(owner) ;
+			CommonContact contact = ForumSessionUtils.getPersonalContact(owner) ;
 			String location = "" ;
 			boolean isCity = false;
 			if(contact != null) {
@@ -59,22 +58,19 @@
 			if(ForumUtils.isEmpty(classIconPost)) 
 				classIconPost = "NormalTopicIcon" ;
 			String namePost = post.getName() ;
-			dateView.setTime(post.getCreatedDate().getTime() - setTime);
-			String createdDate = TimeConvertUtils.getFormatDate(longDateFormat,dateView);
-			//String message = uicomponent.getReplaceByBBCode(post.getMessage()) ;
+			String createdDate = TimeConvertUtils.convertXTimeAgo(post.getCreatedDate(), longDateFormat, setTime);
 			String message = uicomponent.renderPost(post) ;
 			
 			String editBy = post.getModifiedBy() ;
 			String editDate ;
 			if(!ForumUtils.isEmpty(editBy)) {
-				dateView.setTime(post.getModifiedDate().getTime() - setTime);
-				editDate = TimeConvertUtils.getFormatDate(longDateFormat,dateView);
+				editDate = TimeConvertUtils.convertXTimeAgo(post.getModifiedDate(), longDateFormat, setTime);
 			}
 			
 			String idMessage = "Id" + post.getId().substring(15);
 			Date joinedDate =  userInfo.getJoinedDate();
 			String joinDate = "";
-			if(joinedDate != null) joinDate = TimeConvertUtils.getFormatDate(shortDateFormat, joinedDate) ;
+			if(joinedDate != null) joinDate = TimeConvertUtils.convertXTimeAgo(joinedDate, shortDateFormat, setTime) ;
 			String alert = "(<span style='color:#f77617; font-weight:normal;'>" ;
 			boolean isAnd = false ;
 			if(post.getIsHidden()) {
@@ -115,14 +111,13 @@
 								<% boolean isDisplayAvatar = userInfo.getIsDisplayAvatar();	
 									if(isDisplayAvatar) {
 								%>
-								<img src="<%=uiform.getAvatarUrl(owner);%>" class="ImgAvatar ImgAvatarBorder" alt=""/>
+								<img src="<%=uiform.getAvatarUrl(owner);%>" class="ImgAvatar ImgAvatarBorder" alt="<%=_ctx.appRes("UIForumUserSettingForm.label.Avatar");%>"/>
 								<% } %>
 								<div class="InfoMember">
 									<span><%=_ctx.appRes("UITopicDetail.label.JoinDate");%>: $joinDate</span>
 									<% long totalPost = userInfo.getTotalPost();
 										if(totalPost > 0) {
-											 dateView.setTime(userInfo.getLastPostDate().getTime() - setTime);
-											 String lastPostDateOfUser = TimeConvertUtils.getFormatDate(shortDateFormat,dateView) ;
+											 String lastPostDateOfUser = TimeConvertUtils.convertXTimeAgo(userInfo.getLastPostDate(), shortDateFormat, setTime) ;
 									%>
 									<span><%=_ctx.appRes("UITopicDetail.label.Posts");%>: $totalPost</span>
 									<span><%=_ctx.appRes("UITopicDetail.label.LastPost");%>: $lastPostDateOfUser</span>
@@ -133,8 +128,7 @@
 									%>
 									<span><%=_ctx.appRes("UITopicDetail.label.Location");%>: $location</span>
 									<%}
-										dateView.setTime(userInfo.getLastLoginDate().getTime() - setTime);
-										String lastLoginUser = TimeConvertUtils.getFormatDate(shortDateFormat, dateView) ;
+										String lastLoginUser = TimeConvertUtils.convertXTimeAgo(userInfo.getLastLoginDate(), shortDateFormat, setTime) ;
 									%>
 									<span><%=_ctx.appRes("UITopicDetail.label.LastLogin");%>: $lastLoginUser</span>
 								</div>
@@ -178,7 +172,7 @@
 										<% if(typeFile.indexOf("image") >= 0) {
 										   String attLink = uicomponent.getImageUrl(attachment.getPath());
 										%>
-											<a href="#" class="Image"><img onclick="eXo.forum.UIForumPortlet.showPicture('$attLink');" class="AttachImage" id="imgView${fileName}" src="$attLink" height="100px;" alt=""/></a> 
+											<a href="#" class="Image"><img onclick="eXo.forum.UIForumPortlet.showPicture('$attLink');" class="AttachImage" id="imgView${fileName}" src="$attLink" height="100px;" alt="$titleFile"/></a> 
 						 					<div class="LabelBox">
 						 						<a class="AttachmentIcon JPGIcon" onclick="if(eXo.core.Browser.browserType == 'ie') {<%=uicomponent.event("DownloadAttach");%>; } ajaxRedirect('$urlFile'); return false;" href="javaScript: void(0)" title="$titleFile">$fileName</a>
 						 						<div class="Size"><%=_ctx.appRes("UITopicDetail.label.Size");%>: ${size}</div>
@@ -225,33 +219,19 @@
 			<%} %>
 		</div>
 	</div>
-	<div class="UIAction"> 
-		<table class="ActionContainer">
-			<tr>
-				<td align="center">
-				<%  
+	<div class="UIAction">
+  <%  
 					String []actions = uicomponent.getActions();
 					int l = actions.length;
 				%>
-					<div style="width:<%=(l*100)%>px;">
-				<% for(action in actions) { 
+        <div style="width:<%=(l*100)%>px;">
+        <% for(action in actions) { 
 					 String actionLabel = _ctx.appRes(uicomponent.getName() + ".action." + action); 
 					 String link = uicomponent.event(action) ;
 				%>
-						<div onclick="$link" class="ActionButton LightBlueStyle">
-							<div class="ButtonLeft">
-								<div class="ButtonRight">
-									<div class="ButtonMiddle">
-										<a href="javascript:void(0);">$actionLabel</a>
-									</div>
-								</div>
-							</div>
-						</div>
-					<%}%>
-					</div>
-				</td>
-			</tr>
- 		</table> 
-	</div>
+      <a href="javascript:void(0);" onclick="$link" class="ActionButton LightBlueStyle">$actionLabel</a>
+      <%}%>
+      </div>
+    </div>
 	<%uiform.end()%>
 </div>

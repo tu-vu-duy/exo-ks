@@ -24,14 +24,13 @@ import java.util.ResourceBundle;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletMode;
 import javax.portlet.PortletPreferences;
+import javax.portlet.PortletSession;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.namespace.QName;
 
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
-import org.exoplatform.forum.ForumSessionUtils;
 import org.exoplatform.forum.ForumUtils;
-import org.exoplatform.forum.TimeConvertUtils;
 import org.exoplatform.forum.info.ForumParameter;
 import org.exoplatform.forum.service.Category;
 import org.exoplatform.forum.service.Forum;
@@ -47,31 +46,28 @@ import org.exoplatform.forum.webui.popup.UISettingEditModeForm;
 import org.exoplatform.forum.webui.popup.UIViewPostedByUser;
 import org.exoplatform.forum.webui.popup.UIViewTopicCreatedByUser;
 import org.exoplatform.forum.webui.popup.UIViewUserProfile;
+import org.exoplatform.ks.common.CommonUtils;
 import org.exoplatform.ks.common.UserHelper;
-import org.exoplatform.ks.common.user.CommonContact;
 import org.exoplatform.ks.common.webui.UIPopupAction;
 import org.exoplatform.ks.common.webui.UIPopupContainer;
 import org.exoplatform.ks.common.webui.WebUIUtils;
 import org.exoplatform.portal.application.PortalRequestContext;
 import org.exoplatform.portal.webui.util.Util;
+import org.exoplatform.services.organization.OrganizationService;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.exoplatform.web.application.ApplicationMessage;
-import org.exoplatform.web.application.RequestContext;
 import org.exoplatform.webui.application.WebuiApplication;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.application.portlet.PortletApplication;
 import org.exoplatform.webui.application.portlet.PortletRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
-import org.exoplatform.webui.core.UIApplication;
-import org.exoplatform.webui.core.UIPopupMessages;
 import org.exoplatform.webui.core.UIPopupWindow;
 import org.exoplatform.webui.core.UIPortletApplication;
 import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
-import org.exoplatform.webui.exception.MessageException;
 import org.exoplatform.ws.frameworks.cometd.ContinuationService;
 import org.mortbay.cometd.AbstractBayeux;
 import org.mortbay.cometd.continuation.EXoContinuationBayeux;
@@ -94,55 +90,75 @@ import org.mortbay.cometd.continuation.EXoContinuationBayeux;
                  }
 )
 public class UIForumPortlet extends UIPortletApplication {
+  
+  public static String QUICK_REPLY_EVENT_PARAMS    = "UIForumPortlet.QuickReplyEventParams";
+
+  public static String FORUM_POLL_EVENT_PARAMS     = "UIForumPortlet.ForumPollEventParams";
+
+  public static String RULE_EVENT_PARAMS           = "UIForumPortlet.RuleEventParams";
+
+  public static String FORUM_MODERATE_EVENT_PARAMS = "UIForumPortlet.ForumModerateEvent";
+
+  public static String FORUM_LINK_EVENT_PARAMS     = "UIForumPortlet.ForumLinkEvent";
+  
   private ForumService forumService;
 
-  private boolean      isCategoryRendered   = true;
+  private boolean      isCategoryRendered  = true;
 
-  private boolean      isForumRendered      = false;
+  private boolean      isForumRendered     = false;
 
-  private boolean      isTagRendered        = false;
+  private boolean      isTagRendered       = false;
 
-  private boolean      isSearchRendered     = false;
+  private boolean      isSearchRendered    = false;
 
-  private boolean      isJumpRendered       = false;
+  private boolean      isJumpRendered      = false;
 
-  private boolean      isShowForumJump      = false;
+  private boolean      isShowForumJump     = false;
 
-  private boolean      isShowPoll           = false;
+  private boolean      isShowPoll          = false;
 
-  private boolean      isShowModerators     = false;
+  private boolean      isShowModerators    = false;
 
-  private boolean      isShowRules          = false;
+  private boolean      isShowRules         = false;
 
-  private boolean      isShowIconsLegend    = false;
+  private boolean      isShowIconsLegend   = false;
 
-  private boolean      isShowStatistics     = false;
+  private boolean      isShowStatistics    = false;
 
-  private boolean      isShowQuickReply     = false;
+  private boolean      isShowQuickReply    = false;
 
-  private UserProfile  userProfile          = null;
+  private UserProfile  userProfile         = null;
 
-  private boolean      enableIPLogging      = false;
+  private boolean      enableIPLogging     = false;
 
-  private boolean      isShowForumActionBar = false;
+  private boolean      prefForumActionBar  = false;
 
-  private boolean      enableBanIP          = false;
+  private boolean      isRenderActionBar   = false;
 
-  private boolean      useAjax              = true;
+  private boolean      enableBanIP         = false;
 
-  private int          dayForumNewPost      = 0;
+  private boolean      useAjax             = true;
 
-  private String       linkUserInfo         = ForumUtils.EMPTY_STR;
+  protected boolean    forumSpDeleted      = false;
 
-  private List<String> invisibleForums      = new ArrayList<String>();
+  private int          dayForumNewPost     = 0;
+  
+  private String       categorySpId        = "";
 
-  private List<String> invisibleCategories  = new ArrayList<String>();
+  private String       forumSpId           = null;
 
+  protected String       spaceDisplayName  = null;
+
+  private List<String> invisibleForums     = new ArrayList<String>();
+
+  private List<String> invisibleCategories = new ArrayList<String>();
+
+  private PortletMode portletMode;
   public UIForumPortlet() throws Exception {
     forumService = (ForumService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(ForumService.class);
     addChild(UIBreadcumbs.class, null, null);
-    boolean isRenderBar = !UserHelper.isAnonim();
-    addChild(UIForumActionBar.class, null, null).setRendered(isRenderBar);
+    isRenderActionBar = !UserHelper.isAnonim();
+    addChild(UIForumActionBar.class, null, null).setRendered(isRenderActionBar);
     addChild(UICategoryContainer.class, null, null).setRendered(isCategoryRendered);
     addChild(UIForumContainer.class, null, null).setRendered(isForumRendered);
     addChild(UITopicsTag.class, null, null).setRendered(isTagRendered);
@@ -153,17 +169,20 @@ public class UIForumPortlet extends UIPortletApplication {
     try {
       loadPreferences();
     } catch (Exception e) {
+      log.warn("Failed to load portlet preferences", e);
     }
   }
 
   public void processRender(WebuiApplication app, WebuiRequestContext context) throws Exception {
     PortletRequestContext portletReqContext = (PortletRequestContext) context;
-    if (portletReqContext.getApplicationMode() == PortletMode.VIEW) {
+    portletMode = portletReqContext.getApplicationMode();
+    if (portletMode == PortletMode.VIEW) {
+      isRenderActionBar = !UserHelper.isAnonim();
       if (getChild(UIBreadcumbs.class) == null) {
         if (getChild(UISettingEditModeForm.class) != null)
           removeChild(UISettingEditModeForm.class);
         addChild(UIBreadcumbs.class, null, null);
-        addChild(UIForumActionBar.class, null, null).setRendered(!UserHelper.isAnonim());
+        addChild(UIForumActionBar.class, null, null).setRendered(isRenderActionBar);
         UICategoryContainer categoryContainer = addChild(UICategoryContainer.class, null, null).setRendered(isCategoryRendered);
         addChild(UIForumContainer.class, null, null).setRendered(isForumRendered);
         addChild(UITopicsTag.class, null, null).setRendered(isTagRendered);
@@ -172,19 +191,12 @@ public class UIForumPortlet extends UIPortletApplication {
         updateIsRendered(ForumUtils.CATEGORIES);
         categoryContainer.updateIsRender(true);
       }
-    } else if (portletReqContext.getApplicationMode() == PortletMode.EDIT) {
+      updateCurrentUserProfile();
+    } else if (portletMode == PortletMode.EDIT) {
       if (getChild(UISettingEditModeForm.class) == null) {
         UISettingEditModeForm editModeForm = addChild(UISettingEditModeForm.class, null, null);
-        editModeForm.setUserProfile(getUserProfile());
-        if (getChild(UIBreadcumbs.class) != null) {
-          removeChild(UIBreadcumbs.class);
-          removeChild(UIForumActionBar.class);
-          removeChild(UICategoryContainer.class);
-          removeChild(UIForumContainer.class);
-          removeChild(UITopicsTag.class);
-          removeChild(UISearchForm.class);
-          removeChild(UIForumLinks.class);
-        }
+        editModeForm.setInitComponent();
+        removeAllChildPorletView();
       }
     }
     try {
@@ -195,52 +207,73 @@ public class UIForumPortlet extends UIPortletApplication {
     super.processRender(app, context);
   }
 
+  private void removeAllChildPorletView() {
+    if (getChild(UIBreadcumbs.class) != null) {
+      removeChild(UIBreadcumbs.class);
+      removeChild(UIForumActionBar.class);
+      removeChild(UICategoryContainer.class);
+      removeChild(UIForumContainer.class);
+      removeChild(UITopicsTag.class);
+      removeChild(UISearchForm.class);
+      removeChild(UIForumLinks.class);
+    }
+  }
+
   public void renderComponentByURL(WebuiRequestContext context) throws Exception {
-
+    forumSpDeleted = false;
     PortalRequestContext portalContext = Util.getPortalRequestContext();
-
-    String url = ((HttpServletRequest) portalContext.getRequest()).getRequestURL().toString();
-    String old = url;
     String isAjax = portalContext.getRequestParameter("ajaxRequest");
     if (isAjax != null && Boolean.parseBoolean(isAjax))
       return;
+
+    String url = ((HttpServletRequest) portalContext.getRequest()).getRequestURL().toString();
+    String pageNodeSelected = ForumUtils.SLASH + Util.getUIPortal().getSelectedUserNode().getURI();
     String portalName = Util.getUIPortal().getName();
-    url = (url.contains(portalName)) ? url.substring(url.lastIndexOf(portalName)) : url;
-    url = (url.contains(Utils.FORUM_SERVICE)) ? url.substring(url.lastIndexOf(Utils.FORUM_SERVICE))
-                                             : ((url.contains(Utils.CATEGORY)) ? url.substring(url.lastIndexOf(Utils.CATEGORY)) : ((url.contains(Utils.TOPIC)) ? url.substring(url.lastIndexOf(Utils.TOPIC)) : ((url.contains(Utils.FORUM) && ((url.lastIndexOf(Utils.FORUM) + 5) < url.length())) ? url.substring(url.lastIndexOf(Utils.FORUM)) : url)));
-    if (url.indexOf(portalName) >= 0)
-      return;
-
-    if (url.equals(old)) {
-      if (getForumIdOfSpace() != null)
+    if(url.contains(portalName + pageNodeSelected)) {
+      url = url.substring(url.lastIndexOf(portalName + pageNodeSelected)+ (portalName + pageNodeSelected).length());
+    } else if(url.contains(pageNodeSelected)) {
+      url = url.substring(url.lastIndexOf(pageNodeSelected)+ pageNodeSelected.length());
+    }
+    if(!ForumUtils.isEmpty(url)) {
+      url = (url.contains(ForumUtils.SLASH+Utils.FORUM_SERVICE)) ? url.substring(url.lastIndexOf(Utils.FORUM_SERVICE)) :
+           ((url.contains(ForumUtils.SLASH+Utils.CATEGORY)) ? url.substring(url.lastIndexOf(ForumUtils.SLASH+Utils.CATEGORY)+1) :
+           ((url.contains(ForumUtils.SLASH+Utils.TOPIC)) ? url.substring(url.lastIndexOf(ForumUtils.SLASH+Utils.TOPIC)+1) :
+           ((url.contains(ForumUtils.SLASH+Utils.FORUM)) ? url.substring(url.lastIndexOf(ForumUtils.SLASH+Utils.FORUM)+1) : url)));
+    } else {
+      if (!ForumUtils.isEmpty(getForumIdOfSpace())){
         url = getForumIdOfSpace();
-      else
-        return;
-    }
-
-    calculateRenderComponent(url, context);
-    context.addUIComponentToUpdateByAjax(this);
-  }
-
-  private String getForumIdOfSpace() {
-
-    try {
-      PortletRequestContext pcontext = (PortletRequestContext) WebuiRequestContext.getCurrentInstance();
-      PortletPreferences pref = pcontext.getRequest().getPreferences();
-      if (pref.getValue("SPACE_URL", null) != null) {
-        String url = pref.getValue("SPACE_URL", null);
-        SpaceService sService = (SpaceService) PortalContainer.getInstance().getComponentInstanceOfType(SpaceService.class);
-        Space space = sService.getSpaceByUrl(url);
-        String forumId = Utils.FORUM_SPACE_ID_PREFIX + space.getId();
-        return forumId;
       }
-      return null;
-    } catch (Exception e) {
-      return null;
+    }
+    if (!ForumUtils.isEmpty(url) && url.length() > Utils.FORUM.length()) {
+      calculateRenderComponent(url, context);
+      context.addUIComponentToUpdateByAjax(this);
     }
   }
 
-  public void updateIsRendered(String selected) throws Exception {
+  public String getForumIdOfSpace() {
+    PortletRequestContext pcontext = (PortletRequestContext) WebuiRequestContext.getCurrentInstance();
+    PortletPreferences pref = pcontext.getRequest().getPreferences();
+    if (pref.getValue("SPACE_URL", null) != null && ForumUtils.isEmpty(forumSpId)) {
+      String url = pref.getValue("SPACE_URL", null);
+      SpaceService sService = (SpaceService) PortalContainer.getInstance().getComponentInstanceOfType(SpaceService.class);
+      Space space = sService.getSpaceByUrl(url);
+      forumSpId = Utils.FORUM_SPACE_ID_PREFIX + space.getPrettyName();
+      spaceDisplayName = space.getDisplayName();
+      try {
+        OrganizationService service = (OrganizationService) PortalContainer.getInstance()
+                                                                           .getComponentInstanceOfType(OrganizationService.class);
+        String parentGrId = service.getGroupHandler().findGroupById(space.getGroupId()).getParentId();
+        categorySpId = Utils.CATEGORY + parentGrId.replaceAll(CommonUtils.SLASH, CommonUtils.EMPTY_STR);
+      } catch (Exception e) {
+        if (log.isDebugEnabled()){
+          log.debug("Failed to set category id of space " + space.getPrettyName(), e);
+        }
+      }
+    }
+    return forumSpId;
+  }
+
+  public void updateIsRendered(String selected){
     if (selected.equals(ForumUtils.CATEGORIES)) {
       isCategoryRendered = true;
       isForumRendered = false;
@@ -262,24 +295,22 @@ public class UIForumPortlet extends UIPortletApplication {
       isCategoryRendered = false;
       isSearchRendered = true;
     }
-    if (!isShowForumActionBar) {
+    if (!prefForumActionBar) {
       if (!isCategoryRendered || isSearchRendered) {
-        getChild(UIForumActionBar.class).setRendered(false);
+        isRenderActionBar = false;
       }
     }
+    getChild(UIForumActionBar.class).setRendered(isRenderActionBar);
     setRenderForumLink();
     getChild(UIForumContainer.class).setRendered(isForumRendered);
     getChild(UITopicsTag.class).setRendered(isTagRendered);
     getChild(UISearchForm.class).setRendered(isSearchRendered);
     if (!isForumRendered) {
-      try {
-        this.setRenderQuickReply();
-      } catch (Exception e) {
-      }
+      this.setRenderQuickReply();
     }
   }
 
-  public void rederForumHome() throws Exception {
+  public void renderForumHome() throws Exception{
     updateIsRendered(ForumUtils.CATEGORIES);
     UICategoryContainer categoryContainer = getChild(UICategoryContainer.class);
     categoryContainer.updateIsRender(true);
@@ -288,11 +319,13 @@ public class UIForumPortlet extends UIPortletApplication {
     getChild(UIBreadcumbs.class).setUpdataPath(Utils.FORUM_SERVICE);
   }
   
-  public void setRenderForumLink() throws Exception {
-    if (userProfile == null)
-      updateUserProfileInfo();
+  public void setRenderForumLink() {
     if (isShowForumJump) {
-      isJumpRendered = this.userProfile.getIsShowForumJump();
+      if (!ForumUtils.isEmpty(getForumIdOfSpace())) {
+        isJumpRendered = false;
+      } else {
+        isJumpRendered = getUserProfile().getIsShowForumJump();
+      }
     } else {
       isJumpRendered = false;
     }
@@ -305,43 +338,53 @@ public class UIForumPortlet extends UIPortletApplication {
 
   public void setRenderQuickReply() {
     PortletRequestContext pcontext = (PortletRequestContext) WebuiRequestContext.getCurrentInstance();
-    ActionResponse actionRes = (ActionResponse) pcontext.getResponse();
+    PortletSession portletSession = pcontext.getRequest().getPortletSession();
+    ActionResponse actionRes = null;
+    if (pcontext.getResponse() instanceof ActionResponse) {
+      actionRes = (ActionResponse) pcontext.getResponse();
+    }
     ForumParameter param = new ForumParameter();
     param.setRenderQuickReply(false);
     param.setRenderPoll(false);
     param.setRenderModerator(false);
     param.setRenderRule(false);
-    actionRes.setEvent(new QName("QuickReplyEvent"), param);
-    actionRes.setEvent(new QName("ForumPollEvent"), param);
-    actionRes.setEvent(new QName("ForumModerateEvent"), param);
-    actionRes.setEvent(new QName("ForumRuleEvent"), param);
+    if (actionRes != null) {
+      actionRes.setEvent(new QName("QuickReplyEvent"), param);
+      actionRes.setEvent(new QName("ForumPollEvent"), param);
+      actionRes.setEvent(new QName("ForumModerateEvent"), param);
+      actionRes.setEvent(new QName("ForumRuleEvent"), param);
+    } else {
+      portletSession.setAttribute(UIForumPortlet.QUICK_REPLY_EVENT_PARAMS, param, PortletSession.APPLICATION_SCOPE);
+      portletSession.setAttribute(UIForumPortlet.FORUM_POLL_EVENT_PARAMS, param, PortletSession.APPLICATION_SCOPE);
+      portletSession.setAttribute(UIForumPortlet.FORUM_MODERATE_EVENT_PARAMS, param, PortletSession.APPLICATION_SCOPE);
+      portletSession.setAttribute(UIForumPortlet.RULE_EVENT_PARAMS, param, PortletSession.APPLICATION_SCOPE);
+    }
   }
 
   public void loadPreferences() throws Exception {
-    PortletRequestContext pcontext = (PortletRequestContext) WebuiRequestContext.getCurrentInstance();
-    PortletPreferences portletPref = pcontext.getRequest().getPreferences();
+    WebuiRequestContext context = WebuiRequestContext.getCurrentInstance();
+    if (context instanceof PortletRequestContext){
+    PortletRequestContext  pContext = (PortletRequestContext) context;
+    PortletPreferences portletPref = pContext.getRequest().getPreferences();
     invisibleCategories.clear();
     invisibleForums.clear();
-    try {
-      isShowForumActionBar = Boolean.parseBoolean(portletPref.getValue("showForumActionBar", ForumUtils.EMPTY_STR));
-      dayForumNewPost = Integer.parseInt(portletPref.getValue("forumNewPost", ForumUtils.EMPTY_STR));
-      useAjax = Boolean.parseBoolean(portletPref.getValue("useAjax", ForumUtils.EMPTY_STR));
-      enableIPLogging = Boolean.parseBoolean(portletPref.getValue("enableIPLogging", ForumUtils.EMPTY_STR));
-      enableBanIP = Boolean.parseBoolean(portletPref.getValue("enableIPFiltering", ForumUtils.EMPTY_STR));
-      isShowForumJump = Boolean.parseBoolean(portletPref.getValue("isShowForumJump", ForumUtils.EMPTY_STR));
-      isShowPoll = Boolean.parseBoolean(portletPref.getValue("isShowPoll", ForumUtils.EMPTY_STR));
-      isShowModerators = Boolean.parseBoolean(portletPref.getValue("isShowModerators", ForumUtils.EMPTY_STR));
-      isShowRules = Boolean.parseBoolean(portletPref.getValue("isShowRules", ForumUtils.EMPTY_STR));
-      isShowQuickReply = Boolean.parseBoolean(portletPref.getValue("isShowQuickReply", ForumUtils.EMPTY_STR));
-      isShowStatistics = Boolean.parseBoolean(portletPref.getValue("isShowStatistics", ForumUtils.EMPTY_STR));
-      isShowIconsLegend = Boolean.parseBoolean(portletPref.getValue("isShowIconsLegend", ForumUtils.EMPTY_STR));
-      invisibleCategories.addAll(getListInValus(portletPref.getValue("invisibleCategories", ForumUtils.EMPTY_STR)));
-      invisibleForums.addAll(getListInValus(portletPref.getValue("invisibleForums", ForumUtils.EMPTY_STR)));
-    } catch (Exception e) {
-      log.error("Fail to load preference: " + e.getCause());
-    }
+    prefForumActionBar = Boolean.parseBoolean(portletPref.getValue("showForumActionBar", ForumUtils.EMPTY_STR));
+    dayForumNewPost = Integer.parseInt(portletPref.getValue("forumNewPost", ForumUtils.EMPTY_STR));
+    useAjax = Boolean.parseBoolean(portletPref.getValue("useAjax", ForumUtils.EMPTY_STR));
+    enableIPLogging = Boolean.parseBoolean(portletPref.getValue("enableIPLogging", ForumUtils.EMPTY_STR));
+    enableBanIP = Boolean.parseBoolean(portletPref.getValue("enableIPFiltering", ForumUtils.EMPTY_STR));
+    isShowForumJump = Boolean.parseBoolean(portletPref.getValue("isShowForumJump", ForumUtils.EMPTY_STR));
+    isShowPoll = Boolean.parseBoolean(portletPref.getValue("isShowPoll", ForumUtils.EMPTY_STR));
+    isShowModerators = Boolean.parseBoolean(portletPref.getValue("isShowModerators", ForumUtils.EMPTY_STR));
+    isShowRules = Boolean.parseBoolean(portletPref.getValue("isShowRules", ForumUtils.EMPTY_STR));
+    isShowQuickReply = Boolean.parseBoolean(portletPref.getValue("isShowQuickReply", ForumUtils.EMPTY_STR));
+    isShowStatistics = Boolean.parseBoolean(portletPref.getValue("isShowStatistics", ForumUtils.EMPTY_STR));
+    isShowIconsLegend = Boolean.parseBoolean(portletPref.getValue("isShowIconsLegend", ForumUtils.EMPTY_STR));
+    invisibleCategories.addAll(getListInValus(portletPref.getValue("invisibleCategories", ForumUtils.EMPTY_STR)));
+    invisibleForums.addAll(getListInValus(portletPref.getValue("invisibleForums", ForumUtils.EMPTY_STR)));
     if (invisibleCategories.size() == 1 && invisibleCategories.get(0).equals(" "))
       invisibleCategories.clear();
+    }
   }
 
   private List<String> getListInValus(String value) throws Exception {
@@ -373,7 +416,7 @@ public class UIForumPortlet extends UIPortletApplication {
   }
 
   public boolean isShowForumActionBar() {
-    return isShowForumActionBar;
+    return prefForumActionBar;
   }
 
   public boolean isShowPoll() {
@@ -408,57 +451,16 @@ public class UIForumPortlet extends UIPortletApplication {
     return dayForumNewPost;
   }
 
-  public void renderPopupMessages() throws Exception {
-    UIPopupMessages popupMess = getUIPopupMessages();
-    if (popupMess == null)
-      return;
-    WebuiRequestContext context = RequestContext.getCurrentInstance();
-    popupMess.processRender(context);
-  }
-
   public void cancelAction() throws Exception {
-    WebuiRequestContext context = RequestContext.getCurrentInstance();
+    WebuiRequestContext context = WebuiRequestContext.getCurrentInstance();
     UIPopupAction popupAction = getChild(UIPopupAction.class);
     popupAction.deActivate();
     context.addUIComponentToUpdateByAjax(popupAction);
   }
-
-  public UserProfile getUserProfile() throws Exception {
-    if (this.userProfile == null)
-      updateUserProfileInfo();
-    return this.userProfile;
-  }
-
-  public void updateAccessTopic(String topicId) throws Exception {
-    String userId = userProfile.getUserId();
-    if (userId != null && userId.length() > 0) {
-      try {
-        forumService.updateTopicAccess(userId, topicId);
-      } catch (Exception e) {
-      }
-    }
-    userProfile.setLastTimeAccessTopic(topicId, TimeConvertUtils.getInstanceTempCalendar().getTimeInMillis());
-  }
-
-  public void updateAccessForum(String forumId) throws Exception {
-    String userId = userProfile.getUserId();
-    if (userId != null && userId.length() > 0) {
-      try {
-        forumService.updateForumAccess(userId, forumId);
-      } catch (Exception e) {
-      }
-    }
-    userProfile.setLastTimeAccessForum(forumId, TimeConvertUtils.getInstanceTempCalendar().getTimeInMillis());
-  }
-
-  public void updateUserProfileInfo() throws Exception {
-    String userId = ForumUtils.EMPTY_STR;
+  
+  public void updateCurrentUserProfile() {
     try {
-      userId = UserHelper.getCurrentUser();
-    } catch (Exception e) {
-      log.error("user is unknown: " + e.getCause());
-    }
-    try {
+      String userId = UserHelper.getCurrentUser();
       if (enableBanIP) {
         userProfile = forumService.getDefaultUserProfile(userId, WebUIUtils.getRemoteIP());
       } else {
@@ -471,34 +473,60 @@ public class UIForumPortlet extends UIPortletApplication {
     } catch (Exception e) {
       userProfile = new UserProfile();
     }
-  }
-
-  public String getPortletLink() {
-    if (ForumUtils.isEmpty(linkUserInfo))
-      try {
-        linkUserInfo = this.event("ViewPublicUserInfo", "userName");
-      } catch (Exception e) {
-        log.debug("Failed to set link to view info user.", e);
-      }
-    return linkUserInfo;
-  }
-
-  private CommonContact getPersonalContact(String userId) throws Exception {
-    CommonContact contact = ForumSessionUtils.getPersonalContact(userId);
-    if (contact == null) {
-      contact = new CommonContact();
+    if(UserProfile.USER_DELETED == userProfile.getUserRole() ||
+       UserProfile.GUEST == userProfile.getUserRole() ) {
+      isRenderActionBar = false;
     }
-    return contact;
+    UIForumActionBar actionBar = getChild(UIForumActionBar.class);
+    if (actionBar != null) {
+      actionBar.setRendered(isRenderActionBar);
+    }
+  }
+
+  public UserProfile getUserProfile() {
+    if (userProfile == null) {
+      updateCurrentUserProfile();
+    }
+    return userProfile;
+  }
+
+  public void updateAccessTopic(String topicId) throws Exception {
+    String userId = userProfile.getUserId();
+    if (userId != null && userId.length() > 0) {
+      forumService.updateTopicAccess(userId, topicId);
+    }
+    userProfile.setLastTimeAccessTopic(topicId, CommonUtils.getGreenwichMeanTime().getTimeInMillis());
+  }
+
+  public void updateAccessForum(String forumId) throws Exception {
+    String userId = userProfile.getUserId();
+    if (userId != null && userId.length() > 0) {
+      forumService.updateForumAccess(userId, forumId);
+    }
+    userProfile.setLastTimeAccessForum(forumId, CommonUtils.getGreenwichMeanTime().getTimeInMillis());
+  }
+
+  public void removeCacheUserProfile() {
+    try {
+      forumService.removeCacheUserProfile(userProfile.getUserId());
+    } catch (Exception e) {
+      log.debug("Failed to remove cache userprofile with user: " + userProfile.getUserId());
+    }
+  }
+
+  public String getPortletLink(String actionName, String userName) {
+    try {
+      return event(actionName, userName);
+    } catch (Exception e) {
+      log.debug("Failed to set link to view info user.", e);
+      return null;
+    }
   }
 
   protected String getCometdContextName() {
-    String cometdContextName = "cometd";
-    try {
-      EXoContinuationBayeux bayeux = (EXoContinuationBayeux) PortalContainer.getInstance().getComponentInstanceOfType(AbstractBayeux.class);
-      return (bayeux == null ? "cometd" : bayeux.getCometdContextName());
-    } catch (Exception e) {
-    }
-    return cometdContextName;
+    EXoContinuationBayeux bayeux = (EXoContinuationBayeux) PortalContainer.getInstance()
+                                                                          .getComponentInstanceOfType(AbstractBayeux.class);
+    return (bayeux == null ? "cometd" : bayeux.getCometdContextName());
   }
 
   public String getUserToken() throws Exception {
@@ -519,9 +547,8 @@ public class UIForumPortlet extends UIPortletApplication {
   }
   
   public boolean checkForumHasAddTopic(String categoryId, String forumId) throws Exception {
-    if (userProfile == null)
-      updateUserProfileInfo();
-    if (userProfile.getUserRole() == 0) return true;
+    if (getUserProfile().getUserRole() == 0) return true;
+    if (getUserProfile().getUserId().contains(UserProfile.USER_GUEST)) return false;
     try {
       Forum forum = (Forum) forumService.getObjectNameById(forumId, Utils.FORUM);
       if (forum.getIsClosed() || forum.getIsLock())
@@ -546,9 +573,8 @@ public class UIForumPortlet extends UIPortletApplication {
   }
   
   public boolean checkForumHasAddPost(String categoryId, String forumId, String topicId) throws Exception {
-    if (userProfile == null)
-      updateUserProfileInfo();
-    if (userProfile.getUserRole() == 0) return true;
+    if (getUserProfile().getUserRole() == 0) return true;
+    if (getUserProfile().getUserId().contains(UserProfile.USER_GUEST)) return false;
     try {
       Topic topic = (Topic) forumService.getObjectNameById(topicId, Utils.TOPIC);
       if (topic.getIsClosed() || topic.getIsLock())
@@ -578,9 +604,7 @@ public class UIForumPortlet extends UIPortletApplication {
   }
 
   public boolean checkCanView(Category cate, Forum forum, Topic topic) throws Exception {
-    if (userProfile == null)
-      updateUserProfileInfo();
-    String userId = userProfile.getUserId();
+    String userId = getUserProfile().getUserId();
     if (userProfile.getUserRole() == 0)
       return true;
     List<String> userBound = UserHelper.getAllGroupAndMembershipOfUser(userId);
@@ -602,9 +626,6 @@ public class UIForumPortlet extends UIPortletApplication {
       list = ForumUtils.addArrayToList(list, forum.getViewer());
       list = ForumUtils.addArrayToList(list, cate.getViewer());
 
-      // if (topic.getOwner() != null)
-      // list = ForumUtils.addArrayToList(list, new String[] {topic.getOwner()});
-
       if (!list.isEmpty() && topic.getOwner() != null)
         list.add(topic.getOwner());
       if (topic.getIsClosed() || !topic.getIsActive() || !topic.getIsActiveByForum() || !topic.getIsApproved() || topic.getIsWaiting() || (!list.isEmpty() && !Utils.hasPermission(list, userBound)))
@@ -613,17 +634,21 @@ public class UIForumPortlet extends UIPortletApplication {
     return true;
   }
 
+  
+  public static void showWarningMessage(WebuiRequestContext context, String key, String... args) {
+    context.getUIApplication().addMessage(new ApplicationMessage(key, args, ApplicationMessage.WARNING));
+  }
+  
   public void calculateRenderComponent(String path, WebuiRequestContext context) throws Exception {
-    UIApplication uiApp = (UIApplication) this;
     ResourceBundle res = context.getApplicationResourceBundle();
     if (path.equals(Utils.FORUM_SERVICE)) {
-      rederForumHome();
+      renderForumHome();
     } else if (path.indexOf(ForumUtils.FIELD_SEARCHFORUM_LABEL) >= 0) {
       updateIsRendered(ForumUtils.FIELD_SEARCHFORUM_LABEL);
       UISearchForm searchForm = getChild(UISearchForm.class);
       searchForm.setUserProfile(getUserProfile());
-      searchForm.setSelectType(path.replaceFirst(ForumUtils.FIELD_SEARCHFORUM_LABEL, ""));
       searchForm.setPath(ForumUtils.EMPTY_STR);
+      searchForm.setSelectType(path.replaceFirst(ForumUtils.FIELD_SEARCHFORUM_LABEL, ""));
       path = ForumUtils.FIELD_EXOFORUM_LABEL;
     } else if (path.lastIndexOf(Utils.TAG) >= 0) {
       updateIsRendered(ForumUtils.TAG);
@@ -651,7 +676,10 @@ public class UIForumPortlet extends UIPortletApplication {
       } else if (id.length > 1) {
         try {
           page = Integer.parseInt(id[id.length - 1]);
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
+          if (log.isDebugEnabled()){
+            log.debug("Failed to parse number " + id[id.length - 1], e);
+          }
         }
         if (page > 0) {
           path = path.replace(ForumUtils.SLASH + id[id.length - 1], ForumUtils.EMPTY_STR);
@@ -665,11 +693,13 @@ public class UIForumPortlet extends UIPortletApplication {
           topic = this.forumService.getTopicByPath(path, false);
         } else {
           topic = (Topic) this.forumService.getObjectNameById(path, Utils.TOPIC);
-          path = topic.getPath();
-          path = path.substring(path.indexOf(Utils.CATEGORY));
-          id = path.split(ForumUtils.SLASH);
         }
         if (topic != null) {
+          if (path.indexOf(ForumUtils.SLASH) < 0) {
+            path = topic.getPath();
+            path = path.substring(path.indexOf(Utils.CATEGORY));
+            id = path.split(ForumUtils.SLASH);
+          }
           Category category = this.forumService.getCategory(id[0]);
           Forum forum = this.forumService.getForum(id[0], id[1]);
           if (this.checkCanView(category, forum, topic)) {
@@ -685,7 +715,7 @@ public class UIForumPortlet extends UIPortletApplication {
             uiTopicDetailContainer.getChild(UITopicPoll.class).updateFormPoll(id[0], id[1], topic.getId());
             this.getChild(UIForumLinks.class).setValueOption((id[0] + ForumUtils.SLASH + id[1] + " "));
             uiTopicDetail.setIdPostView(postId);
-            uiTopicDetail.setLastPostId((postId.equals("top")?"":postId));
+            uiTopicDetail.setLastPostId((postId.equals("top")?ForumUtils.EMPTY_STR:postId));
             if (isReply || isQuote) {
               if (uiTopicDetail.getCanPost()) {
                 uiTopicDetail.setIdPostView("top");
@@ -703,8 +733,7 @@ public class UIForumPortlet extends UIPortletApplication {
                       postForm.updatePost(postId, true, false, post);
                       popupContainer.setId("UIQuoteContainer");
                     } else {
-                      uiApp.addMessage(new ApplicationMessage("UIBreadcumbs.msg.post-no-longer-exist", null, ApplicationMessage.WARNING));
-                      context.addUIComponentToUpdateByAjax(uiApp.getUIPopupMessages());
+                      showWarningMessage(context, "UIBreadcumbs.msg.post-no-longer-exist", ForumUtils.EMPTY_STR);
                       uiTopicDetail.setIdPostView("normal");
                     }
                   } else {
@@ -717,27 +746,45 @@ public class UIForumPortlet extends UIPortletApplication {
                   log.error(e);
                 }
               } else {
-                uiApp.addMessage(new ApplicationMessage("UIPostForm.msg.no-permission", null, ApplicationMessage.WARNING));
+                showWarningMessage(context, "UIPostForm.msg.no-permission", ForumUtils.EMPTY_STR);
               }
             }
             if (!UserHelper.isAnonim()) {
-              this.forumService.updateTopicAccess(UserHelper.getCurrentUser(), topic.getId());
-              this.getUserProfile().setLastTimeAccessTopic(topic.getId(), TimeConvertUtils.getInstanceTempCalendar().getTimeInMillis());
+              this.forumService.updateTopicAccess(userProfile.getUserId(), topic.getId());
+              this.getUserProfile().setLastTimeAccessTopic(topic.getId(), CommonUtils.getGreenwichMeanTime().getTimeInMillis());
             }
           } else {
-            uiApp.addMessage(new ApplicationMessage("UIBreadcumbs.msg.do-not-permission", new String[] { topic.getTopicName(), res.getString("UIForumPortlet.label.topic").toLowerCase() }, ApplicationMessage.WARNING));
-            rederForumHome();
-            path = Utils.FORUM_SERVICE;
+            showWarningMessage(context, "UIBreadcumbs.msg.do-not-permission", 
+                               new String[] { topic.getTopicName(), res.getString("UIForumPortlet.label.topic").toLowerCase() });
+            if (!ForumUtils.isEmpty(getForumIdOfSpace())) {
+              calculateRenderComponent(forumSpId, context);
+            } else {
+              renderForumHome();
+              path = Utils.FORUM_SERVICE;
+            }
+          }
+        } else if (!ForumUtils.isEmpty(getForumIdOfSpace())) {
+          if (forumService.getForum(categorySpId, forumSpId) == null) {
+            forumSpDeleted = true;
+            removeAllChildPorletView();
+            log.info("The forum in space " + spaceDisplayName + " no longer exists.");
+            return;
+          } else {
+            showWarningMessage(context, "UIShowBookMarkForm.msg.link-not-found", ForumUtils.EMPTY_STR);
+            calculateRenderComponent(forumSpId, context);
           }
         }
       } catch (Exception e) {
-        uiApp.addMessage(new ApplicationMessage("UIShowBookMarkForm.msg.link-not-found", null, ApplicationMessage.WARNING));
-        rederForumHome();
+        if (log.isDebugEnabled()){
+          log.debug("Failed to render forum link: [" + path + "]. Forum home will be rendered.\nCaused by:", e);
+        }
+        showWarningMessage(context, "UIShowBookMarkForm.msg.link-not-found", ForumUtils.EMPTY_STR);
+        renderForumHome();
         path = Utils.FORUM_SERVICE;
       }
     } else if ((path.lastIndexOf(Utils.FORUM) == 0 && path.lastIndexOf(Utils.CATEGORY) < 0) || (path.lastIndexOf(Utils.FORUM) > 0)) {
       try {
-        Forum forum;
+        Forum forum = null;
         String cateId = null;
         int page = 0;
         if (path.indexOf(ForumUtils.SLASH) >= 0) {
@@ -746,6 +793,9 @@ public class UIForumPortlet extends UIPortletApplication {
           try {
             page = Integer.parseInt(arr[arr.length - 1]);
           } catch (Exception e) {
+            if (log.isDebugEnabled()){
+              log.debug("Failed to parse number " + arr[arr.length - 1], e);
+            }
           }
           if (arr[0].indexOf(Utils.CATEGORY) == 0) {
             cateId = arr[0];
@@ -753,8 +803,18 @@ public class UIForumPortlet extends UIPortletApplication {
           } else {
             forum = (Forum) this.forumService.getObjectNameById(arr[0], Utils.FORUM);
           }
-        } else {
+        }
+        if (forum == null) {
           forum = (Forum) this.forumService.getObjectNameById(path, Utils.FORUM);
+          if (forum == null && path.equals(getForumIdOfSpace())) {
+            forum = forumService.getForum(this.categorySpId, path);
+          }
+          if(forum == null) {
+            forumSpDeleted = true;
+            removeAllChildPorletView();
+            log.info("The forum in space " + spaceDisplayName + " no longer exists.");
+            return;
+          }
         }
         path = forum.getPath();
         if (cateId == null) {
@@ -769,13 +829,18 @@ public class UIForumPortlet extends UIPortletApplication {
           forumContainer.getChild(UIForumDescription.class).setForum(forum);
           forumContainer.getChild(UITopicContainer.class).setUpdateForum(cateId, forum, page);
         } else {
-          uiApp.addMessage(new ApplicationMessage("UIBreadcumbs.msg.do-not-permission", new String[] { forum.getForumName(), res.getString("UIForumPortlet.label.forum").toLowerCase() }, ApplicationMessage.WARNING));
-          rederForumHome();
+          showWarningMessage(context, "UIBreadcumbs.msg.do-not-permission", 
+                             new String[] { forum.getForumName(), res.getString("UIForumPortlet.label.forum").toLowerCase() });
+          renderForumHome();
           path = Utils.FORUM_SERVICE;
         }
       } catch (Exception e) {
-        uiApp.addMessage(new ApplicationMessage("UIShowBookMarkForm.msg.link-not-found", new String[] { res.getString("UIForumPortlet.label.forum") }, ApplicationMessage.WARNING));
-        rederForumHome();
+        if (log.isDebugEnabled()){
+          log.debug("Failed to render forum link: [" + path + "]. Forum home will be rendered.\nCaused by:", e);
+        }
+        showWarningMessage(context, "UIShowBookMarkForm.msg.link-not-found", 
+                           new String[] { res.getString("UIForumPortlet.label.forum") });
+        renderForumHome();
         path = Utils.FORUM_SERVICE;
       }
     } else if (path.indexOf(Utils.CATEGORY) >= 0 && path.indexOf(ForumUtils.SLASH) < 0) {
@@ -787,18 +852,25 @@ public class UIForumPortlet extends UIPortletApplication {
           categoryContainer.updateIsRender(false);
           this.updateIsRendered(ForumUtils.CATEGORIES);
         } else {
-          uiApp.addMessage(new ApplicationMessage("UIBreadcumbs.msg.do-not-permission", new String[] { category.getCategoryName(), res.getString("UIForumPortlet.label.category").toLowerCase() }, ApplicationMessage.WARNING));
-          rederForumHome();
+          showWarningMessage(context, "UIBreadcumbs.msg.do-not-permission", 
+                             new String[] { category.getCategoryName(), res.getString("UIForumPortlet.label.category").toLowerCase() });
+          renderForumHome();
           path = Utils.FORUM_SERVICE;
         }
       } catch (Exception e) {
-        uiApp.addMessage(new ApplicationMessage("UIShowBookMarkForm.msg.link-not-found", null, ApplicationMessage.WARNING));
-        rederForumHome();
+        if (log.isDebugEnabled()){
+          log.debug("Failed to render forum link: [" + path + "]. Forum home will be rendered.\nCaused by:", e);
+        }
+        showWarningMessage(context, "UIShowBookMarkForm.msg.link-not-found", ForumUtils.EMPTY_STR);
+        renderForumHome();
         path = Utils.FORUM_SERVICE;
       }
     } else {
-      uiApp.addMessage(new ApplicationMessage("UIShowBookMarkForm.msg.link-not-found", null, ApplicationMessage.WARNING));
-      rederForumHome();
+      if (log.isDebugEnabled()){
+        log.debug("Failed to render forum link: [" + path + "]. Forum home will be rendered.");
+      }
+      showWarningMessage(context, "UIShowBookMarkForm.msg.link-not-found", ForumUtils.EMPTY_STR);
+      renderForumHome();
       path = Utils.FORUM_SERVICE;
     }
     getChild(UIBreadcumbs.class).setUpdataPath(path);
@@ -810,7 +882,7 @@ public class UIForumPortlet extends UIPortletApplication {
       UIForumPortlet forumPortlet = event.getSource();
       ForumParameter params = (ForumParameter) event.getRequestContext().getAttribute(PortletApplication.PORTLET_EVENT_VALUE);
       if (params.getTopicId() != null) {
-        forumPortlet.userProfile.setLastTimeAccessTopic(params.getTopicId(), TimeConvertUtils.getInstanceTempCalendar().getTimeInMillis());
+        forumPortlet.userProfile.setLastTimeAccessTopic(params.getTopicId(), CommonUtils.getGreenwichMeanTime().getTimeInMillis());
         UITopicDetail topicDetail = forumPortlet.findFirstComponentOfType(UITopicDetail.class);
         topicDetail.setIdPostView("lastpost");
       }
@@ -848,11 +920,10 @@ public class UIForumPortlet extends UIPortletApplication {
         UserProfile selectProfile = forumPortlet.forumService.getUserInformations(forumPortlet.forumService.getQuickProfile(userId.trim()));
         viewUserProfile.setUserProfileViewer(selectProfile);
       } catch (Exception e) {
-        log.error("Fail to set user profile: \n", e);
+        log.debug("Fail to set user profile.", e);
+        showWarningMessage(event.getRequestContext(), "UITopicDetail.msg.userIsDeleted", new String[] { userId });
+        return;
       }
-      viewUserProfile.setUserProfile(forumPortlet.userProfile);
-      CommonContact contact = forumPortlet.getPersonalContact(userId.trim());
-      viewUserProfile.setContact(contact);
       popupAction.activate(viewUserProfile, 670, 400, true);
       event.getRequestContext().addUIComponentToUpdateByAjax(popupAction);
     }
@@ -861,16 +932,22 @@ public class UIForumPortlet extends UIPortletApplication {
   static public class PrivateMessageActionListener extends EventListener<UIForumPortlet> {
     public void execute(Event<UIForumPortlet> event) throws Exception {
       UIForumPortlet forumPortlet = event.getSource();
-      ;
       if (forumPortlet.userProfile.getIsBanned()) {
-        String[] args = new String[] {};
-        throw new MessageException(new ApplicationMessage("UITopicDetail.msg.userIsBannedCanNotSendMail", args, ApplicationMessage.WARNING));
+        showWarningMessage(event.getRequestContext(), "UITopicDetail.msg.userIsBannedCanNotSendMail", ForumUtils.EMPTY_STR);
+        return;
       }
       String userId = event.getRequestContext().getRequestParameter(OBJECTID);
       int t = userId.indexOf(Utils.DELETED);
+      if (t < 0) {
+        try {
+          forumPortlet.forumService.getQuickProfile(userId.trim());
+        } catch (Exception e) {
+          t = 1;
+        }
+      }
       if (t > 0) {
-        String[] args = new String[] { userId.substring(0, t) };
-        throw new MessageException(new ApplicationMessage("UITopicDetail.msg.userIsDeleted", args, ApplicationMessage.WARNING));
+        showWarningMessage(event.getRequestContext(), "UITopicDetail.msg.userIsDeleted", userId.substring(0, t) );
+        return;
       }
       UIPopupAction popupAction = forumPortlet.getChild(UIPopupAction.class);
       UIPopupContainer popupContainer = popupAction.createUIComponent(UIPopupContainer.class, null, null);
@@ -879,7 +956,7 @@ public class UIForumPortlet extends UIPortletApplication {
       messageForm.setUserProfile(forumPortlet.userProfile);
       messageForm.setSendtoField(userId);
       popupContainer.setId("PrivateMessageForm");
-      popupAction.activate(popupContainer, 650, 480);
+      popupAction.activate(popupContainer, 720, 550);
       event.getRequestContext().addUIComponentToUpdateByAjax(popupAction);
     }
   }

@@ -35,6 +35,7 @@ import org.exoplatform.forum.service.Post;
 import org.exoplatform.forum.service.UserProfile;
 import org.exoplatform.forum.service.Utils;
 import org.exoplatform.forum.webui.UIForumPortlet;
+import org.exoplatform.ks.common.CommonUtils;
 import org.exoplatform.ks.common.UserHelper;
 import org.exoplatform.ks.common.webui.UIPopupAction;
 import org.exoplatform.ks.common.webui.UIPopupContainer;
@@ -44,7 +45,6 @@ import org.exoplatform.web.application.ApplicationMessage;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
-import org.exoplatform.webui.core.UIApplication;
 import org.exoplatform.webui.core.UIComponent;
 import org.exoplatform.webui.core.UIPopupComponent;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
@@ -91,19 +91,8 @@ public class UIViewPost extends UIForm implements UIPopupComponent {
     this.setActions(actions);
   }
 
-  @SuppressWarnings("unused")
-  private UserProfile getUserProfile() throws Exception {
-    try {
-      userProfile = this.getAncestorOfType(UIForumPortlet.class).getUserProfile();
-    } catch (Exception e) {
-      String userName = UserHelper.getCurrentUser();
-      if (userName != null) {
-        try {
-          userProfile = forumService.getQuickProfile(userName);
-        } catch (Exception ex) {
-        }
-      }
-    }
+  protected UserProfile getUserProfile() {
+    userProfile = this.getAncestorOfType(UIForumPortlet.class).getUserProfile();
     return userProfile;
   }
 
@@ -114,15 +103,14 @@ public class UIViewPost extends UIForm implements UIPopupComponent {
   public String getImageUrl(String imagePath) throws Exception {
     String url = ForumUtils.EMPTY_STR;
     try {
-      url = org.exoplatform.ks.common.Utils.getImageUrl(imagePath);
+      url = CommonUtils.getImageUrl(imagePath);
     } catch (Exception e) {
       log.warn(imagePath + " is not exist: " + e.getMessage());
     }
     return url;
   }
 
-  @SuppressWarnings("unused")
-  private String getFileSource(ForumAttachment attachment) throws Exception {
+  protected String getFileSource(ForumAttachment attachment) throws Exception {
     DownloadService dservice = getApplicationComponent(DownloadService.class);
     try {
       InputStream input = attachment.getInputStream();
@@ -137,8 +125,7 @@ public class UIViewPost extends UIForm implements UIPopupComponent {
     this.post = post;
   }
 
-  @SuppressWarnings("unused")
-  private Post getPostView() throws Exception {
+  protected Post getPostView() throws Exception {
     return post;
   }
 
@@ -169,11 +156,13 @@ public class UIViewPost extends UIForm implements UIPopupComponent {
       Post post = uiForm.post;
       post.setIsApproved(true);
       post.setIsHidden(false);
+      post.setIsWaiting(false);
       List<Post> posts = new ArrayList<Post>();
       posts.add(post);
       try {
         uiForm.forumService.modifyPost(posts, Utils.APPROVE);
         uiForm.forumService.modifyPost(posts, Utils.HIDDEN);
+        uiForm.forumService.modifyPost(posts, Utils.WAITING);
       } catch (Exception e) {
         log.debug("\nModify post fail: ", e);
       }
@@ -201,8 +190,9 @@ public class UIViewPost extends UIForm implements UIPopupComponent {
       UIViewPost uiForm = event.getSource();
       Post post = uiForm.post;
       if (post == null) {
-        UIApplication uiApp = uiForm.getAncestorOfType(UIApplication.class);
-        uiApp.addMessage(new ApplicationMessage("UIShowBookMarkForm.msg.link-not-found", null, ApplicationMessage.WARNING));
+        event.getRequestContext().getUIApplication().addMessage(new ApplicationMessage("UIShowBookMarkForm.msg.link-not-found",
+                                                                                       null,
+                                                                                       ApplicationMessage.WARNING));
         return;
       }
       String path = post.getPath();

@@ -3,7 +3,7 @@
 	import org.exoplatform.web.application.JavascriptManager;
 	JavascriptManager jsManager = _ctx.getRequestContext().getJavascriptManager();
 %>
-<div class="UIAutoPruneForm UIBBCodeManagerForm">
+<div class="UIBBCodeManagerForm UIAutoPruneForm">
 	<% uiform.begin() %>
 	<div class="AutoPruneContainer"  id="AutoPruneContainer">
 		<div style="padding:0px 16px 0px 1px;">
@@ -45,20 +45,20 @@
 						<td width="40px"><div onclick="<%=uiform.event("ActivatePrune", pruneId)%>"><% uiform.renderField(pruneId); %></div></td>
 						<td>$lastRun</td>
 						<td width="60px">
-							<div class="ActionContainer" style="margin:0px auto; width:52px;">
+							<div class="ActionContainer ClearFix" style="margin:0px auto; width:52px;">
 								<div style="cursor:pointer; float:left; margin:2px;" onclick="<%=uiform.event("PruneSetting", pruneId)%>">
 									 <div title="<%=_ctx.appRes("UIAutoPruneForm.label.PruneSetting");%>" class="PruneSettingIcon"><span></span></div>							
 								</div>
 								<div style="cursor:pointer; float:left; margin:2px;" onclick="<%=uiform.event("RunPrune", pruneId)%>">
 									 <div title="<%=_ctx.appRes("UIRunPruneForm.action.Run");%>" class="RunIcon"><span></span></div>							
 								</div>
-								<div style="clear:left;"><span></span></div>
+
 							</div>
 						</td>
 					</tr>
 						<% } else { %>
 					<tr class="$classCssInbox">
-						<td style="width:120px; text-align:center"><b>$categoryName</b></td>
+						<td style="width:120px; text-align:center"><strong>$categoryName</strong></td>
 						<td style="width:120px; text-align:center"> </td>
 						<td width="40px"> </td>
 						<td>&nbsp;</td>
@@ -75,14 +75,14 @@
 						<td width="40px"><div onclick="<%=uiform.event("ActivatePrune", pruneId)%>"><% uiform.renderField(pruneId); %></div></td>
 						<td>$lastRun</td>
 						<td width="60px">
-							<div class="ActionContainer" style="margin:0px auto; width:52px;">
+							<div class="ActionContainer ClearFix" style="margin:0px auto; width:52px;">
 								<div style="cursor:pointer; float:left; margin:2px;" onclick="<%=uiform.event("PruneSetting", pruneId)%>">
 									 <div title="<%=_ctx.appRes("UIAutoPruneForm.label.PruneSetting");%>" class="PruneSettingIcon"><span></span></div>							
 								</div>
 								<div style="cursor:pointer; float:left; margin:2px;" onclick="<%=uiform.event("RunPrune", pruneId)%>">
 									 <div title="<%=_ctx.appRes("UIRunPruneForm.action.Run");%>" class="RunIcon"><span></span></div>							
 								</div>
-								<div style="clear:left;"><span></span></div>
+
 							</div>
 						</td>
 					</tr>
@@ -95,22 +95,8 @@
 		</div>
 	</div>
 	<% jsManager.addJavascript("eXo.forum.UIForumPortlet.setAutoScrollTable('AutoPruneContainer', 'TableContent','UIGrid');") ; %>
-	<div class="UIAction"> 
-		<table class="ActionContainer">
-			<tr>
-				<td align="center">
-					<div onclick="<%=uicomponent.event("Close");%>" class="ActionButton LightBlueStyle">
-						<div class="ButtonLeft">
-							<div class="ButtonRight">
-								<div class="ButtonMiddle">
-									<a href="javascript:void(0);"><%=_ctx.appRes("UIForumPortlet.label.Close"); %></a>
-								</div>
-							</div>
-						</div>
-					</div>
-				</td>
-			</tr>
-		</table> 
-	</div>
+	<div class="UIAction">
+      <a href="javascript:void(0);" onclick="<%=uicomponent.event("Close");%>" class="ActionButton LightBlueStyle"><%=_ctx.appRes("UIForumPortlet.label.Close"); %></a>
+    </div>
 	<%uiform.end()%>
 </div>

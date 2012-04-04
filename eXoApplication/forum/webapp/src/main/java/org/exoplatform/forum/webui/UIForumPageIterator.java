@@ -68,8 +68,7 @@ public class UIForumPageIterator extends UIContainer {
     this.pageList = pageList;
   }
 
-  @SuppressWarnings("unused")
-  private List<String> getTotalpage() throws Exception {
+  protected List<String> getTotalpage() throws Exception {
     int max_Page = (int) pageList.getAvailablePage();
     if (this.page > max_Page)
       this.page = max_Page;
@@ -99,7 +98,6 @@ public class UIForumPageIterator extends UIContainer {
     return temp;
   }
 
-  @SuppressWarnings("unused")
   public List<Long> getInfoPage() throws Exception {
     List<Long> temp = new ArrayList<Long>();
     try {
@@ -120,7 +118,6 @@ public class UIForumPageIterator extends UIContainer {
     this.page = (int) page;
   }
 
-  @SuppressWarnings("unused")
   public int getPageSelected() {
     return this.page;
   }

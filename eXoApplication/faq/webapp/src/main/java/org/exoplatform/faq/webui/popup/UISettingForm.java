@@ -35,6 +35,7 @@ import org.exoplatform.ks.common.webui.BaseUIForm;
 import org.exoplatform.ks.common.webui.UIPopupAction;
 import org.exoplatform.ks.common.webui.UIPopupContainer;
 import org.exoplatform.ks.common.webui.WebUIUtils;
+import org.exoplatform.web.application.ApplicationMessage;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
@@ -42,13 +43,13 @@ import org.exoplatform.webui.core.UIPopupComponent;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.core.model.SelectItemOption;
 import org.exoplatform.webui.event.Event;
-import org.exoplatform.webui.event.Event.Phase;
 import org.exoplatform.webui.event.EventListener;
-import org.exoplatform.webui.form.UIFormCheckBoxInput;
+import org.exoplatform.webui.event.Event.Phase;
 import org.exoplatform.webui.form.UIFormInputWithActions;
-import org.exoplatform.webui.form.UIFormInputWithActions.ActionData;
 import org.exoplatform.webui.form.UIFormSelectBox;
 import org.exoplatform.webui.form.UIFormStringInput;
+import org.exoplatform.webui.form.UIFormInputWithActions.ActionData;
+import org.exoplatform.webui.form.input.UICheckBoxInput;
 import org.exoplatform.webui.form.wysiwyg.UIFormWYSIWYGInput;
 
 /**
@@ -72,7 +73,6 @@ import org.exoplatform.webui.form.wysiwyg.UIFormWYSIWYGInput;
         @EventConfig(listeners = UISettingForm.CancelActionListener.class) 
     }
 )
-@SuppressWarnings("unused")
 public class UISettingForm extends BaseUIForm implements UIPopupComponent {
   public final String         DISPLAY_TAB                      = "DisplayTab";
 
@@ -93,10 +93,6 @@ public class UISettingForm extends BaseUIForm implements UIPopupComponent {
   public static final String  ORDER_BY                         = "order-by".intern();
 
   public static final String  ORDER_TYPE                       = "order-type".intern();
-
-  private static final String DISPLAY_APPROVED                 = "approved";
-
-  private static final String DISPLAY_BOTH                     = "both";
 
   private static final String ENABLE_VOTE_COMMNET              = "enableVotComment";
 
@@ -134,9 +130,9 @@ public class UISettingForm extends BaseUIForm implements UIPopupComponent {
 
   private List<String>        idForumName                      = new ArrayList<String>();
 
-  private boolean             isResetMail                      = false;
+  protected boolean           isResetMail                      = false;
 
-  private int                 indexOfTab                       = 0;
+  protected int               indexOfTab                       = 0;
 
   private String              avatarUrl;
 
@@ -180,8 +176,8 @@ public class UISettingForm extends BaseUIForm implements UIPopupComponent {
       UIFormInputWithActions CategoryScoping = new UIFormInputWithActions(CATEGORY_SCOPING);
 
       List<SelectItemOption<String>> displayMode = new ArrayList<SelectItemOption<String>>();
-      displayMode.add(new SelectItemOption<String>(DISPLAY_APPROVED, DISPLAY_APPROVED));
-      displayMode.add(new SelectItemOption<String>(DISPLAY_BOTH, DISPLAY_BOTH));
+      displayMode.add(new SelectItemOption<String>(FAQSetting.DISPLAY_APPROVED, FAQSetting.DISPLAY_APPROVED));
+      displayMode.add(new SelectItemOption<String>(FAQSetting.DISPLAY_BOTH, FAQSetting.DISPLAY_BOTH));
 
       List<SelectItemOption<String>> orderBy = new ArrayList<SelectItemOption<String>>();
       orderBy.add(new SelectItemOption<String>(ITEM_CREATE_DATE, FAQSetting.DISPLAY_TYPE_POSTDATE));
@@ -221,16 +217,15 @@ public class UISettingForm extends BaseUIForm implements UIPopupComponent {
 
       DisplayTab.addUIFormInput((new UIFormSelectBox(DISPLAY_MODE, DISPLAY_MODE, displayMode)).setValue(faqSetting_.getDisplayMode()));
       DisplayTab.addUIFormInput((new UIFormSelectBox(ORDER_BY, ORDER_BY, orderBy)).setValue(String.valueOf(faqSetting_.getOrderBy())));
-      ;
       DisplayTab.addUIFormInput((new UIFormSelectBox(ORDER_TYPE, ORDER_TYPE, orderType)).setValue(String.valueOf(faqSetting_.getOrderType())));
-      DisplayTab.addUIFormInput((new UIFormCheckBoxInput<Boolean>(ENABLE_VOTE_COMMNET, ENABLE_VOTE_COMMNET, false)).setChecked(faqSetting_.isEnanbleVotesAndComments()));
-      DisplayTab.addUIFormInput((new UIFormCheckBoxInput<Boolean>(ENABLE_ANONYMOUS_SUBMIT_QUESTION, ENABLE_ANONYMOUS_SUBMIT_QUESTION, false)).setChecked(faqSetting_.isEnableAnonymousSubmitQuestion()));
-      DisplayTab.addUIFormInput((new UIFormCheckBoxInput<Boolean>(ENABLE_RSS, ENABLE_RSS, false)).setChecked(faqSetting_.isEnableAutomaticRSS()));
-      DisplayTab.addUIFormInput((new UIFormCheckBoxInput<Boolean>(ENABLE_VIEW_AVATAR, ENABLE_VIEW_AVATAR, false)).setChecked(faqSetting_.isEnableViewAvatar()));
-      UIFormCheckBoxInput<Boolean> isPostQuestionInRootCategory = new UIFormCheckBoxInput<Boolean>(POST_QUESTION_IN_ROOT_CATEGORY, POST_QUESTION_IN_ROOT_CATEGORY, true);
+      DisplayTab.addUIFormInput((new UICheckBoxInput(ENABLE_VOTE_COMMNET, ENABLE_VOTE_COMMNET, false)).setChecked(faqSetting_.isEnanbleVotesAndComments()));
+      DisplayTab.addUIFormInput((new UICheckBoxInput(ENABLE_ANONYMOUS_SUBMIT_QUESTION, ENABLE_ANONYMOUS_SUBMIT_QUESTION, false)).setChecked(faqSetting_.isEnableAnonymousSubmitQuestion()));
+      DisplayTab.addUIFormInput((new UICheckBoxInput(ENABLE_RSS, ENABLE_RSS, false)).setChecked(faqSetting_.isEnableAutomaticRSS()));
+      DisplayTab.addUIFormInput((new UICheckBoxInput(ENABLE_VIEW_AVATAR, ENABLE_VIEW_AVATAR, false)).setChecked(faqSetting_.isEnableViewAvatar()));
+      UICheckBoxInput isPostQuestionInRootCategory = new UICheckBoxInput(POST_QUESTION_IN_ROOT_CATEGORY, POST_QUESTION_IN_ROOT_CATEGORY, true);
       isPostQuestionInRootCategory.setChecked(faqSetting_.isPostQuestionInRootCategory());
       DisplayTab.addUIFormInput(isPostQuestionInRootCategory);
-      UIFormCheckBoxInput<Boolean> enableDiscus = new UIFormCheckBoxInput<Boolean>(ENABLE_DISCUSSION, ENABLE_DISCUSSION, false);
+      UICheckBoxInput enableDiscus = new UICheckBoxInput(ENABLE_DISCUSSION, ENABLE_DISCUSSION, false);
       enableDiscus.setChecked(faqSetting_.getIsDiscussForum());
       Discussion.addUIFormInput(enableDiscus);
       UIFormStringInput categoryPath = new UIFormStringInput(FIELD_CATEGORY_PATH_INPUT, FIELD_CATEGORY_PATH_INPUT, null);
@@ -244,7 +239,7 @@ public class UISettingForm extends BaseUIForm implements UIPopupComponent {
         this.idForumName.add("");
       }
       categoryPath.setValue(idForumName.get(1));
-      categoryPath.setEditable(false);
+      categoryPath.setReadOnly(true);
       Discussion.addUIFormInput(categoryPath);
       List<ActionData> actionData = new ArrayList<ActionData>();
       ActionData ad;
@@ -256,9 +251,9 @@ public class UISettingForm extends BaseUIForm implements UIPopupComponent {
       actionData.add(ad);
       Discussion.setActionField(FIELD_CATEGORY_PATH_INPUT, actionData);
 
-      UIFormCheckBoxInput<Boolean> checkBoxInput = null;
+      UICheckBoxInput checkBoxInput = null;
       for (Cate cate : listCate) {
-        checkBoxInput = new UIFormCheckBoxInput<Boolean>(cate.getCategory().getId(), cate.getCategory().getId(), false);
+        checkBoxInput = new UICheckBoxInput(cate.getCategory().getId(), cate.getCategory().getId(), false);
         checkBoxInput.setChecked(cate.getCategory().isView());
         CategoryScoping.addChild(checkBoxInput);
       }
@@ -284,7 +279,7 @@ public class UISettingForm extends BaseUIForm implements UIPopupComponent {
       orderType.add(new SelectItemOption<String>(DESC, FAQSetting.ORDERBY_TYPE_DESC));
       addUIFormInput((new UIFormSelectBox(ORDER_TYPE, ORDER_TYPE, orderType)).setValue(String.valueOf(faqSetting_.getOrderType())));
 
-      addUIFormInput((new UIFormCheckBoxInput<Boolean>(ITEM_VOTE, ITEM_VOTE, false)).setChecked(faqSetting_.isSortQuestionByVote()));
+      addUIFormInput((new UICheckBoxInput(ITEM_VOTE, ITEM_VOTE, false)).setChecked(faqSetting_.isSortQuestionByVote()));
 
       setAvatarUrl(FAQUtils.getUserAvatar(FAQUtils.getCurrentUser()));
     }
@@ -323,7 +318,7 @@ public class UISettingForm extends BaseUIForm implements UIPopupComponent {
   public void deActivate() throws Exception {
   }
 
-  private String getSelectedTab() {
+  protected String getSelectedTab() {
     return tabSelected;
   }
 
@@ -335,7 +330,7 @@ public class UISettingForm extends BaseUIForm implements UIPopupComponent {
       if (settingForm.isEditPortlet_) {
         UIFormInputWithActions inputWithActions = settingForm.getChildById(settingForm.CATEGORY_SCOPING);
         List<String> listCateIds = new ArrayList<String>();
-        UIFormCheckBoxInput<Boolean> checkBoxInput = null;
+        UICheckBoxInput checkBoxInput = null;
         int position = 1;
         boolean isView = true;
         for (int i = 0; i < settingForm.listCate.size(); i++) {
@@ -358,11 +353,11 @@ public class UISettingForm extends BaseUIForm implements UIPopupComponent {
         faqSetting.setDisplayMode(((UIFormSelectBox) inputWithActions.getChildById(settingForm.DISPLAY_MODE)).getValue());
         faqSetting.setOrderBy(String.valueOf(((UIFormSelectBox) inputWithActions.getChildById(ORDER_BY)).getValue()));
         faqSetting.setOrderType(String.valueOf(((UIFormSelectBox) inputWithActions.getChildById(ORDER_TYPE)).getValue()));
-        faqSetting.setEnanbleVotesAndComments(inputWithActions.getUIFormCheckBoxInput(ENABLE_VOTE_COMMNET).isChecked());
-        faqSetting.setEnableAnonymousSubmitQuestion(inputWithActions.getUIFormCheckBoxInput(ENABLE_ANONYMOUS_SUBMIT_QUESTION).isChecked());
-        faqSetting.setEnableAutomaticRSS(inputWithActions.getUIFormCheckBoxInput(ENABLE_RSS).isChecked());
-        faqSetting.setEnableViewAvatar(inputWithActions.getUIFormCheckBoxInput(ENABLE_VIEW_AVATAR).isChecked());
-        faqSetting.setPostQuestionInRootCategory(inputWithActions.getUIFormCheckBoxInput(POST_QUESTION_IN_ROOT_CATEGORY).isChecked());
+        faqSetting.setEnanbleVotesAndComments(inputWithActions.getUICheckBoxInput(ENABLE_VOTE_COMMNET).isChecked());
+        faqSetting.setEnableAnonymousSubmitQuestion(inputWithActions.getUICheckBoxInput(ENABLE_ANONYMOUS_SUBMIT_QUESTION).isChecked());
+        faqSetting.setEnableAutomaticRSS(inputWithActions.getUICheckBoxInput(ENABLE_RSS).isChecked());
+        faqSetting.setEnableViewAvatar(inputWithActions.getUICheckBoxInput(ENABLE_VIEW_AVATAR).isChecked());
+        faqSetting.setPostQuestionInRootCategory(inputWithActions.getUICheckBoxInput(POST_QUESTION_IN_ROOT_CATEGORY).isChecked());
 
         UIFormInputWithActions emailTab = settingForm.getChildById(settingForm.SET_DEFAULT_EMAIL_TAB);
         String defaultAddnewQuestion = ((UIFormWYSIWYGInput) ((UIFormInputWithActions) emailTab.getChildById(settingForm.SET_DEFAULT_ADDNEW_QUESTION_TAB)).getChildById(EMAIL_DEFAULT_ADD_QUESTION)).getValue();
@@ -375,13 +370,16 @@ public class UISettingForm extends BaseUIForm implements UIPopupComponent {
         if (defaultEditQuestion == null || !ValidatorDataInput.fckContentIsNotEmpty(defaultEditQuestion))
           defaultEditQuestion = " ";
         UIFormInputWithActions Discussion = settingForm.getChildById(DISCUSSION_TAB);
-        boolean isDiscus = (Boolean) Discussion.getUIFormCheckBoxInput(ENABLE_DISCUSSION).getValue();
+        boolean isDiscus = (Boolean) Discussion.getUICheckBoxInput(ENABLE_DISCUSSION).getValue();
         if (isDiscus) {
           String value = Discussion.getUIStringInput(FIELD_CATEGORY_PATH_INPUT).getValue();
           if (!settingForm.idForumName.isEmpty() && !FAQUtils.isFieldEmpty(value)) {
             faqSetting.setIdNameCategoryForum(settingForm.idForumName.get(0) + ";" + settingForm.idForumName.get(1));
           } else {
-            settingForm.warning("UISettingForm.msg.pathCategory-empty");
+            event.getRequestContext()
+                 .getUIApplication()
+                 .addMessage(new ApplicationMessage("UISettingForm.msg.pathCategory-empty", null, ApplicationMessage.WARNING));
+            event.getRequestContext().addUIComponentToUpdateByAjax(uiPortlet);
             return;
           }
         } else {
@@ -390,11 +388,14 @@ public class UISettingForm extends BaseUIForm implements UIPopupComponent {
         faqSetting.setIsDiscussForum(isDiscus);
         faqSetting.setEmailMoveQuestion(emailMoveQuestion);
         FAQUtils.savePortletPreference(faqSetting, defaultAddnewQuestion.replaceAll("&amp;", "&"), defaultEditQuestion.replaceAll("&amp;", "&"));
-        settingForm.info("UISettingForm.msg.update-successful");
+        event.getRequestContext().getUIApplication().addMessage(new ApplicationMessage("UISettingForm.msg.update-successful",
+                                                                                       null,
+                                                                                       ApplicationMessage.INFO));
+        event.getRequestContext().addUIComponentToUpdateByAjax(uiPortlet);
       } else {
         faqSetting.setOrderBy(String.valueOf(settingForm.getUIFormSelectBox(ORDER_BY).getValue()));
         faqSetting.setOrderType(String.valueOf(settingForm.getUIFormSelectBox(ORDER_TYPE).getValue()));
-        faqSetting.setSortQuestionByVote(settingForm.getUIFormCheckBoxInput(settingForm.ITEM_VOTE).isChecked());
+        faqSetting.setSortQuestionByVote(settingForm.getUICheckBoxInput(settingForm.ITEM_VOTE).isChecked());
         settingForm.faqService_.saveFAQSetting(faqSetting, FAQUtils.getCurrentUser());
         UIPopupAction uiPopupAction = settingForm.getAncestorOfType(UIPopupAction.class);
         uiPopupAction.deActivate();
@@ -511,13 +512,8 @@ public class UISettingForm extends BaseUIForm implements UIPopupComponent {
     public void execute(Event<UISettingForm> event) throws Exception {
       UISettingForm settingForm = event.getSource();
       UIAnswersPortlet uiPortlet = settingForm.getAncestorOfType(UIAnswersPortlet.class);
-      UIQuestions uiQuestions = uiPortlet.findFirstComponentOfType(UIQuestions.class);
-      uiQuestions.setDefaultLanguage();
-      UIPopupAction uiPopupAction = settingForm.getAncestorOfType(UIPopupAction.class);
-      uiPopupAction.deActivate();
-      event.getRequestContext().addUIComponentToUpdateByAjax(uiQuestions);
-      event.getRequestContext().addUIComponentToUpdateByAjax(uiPortlet.findFirstComponentOfType(UIAnswersContainer.class));
-      event.getRequestContext().addUIComponentToUpdateByAjax(uiPopupAction);
+      uiPortlet.cancelAction();
+      event.getRequestContext().addUIComponentToUpdateByAjax(uiPortlet.getChild(UIAnswersContainer.class));
     }
   }
 }

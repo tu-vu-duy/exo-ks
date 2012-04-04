@@ -38,7 +38,6 @@ import org.exoplatform.services.log.Log;
 import org.exoplatform.web.application.ApplicationMessage;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
-import org.exoplatform.webui.core.UIApplication;
 import org.exoplatform.webui.core.UIPopupComponent;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.event.Event;
@@ -63,11 +62,9 @@ import org.exoplatform.webui.form.UIFormTabPane;
 public class UIUserWatchManager extends UIFormTabPane implements UIPopupComponent {
   private FAQSetting            faqSetting_            = null;
 
-  @SuppressWarnings("unused")
-  private UIAnswersPageIterator pageIteratorCate;
+  protected UIAnswersPageIterator pageIteratorCate;
 
-  @SuppressWarnings("unused")
-  private JCRPageList           pageListCate;
+  protected JCRPageList           pageListCate;
 
   private UIAnswersPageIterator pageIteratorQues;
 
@@ -94,7 +91,7 @@ public class UIUserWatchManager extends UIFormTabPane implements UIPopupComponen
     super("UIUswerWatchManager");
     addChild(UIAnswersPageIterator.class, null, LIST_QUESTIONS_WATCHED);
     addChild(UIAnswersPageIterator.class, null, LIST_CATES_WATCHED);
-    emailAddress = FAQUtils.getEmailUser(FAQUtils.getCurrentUser());
+    emailAddress = FAQUtils.getEmailUser(null);
     this.setActions(new String[] { "Cancel" });
   }
 
@@ -147,7 +144,8 @@ public class UIUserWatchManager extends UIFormTabPane implements UIPopupComponen
         pageIteratorCates = this.getChildById(LIST_CATES_WATCHED);
         pageIteratorCates.updatePageList(pageListCates);
       }
-      long pageSelect = pageIteratorCates.getPageSelected();
+      long pageSelect = pageIteratorCates.getPageSelected();        
+      
       List<Category> listCategories = new ArrayList<Category>();
       listCategories.addAll(this.pageListCates.getPageResultCategoriesSearch(pageSelect, null));
       if (listCategories.isEmpty()) {
@@ -165,8 +163,7 @@ public class UIUserWatchManager extends UIFormTabPane implements UIPopupComponen
     }
   }
 
-  @SuppressWarnings("unused")
-  private List<Question> getListQuestionsWatch() {
+  protected List<Question> getListQuestionsWatch() {
     try {
       if (pageListQues == null) {
         pageListQues = faqService_.getListQuestionsWatch(faqSetting_, FAQUtils.getCurrentUser());
@@ -178,7 +175,8 @@ public class UIUserWatchManager extends UIFormTabPane implements UIPopupComponen
       long pageSelect = pageIteratorQues.getPageSelected();
       List<Question> listQuestion_ = new ArrayList<Question>();
       listQuestion_.addAll(this.pageListQues.getPage(pageSelect, null));
-      if (listQuestion_.isEmpty()) {
+      if (listQuestion_.isEmpty()) {        
+        
         UIAnswersPageIterator pageIterator = null;
         while (listQuestion_.isEmpty() && pageSelect > 1) {
           pageIterator = this.getChildById(LIST_QUESTIONS_WATCHED);
@@ -193,8 +191,7 @@ public class UIUserWatchManager extends UIFormTabPane implements UIPopupComponen
     return null;
   }
 
-  @SuppressWarnings("unused")
-  private long getTotalpages(String pageInteratorId) {
+  protected long getTotalpages(String pageInteratorId) {
     UIAnswersPageIterator pageIterator = this.getChildById(pageInteratorId);
     try {
       return pageIterator.getInfoPage().get(3);
@@ -210,10 +207,10 @@ public class UIUserWatchManager extends UIFormTabPane implements UIPopupComponen
       String categoryId = event.getRequestContext().getRequestParameter(OBJECTID);
       UIAnswersPortlet uiPortlet = watchManager.getAncestorOfType(UIAnswersPortlet.class);
       UIQuestions uiQuestions = uiPortlet.findFirstComponentOfType(UIQuestions.class);
-      if (!faqService_.isExisting(categoryId)) {
-        UIApplication uiApplication = watchManager.getAncestorOfType(UIApplication.class);
-        uiApplication.addMessage(new ApplicationMessage("UIQuestions.msg.category-id-deleted", null, ApplicationMessage.WARNING));
-        event.getRequestContext().addUIComponentToUpdateByAjax(uiApplication.getUIPopupMessages());
+      if (!faqService_.isExisting(categoryId)) {        
+        event.getRequestContext().getUIApplication().addMessage(new ApplicationMessage("UIQuestions.msg.category-id-deleted",
+                                                                                       null,
+                                                                                       ApplicationMessage.WARNING));        
         uiQuestions.setDefaultLanguage();
         UIPopupAction popupAction = uiPortlet.getChild(UIPopupAction.class);
         popupAction.deActivate();
@@ -238,10 +235,10 @@ public class UIUserWatchManager extends UIFormTabPane implements UIPopupComponen
       UIUserWatchManager watchManager = event.getSource();
       String categoryId = event.getRequestContext().getRequestParameter(OBJECTID);
       UIAnswersPortlet uiPortlet = watchManager.getAncestorOfType(UIAnswersPortlet.class);
-      if (!faqService_.isExisting(categoryId)) {
-        UIApplication uiApplication = watchManager.getAncestorOfType(UIApplication.class);
-        uiApplication.addMessage(new ApplicationMessage("UIQuestions.msg.category-id-deleted", null, ApplicationMessage.WARNING));
-        event.getRequestContext().addUIComponentToUpdateByAjax(uiApplication.getUIPopupMessages());
+      if (!faqService_.isExisting(categoryId)) {        
+        event.getRequestContext().getUIApplication().addMessage(new ApplicationMessage("UIQuestions.msg.category-id-deleted",
+                                                                                       null,
+                                                                                       ApplicationMessage.WARNING));        
         UIPopupAction popupAction = uiPortlet.getChild(UIPopupAction.class);
         popupAction.deActivate();
         event.getRequestContext().addUIComponentToUpdateByAjax(popupAction);

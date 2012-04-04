@@ -25,7 +25,7 @@ import org.exoplatform.forum.TimeConvertUtils;
 import org.exoplatform.forum.service.ForumService;
 import org.exoplatform.forum.service.ForumStatistic;
 import org.exoplatform.forum.service.UserProfile;
-import org.exoplatform.ks.common.UserHelper;
+import org.exoplatform.ks.common.CommonUtils;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
 import org.exoplatform.webui.core.UIContainer;
@@ -45,52 +45,40 @@ import org.exoplatform.webui.event.EventListener;
         @EventConfig(listeners = UICategoryInfo.CreatedLinkActionListener.class )
     }
 )
-@SuppressWarnings("unused")
 public class UICategoryInfo extends UIContainer {
   private ForumService forumService;
 
   private UserProfile  userProfile;
 
-  private String       linkUserInfo = ForumUtils.EMPTY_STR;
-
-  // private long mostUserOnline_ = 0;
-
   public UICategoryInfo() throws Exception {
     forumService = (ForumService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(ForumService.class);
   }
 
-  private List<String> getUserOnline() throws Exception {
+  protected List<String> getUserOnline() throws Exception {
     return forumService.getOnlineUsers();
   }
 
-  private String getScreenName(String userName) throws Exception {
+  protected String getScreenName(String userName) throws Exception {
     return forumService.getScreenName(userName);
   }
 
-  private UserProfile getUserProfile() throws Exception {
-    try {
-      UIForumPortlet forumPortlet = getAncestorOfType(UIForumPortlet.class);
-      userProfile = forumPortlet.getUserProfile();
-      linkUserInfo = forumPortlet.getPortletLink();
-    } catch (Exception e) {
-      String userId = UserHelper.getCurrentUser();
-      userProfile = forumService.getDefaultUserProfile(userId, ForumUtils.EMPTY_STR);
-    }
+  protected UserProfile getUserProfile() throws Exception {
+    UIForumPortlet forumPortlet = getAncestorOfType(UIForumPortlet.class);
+    userProfile = forumPortlet.getUserProfile();
     return userProfile;
   }
 
-  private String getActionViewInfoUser(String linkType, String userName) {
-    String link = linkUserInfo.replace("ViewPublicUserInfo", linkType).replace("userName", userName);
-    return link;
+  protected String getActionViewInfoUser(String linkType, String userName) {
+    return getAncestorOfType(UIForumPortlet.class).getPortletLink(linkType, userName);
   }
 
-  private String getMostUsersOnline(String s, String at) throws Exception {
+  protected String getMostUsersOnline(String s, String at) throws Exception {
     if (ForumUtils.isEmpty(s))
       return ForumUtils.EMPTY_STR;
     try {
       String[] strs = s.split(ForumUtils.COMMA);
       long l = Long.parseLong(strs[1].replace("at", ForumUtils.EMPTY_STR).trim());
-      Calendar calendar = TimeConvertUtils.getInstanceTempCalendar();
+      Calendar calendar = CommonUtils.getGreenwichMeanTime();
       double timeZone = userProfile.getTimeZone();
       if (userProfile.getUserId().equals(UserProfile.USER_GUEST))
         timeZone = 0;

@@ -28,12 +28,12 @@ import org.exoplatform.poll.Utils;
 import org.exoplatform.portal.config.UserACL;
 import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.Identity;
+import org.exoplatform.services.security.IdentityConstants;
 import org.exoplatform.web.application.RequestContext;
 import org.exoplatform.webui.application.WebuiApplication;
 import org.exoplatform.webui.application.WebuiRequestContext;
 import org.exoplatform.webui.application.portlet.PortletRequestContext;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
-import org.exoplatform.webui.core.UIPopupMessages;
 import org.exoplatform.webui.core.UIPortletApplication;
 import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
 
@@ -51,8 +51,9 @@ import org.exoplatform.webui.core.lifecycle.UIApplicationLifecycle;
 public class UIPollPortlet extends UIPortletApplication {
   private boolean isAdmin = false;
 
-  private String  userId  = "";
+  private String      userId  = "";
 
+  private PortletMode portletMode;
   public UIPollPortlet() throws Exception {
     addChild(UIPoll.class, null, null).setRendered(false);
     addChild(UIPollManagement.class, null, null).setRendered(true);
@@ -61,24 +62,17 @@ public class UIPollPortlet extends UIPortletApplication {
 
   public void processRender(WebuiApplication app, WebuiRequestContext context) throws Exception {
     PortletRequestContext portletReqContext = (PortletRequestContext) context;
-    if (portletReqContext.getApplicationMode() == PortletMode.VIEW) {
+    portletMode = portletReqContext.getApplicationMode();
+    if (portletMode == PortletMode.VIEW) {
       UIPoll uipoll = getChild(UIPoll.class).setRendered(true);
       hasGroupAdminOfGatein();
       uipoll.setPollId();
       getChild(UIPollManagement.class).setRendered(false);
-    } else if (portletReqContext.getApplicationMode() == PortletMode.EDIT) {
+    } else if (portletMode == PortletMode.EDIT) {
       getChild(UIPoll.class).setRendered(false);
       ((UIPollManagement) getChild(UIPollManagement.class).setRendered(true)).updateGrid();
     }
     super.processRender(app, context);
-  }
-
-  public void renderPopupMessages() throws Exception {
-    UIPopupMessages popupMess = getUIPopupMessages();
-    if (popupMess == null)
-      return;
-    WebuiRequestContext context = RequestContext.getCurrentInstance();
-    popupMess.processRender(context);
   }
 
   public boolean isAdmin() {
@@ -96,12 +90,14 @@ public class UIPollPortlet extends UIPortletApplication {
       List<String> list = new ArrayList<String>();
       Identity identity = ConversationState.getCurrent().getIdentity();
       userId = identity.getUserId();
-      if (Utils.isEmpty(userId)) {
+      if (Utils.isEmpty(userId) || IdentityConstants.ANONIM.equals(userId)) {
         userId = UserHelper.getCurrentUser();
+        if(!Utils.isEmpty(userId)) {
+          list.add(userId);
+        }
       } else {
         list.addAll(identity.getGroups());
       }
-      list.add(userId);
       for (String str : list) {
         if (str.equals(userACL.getSuperUser()) || str.equals(userACL.getAdminGroups()))
           isAdmin = true;

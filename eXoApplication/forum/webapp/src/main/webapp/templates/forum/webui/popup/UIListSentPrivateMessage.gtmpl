@@ -9,12 +9,12 @@
 	List sendmails = uicomponent.getPrivateMessageSendByUser() ;
 %>
 <div class="ForumMail Send" id="$uicomponent.id">
-	<div style="overflow:auto; margin:2px 0px;">
+	<div style="overflow:auto; margin:2px 0px;" class="ClearFix">
 		<%
 			if(uicomponent.isRenderIterator()) {
 				uicomponent.renderChild(UIForumPageIterator.class) ; 
 		%>
-		  <div style="clear:right; height:0px;"><span></span></div>
+
 		<% } %>
 	</div>
 	<table cellspacing="0" class="UIGrid" id="PermissionInfo" border="0" cellpadding="0">
@@ -33,18 +33,16 @@
 				String classCssSend = "EvenRow";
 				i = 0;
 				long setTime = (long)(userProfile.getTimeZone()*3600000) ;
-				Date fromDate = new Date();
 				for(mail in sendmails) {
 					if(i%2 == 0) classCssSend = "EvenRow";
 					else classCssSend = "OddRow";
 					++i;
 					String mailId = mail.getId();
 					String nameMail = mail.getName() ;
-					if(mail.getIsUnread())nameMail = "<b>" + nameMail + "</b>";
+					if(mail.getIsUnread())nameMail = "<strong>" + nameMail + "</strong>";
 					String fromUser = mail.getSendTo();
 					fromUser = ForumUtils.getCalculateListEmail(fromUser);
-					fromDate.setTime(mail.getReceivedDate().getTime() - setTime);
-					String strFromDate = TimeConvertUtils.getFormatDate(formatDate,fromDate);
+					String strFromDate = TimeConvertUtils.convertXTimeAgo(mail.getReceivedDate(), formatDate, setTime);
 		%>
 			<tr class="$classCssSend">
 				<td class="text"><a href="<%=uicomponent.event("ViewMessage", mailId)%>">$nameMail</a></td>
@@ -67,7 +65,7 @@
 		   } else {%>
 		  <tr>
 				<td colspan="4">
-					<div style="text-align:center"><b><%=_ctx.appRes("UIPrivateMessageForm.label.NoMessages");%></b></div>
+					<div style="text-align:center"><strong><%=_ctx.appRes("UIPrivateMessageForm.label.NoMessages");%></strong></div>
 				</td>
 			</tr>
 		 <% } %>

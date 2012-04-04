@@ -30,7 +30,7 @@
 				 			<a>$categoryName</a>
 				 		</div> 
 					</div> 			
-				<div style="clear:left;"><span></span></div>
+
 				<div class="ChildNodeContainer" style="$display">
 				<% 
 					for(forum in forums) {
@@ -39,12 +39,11 @@
 						String link = uicomponent.event("AddCategory",objectId ) ;
 						String classForumIcon = "ThreadsIcon";
 				%>
-					<div class="Node">
+					<div class="Node ClearFix">
 						<div class="Icon $classForumIcon"><span></span></div>
 							<div class="NodeLabel"> 
 								<a href="$link">$forumName</a>	
 							</div>
-						<div style="clear:left;"><span></span></div>
 					</div>
 				<% } %>		
 				</div>
@@ -52,22 +51,8 @@
 		<% } %>	
 		 </div>	
 	</div>
-	<div class="UIAction">
-	  <table class="ActionContainer" style="text-align:center">
-	  	<tr>
-	 	 		<td align="center">
-					<div onclick="<%=uicomponent.event("Close");%>" class="ActionButton LightBlueStyle">
-					  <div class="ButtonLeft">
-						  <div class="ButtonRight">
-						    <div class="ButtonMiddle">
-					       <a href="javascript:void(0);"><%=_ctx.appRes("UIAnswersPortlet.action.Close");%></a>
-						    </div>
-					    </div>
-						</div>
-					</div>
-	   		</td>
-	  	</tr>
-	  </table>
-	</div>
+	 <div class="UIAction">
+      <a href="javascript:void(0);" onclick="<%=uicomponent.event("Close");%>" class="ActionButton LightBlueStyle"><%=_ctx.appRes("UIAnswersPortlet.action.Close");%></a>
+    </div>
 	<%uiform.end()%>
 </div>

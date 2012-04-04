@@ -26,7 +26,6 @@ import javax.jcr.PathNotFoundException;
 
 import org.exoplatform.download.DownloadService;
 import org.exoplatform.forum.ForumSessionUtils;
-import org.exoplatform.forum.ForumTransformHTML;
 import org.exoplatform.forum.ForumUtils;
 import org.exoplatform.forum.rendering.RenderHelper;
 import org.exoplatform.forum.rendering.RenderingException;
@@ -39,7 +38,8 @@ import org.exoplatform.forum.service.Utils;
 import org.exoplatform.forum.webui.BaseForumForm;
 import org.exoplatform.forum.webui.UIForumPageIterator;
 import org.exoplatform.forum.webui.UIForumPortlet;
-import org.exoplatform.ks.common.user.CommonContact;
+import org.exoplatform.ks.common.CommonUtils;
+import org.exoplatform.ks.common.TransformHTML;
 import org.exoplatform.ks.common.webui.UIPopupAction;
 import org.exoplatform.ks.common.webui.UIPopupContainer;
 import org.exoplatform.services.log.ExoLogger;
@@ -74,7 +74,7 @@ public class UIViewTopic extends BaseForumForm implements UIPopupComponent {
 
   private Topic                    topic;
 
-  private JCRPageList              pageList;
+  protected JCRPageList            pageList;
 
   private int                      pageSelect;
 
@@ -108,13 +108,12 @@ public class UIViewTopic extends BaseForumForm implements UIPopupComponent {
 
   public String renderPost(Post post) throws RenderingException {
     if (SIGNATURE.equals(post.getId())) {
-      post.setMessage(ForumTransformHTML.enCodeViewSignature(post.getMessage()));
+      post.setMessage(TransformHTML.enCodeViewSignature(post.getMessage()));
     }
     return renderHelper.renderPost(post);
   }
 
-  @SuppressWarnings("unused")
-  private void initPage() throws Exception {
+  protected void initPage() throws Exception {
     this.userProfile = this.getAncestorOfType(UIForumPortlet.class).getUserProfile();
     String userLogin = this.userProfile.getUserId();
     Topic topic = this.topic;
@@ -149,8 +148,8 @@ public class UIViewTopic extends BaseForumForm implements UIPopupComponent {
     }
   }
 
-  @SuppressWarnings( { "unused", "unchecked" })
-  private List<Post> getPostPageList() throws Exception {
+  @SuppressWarnings("unchecked")
+  protected List<Post> getPostPageList() throws Exception {
     if (this.pageList == null)
       return null;
     UIForumPageIterator forumPageIterator = this.getChild(UIForumPageIterator.class);
@@ -167,16 +166,14 @@ public class UIViewTopic extends BaseForumForm implements UIPopupComponent {
     return posts;
   }
 
-  @SuppressWarnings("unused")
-  private boolean getIsRenderIter() {
+  protected boolean getIsRenderIter() {
     long availablePage = this.pageList.getAvailablePage();
     if (availablePage > 1)
       return true;
     return false;
   }
 
-  @SuppressWarnings("unused")
-  private UserProfile getUserInfo(String userName) throws Exception {
+  protected UserProfile getUserInfo(String userName) throws Exception {
     UserProfile profile = mapUserProfile.get(userName);
     if (profile == null) {
       profile = new UserProfile();
@@ -187,27 +184,17 @@ public class UIViewTopic extends BaseForumForm implements UIPopupComponent {
     return profile;
   }
 
-  @SuppressWarnings("unused")
-  private CommonContact getPersonalContact(String userId) throws Exception {
-    CommonContact contact = ForumSessionUtils.getPersonalContact(userId);
-    if (contact == null) {
-      contact = new CommonContact();
-    }
-    return contact;
-  }
-
   public String getImageUrl(String imagePath) throws Exception {
     String url = ForumUtils.EMPTY_STR;
     try {
-      url = org.exoplatform.ks.common.Utils.getImageUrl(imagePath);
+      url = CommonUtils.getImageUrl(imagePath);
     } catch (Exception e) {
       log.warn(imagePath + " must exist: " + e.getCause());
     }
     return url;
   }
 
-  @SuppressWarnings("unused")
-  private String getFileSource(ForumAttachment attachment) throws Exception {
+  protected String getFileSource(ForumAttachment attachment) throws Exception {
     DownloadService dservice = getApplicationComponent(DownloadService.class);
     try {
       InputStream input = attachment.getInputStream();
@@ -218,13 +205,11 @@ public class UIViewTopic extends BaseForumForm implements UIPopupComponent {
     }
   }
 
-   @SuppressWarnings("unused")
-  private String getAvatarUrl(String userId) throws Exception {
+  protected String getAvatarUrl(String userId) throws Exception {
     return ForumSessionUtils.getUserAvatarURL(userId, getForumService());
   }
 
-  @SuppressWarnings("unused")
-  private boolean isOnline(String userId) throws Exception {
+  protected boolean isOnline(String userId) throws Exception {
     return this.getForumService().isOnline(userId);
   }
 

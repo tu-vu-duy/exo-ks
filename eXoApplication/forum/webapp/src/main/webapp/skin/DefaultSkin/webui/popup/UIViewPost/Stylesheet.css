@@ -3,7 +3,7 @@
 	width: 96%;
 }
 
-*html .UIForumPortlet .UIViewPost {
+* html .UIForumPortlet .UIViewPost {
 	margin: 10px auto;
 	width: 94%;
 }
@@ -11,7 +11,7 @@
 .UIViewPost .ViewContainer {
 	border: 1px solid #c7c7c7;
 	background: #f7f7f7;
-	-moz-box-shadow: 1px 1px #fff inset, -1px -1px #fff inset;
+	box-shadow: inset 1px 1px #fff, inset -1px -1px #fff;
 	padding: 10px;
 }
 
@@ -68,7 +68,7 @@
 }
 
 .UIViewPost .AttachmentIcon {
-	height: 20px; 
+	height: 20px;
 	width: auto;
 	display: block;
 	padding-left: 20px;

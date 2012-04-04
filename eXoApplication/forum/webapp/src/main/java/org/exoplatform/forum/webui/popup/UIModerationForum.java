@@ -19,7 +19,6 @@ package org.exoplatform.forum.webui.popup;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.exoplatform.forum.ForumTransformHTML;
 import org.exoplatform.forum.ForumUtils;
 import org.exoplatform.forum.service.ForumPageList;
 import org.exoplatform.forum.service.ForumSearch;
@@ -32,6 +31,7 @@ import org.exoplatform.forum.webui.BaseForumForm;
 import org.exoplatform.forum.webui.UIForumPageIterator;
 import org.exoplatform.forum.webui.UIForumPortlet;
 import org.exoplatform.ks.bbcode.core.ExtendedBBCodeProvider;
+import org.exoplatform.ks.common.TransformHTML;
 import org.exoplatform.ks.common.webui.BaseEventListener;
 import org.exoplatform.ks.common.webui.UIPopupAction;
 import org.exoplatform.ks.common.webui.UIPopupContainer;
@@ -57,7 +57,6 @@ import org.exoplatform.webui.event.Event.Phase;
       @EventConfig(listeners = UIModerationForum.CloseActionListener.class, phase=Phase.DECODE)
     }
 )
-@SuppressWarnings("unchecked")
 public class UIModerationForum extends BaseForumForm implements UIPopupComponent {
   private String[]            path            = new String[] {};
 
@@ -88,9 +87,8 @@ public class UIModerationForum extends BaseForumForm implements UIPopupComponent
     this.isReloadPortlet = isReloadPortlet;
   }
 
-  @SuppressWarnings("unused")
-  private String getTitleInHTMLCode(String s) {
-    return ForumTransformHTML.getTitleInHTMLCode(s, new ArrayList<String>((new ExtendedBBCodeProvider()).getSupportedBBCodes()));
+  protected String getTitleInHTMLCode(String s) {
+    return TransformHTML.getTitleInHTMLCode(s, new ArrayList<String>((new ExtendedBBCodeProvider()).getSupportedBBCodes()));
   }
 
   public void setUserProfile(UserProfile userProfile) throws Exception {
@@ -118,8 +116,8 @@ public class UIModerationForum extends BaseForumForm implements UIPopupComponent
     return isShowIter;
   }
 
-  @SuppressWarnings( { "unused" })
-  private List<ForumSearch> getListObject() throws Exception {
+  @SuppressWarnings("unchecked")
+  protected List<ForumSearch> getListObject() throws Exception {
     try {
       list_ = getForumService().getJobWattingForModerator(getPath());
     } catch (Exception e) {
@@ -134,10 +132,7 @@ public class UIModerationForum extends BaseForumForm implements UIPopupComponent
       isShowIter = false;
     int pageSelect = pageIterator.getPageSelected();
     List<ForumSearch> list = new ArrayList<ForumSearch>();
-    try {
-      list.addAll(pageList.getPageSearch(pageSelect, list_));
-    } catch (Exception e) {
-    }
+    list.addAll(pageList.getPageSearch(pageSelect, list_));
     return list;
   }
 

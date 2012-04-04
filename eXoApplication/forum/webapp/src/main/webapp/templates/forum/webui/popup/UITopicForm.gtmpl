@@ -21,8 +21,6 @@
 											 String classCss = "SelectedTab" ;
 											 int i =0; 
 											 String href = "";
-											 String url = uicomponent.url("PreviewThread","pathId");
-											 uicomponent.setLink(url);
 											 for(tabconten in uiform.getChildren()){
 											 	 href ="javascript:void(0);";
 												 if(uiform.getIsSelected(i)) classCss = "SelectedTab" ;
@@ -79,28 +77,14 @@
 			</div>	
 		</div>	
 	</div>
-	<div class="UIAction"> 
-		<table class="ActionContainer">
-			<tr>
-				<td align="center">
-		<% for(action in uicomponent.getActions()) { 
+	<div class="UIAction">
+  	<% for(action in uicomponent.getActions()) { 
 			 	String actionLabel = _ctx.appRes(uicomponent.getName() + ".action." + action); 
 			 	String link = uicomponent.event(action) ;
 		%>
-					<div class="ActionButton LightBlueStyle">
-						<div class="ButtonLeft">
-							<div class="ButtonRight">
-								<div class="ButtonMiddle">
-									<a href="$link">$actionLabel</a>
-								</div>
-							</div>
-						</div>
-					</div>
-			<%}%>
-				</td>
-			</tr>
- 		</table> 
-	</div>
+      <a href="$link" class="ActionButton LightBlueStyle">$actionLabel</a>
+      <%}%>
+    </div>
 	<%uiform.end()%>
 </div>
 <script type="text/javascript">

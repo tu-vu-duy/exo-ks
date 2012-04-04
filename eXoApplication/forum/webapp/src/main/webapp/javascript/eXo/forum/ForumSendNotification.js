@@ -8,6 +8,17 @@ function ForumSendNotification() {
 	this.GoDirectly="Go directly to the TYPE: LINK Click here.";
 } ;
 
+ForumSendNotification.prototype.initParam = function (notification, message, post, 
+																											titeName, from, briefContent, GoDirectly) {
+	this.notification = notification;
+	this.message = message;
+	this.post = post;
+	this.titeName = titeName;
+	this.from = from;
+	this.briefContent = briefContent;
+	this.GoDirectly = GoDirectly;
+};
+
 ForumSendNotification.prototype.init = function(eXoUser, eXoToken, contextName){
 	if (!eXo.core.Cometd) {
 		eXo.require('eXo.core.Cometd');
@@ -22,16 +33,6 @@ ForumSendNotification.prototype.init = function(eXoUser, eXoToken, contextName){
 		} else {
 			this.subcribeCometdSendNotification();
 		}
-	}
-	var i18n = document.getElementById('NotificationMessage');
-	if(i18n) {
-		this.notification = i18n.getAttribute("notification") ;
-		this.message		= i18n.getAttribute("message");
-		this.post			= i18n.getAttribute("post");
-		this.titeName		= i18n.getAttribute("titeName");
-		this.from			= i18n.getAttribute("from");
-		this.briefContent = i18n.getAttribute("briefContent");
-		this.GoDirectly	= i18n.getAttribute("goDirectly");
 	}
 } ;
 
@@ -89,7 +90,7 @@ ForumSendNotification.prototype.getContentHTML = function(message){
 	if(message.type=='PrivatePost'){
 		type = this.post;
 		link = String(this.GoDirectly).replace('TYPE', type);
-		link = link.replace(' LINK', '<a style="color:#204AA0" href="'+ String(message.id).replace('public', 'private') +'">') +	'</a>';
+		link = link.replace(' LINK', '<a style="color:#204AA0" href="'+ String(message.id) +'">') +	'</a>';
 	} else {
 		link = String(this.GoDirectly).replace('TYPE', type);
 		var alink = document.getElementById('privateMessageLink');
@@ -103,9 +104,9 @@ ForumSendNotification.prototype.getContentHTML = function(message){
 	}
 	var content = 
 		'<div style="padding:7px 0px 7px 5px">'+
-		'<b>'+String(this.titeName).replace('TYPE',type)+':</b> <br/>'+message.name+'<br/>'+
-		'<b>'+this.from+':</b> ' + message.from + '<br/>' +
-		'<b>'+this.briefContent+':</b><br/>'+ msg + '<br/>' + link +
+		'<strong>'+String(this.titeName).replace('TYPE',type)+':</strong> <br/>'+message.name+'<br/>'+
+		'<strong>'+this.from+':</strong> ' + message.from + '<br/>' +
+		'<strong>'+this.briefContent+':</strong><br/>'+ msg + '<br/>' + link +
 		'</div>';
 	return content;
 };

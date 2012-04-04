@@ -171,7 +171,7 @@ public class UIFormSelectBoxWithGroups extends UIFormStringInput {
   }
 
   public UIFormSelectBoxWithGroups setDisabled(boolean disabled) {
-    setEnable(!disabled);
+    this.disabled = disabled;
     return this;
   }
 
@@ -233,9 +233,12 @@ public class UIFormSelectBoxWithGroups extends UIFormStringInput {
       formId = uiForm.getId();
 
     Writer w = context.getWriter();
-    w.write("<select class=\"selectbox\" name=\"");
+    w.write("<select class=\"selectbox\" id=\"");
+    w.write(getId());
+    w.write("\" name=\"");
     w.write(name);
     w.write("\"");
+    renderHTMLAttributes(w);
     if (onchange_ != null) {
       w.append(" onchange=\"").append(renderOnChangeEvent(uiForm)).append("\"");
     }
@@ -245,7 +248,7 @@ public class UIFormSelectBoxWithGroups extends UIFormStringInput {
     if (size_ > 1)
       w.write(" size=\"" + size_ + "\"");
 
-    if (!enable_)
+    if (isDisabled())
       w.write(" disabled ");
 
     w.write(">\n");
@@ -256,8 +259,8 @@ public class UIFormSelectBoxWithGroups extends UIFormStringInput {
         try {
           label = res.getString(formId + ".label.option." + ((SelectOption) item).getValue());
         } catch (MissingResourceException ex) {
+          label = formId + ".label.option." + ((SelectOption) item).getValue();
         }
-
         w.write(renderOption(((SelectOption) item), label));
 
       } else if (item instanceof SelectOptionGroup) {
@@ -275,6 +278,7 @@ public class UIFormSelectBoxWithGroups extends UIFormStringInput {
           try {
             label = res.getString(formId + ".label.option." + opt.getValue());
           } catch (MissingResourceException ex) {
+            label = formId + ".label.option." + opt.getValue();
           }
           w.write(renderOption(opt, label));
 

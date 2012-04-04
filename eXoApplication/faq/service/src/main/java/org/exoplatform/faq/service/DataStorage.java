@@ -24,7 +24,6 @@ import javax.jcr.Node;
 
 import org.exoplatform.container.component.ComponentPlugin;
 import org.exoplatform.ks.common.NotifyInfo;
-import org.exoplatform.services.mail.Message;
 
 /**
  * Created by The eXo Platform SAS
@@ -38,6 +37,12 @@ public interface DataStorage {
 
   void addRolePlugin(ComponentPlugin plugin) throws Exception;
 
+  /**
+   * 
+   * @param userName userName
+   * @return true if userName has admin role. The current user is implied if userName is null.
+   * @throws Exception
+   */
   boolean isAdminRole(String userName) throws Exception;
 
   List<String> getAllFAQAdmin() throws Exception;
@@ -58,11 +63,9 @@ public interface DataStorage {
 
   void saveTemplate(String str) throws Exception;
 
-  void sendMessage(Message message) throws Exception;
+  Iterator<NotifyInfo> getPendingMessages();
 
-  Iterator<NotifyInfo> getPendingMessages() throws Exception;
-
-  List<QuestionLanguage> getQuestionLanguages(String questionId) throws Exception;
+  List<QuestionLanguage> getQuestionLanguages(String questionId);
 
   void deleteAnswer(String questionId, String answerId) throws Exception;
 
@@ -114,7 +117,7 @@ public interface DataStorage {
 
   long getMaxindexCategory(String parentId) throws Exception;
 
-  void saveCategory(String parentId, Category cat, boolean isAddNew) throws Exception;
+  void saveCategory(String parentId, Category cat, boolean isAddNew);
 
   List<Cate> listingCategoryTree() throws Exception;
 
@@ -196,8 +199,15 @@ public interface DataStorage {
 
   boolean isModerateQuestion(String id) throws Exception;
 
-  boolean isViewAuthorInfo(String id) throws Exception;
+  boolean isViewAuthorInfo(String id);
 
+  /**
+   * 
+   * @param categoryId id of category
+   * @param user username
+   * @return true if user is moderator of the category. The current user is implied if user is null.
+   * @throws Exception
+   */
   boolean isCategoryModerator(String categoryId, String user) throws Exception;
 
   boolean isCategoryExist(String name, String path);

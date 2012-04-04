@@ -19,7 +19,6 @@ package org.exoplatform.forum.webui.popup;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.exoplatform.forum.ForumTransformHTML;
 import org.exoplatform.forum.ForumUtils;
 import org.exoplatform.forum.service.ForumNodeTypes;
 import org.exoplatform.forum.service.Topic;
@@ -28,18 +27,18 @@ import org.exoplatform.forum.webui.UIForumKeepStickPageIterator;
 import org.exoplatform.forum.webui.UIForumPortlet;
 import org.exoplatform.forum.webui.UITopicContainer;
 import org.exoplatform.ks.bbcode.core.ExtendedBBCodeProvider;
+import org.exoplatform.ks.common.TransformHTML;
 import org.exoplatform.ks.common.webui.UIPopupAction;
 import org.exoplatform.ks.common.webui.UIPopupContainer;
 import org.exoplatform.web.application.ApplicationMessage;
 import org.exoplatform.webui.config.annotation.ComponentConfig;
 import org.exoplatform.webui.config.annotation.EventConfig;
-import org.exoplatform.webui.core.UIApplication;
 import org.exoplatform.webui.core.UIPopupComponent;
 import org.exoplatform.webui.core.lifecycle.UIFormLifecycle;
 import org.exoplatform.webui.event.Event;
 import org.exoplatform.webui.event.EventListener;
 import org.exoplatform.webui.event.Event.Phase;
-import org.exoplatform.webui.form.UIFormCheckBoxInput;
+import org.exoplatform.webui.form.input.UICheckBoxInput;
 
 /**
  * Created by The eXo Platform SAS
@@ -88,13 +87,12 @@ public class UIPageListTopicUnApprove extends UIForumKeepStickPageIterator imple
     this.forumId = forumId;
   }
 
-  @SuppressWarnings("unused")
-  private String getTitleInHTMLCode(String s) {
-    return ForumTransformHTML.getTitleInHTMLCode(s, new ArrayList<String>((new ExtendedBBCodeProvider()).getSupportedBBCodes()));
+  protected String getTitleInHTMLCode(String s) {
+    return TransformHTML.getTitleInHTMLCode(s, new ArrayList<String>((new ExtendedBBCodeProvider()).getSupportedBBCodes()));
   }
 
-  @SuppressWarnings( { "unchecked", "unused" })
-  private List<Topic> getTopicsUnApprove() throws Exception {
+  @SuppressWarnings("unchecked")
+  protected List<Topic> getTopicsUnApprove() throws Exception {
     String type = (typeApprove == Utils.WAITING) ? ForumNodeTypes.EXO_IS_WAITING : (typeApprove == Utils.APPROVE) ? ForumNodeTypes.EXO_IS_APPROVED : ForumNodeTypes.EXO_IS_ACTIVE;
     pageList = getForumService().getPageTopic(this.categoryId, this.forumId, "@" + type + "='" + ((typeApprove == Utils.WAITING) ? "true" : "false") + "'", ForumUtils.EMPTY_STR);
     pageList.setPageSize(6);
@@ -104,10 +102,10 @@ public class UIPageListTopicUnApprove extends UIForumKeepStickPageIterator imple
     if (topics == null)
       topics = new ArrayList<Topic>();
     for (Topic topic : topics) {
-      if (getUIFormCheckBoxInput(topic.getId()) != null) {
-        getUIFormCheckBoxInput(topic.getId()).setChecked(false);
+      if (getUICheckBoxInput(topic.getId()) != null) {
+        getUICheckBoxInput(topic.getId()).setChecked(false);
       } else {
-        addUIFormInput(new UIFormCheckBoxInput(topic.getId(), topic.getId(), false));
+        addUIFormInput(new UICheckBoxInput(topic.getId(), topic.getId(), false));
       }
     }
     return topics;
@@ -127,9 +125,10 @@ public class UIPageListTopicUnApprove extends UIForumKeepStickPageIterator imple
       String topicId = event.getRequestContext().getRequestParameter(OBJECTID);
       Topic topic = uiForm.getTopic(topicId);
       topic = uiForm.getForumService().getTopicUpdate(topic, false);
-      UIApplication uiApp = uiForm.getAncestorOfType(UIApplication.class);
       if (topic == null) {
-        uiApp.addMessage(new ApplicationMessage("UIShowBookMarkForm.msg.link-not-found", null, ApplicationMessage.WARNING));
+        event.getRequestContext().getUIApplication().addMessage(new ApplicationMessage("UIShowBookMarkForm.msg.link-not-found",
+                                                                                       null,
+                                                                                       ApplicationMessage.WARNING));
         return;
       }
       UIPopupContainer popupContainer = uiForm.getChild(UIPopupContainer.class);
